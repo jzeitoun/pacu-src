@@ -14,7 +14,7 @@ class WSHandler(websocket.WebSocketHandler):
     url = r'/ws/(?P<modname>[\w\.]+)/(?P<clsname>\w+)'
     inst = None
     def open(self, modname, clsname):
-        self.stream.set_nodelay(True)
+        self.set_nodelay(True)
         # print 'OPEN', modname, clsname, self.get_argument('files')
         try:
             cls = getattr(importlib.import_module(modname), clsname)
