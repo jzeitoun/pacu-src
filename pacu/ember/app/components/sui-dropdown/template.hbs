@@ -1,0 +1,17 @@
+<i class="{{icon}} icon"></i>
+<span class="text">{{prompt}}</span>
+<div class="menu">
+  {{#if header}}
+  <div class="header">
+    <i class="tags icon"></i>
+    {{header}}
+  </div>
+  <div class="divider"></div>
+  {{/if}}
+  {{#each items as |item|}}
+  <div class="item">
+    <div class="ui {{item.colordot}} empty circular label" data-value="{{item.uid}}"></div>
+      {{item.text}}
+  </div>
+  {{/each}}
+</div>

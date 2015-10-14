@@ -1,0 +1,44 @@
+<div class="ui center aligned inverted segment">
+  <h2 class="ui">Create new session</h2>
+</div>
+<div class="ui inverted segment">
+  <form class="ui inverted form" {{action "save" model on="submit"}}>
+    <div class="field">
+      <label>Title</label>
+      {{input value=model.title type="text" placeholder="Title"}}
+    </div>
+    <div class="two fields">
+      <div class="field">
+        <label>Host</label>
+        {{input value=model.host type="text" placeholder="Host"}}
+      </div>
+      <div class="field">
+        <label>User</label>
+        {{input value=model.user type="text" placeholder="User"}}
+      </div>
+    </div>
+    <div class="field">
+      <label>Description</label>
+       {{textarea value=model.desc rows="3"
+        placeholder="Add your analysis note here..."}}
+    </div>
+    <div class="field">
+      <label>Scanbox resource route</label>
+      {{input value=model.src type="hidden"}}
+      {{#if model.src}}
+        <div class="ui inverted green segment">{{model.src}}</div>
+      {{else}}
+        {{x-nav-step src="/api/fs/sbx" value=steps selected=model.src onSelect="focusSubmit"}}
+      {{/if}}
+    </div>
+    {{!--
+    <div class="inline field">
+      <div class="ui checkbox">
+        <input type="checkbox" tabindex="0" class="hidden">
+        <label>I agree to the terms and conditions</label>
+      </div>
+    </div>
+    --}}
+    <button id="submit-new-analysis" class="ui inverted fluid red button" type="submit">Submit</button>
+  </form>
+</div>

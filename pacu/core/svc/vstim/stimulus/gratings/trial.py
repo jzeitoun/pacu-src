@@ -1,0 +1,23 @@
+from psychopy import event
+from psychopy.core import CountdownTimer
+# PhaseIncreasingTrial
+class Trial(object):
+    def __init__(self, stimulus, condition, duration, interval):
+        self.frameCount = 0
+        self.stimulus = stimulus
+        self.condition = condition
+        self.interval = interval
+        self.duration = duration
+    def start(self):
+        self.getTime = CountdownTimer(self.duration).getTime
+        return self
+    def __nonzero__(self):
+        if event.getKeys('escape'):
+            self.stimulus.should_stop = True
+        return self.getTime() > 0
+    def __enter__(self):
+        self.interval.start()
+        self.stimulus.update_phase(self)
+    def __exit__(self, *args):
+        self.interval.complete()
+        self.frameCount += 1

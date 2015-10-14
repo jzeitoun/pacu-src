@@ -1,0 +1,12 @@
+<input type="hidden" value="{{attrs.value}}">
+{{#unless broke}}
+  <i class="dropdown icon"></i>
+{{/unless}}
+<div class="default text">{{defaultText}}</div>
+<div class="menu" style="max-height: 360px;">
+  {{#each content as |c|}}
+    <div class="item {{c.classes}}" data-value="{{c.value}}">
+      <i class="{{c.icon}} icon"></i>{{c.text}}
+    </div>
+  {{/each}}
+</div>

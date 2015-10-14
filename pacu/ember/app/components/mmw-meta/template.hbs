@@ -1,0 +1,23 @@
+<thead>
+  <tr>
+    <th style="text-align: center">Key</th>
+    <th style="text-align: center">Value</th>
+  </tr>
+</thead>
+<tbody>
+  {{#each mmw.meta as |item|}}
+  <tr>
+    {{#each item as |e|}}
+      <td style="text-align: center">{{e}}</td>
+    {{/each}}
+  </tr>
+  {{/each}}
+</tbody>
+<tfoot>
+  <tr>
+    <th colspan="2" class="ui center aligned segment">
+    <i class="disk outline icon"></i>
+      {{mmw.filename}}
+    </th>
+  </tr>
+</tfoot>

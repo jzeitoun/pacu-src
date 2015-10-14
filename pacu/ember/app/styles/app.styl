@@ -1,0 +1,156 @@
+@import 'pod-styles'
+@import "range"
+
+html
+  background-color black
+
+body
+  color ivory
+  background-color black
+  padding 2vh 2vw
+
+.header.app-info
+  line-height 2em
+
+.header.app-info
+  font-family Open Sans
+
+a.active > div.nav
+  background-color maroon !important
+
+#copyright
+  text-align center
+  font-size 0.8em
+  font-style italic
+  p
+    margin 0.5em
+    letter-spacing 0.1em
+
+// .app-data-sbx.dropdown
+//   display table
+//   margin 0 auto
+
+// .app-data-viewport
+//   margin-top 3vh
+// 
+// 
+// .app-data-viewport canvas
+//   border 1px dotted red
+// 
+// .app-data-viewport canvas.active
+//   border 1px solid white
+// #app-layerbase
+//   position relative
+//   border 1px solid white
+//   margin-bottom 1vh
+// 
+// .app-data-viewport .mmw-control
+//   border 1px solid white
+// 
+// .mmw-control input[type="range"]
+//   margin 1%
+//   width 98%
+//   &:hover
+//     cursor move /* fallback if grab cursor is unsupported */
+//     cursor grab
+//     cursor -moz-grab
+//     cursor -webkit-grab
+//   &:active
+//     cursor grabbing
+//     cursor -moz-grabbing
+//     cursor -webkit-grabbing
+// 
+// canvas, svg
+//   background-color transparent
+// //   position absolute
+// svg.roi-canvas
+//   cursor crosshair
+.roi-rect
+  fill transparent
+  stroke-width 1
+  stroke lime
+  cursor pointer
+  &:active
+    fill RGBA(50, 50, 255, 0.5);
+.roi-rect-temp
+  stroke red
+  cursor crosshair
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+.grid .tick {
+	stroke: lightgrey;
+	opacity: 0.7;
+	shape-rendering: crispEdges;
+}
+
+.grid path {
+	stroke-width: 0;
+}
+
+.axis path {
+	fill: none;
+	stroke: #bbb;
+	shape-rendering: crispEdges;
+}
+
+.axis text {
+	fill: #555;
+}
+
+.axis line {	
+	stroke: #e7e7e7;
+	shape-rendering: crispEdges;
+}
+
+.axis .axis-label {
+	font-size: 14px;
+}
+
+.line {
+	fill: none;
+	stroke-width: 1.5px;
+}
+
+.dot {
+	/* consider the stroke-with the mouse detect radius? */
+	stroke: transparent;
+	stroke-width: 10px;  
+	cursor: pointer;
+}
+
+.dot:hover {
+	stroke: rgba(68, 127, 255, 0.3);
+}
+

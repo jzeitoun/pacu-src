@@ -1,0 +1,14 @@
+pathlib
+tornado
+sqlalchemy
+psychopy
+futures
+ujson
+numpy
+pillow
+scipy
+pyglet # only using for python window64 distributino website
+# pyopengl
+# pyopengl accelerate
+# vlc?
+pandas

@@ -1,0 +1,13 @@
+{{!--
+<h4>{{#link-to 'analysis.new'}}CREATE NEW{{/link-to}}</h4>
+  <h6>{{#link-to 'analysis.session' 'wrong'}}wrong route for debug{{/link-to}}</h6>
+<h4>previous analysis sessions</h4>
+{{#each model.entities as |entity|}}
+<div class="ui inverted segment">
+  <h3 class="ui header">{{entity.metadata_data.name}}</h3>
+  <h5 class="ui header">{{entity.mapper_name}}</h5>
+  <p>{{from-timestamp entity.created_at}}</p>
+  {{#link-to 'analysis.session' entity.id class="fluid ui blue button"}}open{{/link-to}}
+</div>
+{{/each}}
+--}}

@@ -1,0 +1,37 @@
+{{sui-model-select
+  prompt="Please select your spec..."
+  valuePath="clsname"
+  items=attrs.items
+  item=attrs.item
+  value=value}}
+{{#if attrs.item}}
+<section class="ui clearing divider"></section>
+  <section>
+    <table class="ui inverted striped table">
+      <thead>
+        <tr><th colspan="3">
+            <span>{{item.clsname}}</span>
+            <span class="ui pointing left tiny gray label">{{item.pkgname}}</span>
+        </th></tr>
+      </thead>
+      <tbody>
+        {{#each item.fields as |field|}}
+        <tr class="field">
+          <td class="collapsing">
+            <span class="attrs title">{{field.attrs.title}}</span>
+          </td>
+          <td class="collapsing">
+            <span class="ui violet fluid label attrs description">{{field.attrs.description}}</span>
+          </td>
+          <td>{{component field.component
+                meta=field.attrs
+                name=field.key
+                value=field.val
+                class="ui inverted input fluid"}}</td>
+        </tr>
+        {{/each}}
+      </tbody>
+      <tfoot><tr><th colspan="3">{{item.description}}</th></tr></tfoot>
+    </table>
+  </section>
+{{/if}}
