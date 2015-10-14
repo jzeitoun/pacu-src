@@ -1,5 +1,7 @@
 import traceback
 
+import numpy as np
+
 from pacu.core.svc.impl import spec
 from pacu.core.svc.impl import specs
 from pacu.core.svc.impl.exc import UserAbortException
@@ -9,28 +11,11 @@ from pacu.core.svc.impl.exc import ComponentNotFoundError
 from pacu.core.svc.impl.service import Service
 from pacu.core.svc.impl.component_dependency import ComponentDependency
 from pacu.core.svc.impl.deps import Dependency
-
 from pacu.core.svc.analysis.i3d.files.impl import Files
 from pacu.core.svc.analysis.i3d.stack.impl import Stack
 from pacu.core.svc.analysis.i3d.rois.impl import ROIs
 from pacu.util.descriptor.set import DescriptorSet
 
-import numpy as np
-from joblib import Parallel, delayed
-from joblib.pool import has_shareable_memory
-
-p = Parallel(n_jobs=-1, max_nbytes=False) #, verbose=5)
-
-# scanbox data should take complementary number (inverse)
-def gml(mmap, x1, x2, y1, y2):
-    return mmap[
-        :, y1:y2, x1:x2
-    ].mean(axis=(1, 2))
-
-get_mean_lazy = delayed(gml)
-
-# can reduce
-import tifffile
 class I3DAnalysisService(object):
     files = Dependency(Files)
     stack = Dependency(Stack).on(files, 'mat.memmap')
@@ -42,17 +27,18 @@ class I3DAnalysisService(object):
     def get_frame(self, index):
         return self.stack.get_frame(index)
     def get_mean(self, x1, x2, y1, y2):
-        jobs = [get_mean_lazy(arr, x1, x2, y1, y2)
-                for arr in np.split(self.stack.raw, 8)]
-        res = p(jobs)
-        return np.concatenate(res).tolist()
+        pass
+        # jobs = [get_mean_lazy(arr, x1, x2, y1, y2)
+        #         for arr in np.split(self.stack.raw, 8)]
+        # res = p(jobs)
+        # return np.concatenate(res).tolist()
         # return self.stack.mmap[
         #     :, y1:y2, x1:x2
         # ].mean(axis=(1,2)).tolist()
 
 jz5 = '/Volumes/Users/ht/tmp/pysbx-data/JZ5/JZ5_000_003'
 jz6 = '/Volumes/Users/ht/tmp/pysbx-data/JZ6/JZ6_000_003'
-qwe = I3DAnalysisService(files=jz5)
+# qwe = I3DAnalysisService(files=jz5)
 # X1:333, X2:357, Y1:122, Y2:145
 x1 = 338
 x2 = 360

@@ -9,8 +9,8 @@ from pacu.core.scanbox import FileGroup
 
 binpath = '/Volumes/Users/ht/tmp/pysbx-data/JZ5/JZ5_000_003'
 binpath = '/Volumes/Users/ht/tmp/pysbx-data/JZ7/9-21-15_000_007'
-s = FileGroup(binpath)
-raw = s.mat.memmap[..., 0]
+# s = FileGroup(binpath)
+# raw = s.mat.memmap[..., 0]
 
 #             self.raw = mmap[..., 0]
 #             # print 'invmin', 65535 - self.raw.max()
@@ -31,10 +31,14 @@ def mean(arr_in, arr_out, addr_in, addr_out):
         print 'warning, memory copy was made...'
     arr_out[:] = 65536.0 - arr_in.mean(axis=(1,2))
 
-def get(self, *args):
+def get(self, x1, x2, y1, y2, src=''):
     # turn off gzip encoding by setting "application" mime-type
     # data = np.memmap(binpath, dtype=np.int32, mode='r', shape=shape)
-    x1, x2, y1, y2 = map(int, args)
+
+    s = FileGroup(src)
+    raw = s.mat.memmap[..., 0]
+
+    x1, x2, y1, y2 = map(int, [x1, x2, y1, y2])
     data = raw[:, y1:y2, x1:x2]
     result = np.ctypeslib.as_array(Array(ctypes.c_float, len(data)).get_obj())
     ins, outs = [np.array_split(arr, 8) for arr in (data, result)]

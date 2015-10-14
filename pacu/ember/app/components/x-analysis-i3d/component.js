@@ -52,14 +52,16 @@ export default Ember.Component.extend({
       return rois.pushObject(roi);
     },
     refreshROI(roi) {
-      console.log('refROI');
 
       // this.wsx.invoke('get_mean', roi.x1, roi.x2, roi.y1, roi.y2).then((data) => {
       //   roi.set('mean', data);
       // });
 
+      const src = this.getAttr('files');
+      const qs = encodeURI(`?src=${src}`);
+      console.log('refROI with', src);
       var xhr = new XMLHttpRequest();
-      xhr.open('GET', `/api/ping/${roi.x1}/${roi.x2}/${roi.y1}/${roi.y2}`, true);
+      xhr.open('GET', `/api/ping/${roi.x1}/${roi.x2}/${roi.y1}/${roi.y2}${qs}`, true);
       xhr.responseType = 'arraybuffer';
       xhr.onload = function(e) {
         const arr = new Float32Array(this.response);
