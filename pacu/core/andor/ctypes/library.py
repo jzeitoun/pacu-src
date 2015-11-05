@@ -19,23 +19,32 @@ class CDLLDescriptor(IncrementalHash):
     def __get__(self, inst, type):
         return self.dll if inst else self
     def __key_set__(self, key):
-        self.dll = cdll.LoadLibrary(lib_basepath.joinpath(key).str)
+        try:
+            self.dll = cdll.LoadLibrary(lib_basepath.joinpath(key).str)
+        except OSError as e:
+            print 'CDLL OSError:', e
+            self.dll = NotImplemented
         return key
 
 ERRORMSG = 'Error loading Andor device. (Library could not be initialized.)'
 
 class CTypesLibrary(object):
     libs = CDLLDescriptor.descriptor_set()
-    def check(self):
+    def check(self, verbose=True):
         try:
             kvs = self.libs.items()
+            for key, value in kvs:
+                if value is NotImplemented:
+                    return False
         except Exception as e:
-            print ERRORMSG, '\n', type(e), e
+            if verbose:
+                print ERRORMSG, '\n', type(e), e
             return False
         else:
-            maxlen = max(map(len, list(self.libs.key)))
-            for name, dll in kvs:
-                print '{:{}}: {!r}'.format(name, maxlen, dll)
+            if verbose:
+                maxlen = max(map(len, list(self.libs.key)))
+                for name, dll in kvs:
+                    print '{:{}}: {!r}'.format(name, maxlen, dll)
             return True
 
 for key in ['atblkbx', 'atcl_bitflow', 'atcore', 'atdevregcam',

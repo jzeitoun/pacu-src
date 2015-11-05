@@ -12,3 +12,6 @@ class SystemInstrument(BaseInstrument):
     def acquire(self, Instrument, index=0):
         return Instrument(self.handle.acquire(index))
     feat = BaseFeature.descriptor_set()
+    @property
+    def available(self):
+        return

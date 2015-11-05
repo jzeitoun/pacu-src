@@ -1,10 +1,10 @@
 import atexit
 from functools import partial
 
-from zyla.core.error import ZylaError
-from zyla.core.ctypes.define import AT_64, AT_STRING, AT_H, AT_DOUBLE, AT_BOOL
-from zyla.core.ctypes.library import ctypes, ctypes_library
-from zyla.util.compat import str
+from pacu.core.andor.error import ZylaError
+from pacu.core.andor.ctypes.define import AT_64, AT_STRING, AT_H, AT_DOUBLE, AT_BOOL
+from pacu.core.andor.ctypes.library import ctypes, ctypes_library
+from pacu.util.compat import str
 
 core = ctypes_library.atcore
 util = ctypes_library.atutility
@@ -18,7 +18,7 @@ def describe(apiname, CTYPE, verb=None):
     return do if verb else getset
 
 class CTypesHandle(int):
-    release = core.AT_Close
+    # release = core.AT_Close
     @classmethod
     def acquire(cls, index=0):
         handle = AT_H()
