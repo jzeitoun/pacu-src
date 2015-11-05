@@ -19,6 +19,9 @@ Router.map(function() {
     this.route('new');
   });
   this.route('analysis', { path: '/analysis/:analysis_id' });
+  this.route('andor', function() {
+    this.route('zyla');
+  });
 });
 
 export default Router;

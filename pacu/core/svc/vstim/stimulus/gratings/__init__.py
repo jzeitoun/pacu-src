@@ -14,6 +14,7 @@ from pacu.core.svc.vstim.stimulus.base import StimulusBase
 from pacu.core.svc.vstim.stimulus.repetition import Repetition
 from pacu.core.svc.vstim.stimulus.orientations import Orientations
 from pacu.core.svc.vstim.stimulus.sfrequencies import SFrequencies
+from pacu.core.svc.vstim.stimulus.tfrequencies import TFrequencies
 from pacu.core.svc.vstim.stimulus.duration import OnDuration
 from pacu.core.svc.vstim.stimulus.duration import OffDuration
 from pacu.core.svc.vstim.stimulus.gratings.condition import Condition
@@ -70,7 +71,7 @@ class StimulusResource(Resource):
         for key, val in vars(trial.condition).items():
             setattr(self.instance, key, val)
     def update_phase(self, trial):
-        self.instance.phase = trial.frameCount * 0.01
+        self.instance.phase = trial.frameCount * 0.01 * trial.condition.tf
         self.instance.draw()
         self.window.flip()
     def flip_text(self, text):
@@ -88,7 +89,7 @@ class GratingsStimulus(Component):
     repetition = Repetition(2)
     orientations = Orientations([0, 120, 240])
     sfrequencies = SFrequencies([0.01, 0.05, 0.1])
-    tfrequencies = [1.0]
+    tfrequencies = TFrequencies([1.0])
     on_duration = OnDuration(0.1)
     off_duration = OffDuration(0)
     __call__ = StimulusResource.bind('window', 'clock')

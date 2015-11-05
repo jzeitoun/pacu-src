@@ -9,14 +9,14 @@
       <i class="icon minimize"></i>
     </div>
     {{#sui-popup selector="#get-focused" position="bottom left"}}
-      Click to exit fullscreen!
+      Click to exit fullscreen
     {{/sui-popup}}
   {{else}}
     <div id="get-focused" class="circular ui small icon button" {{action "getFocused"}}>
       <i class="icon maximize"></i>
     </div>
     {{#sui-popup selector="#get-focused" position="bottom left"}}
-      Click and get focused!
+      Click and get focused
     {{/sui-popup}}
   {{/if}}
 
@@ -26,7 +26,7 @@
     </div>
   {{/link-to}}
   {{#sui-popup selector="#get-psypy" position="bottom left"}}
-    Launch PsychoPy Controller!
+    Launch PsychoPy Controller
   {{/sui-popup}}
 
   {{#link-to 'analyses'}}
@@ -35,7 +35,16 @@
     </div>
   {{/link-to}}
   {{#sui-popup selector="#get-analyzer" position="bottom left"}}
-    Launch Image Stack Analyzer!
+    Launch Image Stack Analyzer
+  {{/sui-popup}}
+
+  {{#link-to 'andor'}}
+    <div id="get-andor" class="nav circular ui small icon blue button">
+      <i class="camera retro icon"></i>
+    </div>
+  {{/link-to}}
+  {{#sui-popup selector="#get-andor" position="bottom left"}}
+    Launch Andor Camera Controller
   {{/sui-popup}}
 
   {{#link-to 'index'}}

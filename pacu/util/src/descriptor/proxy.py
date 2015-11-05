@@ -18,11 +18,13 @@ class DescriptorProxy(object):
         if isinstance(prop_attr, int):
             raise Exception('Wrong type to call proxy.')
         elif isinstance(prop_attr, tuple):
-            return zip(*[
-                [getattr(desc, pattr) for desc in self.desc]
-                for pattr in prop_attr])
+            return [getattr(self.desc, pattr) for pattr in prop_attr]
+            # return zip(*[
+            #     [getattr(desc, pattr) for desc in self.desc]
+            #     for pattr in prop_attr])
         else:
-            return [getattr(desc, prop_attr) for desc in self.desc]
+            return getattr(self.desc, prop_attr)
+            # return [getattr(desc, prop_attr) for desc in self.desc]
     def zip(self, *ds):
         return zip(*[
             iter(getattr(self, delegator))

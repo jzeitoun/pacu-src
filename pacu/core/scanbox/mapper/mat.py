@@ -42,6 +42,8 @@ class MatMapper(object):
         return all((mat, hasfields, hassbx))
 
     def __init__(self, path):
+        # if '.' in path.str:
+        #     path = path.with_suffix(''.join(path.suffixes + ['.mat']))
         self.path = path.with_suffix('.mat')
         self.raw = io.loadmat(self.path.str, squeeze_me=True)['info']
         self.parse()
@@ -77,3 +79,7 @@ class MatMapper(object):
             ).transpose(3, 1, 0, 2)
 
     props = DescriptorSet(property, 'size framerate max_index mt_shape')
+
+# from pacu.util.path import Path
+# kj = Path('/Volumes/Users/ht/tmp/pysbx-data/KJ13.2_000_000')
+# qwe = MatMapper(kj)
