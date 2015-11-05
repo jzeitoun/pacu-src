@@ -6,7 +6,7 @@ if lib.check(verbose=False):
     si = SystemInstrument()
     has_andor = True
     number_of_cameras = si.device_count
-    camera_indice = range(number_of_cameras)
+    camera_indice = range(1, 1 + number_of_cameras)
 
 __all__ = [
     'has_andor',

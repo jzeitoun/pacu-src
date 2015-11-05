@@ -1,6 +1,6 @@
 import { moduleFor, test } from 'ember-qunit';
 
-moduleFor('route:andor/zyla', 'Unit | Route | andor/zyla', {
+moduleFor('route:andor/index', 'Unit | Route | andor/index', {
   // Specify the other units that are required for this test.
   // needs: ['controller:foo']
 });

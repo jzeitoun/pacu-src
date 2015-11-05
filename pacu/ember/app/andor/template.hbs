@@ -3,10 +3,14 @@
     <p>This computer has Andor devices.</p>
     <p>How many cameras are currently available: {{model.number_of_cameras}}</p>
     <p>if any, click link to acquire device.(exclusively)</p>
-    {{model.camera_indice}}
+    {{#each model.camera_indice as |index|}}
+      <h1>{{index}}</h1>
+      {{link-to "andor" index}}
+    {{/each}}
   {{else}}
     <p>This computer has no Andor devices.</p>
   {{/if}}
-  <button class="ui blue button"{{action "refreshModel"}}>Click to refresh...</button>
+  <h4>Please restart PACU to refresh current status...</h4>
+  {{!-- <button class="ui blue button"{{action "refreshModel"}}>Click to refresh...</button> --}}
 </div>
 {{outlet}}
