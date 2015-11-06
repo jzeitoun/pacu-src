@@ -177,7 +177,7 @@ class AndorBindingService(object):
             l.info('%s => %s', key, typed_value)
             return dict(error=False)
         except Exception as e:
-            l.info(str(type(e)))
+            l.info(str(e.__class__))
             l.info(str(e))
             return dict(error=True, detail=str(e), value=origin)
     def get_faeture(self, feature_name):
