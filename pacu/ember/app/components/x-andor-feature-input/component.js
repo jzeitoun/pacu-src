@@ -20,7 +20,9 @@ export default Ember.Component.extend({
   }.on('willDestroyElement'),
   submit: function(e) {
     const meta = this.getAttr('meta');
-    this.attrs.onUpdate(meta); // will return a promise?
+    this.attrs.onUpdate(meta).then(function(data) {
+      console.log(data);
+    });
     return false;
   }
 });

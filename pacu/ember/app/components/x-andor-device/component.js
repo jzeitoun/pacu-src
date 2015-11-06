@@ -66,7 +66,7 @@ export default Ember.Component.extend({
   @computed('state') stateCss(s) { return s===true ? 'block': 'none' },
   actions: {
     setFeature: function(feature) {
-      this.wsx.invoke('set_feature', feature);
+      return this.wsx.invoke('set_feature', feature);
     },
     acquire: function() {
       const self = this;

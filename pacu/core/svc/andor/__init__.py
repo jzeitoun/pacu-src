@@ -160,9 +160,9 @@ class AndorBindingService(object):
         return [self.inst.meta[key].export()
                 for key in list(self.inst.feat)]
     def set_feature(self, feature):
-        l.info('SET FEATURE')
-        table = dict(IntMeta=int, EnumMeta=int, FloatMeta=float, BoolMeta=bool)
         try:
+            l.info('SET FEATURE')
+            table = dict(IntMeta=int, EnumMeta=int, FloatMeta=float, BoolMeta=bool)
             origin = getattr(self.inst, feature['key'])
             key = feature['key']
             type = feature['type']
