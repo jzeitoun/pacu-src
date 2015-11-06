@@ -5,7 +5,7 @@
     <p>if any, click link to acquire device.(exclusively)</p>
     {{#each model.camera_indice as |index|}}
       <h1>{{index}}</h1>
-      {{link-to "andor" index}}
+      {{! link-to "andor.device" index}}
     {{/each}}
   {{else}}
     <p>This computer has no Andor devices.</p>
