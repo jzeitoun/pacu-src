@@ -46,6 +46,17 @@ class AbstractMeta(object):
         return self.format_show()
     def show(self):
         print self.format_show()
+    def export(self):
+        return dict(
+            feature     = self.feature,
+            type        = type(self).__name__,
+            value       = self.current,
+            implemented = self.implemented,
+            readonly    = self.readonly,
+            readable    = self.readable,
+            writable    = self.writable,
+            range       = self.range,
+        )
     def format_show(self):
         info = '{} - {} - {}'.format(
             self.feature, type(self).__name__, self.current)

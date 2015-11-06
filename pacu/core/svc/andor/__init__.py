@@ -142,6 +142,8 @@ class AndorBindingService(object):
     def release(self):
         try:
             self.inst.release()
+        except Exception as e:
+            print 'exception raised within release.', type(e), e
         finally:
             self.inst = None
     @property

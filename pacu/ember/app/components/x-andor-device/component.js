@@ -9,6 +9,7 @@ export default Ember.Component.extend({
            s===true ? 'Acquired':
                       'Unavailable'
   },
+  @computed('state') stateCss(s) { return s===true ? 'block': 'none' },
   actions: {
     acquire: function() {
       const self = this;
@@ -22,13 +23,10 @@ export default Ember.Component.extend({
       });
     },
     release: function() {
+      const self = this;
       this.wsx.invoke('release').then(function(data) {
-        if (data.error) {
-          alert(data.detail);
-        } else {
-          self.wsx.mirror('state');
-          self.set('features', []);
-        }
+        self.set('state', null);
+        self.set('features', []);
       });
     }
   },
@@ -39,6 +37,10 @@ export default Ember.Component.extend({
     this.wsx = this.get('socket').create(
       this, 'pacu.core.svc.andor', 'AndorBindingService', this.getAttr('src')
     );
+    this.$('.tabular.menu .item').tab({
+      onLoad: function(tabPath, parameterArray, historyEvent) {
+      }
+    });
   }.on('didInsertElement'),
   dnitWS: function() { this.wsx.dnit(); }.on('willDestroyElement'),
 });

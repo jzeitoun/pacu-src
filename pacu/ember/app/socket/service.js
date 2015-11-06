@@ -51,7 +51,7 @@ class WebSocketEx {
     } else { this.firstPromise.then(func); }
     return this;
   }
-  mirror(routes) {
+  mirror(route) {
     return this.makeRequest('access', route).then(function(data) {
       this.set(route, data);
     });

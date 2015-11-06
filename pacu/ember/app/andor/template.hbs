@@ -2,9 +2,8 @@
   {{#if model.has_andor}}
     <p>This computer has Andor devices.</p>
     <p>How many cameras are currently available: {{model.number_of_cameras}}</p>
-    <p>if any, click link to acquire device.(exclusively)</p>
     {{#each model.camera_indice as |index|}}
-      {{#link-to "andor.device" index}}#{{index}}{{/link-to}}
+      {{#link-to "andor.device" index}}Access to device #{{index}}{{/link-to}}
     {{/each}}
   {{else}}
     <p>This computer has no Andor devices.</p>

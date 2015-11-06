@@ -1,16 +1,24 @@
-<h3 class="ui inverted header">Device Index: {{attrs.src}}</h3>
-<h3 class="ui inverted header">Device Handle: {{stateStr}}</h3>
+<h4 class="ui inverted header">Device Handle #{{attrs.src}}: {{stateStr}}</h4>
 {{#if state}}
-  <button class="ui blue button"{{action "release"}}>Click to release...</button>
+  <button class="ui small red button"{{action "release"}}>Click to release...</button>
 {{else}}
-  <button class="ui blue button"{{action "acquire"}}>Click to acquire...</button>
+  <button class="ui small blue button"{{action "acquire"}}>Click to acquire...</button>
 {{/if}}
-<table class="ui compact fixed inverted table">
-{{#each features as |f|}}
-  <tr>
-  {{#each f as |o|}}
-    <td>{{o}}</td>
-  {{/each}}
-  </tr>
-{{/each}}
-</table>
+<div class="ui segment" style="display: {{stteCss}}">
+  <div class="ui top attached tabular menu">
+    <a class="item active" data-tab="features">Features</a>
+    <a class="item"        data-tab="preview">Preview</a>
+  </div>
+  <div class="ui bottom attached tab segment active" data-tab="features">
+    <table class="ui compact table">
+    {{#each features as |f|}}
+      <tr>
+      {{#each f as |o|}}
+        <td>{{o}}</td>
+      {{/each}}
+      </tr>
+    {{/each}}
+    </table>
+  </div>
+  <div class="ui bottom attached tab segment" data-tab="preview"></div>
+</div>
