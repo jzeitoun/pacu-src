@@ -1,7 +1,13 @@
 import Ember from 'ember';
+import computed from 'ember-computed-decorators';
 
 export default Ember.Component.extend({
-  state: 'Initial',
+  state: null,
+  @computed('state') stateStr(s) {
+    return s===null ? 'Initial' :
+           s===true ? 'Acquired':
+                      'Unavailable'
+  },
   actions: {
     acquire: function() {
       const self = this;

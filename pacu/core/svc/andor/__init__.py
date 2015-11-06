@@ -142,7 +142,7 @@ class AndorBindingService(object):
         # there is no way to raise errors to frontend WSX module should be improved..
     @property
     def state(self):
-        return '!!!!!!!!!!!!'
+        return bool(self.inst)
     @property
     def features(self):
         return self.inst.feat.items()

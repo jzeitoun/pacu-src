@@ -1,10 +1,6 @@
-<h2>Device Index: {{attrs.src}}</h2>
-<h2>Device Handle: {{state}}</h2>
+<h3 class="ui inverted header">Device Index: {{attrs.src}}</h3>
+<h3 class="ui inverted header">Device Handle: {{stateStr}}</h3>
 <button class="ui blue button"{{action "acquire"}}>Click to acquire...</button>
-<div class="ui toggle checkbox">
-  <input type="checkbox" name="public">
-  <label>Subscribe to weekly newsletter</label>
-</div>
 <table class="ui compact fixed inverted table">
 {{#each features as |f|}}
   <tr>
