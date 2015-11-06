@@ -160,8 +160,41 @@ class AndorBindingService(object):
         return [self.inst.meta[key].export()
                 for key in list(self.inst.feat)]
     def set_feature(self, feature):
-        l.info('SET FEATURE')
-        l.info(str(feature))
+        try:
+            origin = getattr(self.inst, feature['key'])
+            setattr(self.inst, feature['key'], feature['value'])
+            return dict(error=False)
+        except Exception as e:
+            return dict(error=True, detail=str(e), value=origin)
     def get_faeture(self, feature_name):
         l.info('GET FEATURE')
         l.info(str(feature_name))
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
