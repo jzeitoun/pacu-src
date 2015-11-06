@@ -151,4 +151,5 @@ class AndorBindingService(object):
         return bool(self.inst)
     @property
     def features(self):
-        return self.inst.feat.items()
+        return [self.inst.meta[key].export()
+                for key in list(self.inst.feat)]

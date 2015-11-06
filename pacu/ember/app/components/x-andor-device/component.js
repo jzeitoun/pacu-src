@@ -18,7 +18,12 @@ export default Ember.Component.extend({
           alert(data.detail);
         } else {
           self.wsx.mirror('state');
-          self.wsx.mirror('features');
+          self.wsx.access('features').then(function(features) {
+            features.forEach(function(item) {
+            // self.wsx.mirror('features');
+            // debugger
+            });
+          });
         }
       });
     },
@@ -26,11 +31,12 @@ export default Ember.Component.extend({
       const self = this;
       this.wsx.invoke('release').then(function(data) {
         self.set('state', null);
-        self.set('features', []);
+        self.resetFeatures();
       });
     }
   },
   socket: Ember.inject.service(),
+  resetFeatures: function() { console.log('reset features'); this.set('features', {}); }.on('init'),
   initWS: function() {
     window.asd = this;
     const self = this;
