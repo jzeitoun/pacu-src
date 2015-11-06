@@ -1,6 +1,10 @@
 <h3 class="ui inverted header">Device Index: {{attrs.src}}</h3>
 <h3 class="ui inverted header">Device Handle: {{stateStr}}</h3>
-<button class="ui blue button"{{action "acquire"}}>Click to acquire...</button>
+{{#if state}}
+  <button class="ui blue button"{{action "release"}}>Click to release...</button>
+{{else}}
+  <button class="ui blue button"{{action "acquire"}}>Click to acquire...</button>
+{{/if}}
 <table class="ui compact fixed inverted table">
 {{#each features as |f|}}
   <tr>

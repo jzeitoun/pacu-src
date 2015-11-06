@@ -139,7 +139,11 @@ class AndorBindingService(object):
             return dict(error=None, detail=self.features)
         except Exception as e:
             return dict(error=True, detail='Fail: ' + str(e))
-        # there is no way to raise errors to frontend WSX module should be improved..
+    def release(self):
+        try:
+            self.inst.release()
+        finally:
+            self.inst = None
     @property
     def state(self):
         return bool(self.inst)

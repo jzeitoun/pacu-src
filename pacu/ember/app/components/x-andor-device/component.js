@@ -2,9 +2,10 @@ import Ember from 'ember';
 import computed from 'ember-computed-decorators';
 
 export default Ember.Component.extend({
-  state: null,
+  state: '',
   @computed('state') stateStr(s) {
-    return s===null ? 'Initial' :
+    return s===''   ? 'Initial' :
+           s===null ? 'Released':
            s===true ? 'Acquired':
                       'Unavailable'
   },
@@ -17,6 +18,16 @@ export default Ember.Component.extend({
         } else {
           self.wsx.mirror('state');
           self.wsx.mirror('features');
+        }
+      });
+    },
+    release: function() {
+      this.wsx.invoke('release').then(function(data) {
+        if (data.error) {
+          alert(data.detail);
+        } else {
+          self.wsx.mirror('state');
+          self.set('features', []);
         }
       });
     }
