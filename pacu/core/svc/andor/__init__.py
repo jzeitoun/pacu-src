@@ -3,6 +3,7 @@ import time
 import tifffile
 import numpy as np
 
+from pacu.util import logging
 from pacu.core.andor.ctypes.library import ctypes
 from pacu.core.andor.ctypes.callback import c_feat_cb
 from pacu.core.andor.instrument.zyla import ZylaInstrument
@@ -127,15 +128,18 @@ from pacu.core.andor.acquisition import helper
 ## # print 'done !'
 ## 
 
+
+l = logging.get_default()
+
 class AndorBindingService(object):
     inst = None
     # very rough and magic implementation.
     # no reason to be `files` argument.
     def __init__(self, files=-1):
-        print 'INIT'
+        l.info('INIT')
         self.index = int(files)
     def acquire(self):
-        print 'ACQ'
+        l.info('ACQ')
         try:
             self.inst = SystemInstrument().acquire(ZylaInstrument, self.index)
             return dict(error=None, detail=self.features)
@@ -156,8 +160,8 @@ class AndorBindingService(object):
         return [self.inst.meta[key].export()
                 for key in list(self.inst.feat)]
     def set_feature(self, feature):
-        print 'SETFEA'
-        print feature
-    def get_faeture(self, feature):
-        print 'GETFEAET'
-        print feature
+        l.info('SET FEATURE')
+        l.info(str(feature))
+    def get_faeture(self, feature_name):
+        l.info('GET FEATURE')
+        l.info(str(feature_name))
