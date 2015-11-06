@@ -171,10 +171,8 @@ class AndorBindingService(object):
             marshalling = table.get(type, lambda x:x)
             value = feature['value']
             typed_value = marshalling(value)
-            l.info('got typed value!')
-            setattr(self.inst,  value)
-            l.info('attr set!')
-            # l.info('%s => %s', key, value)
+            setattr(self.inst, typed_value)
+            l.info('%s => %s', key, typed_value)
             return dict(error=False)
         except Exception as e:
             l.info(str(type(e)))
