@@ -153,3 +153,9 @@ class AndorBindingService(object):
     def features(self):
         return [self.inst.meta[key].export()
                 for key in list(self.inst.feat)]
+    def set_feature(self, feature):
+        print 'SETFEA'
+        print feature
+    def get_faeture(self, feature):
+        print 'GETFEAET'
+        print feature
