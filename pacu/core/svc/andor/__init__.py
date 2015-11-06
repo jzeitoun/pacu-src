@@ -131,8 +131,8 @@ class AndorBindingService(object):
     inst = None
     # very rough and magic implementation.
     # no reason to be `files` argument.
-    def __init__(self, files=None):
-        self.index = files
+    def __init__(self, files=-1):
+        self.index = int(files)
     @property
     def features(self):
         return dict(a=1, b=2)
