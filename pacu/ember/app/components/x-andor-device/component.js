@@ -20,8 +20,7 @@ export default Ember.Component.extend({
           self.wsx.mirror('state');
           self.wsx.access('features').then(function(features) {
             features.forEach(function(item) {
-            // self.wsx.mirror('features');
-            // debugger
+              self.set(`features.${item.feature}`, item);
             });
           });
         }
@@ -36,7 +35,19 @@ export default Ember.Component.extend({
     }
   },
   socket: Ember.inject.service(),
-  resetFeatures: function() { console.log('reset features'); this.set('features', {}); }.on('init'),
+  resetFeatures: function() {
+    console.log('reset features');
+    this.set('features', {AOIHeight: {
+      feature    : 'AOIHeight',
+      implemented: true,
+      range      : [8, 2160],
+      writable   : true,
+      readable   : true,
+      readonly   : false,
+      type       : 'IntMeta',
+      value      : 2160,
+    }});
+  }.on('init'),
   initWS: function() {
     window.asd = this;
     const self = this;

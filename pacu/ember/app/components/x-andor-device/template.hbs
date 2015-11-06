@@ -11,13 +11,9 @@
   </div>
   <div class="ui bottom attached tab segment active" data-tab="features">
     <table class="ui compact table">
-    {{#each features as |f|}}
       <tr>
-      {{#each f as |o|}}
-        <td>{{o}}</td>
-      {{/each}}
+        <td>AOIHeight</td><td>{{x-andor-feature-input meta=features.AOIHeight}}</td>
       </tr>
-    {{/each}}
     </table>
   </div>
   <div class="ui bottom attached tab segment" data-tab="preview"></div>
