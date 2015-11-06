@@ -170,7 +170,7 @@ class AndorBindingService(object):
             value = feature['value']
             typed_value = marshalling(value)
             setattr(self.inst,  value)
-            l.debug('%s => %s', key, value)
+            l.info('%s => %s', key, value)
             return dict(error=False)
         except Exception as e:
             l.error(str(type(e)))
