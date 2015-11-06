@@ -164,11 +164,13 @@ class AndorBindingService(object):
         table = dict(IntMeta=int, EnumMeta=int, FloatMeta=float, BoolMeta=bool)
         try:
             origin = getattr(self.inst, feature['key'])
+            key = feature['key']
             type = feature['type']
             marshalling = table.get(type, str)
             value = feature['value']
             typed_value = marshalling(value)
-            setattr(self.inst, feature['key'], value)
+            setattr(self.inst,  value)
+            l.debug('%s => %s', key, value)
             return dict(error=False)
         except Exception as e:
             l.error(str(type(e)))
