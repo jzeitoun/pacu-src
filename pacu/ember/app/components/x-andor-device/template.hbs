@@ -1,14 +1,16 @@
+<h2>Device Index: {{attrs.src}}</h2>
+<h2>Device Handle: {{state}}</h2>
 <button class="ui blue button"{{action "acquire"}}>Click to acquire...</button>
-<ul>
+<div class="ui toggle checkbox">
+  <input type="checkbox" name="public">
+  <label>Subscribe to weekly newsletter</label>
+</div>
+<table class="ui compact fixed inverted table">
 {{#each features as |f|}}
-  <p>
+  <tr>
   {{#each f as |o|}}
-    <span>{{o}}</span>
+    <td>{{o}}</td>
   {{/each}}
-  </p>
+  </tr>
 {{/each}}
-</ul>
-
-{{!-- #each-in ures as |key value|}}
-  <li>{{key}}: {{value}}</li>
-{{/each-in --}}
+</table>

@@ -133,9 +133,6 @@ class AndorBindingService(object):
     # no reason to be `files` argument.
     def __init__(self, files=-1):
         self.index = int(files)
-    @property
-    def features(self):
-        return self.inst.feat.items()
     def acquire(self):
         try:
             self.inst = SystemInstrument().acquire(ZylaInstrument, self.index)
@@ -143,3 +140,9 @@ class AndorBindingService(object):
         except Exception as e:
             return dict(error=True, detail='Fail: ' + str(e))
         # there is no way to raise errors to frontend WSX module should be improved..
+    @property
+    def state(self):
+        return '!!!!!!!!!!!!'
+    @property
+    def features(self):
+        return self.inst.feat.items()

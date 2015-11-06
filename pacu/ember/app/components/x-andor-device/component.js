@@ -1,6 +1,7 @@
 import Ember from 'ember';
 
 export default Ember.Component.extend({
+  state: 'Initial',
   actions: {
     acquire: function() {
       const self = this;
@@ -8,7 +9,8 @@ export default Ember.Component.extend({
         if (data.error) {
           alert(data.detail);
         } else {
-          self.setFeature(data.detail);
+          self.wsx.mirror('state');
+          self.wsx.mirror('features');
         }
       });
     }
@@ -19,12 +21,7 @@ export default Ember.Component.extend({
     const self = this;
     this.wsx = this.get('socket').create(
       this, 'pacu.core.svc.andor', 'AndorBindingService', this.getAttr('src')
-    ).then(function() {
-      self.wsx.access('features').then(self.setFeatures);
-    });
+    );
   }.on('didInsertElement'),
   dnitWS: function() { this.wsx.dnit(); }.on('willDestroyElement'),
-  setFeatures(features) {
-    this.set('features', features);
-  },
 });
