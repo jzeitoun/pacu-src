@@ -132,8 +132,10 @@ class AndorBindingService(object):
     # very rough and magic implementation.
     # no reason to be `files` argument.
     def __init__(self, files=-1):
+        print 'INIT'
         self.index = int(files)
     def acquire(self):
+        print 'ACQ'
         try:
             self.inst = SystemInstrument().acquire(ZylaInstrument, self.index)
             return dict(error=None, detail=self.features)
