@@ -3,8 +3,13 @@ import Ember from 'ember';
 export default Ember.Component.extend({
   actions: {
     acquire: function() {
+      const self = this;
       this.wsx.invoke('acquire').then(function(data) {
-        alert(data);
+        if (data.error) {
+          alert(data.detail);
+        } else {
+          self.setFeature(data.detail);
+        }
       });
     }
   },

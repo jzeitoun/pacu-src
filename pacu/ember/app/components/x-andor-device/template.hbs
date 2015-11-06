@@ -1,6 +1,14 @@
 <button class="ui blue button"{{action "acquire"}}>Click to acquire...</button>
 <ul>
-{{#each-in features as |key value|}}
-  <li>{{key}}: {{value}}</li>
-{{/each-in}}
+{{#each features as |f|}}
+  <p>
+  {{#each f as |o|}}
+    <span>{{o}}</span>
+  {{/each}}
+  </p>
+{{/each}}
 </ul>
+
+{{!-- #each-in ures as |key value|}}
+  <li>{{key}}: {{value}}</li>
+{{/each-in --}}
