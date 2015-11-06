@@ -162,6 +162,7 @@ class AndorBindingService(object):
     def set_feature(self, feature):
         try:
             l.info('SET FEATURE')
+            l.info(str(feature))
             table = dict(IntMeta=int, EnumMeta=int, FloatMeta=float, BoolMeta=bool)
             origin = getattr(self.inst, feature['key'])
             key = feature['key']
