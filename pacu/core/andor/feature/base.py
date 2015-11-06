@@ -50,6 +50,7 @@ class AbstractMeta(object):
         return dict(
             feature     = self.feature,
             type        = type(self).__name__,
+            key         = self.attr,
             value       = self.current,
             implemented = self.implemented,
             readonly    = self.readonly,
