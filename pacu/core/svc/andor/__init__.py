@@ -166,15 +166,15 @@ class AndorBindingService(object):
             origin = getattr(self.inst, feature['key'])
             key = feature['key']
             type = feature['type']
-            marshalling = table.get(type, str)
+            marshalling = table.get(type, lambda x:x)
             value = feature['value']
             typed_value = marshalling(value)
             setattr(self.inst,  value)
             l.info('%s => %s', key, value)
             return dict(error=False)
         except Exception as e:
-            l.error(str(type(e)))
-            l.error(str(e))
+            l.info(str(type(e)))
+            l.info(str(e))
             return dict(error=True, detail=str(e), value=origin)
     def get_faeture(self, feature_name):
         l.info('GET FEATURE')
