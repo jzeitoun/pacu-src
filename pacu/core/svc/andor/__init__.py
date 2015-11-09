@@ -115,6 +115,8 @@ from pacu.core.andor.acquisition import helper
 ## 
 
 
+import matplotlib.pyplot as plt
+
 l = logging.get_default()
 
 class AndorBindingService(object):
@@ -183,27 +185,10 @@ class AndorBindingService(object):
     def getDebugFrame(self):
         print 'GET debug frame backend'
         with self.inst.acquisition as frames:
-            frame = frames.capture()
-        return frame
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+            ts, frame = frames.capture()
+        rgba = plt.cm.jet(frame, bytes=True).tostring()
+        print 'rgba...', rgba[:36]
+        return rgba
 
 
 

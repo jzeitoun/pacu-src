@@ -43,7 +43,7 @@
     <button class="ui small button"{{action "reqDebugFrame"}}>frame...</button>
     <p>Streaming...</p>
     <div style="margin: 0 auto; width: 2560px; height: 2160px;">
-      {{x-canvas-arraybuffer buf=currentBuffer width=2560 height=2160}}
+      {{x-canvas-arraybuffer buf=currentBuffer width=2560 height=2160 staticPos=true}}
     </div>
   </div>
   <div class="ui bottom attached tab segment" data-tab="acquisition">
