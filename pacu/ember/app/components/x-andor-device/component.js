@@ -1,62 +1,69 @@
 import Ember from 'ember';
 import computed from 'ember-computed-decorators';
 
-const BASIC_FEATS = [
+const BASIC_INFOS = [
   'CameraModel',
   'ControllerID',
   'FirmwareVersion',
   'InterfaceType',
   'SerialNumber',
+];
+const BASIC_FEATS = [
   'AccumulateCount',
   'AOIHeight',
   'AOILeft',
-  'AOIStride',
   'AOITop',
   'AOIWidth',
-  'Baseline',
   'FrameCount',
+  'ExposureTime',
+  'FrameRate',
+  'AOIBinning',
+];
+const ADV_FEATS = [
+  'AOIStride',
+  'Baseline',
   'ImageSizeBytes',
   'SensorHeight',
   'SensorWidth',
   'TimestampClock',
   'TimestampClockFrequency',
   'BytesPerPixel',
-  'ExposureTime',
-  'FrameRate',
   'MaxInterfaceTransferRate',
   'PixelHeight',
-  'ReadoutTime',
-  'SensorTemperature',
-  'CameraAcquiring',
-  'EventEnable',
-  'FullAOIControl',
-  'IOInvert',
   'MetadataEnable',
   'MetadataFrame',
   'MetadataTimestamp',
-  'Overlap',
   'SensorCooling',
   'SpuriousNoiseFilter',
   'StaticBlemishCorrection',
   'VerticallyCentreAOI',
-  'AOIBinning',
   'AuxiliaryOutSource',
   'BitDepth',
-  'CycleMode',
-  'ElectronicShutteringMode',
+  'EventEnable',
   'EventSelector',
-  'FanSpeed',
   'IOSelector',
+  'IOInvert',
   'PixelEncoding',
   'PixelReadoutRate',
   'SimplePreAmpGainControl',
+  'CycleMode',
+  'ElectronicShutteringMode',
+  'SensorTemperature',
+  'FanSpeed',
   'TemperatureStatus',
   'TriggerMode',
+  'ReadoutTime',
+  'CameraAcquiring',
+  'FullAOIControl',
+  'Overlap',
 ];
 
 export default Ember.Component.extend({
+  busy: false,
   toast: Ember.inject.service(),
+  infos: BASIC_INFOS,
   feats: BASIC_FEATS,
+  advfs: ADV_FEATS,
   state: '',
   @computed('state') stateStr(s) {
     return s===''   ? 'Initial' :
@@ -65,12 +72,21 @@ export default Ember.Component.extend({
                       'Unavailable'
   },
   @computed('state') stateCss(s) { return s===true ? 'block': 'none' },
+  setBuffer(buf) {
+    console.log('set buffer -> currentBuffer');
+    this.set('currentBuffer', buf);
+  },
   actions: {
+    reqDebugFrame: function() {
+      console.log('REQ DBG FRM');
+      this.wsx.onbinary(this.setBuffer).invokeAsBinary('getDebugFrame');
+    },
     setFeature: function(feature) {
       return this.wsx.invoke('set_feature', feature);
     },
     acquire: function() {
       const self = this;
+      self.set('busy', true);
       this.wsx.invoke('acquire').then(function(data) {
         if (data.error) {
           alert(data.detail);
@@ -82,12 +98,15 @@ export default Ember.Component.extend({
             });
           });
         }
+        self.set('busy', false);
       });
     },
     release: function() {
       const self = this;
+      self.set('busy', true);
       this.wsx.invoke('release').then(function(data) {
         self.set('state', null);
+        self.set('busy', false);
         self.resetFeatures();
       });
     }
@@ -107,5 +126,5 @@ export default Ember.Component.extend({
       onLoad: function(tabPath, parameterArray, historyEvent) {}
     });
   }.on('didInsertElement'),
-  dnitWS: function() { this.wsx.dnit(); }.on('willDestroyElement')
+  dnitWS: function() { this.wsx.dnit(); }.on('willDestroyElement'),
 });

@@ -26,7 +26,7 @@ export default Ember.Component.extend({
     ctx.putImageData(img, 0, 0);
   },
   registerObserver: function() {
-    console.log('RRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRCA');
+    console.log('observer registration...');
     this.addObserver('mmw.currentBuffer', this.bufferChanged);
   }.on('didInsertElement')
 });

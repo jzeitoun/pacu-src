@@ -33,20 +33,6 @@ from pacu.core.andor.acquisition import helper
 
 # context = 181818
 # 
-# # commented out
-# # @c_feat_cb
-# # def feat_changed(handle, feature, context):
-# #     print '\n', 'CALLBACK: `{}` CHANGED!'.format(feature), context
-# #     # print '\n', 'CALLBACK: `{}` => `{}`'.format(feature, cam.get(feature))
-# #     return 0 # meaning callback handled successful.
-# # context = ctypes.cast(ctypes.byref(ctypes.c_int(qwe.handle)), ctypes.c_void_p)
-# # for feat in map(unicode,
-# #     'AOIWidth AOIHeight AOIBinning ReadoutTime ImageSizeBytes ExposureTime AOIStride FrameRate CameraAcquiring'.split()):
-# #     qwe.handle.core('RegisterFeatureCallback',
-# #         feat,
-# #         feat_changed,
-# #         context
-# #     )
 # qwe.exposure_time = 0.001 # 0.0001 makes fixed frame rate range
 # qwe.metadata_enable = 1
 #### qwe.trigger_mode = 1 # internal, just run
@@ -136,12 +122,13 @@ class AndorBindingService(object):
     # very rough and magic implementation.
     # no reason to be `files` argument.
     def __init__(self, files=-1):
-        print 'INIT'
+        print 'INIT with id', id(self)
         self.index = int(files)
     def acquire(self):
         print 'ACQ'
         try:
             self.inst = SystemInstrument().acquire(ZylaInstrument, self.index)
+            # self.setup_feature_callback()
             return dict(error=None, detail=self.features)
         except Exception as e:
             return dict(error=True, detail='Fail: ' + str(e))
@@ -179,6 +166,26 @@ class AndorBindingService(object):
     def get_faeture(self, feature_name):
         print 'GET FEATURE'
         print str(feature_name)
+    def setup_feature_callback(self):
+        @c_feat_cb
+        def feat_changed(handle, feature, context):
+            print '\n', 'CALLBACK: `{}` CHANGED!'.format(feature), context
+            # print '\n', 'CALLBACK: `{}` => `{}`'.format(feature, cam.get(feature))
+            return 0 # meaning callback handled successful.
+        context = ctypes.cast(ctypes.byref(ctypes.c_int(id(self))), ctypes.c_void_p)
+        for feat in map(unicode,
+            'AOIWidth AOIHeight AOIBinning ReadoutTime ImageSizeBytes ExposureTime AOIStride FrameRate CameraAcquiring'.split()):
+            self.inst.handle.core('RegisterFeatureCallback',
+                feat,
+                feat_changed,
+                context
+            )
+    def getDebugFrame(self):
+        print 'GET debug frame backend'
+        with self.inst.acquisition as frames:
+            frame = frames.capture()
+        return frame
+
 
 
 

@@ -5,11 +5,28 @@
   <button class="ui small blue button"{{action "acquire"}}>Click to acquire...</button>
 {{/if}}
 <div class="ui segment" style="display: {{stteCss}}">
-  <div class="ui top attached tabular menu">
-    <a class="item active" data-tab="features">Features</a>
-    <a class="item"        data-tab="preview">Preview</a>
+  <div class="ui {{if busy 'active'}} dimmer">
+    <div class="ui text inverted loader">Please wait...</div>
   </div>
-  <div class="ui bottom attached tab segment active" data-tab="features">
+  <div class="ui top attached tabular menu">
+    <a class="item active" data-tab="information">Information</a>
+    <a class="item"        data-tab="features">Features</a>
+    <a class="item"        data-tab="preview">Preview</a>
+    <a class="item"        data-tab="acquisition">Acquisition</a>
+  </div>
+  <div class="ui bottom attached tab segment active" data-tab="information">
+    {{#if state}}
+    <table class="ui compact table">
+      {{#each infos as |i|}}
+        <tr>
+          <td>{{i}}</td><td>{{x-andor-feature-input
+                              meta=(get features i)}}</td>
+        </tr>
+      {{/each}}
+    </table>
+    {{/if}}
+  </div>
+  <div class="ui bottom attached tab segment" data-tab="features">
     {{#if state}}
     <table class="ui compact table">
       {{#each feats as |f|}}
@@ -22,5 +39,14 @@
     </table>
     {{/if}}
   </div>
-  <div class="ui bottom attached tab segment" data-tab="preview"></div>
+  <div class="ui bottom attached tab segment" data-tab="preview">
+    <button class="ui small button"{{action "reqDebugFrame"}}>frame...</button>
+    <p>Streaming...</p>
+    <div style="margin: 0 auto; width: 2560px; height: 2160px;">
+      {{x-canvas-arraybuffer buf=currentBuffer width=2560 height=2160}}
+    </div>
+  </div>
+  <div class="ui bottom attached tab segment" data-tab="acquisition">
+  </div>
 </div>
+{{!<div style="margin: 0 auto; width: {stackX}px; height: {stackY}px;">}}
