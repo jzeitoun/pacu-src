@@ -1,8 +1,3 @@
-<section class="notifications-container">
-  {{#each notifications as |notification|}}
-    {{notification-message notification=notification}}
-  {{/each}}
-</section>
 <section>
   {{#if fullscreen.isEnabled}}
     <div id="get-focused" class="circular ui small icon button" {{action "getFocused"}}>

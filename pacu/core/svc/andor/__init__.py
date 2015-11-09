@@ -161,19 +161,15 @@ class AndorBindingService(object):
                 for key in list(self.inst.feat)]
     def set_feature(self, feature):
         try:
-            l.info('SET FEATURE')
-            l.info(str(feature))
+            l.debug('SET FEATURE')
             table = dict(IntMeta=int, EnumMeta=int, FloatMeta=float, BoolMeta=bool)
             origin = getattr(self.inst, feature['key'])
             key = feature['key']
             type = feature['type']
-            l.info('type is %s', type)
             marshalling = table.get(type, lambda x:x)
             value = feature['value']
             typed_value = marshalling(value)
-            l.info('got typed value! %s', typed_value)
             setattr(self.inst, key, typed_value)
-            l.info('attr set!')
             l.info('%s => %s', key, typed_value)
             return dict(error=False)
         except Exception as e:

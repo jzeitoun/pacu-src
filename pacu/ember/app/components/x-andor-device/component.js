@@ -66,7 +66,9 @@ export default Ember.Component.extend({
   @computed('state') stateCss(s) { return s===true ? 'block': 'none' },
   actions: {
     setFeature: function(feature) {
-      return this.wsx.invoke('set_feature', feature);
+      return this.wsx.invoke('set_feature', feature).then(function() {
+        debugger;
+      });
     },
     acquire: function() {
       const self = this;
@@ -107,4 +109,5 @@ export default Ember.Component.extend({
     });
   }.on('didInsertElement'),
   dnitWS: function() { this.wsx.dnit(); }.on('willDestroyElement'),
+  toast: Ember.inject.service()
 });

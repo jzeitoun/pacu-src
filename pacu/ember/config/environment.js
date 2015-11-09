@@ -53,6 +53,7 @@ module.exports = function(environment) {
     'script-src': "'self' *",
     'font-src': "'self' *",
     'style-src': "'self' * 'unsafe-inline'",
+    'img-src': "'self' * 'unsafe-inline'"
   }
 
   return ENV;

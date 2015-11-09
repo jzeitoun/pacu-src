@@ -14,11 +14,9 @@
     <table class="ui compact table">
       {{#each feats as |f|}}
         <tr>
-          <td>{{f}}</td>
-          <td>{{x-andor-feature-input
-                meta=(get features f)
-                onUpdate=(action "setFeature")
-          }}</td>
+          <td>{{f}}</td><td>{{x-andor-feature-input
+                              meta=(get features f)
+                              onUpdate=(action "setFeature")}}</td>
         </tr>
       {{/each}}
     </table>

@@ -17,5 +17,9 @@ export default Ember.Route.extend({
         processor: 'processor',
       }
     });
-  }
+  },
+  toast: Ember.inject.service(),
+  deferredSetup: function() {
+    this.toast.options.positionClass = 'toast-top-center';
+  }.on('init')
 });

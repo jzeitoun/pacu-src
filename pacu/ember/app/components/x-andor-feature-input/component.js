@@ -21,7 +21,10 @@ export default Ember.Component.extend({
   submit: function(e) {
     const meta = this.getAttr('meta');
     this.attrs.onUpdate(meta).then(function(data) {
-      console.log(data);
+      if (data.error) {
+        Ember.set(meta, 'value', data.value);
+        alert(data.detail);
+      }
     });
     return false;
   }
