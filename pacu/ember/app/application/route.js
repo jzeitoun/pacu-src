@@ -21,5 +21,7 @@ export default Ember.Route.extend({
   toast: Ember.inject.service(),
   deferredSetup: function() {
     this.toast.options.positionClass = 'toast-top-center';
+    this.toast.preventDuplicates = false;
+    this.toast.timeOut = '5000';
   }.on('init')
 });

@@ -55,6 +55,7 @@ const BASIC_FEATS = [
 ];
 
 export default Ember.Component.extend({
+  toast: Ember.inject.service(),
   feats: BASIC_FEATS,
   state: '',
   @computed('state') stateStr(s) {
@@ -66,9 +67,7 @@ export default Ember.Component.extend({
   @computed('state') stateCss(s) { return s===true ? 'block': 'none' },
   actions: {
     setFeature: function(feature) {
-      return this.wsx.invoke('set_feature', feature).then(function() {
-        debugger;
-      });
+      return this.wsx.invoke('set_feature', feature);
     },
     acquire: function() {
       const self = this;
@@ -108,6 +107,5 @@ export default Ember.Component.extend({
       onLoad: function(tabPath, parameterArray, historyEvent) {}
     });
   }.on('didInsertElement'),
-  dnitWS: function() { this.wsx.dnit(); }.on('willDestroyElement'),
-  toast: Ember.inject.service()
+  dnitWS: function() { this.wsx.dnit(); }.on('willDestroyElement')
 });

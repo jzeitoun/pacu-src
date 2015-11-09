@@ -3,6 +3,7 @@ import computed from 'ember-computed-decorators';
 
 // this.getAttr('meta');
 export default Ember.Component.extend({
+  toast: Ember.inject.service(),
   tagName: 'form',
   classNames: 'ui fitted input',
   classNameBindings: ['meta.readonly:readonly:action'],
@@ -23,7 +24,9 @@ export default Ember.Component.extend({
     this.attrs.onUpdate(meta).then(function(data) {
       if (data.error) {
         Ember.set(meta, 'value', data.value);
-        alert(data.detail);
+        this.toast.error(`Failed to update "${meta.feature}". (${data.detail})`);
+      } else {
+        this.toast.info(`"${meta.feature}" updated successfully.`);
       }
     });
     return false;

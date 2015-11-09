@@ -136,10 +136,10 @@ class AndorBindingService(object):
     # very rough and magic implementation.
     # no reason to be `files` argument.
     def __init__(self, files=-1):
-        l.info('INIT')
+        print 'INIT'
         self.index = int(files)
     def acquire(self):
-        l.info('ACQ')
+        print 'ACQ'
         try:
             self.inst = SystemInstrument().acquire(ZylaInstrument, self.index)
             return dict(error=None, detail=self.features)
@@ -161,7 +161,7 @@ class AndorBindingService(object):
                 for key in list(self.inst.feat)]
     def set_feature(self, feature):
         try:
-            l.debug('SET FEATURE')
+            print 'SET FEATURE'
             table = dict(IntMeta=int, EnumMeta=int, FloatMeta=float, BoolMeta=bool)
             origin = getattr(self.inst, feature['key'])
             key = feature['key']
@@ -170,15 +170,15 @@ class AndorBindingService(object):
             value = feature['value']
             typed_value = marshalling(value)
             setattr(self.inst, key, typed_value)
-            l.info('%s => %s', key, typed_value)
+            print '%s => %s' % (key, typed_value)
             return dict(error=False)
         except Exception as e:
-            l.info(str(e.__class__))
-            l.info(str(e))
+            print str(e.__class__)
+            print str(e)
             return dict(error=True, detail=str(e), value=origin)
     def get_faeture(self, feature_name):
-        l.info('GET FEATURE')
-        l.info(str(feature_name))
+        print 'GET FEATURE'
+        print str(feature_name)
 
 
 
