@@ -159,7 +159,10 @@ export default Ember.Component.extend({
     this.wsx = this.get('socket').create(
       this, 'pacu.core.svc.andor', 'AndorBindingService', this.getAttr('src')
     ).then(function(wsx) {
-      console.log('socket initialized');
+      this.toast.success('WebSocket connection estabilished.');
+      wsx.socket.onclose = () => {
+        this.toast.warning('WebSocket connection closed.');
+      };
     });
     this.$('.tabular.menu .item').tab({
       onLoad: function(tabPath, parameterArray, historyEvent) {}

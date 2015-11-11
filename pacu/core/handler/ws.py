@@ -65,19 +65,19 @@ class WSHandler(websocket.WebSocketHandler):
                 dumped = ujson.dumps([seq, str(rv)])
             self.write_message(dumped)
     def on_message(self, message):
+        rv, er = None, None
         try:
             seq, ftype, route, payload = ujson.loads(message)
             as_binary = payload.pop('as_binary')
             func = getattr(self, ftype)
             rv = func(route, **payload)
         except Exception as e:
-            rv = 'ERROR!'+str(e) # should go for pure ws fetch?
-            raise e
-        if as_binary:
+            er = str(e)
+        if as_binary and rv:
             self.write_message(rv, binary=True)
         else:
             try:
-                dumped = ujson.dumps([seq, rv])
-            except:
-                dumped = ujson.dumps([seq, str(rv)])
+                dumped = ujson.dumps([seq, rv, er])
+            except: # coerce
+                dumped = ujson.dumps([seq, str(rv), er])
             self.write_message(dumped)

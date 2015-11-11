@@ -28,7 +28,6 @@ class WebSocketEx {
     self.constructionFinallys = [];
     self.constructionPromise = new Ember.RSVP.Promise(function(res, rej) {
       self.socket = new WebSocket(url);
-      // self.socket.inst = self;
       self.socket.binaryType = binaryType;
       self.socket.onmessage = self.onmessage.bind(self);
       self.socket.onopen = res.bind(self);
@@ -101,7 +100,8 @@ class WebSocketEx {
     if (msg.data instanceof ArrayBuffer) {
         this.onbinaryFunc(msg.data); return;
     }
-    const [seq, argument] = JSON.parse(msg.data);
+    const [seq, argument, error] = JSON.parse(msg.data);
+    log('msg return', seq, argument, error);
     const res = this.promises[seq];
     if (delete this.promises[seq]) {
       res(argument);
