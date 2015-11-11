@@ -76,21 +76,15 @@ export default Ember.Component.extend({
     console.log('set buffer -> currentBuffer');
     this.set('currentBuffer', buf);
   },
-  acquireResource: function() {
-    this.wsx.invoke('acquireResource').then((data) => {
+  acquire: function() {
+    // this.wsx.invoke('raiseAfter1Sec').gate('ongoing').then((data) => {
+    this.wsx.invoke('acquire').gate('busy', 'ongoing').then((data) => {
       console.log('resolve then');
-      debugger
-    }).catch((err) => {
-      console.log('resolve catch');
-      debugger
-    }).finally(() => {
-      console.log('resolve fiannyly');
-      debugger
-    });
+    }).catch(this.toast.warning);
   },
   actions: {
     toggleResource: function() {
-      this[this.get('state') ? 'releaseResource' : 'acquireResource']();
+      this[this.get('state') ? 'releaseResource' : 'acquire']();
     },
     reqDebugStream: function() {
       console.log('REQ DBG STRM');

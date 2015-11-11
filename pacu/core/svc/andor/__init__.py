@@ -130,23 +130,22 @@ class AndorBindingService(object):
     def return1(self):
         return 1
     def acquire(self):
-        print 'ACQ'
-        try:
-            self.inst = SystemInstrument().acquire(ZylaInstrument, self.index)
-            self.inst.aoi_height = 512
-            self.inst.aoi_width = 512
-            self.inst.accumulate_count = 1
-            self.inst.frame_rate = 60
-            self.inst.exposure_time = 0.01
-            self.inst.cycle_mode = 1 # continuous
-            self.inst.electronic_shuttering_mode = 1 # global
-            self.inst.metadata_enable = 1
 
+        raise AttributeError('Oh..')
 
-            # self.setup_feature_callback()
-            return dict(error=None, detail=self.features)
-        except Exception as e:
-            return dict(error=True, detail='Fail: ' + str(e))
+        print 'Acquire camera handle...'
+        self.inst = SystemInstrument().acquire(ZylaInstrument, self.index)
+        self.inst.aoi_height = 512
+        self.inst.aoi_width = 512
+        self.inst.accumulate_count = 1
+        self.inst.frame_rate = 60
+        self.inst.exposure_time = 0.01
+        self.inst.cycle_mode = 1 # continuous
+        self.inst.electronic_shuttering_mode = 1 # global
+        self.inst.metadata_enable = 1
+        # self.setup_feature_callback()
+        return dict(error=None, detail=self.features)
+
     def release(self):
         try:
             self.inst.release()
@@ -277,6 +276,18 @@ class AndorBindingService(object):
         rgba = plt.cm.gray(frame.view('uint8')[1::2, ...], bytes=True).tostring()
         print frame[0][:16]
         return rgba
+# {
+#   "errors": [
+#     {
+#       "status": "422",
+#       "source": { "pointer": "/data/attributes/first-name" },
+#       "title":  "Invalid Attribute",
+#       "detail": "First name must contain at least three characters."
+#     }
+#   ]
+# }
+
+
 
 
 
