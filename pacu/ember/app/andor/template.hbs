@@ -1,15 +1,1 @@
-<div class="ui center aligned inverted segment">
-  {{#if model.has_andor}}
-    <p>This computer has Andor devices.</p>
-    <p>How many cameras are currently available: {{model.number_of_cameras}}</p>
-    {{#each model.camera_indice as |index|}}
-      {{#link-to "andor.device" index}}Access to device #{{index}}{{/link-to}}
-    {{/each}}
-  {{else}}
-    <p>This computer has no Andor devices.</p>
-  {{/if}}
-  <h5>Please restart PACU to refresh current status...</h5>
-</div>
-<div class="ui center aligned inverted segment">
-  {{outlet}}
-</div>
+{{outlet}}

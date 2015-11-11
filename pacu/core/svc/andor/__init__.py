@@ -49,53 +49,11 @@ from pacu.core.andor.acquisition import helper
 # qwe.aoi_width = 1024
 # rawbuf = qwe.acquisition.alloc_buffer()
 # f = open('deleteme.bin', 'wb')
-# @c_feat_cb
-# def exposure_start(handle, feature, context):
-#     if not qwe.camera_acquiring:
-#         return 0
-#     print 's',
-#     # qwe.acquisition.queue_buffer(rawbuf)
-#     return 0
-# @c_feat_cb
-# def exposure_end(handle, feature, context):
-#     if not qwe.camera_acquiring:
-#         return 0
-#     print 'e',
-#     st = time.time()
-#     # time.sleep(1)
-#     # f.write(rawbuf)
-#     # buf = qwe.acquisition.wait_buffer(3000, matching_buf=rawbuf)
-#     # ts = qwe.acquisition.extract_timestamp(rawbuf)
-#     # frame, pointer = helper.get_contigious(qwe.aoi_height, qwe.aoi_width)
-#     # qwe.acquisition.convert_buffer(buf, pointer)
-#     print 'conv latency', time.time() - st
-#     # print frame[:3]
-#     # tifffile.imsave('a.tiff', frame)
-#     return 0
-# @c_feat_cb
-# def buf_overflow(handle, feature, context):
-#     print 'buf overflowed. cancel everything'
-#     return 0
-# 
-# context = 18
-# qwe.event_selector = 0 #'ExposureStartEvent'
-# qwe.event_enable = 1
-# qwe.handle.core('RegisterFeatureCallback',
-#     u'ExposureStartEvent',
-#     exposure_start,
-#     context)
-# qwe.event_selector = 1 # 'ExposureEndEvent'
-# qwe.event_enable = 1
-# qwe.handle.core('RegisterFeatureCallback',
-#     u'ExposureEndEvent',
-#     exposure_end,
-#     context)
-# qwe.event_selector = 5 # 'BufferOverflowEvent'
-# qwe.event_enable = 1
-# qwe.handle.core('RegisterFeatureCallback',
-#     u'BufferOverflowEvent',
-#     buf_overflow,
-#     context)
+
+
+
+
+
 # frames = qwe.acquisition()
 
 ## # commented out
@@ -113,23 +71,77 @@ from pacu.core.andor.acquisition import helper
 ## # tifffile.imsave('a.tif', stack)
 ## # print 'done !'
 ## 
-
-
+import itertools
 import matplotlib.pyplot as plt
+cms = itertools.cycle([plt.cm.gray, plt.cm.jet])
+
+CONTEXTS = {}
+import time
+
+@c_feat_cb
+def exposure_start(handle, feature, context):
+    self = CONTEXTS[context]
+    if not self.inst.camera_acquiring:
+        return 0
+    # print 's',
+    self.inst.acquisition.queue_buffer(self.rawbuf)
+    return 0
+@c_feat_cb
+def exposure_end(handle, feature, context):
+    self = CONTEXTS[context]
+    if not self.inst.camera_acquiring:
+        return 0
+    print '.',
+    # print 'e',
+    # st = time.time()
+    # time.sleep(1)
+    # f.write(rawbuf)
+    buf = self.inst.acquisition.wait_buffer(3000, matching_buf=self.rawbuf)
+    ts = self.inst.acquisition.extract_timestamp(self.rawbuf)
+    frame, pointer = helper.get_contigious(self.inst.aoi_height, self.inst.aoi_width)
+    self.inst.acquisition.convert_buffer(buf, pointer)
+    self.currentFrame = frame
+    # print 'conv latency', time.time() - st
+    # print frame[:3]
+    # tifffile.imsave('a.tiff', frame)
+    return 0
+@c_feat_cb
+def buf_overflow(handle, feature, context):
+    self = CONTEXTS[context]
+    if not self.inst.camera_acquiring:
+        return 0
+    print 'buf overflowed. cancel everything'
+    return 0
+
 
 l = logging.get_default()
 
 class AndorBindingService(object):
+    currentFrame = None
     inst = None
     # very rough and magic implementation.
     # no reason to be `files` argument.
     def __init__(self, files=-1):
         print 'INIT with id', id(self)
         self.index = int(files)
+    def acquireResource(self):
+        time.sleep(3)
+        raise Exception('test raise!!!!!!!!')
+        return '!!!!!!!!!'
     def acquire(self):
         print 'ACQ'
         try:
             self.inst = SystemInstrument().acquire(ZylaInstrument, self.index)
+            self.inst.aoi_height = 512
+            self.inst.aoi_width = 512
+            self.inst.accumulate_count = 1
+            self.inst.frame_rate = 60
+            self.inst.exposure_time = 0.01
+            self.inst.cycle_mode = 1 # continuous
+            self.inst.electronic_shuttering_mode = 1 # global
+            self.inst.metadata_enable = 1
+
+
             # self.setup_feature_callback()
             return dict(error=None, detail=self.features)
         except Exception as e:
@@ -182,13 +194,90 @@ class AndorBindingService(object):
                 feat_changed,
                 context
             )
-    def getDebugFrame(self):
-        print 'GET debug frame backend'
+    def getDebugOneFrame(self):
+        # print 'GET debug frame backend'
         with self.inst.acquisition as frames:
             ts, frame = frames.capture()
-        rgba = plt.cm.jet(frame, bytes=True).tostring()
-        print 'rgba...', rgba[:36]
+        rgba = plt.cm.gray(frame.view('uint8')[1::2, ...], bytes=True).tostring()
         return rgba
+    def getTiming(self, epoch):
+        epoch = int(epoch)
+        cur = time.time()
+        print 'GET timing', epoch - cur
+        print 'EPH', epoch, 'CUR', cur
+    def getDebugFrame(self):
+        print 'GET debug frame backend'
+        # s = time.time()
+        if self.currentFrame is not None:
+            # return plt.cm.gray(self.currentFrame, bytes=True).tostring()
+            # print 'GET RGBA...'
+            # cm = next(cms)
+            data = plt.cm.gray(self.currentFrame.view('uint8')[1::2, ...], bytes=True).tostring()
+            # print time.time() - s, 'Elapsed...'
+            return data
+        else:
+            return ''
+    def getDebugStream(self):
+        print 'stream mode needs cyclemode to be 1'
+        print self.inst.image_size_bytes, 'SIZE'
+        context = id(self)
+        CONTEXTS[context] = self
+        self.inst.event_selector = 0 #'ExposureStartEvent'
+        self.inst.event_enable = 1
+        self.inst.handle.core('RegisterFeatureCallback',
+            u'ExposureStartEvent',
+            exposure_start,
+            context)
+        self.inst.event_selector = 1 # 'ExposureEndEvent'
+        self.inst.event_enable = 1
+        self.inst.handle.core('RegisterFeatureCallback',
+            u'ExposureEndEvent',
+            exposure_end,
+            context)
+        self.inst.event_selector = 5 # 'BufferOverflowEvent'
+        self.inst.event_enable = 1
+        self.inst.handle.core('RegisterFeatureCallback',
+            u'BufferOverflowEvent',
+            buf_overflow,
+            context)
+        self.rawbuf = self.inst.acquisition.alloc_buffer()
+        self.frames = self.inst.acquisition()
+        return 'READY!'
+    def delDebugStream(self):
+        print 'stream mode release'
+        context = id(self)
+
+        self.inst.event_selector = 0 #'ExposureStartEvent'
+        self.inst.event_enable = 0
+        self.inst.handle.core('UnregisterFeatureCallback',
+            u'ExposureStartEvent',
+            exposure_start,
+            context)
+        self.inst.event_selector = 1 # 'ExposureEndEvent'
+        self.inst.event_enable = 0
+        self.inst.handle.core('UnregisterFeatureCallback',
+            u'ExposureEndEvent',
+            exposure_end,
+            context)
+        self.inst.event_selector = 5 # 'BufferOverflowEvent'
+        self.inst.event_enable = 0
+        self.inst.handle.core('UnregisterFeatureCallback',
+            u'BufferOverflowEvent',
+            buf_overflow,
+            context)
+
+        self.frames = self.inst.acquisition()
+        self.rawbuf = None
+        del CONTEXTS[context]
+        print 'self.frames', self.frames
+        return 'OK!'
+    def getStreamFrame(self):
+        ts, frame = self.frames.capture()
+        rgba = plt.cm.gray(frame.view('uint8')[1::2, ...], bytes=True).tostring()
+        print frame[0][:16]
+        return rgba
+
+
 
 
 

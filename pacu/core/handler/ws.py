@@ -32,7 +32,7 @@ class WSHandler(websocket.WebSocketHandler):
         except Exception as e:
             print 'delegator init error', e
     def on_close(self):
-        print 'CLOSE'
+        print 'socket closing...'
     def access(self, route):
         attrs = route.split('.')
         value = reduce(getattr, attrs, self.inst)
@@ -40,7 +40,7 @@ class WSHandler(websocket.WebSocketHandler):
     def invoke(self, route, args=None, kwargs=None):
         func = self.access(route)
         return func(*args or [], **kwargs or {})
-    def on_message(self, message):
+    def _on_message(self, message):
         try:
             seq, ftype, route, payload = ujson.loads(message)
             as_binary = payload.pop('as_binary')
@@ -56,6 +56,23 @@ class WSHandler(websocket.WebSocketHandler):
         except Exception as e:
             print 'invalid json', e
             rv = 'ERROR!'+str(e) # should go for pure ws fetch?
+        if as_binary:
+            self.write_message(rv, binary=True)
+        else:
+            try:
+                dumped = ujson.dumps([seq, rv])
+            except:
+                dumped = ujson.dumps([seq, str(rv)])
+            self.write_message(dumped)
+    def on_message(self, message):
+        try:
+            seq, ftype, route, payload = ujson.loads(message)
+            as_binary = payload.pop('as_binary')
+            func = getattr(self, ftype)
+            rv = func(route, **payload)
+        except Exception as e:
+            rv = 'ERROR!'+str(e) # should go for pure ws fetch?
+            raise e
         if as_binary:
             self.write_message(rv, binary=True)
         else:

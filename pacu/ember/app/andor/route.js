@@ -7,6 +7,10 @@ export default Ember.Route.extend({
   actions: {
     refreshModel: function() {
       this.refresh();
-    }
+    },
+  didTransition() {
+    this.controllerFor('application').set(
+      'current-feature', 'Andor Device Controller');
+    },
   }
 });

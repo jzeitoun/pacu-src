@@ -1,9 +1,20 @@
-<h4 class="ui inverted header">Device Handle #{{attrs.src}}: {{stateStr}}</h4>
-{{#if state}}
+<p class="ui inverted blue label">{{stateStr}}</p>
+<p class="ui inverted red label">
+  {{if features.CameraAcquiring.value "On air" "Idle"}}
+</p>
+
+<button {{action "toggleResource"}}
+  class="ui inverted {{if state "red" "blue"}} button" >
+  Click to {{if state "relaese..." "acquire..."}}
+</button>
+
+{{!-- #if state}}
   <button class="ui small red button"{{action "release"}}>Click to release...</button>
 {{else}}
   <button class="ui small blue button"{{action "acquire"}}>Click to acquire...</button>
 {{/if}}
+--}}
+
 <div class="ui segment" style="display: {{stteCss}}">
   <div class="ui {{if busy 'active'}} dimmer">
     <div class="ui text inverted loader">Please wait...</div>
@@ -40,10 +51,13 @@
     {{/if}}
   </div>
   <div class="ui bottom attached tab segment" data-tab="preview">
+    <button class="ui small button"{{action "reqTiming"}}>timing...</button>
     <button class="ui small button"{{action "reqDebugFrame"}}>frame...</button>
+    <button class="ui small button"{{action "reqDebugStream"}}>stream...</button>
     <p>Streaming...</p>
-    <div style="margin: 0 auto; width: 2560px; height: 2160px;">
-      {{x-canvas-arraybuffer buf=currentBuffer width=2560 height=2160 staticPos=true}}
+    <div style="margin: 0 auto; width: {{features.AOIWidth.value}}px; height: {{features.AOIHeight.value}}px;">
+      {{x-canvas-arraybuffer buf=currentBuffer
+          width=features.AOIWidth.value height=features.AOIHeight.value staticPos=true}}
     </div>
   </div>
   <div class="ui bottom attached tab segment" data-tab="acquisition">

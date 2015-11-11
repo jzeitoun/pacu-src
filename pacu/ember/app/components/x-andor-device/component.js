@@ -76,10 +76,47 @@ export default Ember.Component.extend({
     console.log('set buffer -> currentBuffer');
     this.set('currentBuffer', buf);
   },
+  acquireResource: function() {
+    this.wsx.invoke('acquireResource').then((data) => {
+      debugger
+    }).catch((err) => {
+      debugger
+    }).finally(() => {
+      debugger
+    });
+  },
   actions: {
+    toggleResource: function() {
+      this[this.get('state') ? 'releaseResource' : 'acquireResource']();
+    },
+    reqDebugStream: function() {
+      console.log('REQ DBG STRM');
+      const self = this;
+      function loop() {
+        return setTimeout(function() {
+          console.log('stream!')
+          self.wsx.invokeAsBinary('getDebugFrame');
+          self.loopid = loop();
+        }, 16);
+      };
+      self.wsx.invoke('getDebugStream').then(function(data) {
+        loop();
+        setTimeout(function() {
+          console.log('clear!')
+          clearTimeout(self.loopid);
+          self.wsx.invoke('delDebugStream');
+        }, 5000);
+      });
+    },
+    reqTiming: function() {
+      console.log('REQ TIMing');
+      this.wsx.invoke('getTiming', +(new Date()));
+      console.log('REQ SENT!');
+    },
     reqDebugFrame: function() {
       console.log('REQ DBG FRM');
-      this.wsx.onbinary(this.setBuffer).invokeAsBinary('getDebugFrame');
+      this.wsx.invokeAsBinary('getDebugOneFrame');
+      console.log('REQ SENT!');
     },
     setFeature: function(feature) {
       return this.wsx.invoke('set_feature', feature);
@@ -91,6 +128,7 @@ export default Ember.Component.extend({
         if (data.error) {
           alert(data.detail);
         } else {
+          self.wsx.onbinary(self.setBuffer);
           self.wsx.mirror('state');
           self.wsx.access('features').then(function(features) {
             features.forEach(function(item) {
@@ -118,10 +156,11 @@ export default Ember.Component.extend({
   }.on('init'),
   initWS: function() {
     window.asd = this;
-    const self = this;
     this.wsx = this.get('socket').create(
       this, 'pacu.core.svc.andor', 'AndorBindingService', this.getAttr('src')
-    );
+    ).then(function(wsx) {
+      console.log('socket initialized');
+    });
     this.$('.tabular.menu .item').tab({
       onLoad: function(tabPath, parameterArray, historyEvent) {}
     });
