@@ -124,10 +124,11 @@ class AndorBindingService(object):
     def __init__(self, files=-1):
         print 'INIT with id', id(self)
         self.index = int(files)
-    def acquireResource(self):
-        time.sleep(3)
+    def raiseAfter1Sec(self):
+        time.sleep(1)
         raise Exception('test raise!!!!!!!!')
-        return '!!!!!!!!!'
+    def return1(self):
+        return 1
     def acquire(self):
         print 'ACQ'
         try:

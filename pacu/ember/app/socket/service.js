@@ -11,11 +11,26 @@ class PromiseEx extends Ember.RSVP.Promise {
     this.context = context;
   }
   then(onFulfillment, onRejection, label) {
+    console.log('load then');
     const onf = onFulfillment ? onFulfillment.bind(this.context) : undefined;
     const onr = onRejection   ? onRejection.bind(this.context)   : undefined;
     const then = super.then(onf, onr, label);
     then.context = this.context;
-    return then;
+    return this;
+  }
+  catch(onRejection, label) {
+    console.log('load actch ');
+    const onr = onRejection   ? onRejection.bind(this.context)   : undefined;
+    const catchy = super.catch(onr, label);
+    catchy.context = this.context;
+    return this;
+  }
+  finally(callback, label) {
+    console.log('load finalyl ');
+    const cb = callback   ? callback.bind(this.context)   : undefined;
+    const finallie = super.catch(cb, label);
+    finallie.context = this.context;
+    return this;
   }
 }
 class WebSocketEx {
@@ -92,7 +107,8 @@ class WebSocketEx {
   }
   makeRequest(type, route, payload={as_binary: false}) {
     return new PromiseEx((res, rej) => {
-      this.promises[++sequence] = res;
+      this.promises[++sequence] = {res, rej};
+      // this.promises[++sequence] = res;
       this.socket.send(JSON.stringify([sequence, type, route, payload]));
     }.bind(this), null, this.context);
   }
@@ -102,9 +118,13 @@ class WebSocketEx {
     }
     const [seq, argument, error] = JSON.parse(msg.data);
     log('msg return', seq, argument, error);
-    const res = this.promises[seq];
+    const {res, rej} = this.promises[seq];
     if (delete this.promises[seq]) {
-      res(argument);
+      if (Ember.isNone(error)) {
+        res(argument);
+      } else {
+        rej(error);
+      }
     }
   }
   static asBufBased(context, url) {

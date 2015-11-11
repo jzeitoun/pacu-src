@@ -78,10 +78,13 @@ export default Ember.Component.extend({
   },
   acquireResource: function() {
     this.wsx.invoke('acquireResource').then((data) => {
+      console.log('resolve then');
       debugger
     }).catch((err) => {
+      console.log('resolve catch');
       debugger
     }).finally(() => {
+      console.log('resolve fiannyly');
       debugger
     });
   },
