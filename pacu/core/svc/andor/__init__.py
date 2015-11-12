@@ -91,7 +91,7 @@ def exposure_end(handle, feature, context):
     self = CONTEXTS[context]
     if not self.inst.camera_acquiring:
         return 0
-    print '.',
+    # print '.',
     # print 'e',
     # st = time.time()
     # time.sleep(1)
@@ -100,7 +100,8 @@ def exposure_end(handle, feature, context):
     ts = self.inst.acquisition.extract_timestamp(self.rawbuf)
     frame, pointer = helper.get_contigious(self.inst.aoi_height, self.inst.aoi_width)
     self.inst.acquisition.convert_buffer(buf, pointer)
-    self.currentFrame = frame
+    self._current_frame = frame
+    self.frame_gathered += 1
     # print 'conv latency', time.time() - st
     # print frame[:3]
     # tifffile.imsave('a.tiff', frame)
@@ -113,28 +114,23 @@ def buf_overflow(handle, feature, context):
     print 'buf overflowed. cancel everything'
     return 0
 
-
 l = logging.get_default()
 
 class AndorBindingService(object):
-    currentFrame = None
+    frame_gathered = 0
+    _current_frame = None
     inst = None
     # very rough and magic implementation.
     # no reason to be `files` argument.
     def __init__(self, files=-1):
-        print 'INIT with id', id(self)
         self.index = int(files)
-    def raiseAfter1Sec(self):
-        time.sleep(1)
-        raise Exception('test raise!!!!!!!!')
-    def return1(self):
-        return 1
-    def acquire(self):
-
-        raise AttributeError('Oh..')
-
+    def acquire_handle(self):
         print 'Acquire camera handle...'
-        self.inst = SystemInstrument().acquire(ZylaInstrument, self.index)
+        return True
+        try:
+            self.inst = SystemInstrument().acquire(ZylaInstrument, self.index)
+        except Exception as e:
+            raise Exception('Failed to acquire camera handle: ' + str(e))
         self.inst.aoi_height = 512
         self.inst.aoi_width = 512
         self.inst.accumulate_count = 1
@@ -143,23 +139,26 @@ class AndorBindingService(object):
         self.inst.cycle_mode = 1 # continuous
         self.inst.electronic_shuttering_mode = 1 # global
         self.inst.metadata_enable = 1
-        # self.setup_feature_callback()
-        return dict(error=None, detail=self.features)
-
-    def release(self):
+        return True
+    def release_handle(self):
+        print 'Release camera handle...'
+        return None
+        if self.inst.camera_acquiring:
+            raise Exception('Camera is in recording session. Stop first...')
         try:
             self.inst.release()
         except Exception as e:
-            print 'exception raised within release.', type(e), e
-        finally:
+            raise e
+        else:
             self.inst = None
-    @property
-    def state(self):
-        return bool(self.inst)
+            return None
     @property
     def features(self):
-        return [self.inst.meta[key].export()
+        try:
+            return [self.inst.meta[key].export()
                 for key in list(self.inst.feat)]
+        except:
+            return []
     def set_feature(self, feature):
         try:
             print 'SET FEATURE'
@@ -180,46 +179,43 @@ class AndorBindingService(object):
     def get_faeture(self, feature_name):
         print 'GET FEATURE'
         print str(feature_name)
-    def setup_feature_callback(self):
-        @c_feat_cb
-        def feat_changed(handle, feature, context):
-            print '\n', 'CALLBACK: `{}` CHANGED!'.format(feature), context
-            # print '\n', 'CALLBACK: `{}` => `{}`'.format(feature, cam.get(feature))
-            return 0 # meaning callback handled successful.
-        context = ctypes.cast(ctypes.byref(ctypes.c_int(id(self))), ctypes.c_void_p)
-        for feat in map(unicode,
-            'AOIWidth AOIHeight AOIBinning ReadoutTime ImageSizeBytes ExposureTime AOIStride FrameRate CameraAcquiring'.split()):
-            self.inst.handle.core('RegisterFeatureCallback',
-                feat,
-                feat_changed,
-                context
-            )
-    def getDebugOneFrame(self):
-        # print 'GET debug frame backend'
-        with self.inst.acquisition as frames:
-            ts, frame = frames.capture()
-        rgba = plt.cm.gray(frame.view('uint8')[1::2, ...], bytes=True).tostring()
-        return rgba
-    def getTiming(self, epoch):
-        epoch = int(epoch)
-        cur = time.time()
-        print 'GET timing', epoch - cur
-        print 'EPH', epoch, 'CUR', cur
-    def getDebugFrame(self):
-        print 'GET debug frame backend'
-        # s = time.time()
-        if self.currentFrame is not None:
-            # return plt.cm.gray(self.currentFrame, bytes=True).tostring()
-            # print 'GET RGBA...'
-            # cm = next(cms)
-            data = plt.cm.gray(self.currentFrame.view('uint8')[1::2, ...], bytes=True).tostring()
-            # print time.time() - s, 'Elapsed...'
-            return data
-        else:
-            return ''
-    def getDebugStream(self):
-        print 'stream mode needs cyclemode to be 1'
-        print self.inst.image_size_bytes, 'SIZE'
+#     def setup_feature_callback(self):
+#         @c_feat_cb
+#         def feat_changed(handle, feature, context):
+#             print '\n', 'CALLBACK: `{}` CHANGED!'.format(feature), context
+#             # print '\n', 'CALLBACK: `{}` => `{}`'.format(feature, cam.get(feature))
+#             return 0 # meaning callback handled successful.
+#         context = ctypes.cast(ctypes.byref(ctypes.c_int(id(self))), ctypes.c_void_p)
+#         for feat in map(unicode,
+#             'AOIWidth AOIHeight AOIBinning ReadoutTime ImageSizeBytes ExposureTime AOIStride FrameRate CameraAcquiring'.split()):
+#             self.inst.handle.core('RegisterFeatureCallback',
+#                 feat,
+#                 feat_changed,
+#                 context
+#             )
+#     def getDebugOneFrame(self):
+#         # print 'GET debug frame backend'
+#         with self.inst.acquisition as frames:
+#             ts, frame = frames.capture()
+#         rgba = plt.cm.gray(frame.view('uint8')[1::2, ...], bytes=True).tostring()
+#         return rgba
+#     def getDebugFrame(self):
+#         print 'GET debug frame backend'
+#         # s = time.time()
+#         if self.currentFrame is not None:
+#             # return plt.cm.gray(self.currentFrame, bytes=True).tostring()
+#             # print 'GET RGBA...'
+#             # cm = next(cms)
+#             data = plt.cm.gray(self.currentFrame.view('uint8')[1::2, ...], bytes=True).tostring()
+#             # print time.time() - s, 'Elapsed...'
+#             return data
+#         else:
+#             return ''
+    def start_recording(self):
+        if not self.inst:
+            raise Exception('Could not find camera.')
+        if self.inst.camera_acquiring:
+            raise Exception('Camera is still in recording session.')
         context = id(self)
         CONTEXTS[context] = self
         self.inst.event_selector = 0 #'ExposureStartEvent'
@@ -241,10 +237,14 @@ class AndorBindingService(object):
             buf_overflow,
             context)
         self.rawbuf = self.inst.acquisition.alloc_buffer()
+        self.frame_gathered = 0
         self.frames = self.inst.acquisition()
-        return 'READY!'
-    def delDebugStream(self):
-        print 'stream mode release'
+        return True
+    def stop_recording(self):
+        if not self.inst:
+            raise Exception('Could not find camera.')
+        if not self.inst.camera_acquiring:
+            raise Exception('Camera is not in recording session.')
         context = id(self)
 
         self.inst.event_selector = 0 #'ExposureStartEvent'
@@ -269,26 +269,10 @@ class AndorBindingService(object):
         self.frames = self.inst.acquisition()
         self.rawbuf = None
         del CONTEXTS[context]
-        print 'self.frames', self.frames
-        return 'OK!'
-    def getStreamFrame(self):
-        ts, frame = self.frames.capture()
-        rgba = plt.cm.gray(frame.view('uint8')[1::2, ...], bytes=True).tostring()
-        print frame[0][:16]
-        return rgba
-# {
-#   "errors": [
-#     {
-#       "status": "422",
-#       "source": { "pointer": "/data/attributes/first-name" },
-#       "title":  "Invalid Attribute",
-#       "detail": "First name must contain at least three characters."
-#     }
-#   ]
-# }
-
-
-
+        return None
+    @property
+    def current_frame(self):
+        return plt.cm.gray(self._current_frame.view('uint8')[1::2, ...], bytes=True).tostring()
 
 
 

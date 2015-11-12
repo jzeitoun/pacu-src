@@ -2,64 +2,32 @@ import Ember from 'ember';
 import computed from 'ember-computed-decorators';
 
 const BASIC_INFOS = [
-  'CameraModel',
-  'ControllerID',
-  'FirmwareVersion',
-  'InterfaceType',
-  'SerialNumber',
+  'CameraModel', 'ControllerID', 'FirmwareVersion',
+  'InterfaceType', 'SerialNumber',
 ];
 const BASIC_FEATS = [
-  'AccumulateCount',
-  'AOIHeight',
-  'AOILeft',
-  'AOITop',
-  'AOIWidth',
-  'FrameCount',
-  'ExposureTime',
-  'FrameRate',
-  'AOIBinning',
+  'AccumulateCount', 'AOIHeight', 'AOILeft',
+  'AOITop', 'AOIWidth', 'FrameCount',
+  'ExposureTime', 'FrameRate', 'AOIBinning',
 ];
 const ADV_FEATS = [
-  'AOIStride',
-  'Baseline',
-  'ImageSizeBytes',
-  'SensorHeight',
-  'SensorWidth',
-  'TimestampClock',
-  'TimestampClockFrequency',
-  'BytesPerPixel',
-  'MaxInterfaceTransferRate',
-  'PixelHeight',
-  'MetadataEnable',
-  'MetadataFrame',
-  'MetadataTimestamp',
-  'SensorCooling',
-  'SpuriousNoiseFilter',
-  'StaticBlemishCorrection',
-  'VerticallyCentreAOI',
-  'AuxiliaryOutSource',
-  'BitDepth',
-  'EventEnable',
-  'EventSelector',
-  'IOSelector',
-  'IOInvert',
-  'PixelEncoding',
-  'PixelReadoutRate',
-  'SimplePreAmpGainControl',
-  'CycleMode',
-  'ElectronicShutteringMode',
-  'SensorTemperature',
-  'FanSpeed',
-  'TemperatureStatus',
-  'TriggerMode',
-  'ReadoutTime',
-  'CameraAcquiring',
-  'FullAOIControl',
-  'Overlap',
+  'AOIStride', 'Baseline', 'ImageSizeBytes',
+  'SensorHeight', 'SensorWidth', 'TimestampClock',
+  'TimestampClockFrequency', 'BytesPerPixel', 'MaxInterfaceTransferRate',
+  'PixelHeight', 'MetadataEnable', 'MetadataFrame',
+  'MetadataTimestamp', 'SensorCooling', 'SpuriousNoiseFilter',
+  'StaticBlemishCorrection', 'VerticallyCentreAOI', 'AuxiliaryOutSource',
+  'BitDepth', 'EventEnable', 'EventSelector',
+  'IOSelector', 'IOInvert', 'PixelEncoding',
+  'PixelReadoutRate', 'SimplePreAmpGainControl', 'CycleMode',
+  'ElectronicShutteringMode', 'SensorTemperature', 'FanSpeed',
+  'TemperatureStatus', 'TriggerMode', 'ReadoutTime',
+  'CameraAcquiring', 'FullAOIControl', 'Overlap',
 ];
 
 export default Ember.Component.extend({
   busy: false,
+  onair: false,
   toast: Ember.inject.service(),
   infos: BASIC_INFOS,
   feats: BASIC_FEATS,
@@ -68,87 +36,63 @@ export default Ember.Component.extend({
   @computed('state') stateStr(s) {
     return s===''   ? 'Initial' :
            s===null ? 'Released':
-           s===true ? 'Acquired':
-                      'Unavailable'
+           s===true ? 'Acquired': 'Unavailable'
   },
-  @computed('state') stateCss(s) { return s===true ? 'block': 'none' },
-  setBuffer(buf) {
-    console.log('set buffer -> currentBuffer');
-    this.set('currentBuffer', buf);
+  handleError: function(err) {
+    this.toast.warning(`${err.title}: ${err.detail}`);
+    console.error(err.source.join('\n'));
   },
-  acquire: function() {
-    // this.wsx.invoke('raiseAfter1Sec').gate('ongoing').then((data) => {
-    this.wsx.invoke('acquire').gate('busy', 'ongoing').then((data) => {
-      console.log('resolve then');
-    }).catch(this.toast.warning);
+  streamITV: 30,
+  streamOn: false,
+  streamModeChanged: function() {
+    const streamOn = this.get('streamOn');
+    if (streamOn) { this.startStream();
+    } else { this.stopStream(); }
+  }.observes('streamOn'),
+  startStream: function() {
+    const self = this;
+    (function frame() {
+      self.wsx.accessAsBinary('current_frame');
+      self.streamID = setTimeout(frame, self.streamITV);
+    })();
+  },
+  stopStream: function() {
+    console.log('stop');
+    this.streamID = clearTimeout(this.streamID);
+  },
+  snapStream: function() {
+    this.set('streamOn', false);
+    this.wsx.accessAsBinary('current_frame');
   },
   actions: {
     toggleResource: function() {
-      this[this.get('state') ? 'releaseResource' : 'acquire']();
+      const command = this.get('state') ? 'release_handle' : 'acquire_handle';
+      this.wsx.invoke(command).gate('busy').then((state) => {
+        this.resetFeatures();
+        this.set('state', state);
+        this.wsx.access('features').then((features) => {
+          features.forEach((item) => {
+            this.set(`features.${item.feature}`, item);
+          });
+        });
+      }).catch(this.handleError.bind(this));
     },
-    reqDebugStream: function() {
-      console.log('REQ DBG STRM');
-      const self = this;
-      function loop() {
-        return setTimeout(function() {
-          console.log('stream!')
-          self.wsx.invokeAsBinary('getDebugFrame');
-          self.loopid = loop();
-        }, 16);
-      };
-      self.wsx.invoke('getDebugStream').then(function(data) {
-        loop();
-        setTimeout(function() {
-          console.log('clear!')
-          clearTimeout(self.loopid);
-          self.wsx.invoke('delDebugStream');
-        }, 5000);
-      });
+    toggleRecording: function() {
+      const command = this.get('onair') ? 'stop_recording' : 'start_recording';
+      this.wsx.invoke(command).gate('busy').then((data) => {
+        this.set('onair', data);
+        this.set('streamOn', data);
+      }).catch(this.handleError.bind(this));
     },
-    reqTiming: function() {
-      console.log('REQ TIMing');
-      this.wsx.invoke('getTiming', +(new Date()));
-      console.log('REQ SENT!');
-    },
-    reqDebugFrame: function() {
-      console.log('REQ DBG FRM');
-      this.wsx.invokeAsBinary('getDebugOneFrame');
-      console.log('REQ SENT!');
+    snapCurrentFrame: function() {
+      this.snapStream();
     },
     setFeature: function(feature) {
       return this.wsx.invoke('set_feature', feature);
-    },
-    acquire: function() {
-      const self = this;
-      self.set('busy', true);
-      this.wsx.invoke('acquire').then(function(data) {
-        if (data.error) {
-          alert(data.detail);
-        } else {
-          self.wsx.onbinary(self.setBuffer);
-          self.wsx.mirror('state');
-          self.wsx.access('features').then(function(features) {
-            features.forEach(function(item) {
-              self.set(`features.${item.feature}`, item);
-            });
-          });
-        }
-        self.set('busy', false);
-      });
-    },
-    release: function() {
-      const self = this;
-      self.set('busy', true);
-      this.wsx.invoke('release').then(function(data) {
-        self.set('state', null);
-        self.set('busy', false);
-        self.resetFeatures();
-      });
     }
   },
   socket: Ember.inject.service(),
   resetFeatures: function() {
-    console.log('reset features');
     this.set('features', {});
   }.on('init'),
   initWS: function() {
@@ -160,10 +104,16 @@ export default Ember.Component.extend({
       wsx.socket.onclose = () => {
         this.toast.warning('WebSocket connection closed.');
       };
+    }).onbinary((buf) => {
+      this.set('currentBuffer', buf);
     });
+  }.on('didInsertElement'),
+  dnitWS: function() { this.wsx.dnit(); }.on('willDestroyElement'),
+  initSUI: function() {
     this.$('.tabular.menu .item').tab({
       onLoad: function(tabPath, parameterArray, historyEvent) {}
     });
   }.on('didInsertElement'),
-  dnitWS: function() { this.wsx.dnit(); }.on('willDestroyElement'),
+  dnitSUI: function() {
+  }.on('willDestroyElement'),
 });

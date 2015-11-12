@@ -28,19 +28,18 @@ class PromiseEx extends Ember.RSVP.Promise {
 }
 class WebSocketEx {
   constructor(context, url, binaryType='arraybuffer') {
-    const self = this;
-    self.context = context;
-    self.promises = {};
-    self.constructionThens = [];
-    self.constructionCatches = [];
-    self.constructionFinallys = [];
-    self.constructionPromise = new Ember.RSVP.Promise(function(res, rej) {
-      self.socket = new WebSocket(url);
-      self.socket.binaryType = binaryType;
-      self.socket.onmessage = self.onmessage.bind(self);
-      self.socket.onopen = res.bind(self);
-      self.socket.onerror = rej.bind(self);
-      self.socket.onclose = function() {};
+    this.context = context;
+    this.promises = {};
+    this.constructionThens = [];
+    this.constructionCatches = [];
+    this.constructionFinallys = [];
+    this.constructionPromise = new Ember.RSVP.Promise((res, rej) => {
+      this.socket = new WebSocket(url);
+      this.socket.binaryType = binaryType;
+      this.socket.onmessage = this.onmessage.bind(this);
+      this.socket.onopen = res.bind(this);
+      this.socket.onerror = rej.bind(this);
+      this.socket.onclose = function() {};
     }).then(() => {
       for (const f of this.constructionThens) f.call(context, this);
     }).catch((e) => {
@@ -57,6 +56,7 @@ class WebSocketEx {
     this.promises = null;
     this.context = null;
     this.socket.close();
+    this.onbinaryFunc = null;
   }
   then(func) {
     if (Ember.isNone(this.constructionThens)) {
@@ -77,8 +77,8 @@ class WebSocketEx {
     return this; // so that chain can go forth...
   }
   mirror(route) {
-    return this.makeRequest('access', route).then(function(data) {
-      this.set(route, data);
+    return this.makeRequest('access', route).then((data) => {
+      this.context.set(route, data);
     });
   }
   access(route) {

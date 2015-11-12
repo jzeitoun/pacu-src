@@ -5,17 +5,27 @@ export default Ember.Component.extend({
   initSUI: function() {
     const self = this;
     this.$().dropdown({
-      onChange(value/*, text, $choice*/) { // value is index
-        self.attrs.value.update(value);
+      onChange(value/*text, $choice*/) { // value is index
         const item = self.getAttr('items').get(value);
-        self.attrs.item.update(item);
+        if (Ember.isNone(self.attrs.onChange)) {
+          self.attrs.value.update(value);
+          self.attrs.item.update(item);
+        } else {
+          self.attrs.onChange(item);
+        }
       }
     });
-    Ember.run.scheduleOnce('afterRender', () => {
-      const value = self.getAttr('value'); // is index
-      self.$().dropdown('set selected', value);
-    });
   }.on('didInsertElement'),
+  present: function(index) {
+    const $item = this.$().dropdown('get item', index);
+    if (!$item) { return; }
+    const content = $item.clone().contents();
+    this.$().dropdown('set text', content);
+  },
+  valueChanged: function() {
+    const index = this.getAttr('value');
+    this.present(index);
+  }.observes('attrs.value'),
   dnitSUI: function() {
     this.$().dropdown('destroy');
   }.on('willDestroyElement'),
