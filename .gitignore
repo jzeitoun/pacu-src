@@ -57,3 +57,6 @@ target/
 doc/_build/
 doc/_static/
 doc/_templates/
+
+# domain specific
+pacu.bat
