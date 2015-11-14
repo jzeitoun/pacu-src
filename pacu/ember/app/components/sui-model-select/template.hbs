@@ -14,3 +14,23 @@
   </div>
   {{/each}}
 </div>
+
+{{!-- EXAMPLE SIMPLE CASE
+  {{sui-model-select
+    name=model.name
+    value=model.value
+    items=model.items
+    onChange=(action "enumChange" model)
+  }}
+--}}
+
+{{!-- EXAMPLE ADVANCED CASE
+  {{sui-model-select
+    name=model.name
+    value=model.value
+    valuePath="name"
+    items=model.items
+    onChange=(action "enumChange" model)
+    prompt="choose one..."
+  }}
+--}}

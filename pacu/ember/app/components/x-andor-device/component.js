@@ -75,6 +75,9 @@ export default Ember.Component.extend({
     this.wsx.accessAsBinary('current_frame');
   },
   actions: {
+    // updateFeature: function(key, val) {
+    //   Ember.set(this, `features.${key}.value`, val);
+    // },
     toggleResource: function() {
       const command = this.get('state') ? 'release_handle' : 'acquire_handle';
       this.wsx.invoke(command).gate('busy').then((state) => {
@@ -161,11 +164,8 @@ export default Ember.Component.extend({
   dnitSUI: function() {
   }.on('willDestroyElement'),
   @computed('features.AOIBinning') sf(feat) {
-//     console.log(feat);
-//     debugger
-// feat.range
     return {
-      name : feat ? feat.feature : 'aregawr',
+      name : feat ? feat.feature : '',
       value: feat ? feat.value : 0,
       items: feat ? feat.range : []
     };

@@ -4,6 +4,7 @@ export default Ember.Component.extend({
   classNames: 'ui fluid search selection dropdown',
   initSUI: function() {
     const self = this;
+    window.ff = this;
     this.$().dropdown({
       onChange(value/*text, $choice*/) { // value is index
         const item = self.getAttr('items').get(value);
@@ -13,7 +14,7 @@ export default Ember.Component.extend({
             self.attrs.item.update(item);
           }
         } else {
-          self.attrs.onChange(item);
+          self.attrs.onChange(value);
         }
       }
     });

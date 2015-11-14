@@ -1,11 +1,6 @@
 <div class="ui {{if busy 'active'}} dimmer">
   <div class="ui text inverted loader">Please wait...</div>
 </div>
-{{sui-model-select
-  name=sf.name
-  value=sf.value
-  items=sf.items
-}}
 <button {{action "toggleResource"}}
   class="ui inverted {{if state "red" "blue"}} button" >
   Click to {{if state "relaese" "acquire"}} device #{{attrs.src}}...
@@ -58,6 +53,7 @@
       {{/each}}
     </table>
     {{/if}}
+
   </div>
   <div class="ui bottom attached tab segment" data-tab="mode">
     <div class="ui raised segment">
