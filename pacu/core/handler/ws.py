@@ -36,6 +36,8 @@ class WSHandler(websocket.WebSocketHandler):
             print 'delegator init error', e
     def on_close(self):
         print 'socket closing...'
+        if hasattr(self.inst, '__dnit__'):
+            self.inst.__dnit__()
     def access(self, route):
         attrs = route.split('.')
         value = reduce(getattr, attrs, self.inst)

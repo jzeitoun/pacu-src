@@ -62,7 +62,7 @@ class ZylaAcquisition(BaseAcquisition):
             AT_64(self.inst.aoi_width),
             AT_64(self.inst.aoi_height),
             AT_64(self.inst.aoi_stride),
-            self.inst.pixel_encoding,
+            unicode(self.inst.pixel_encoding),
             u'Mono16')
         return buf_dst
     def extract_timestamp(self, buf):

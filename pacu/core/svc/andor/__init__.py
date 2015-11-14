@@ -125,6 +125,18 @@ class AndorBindingService(object):
     # no reason to be `files` argument.
     def __init__(self, files=-1):
         self.index = int(files)
+    def __dnit__(self):
+        print 'prepare to be destroyed...'
+        if self.inst and self.inst.camera_acquiring:
+            print 'stop acquiring...'
+            self.stop_recording()
+        try:
+            print 'handle...',
+            self.release_handle()
+        except:
+            print 'already released'
+        else:
+            print 'handle released'
     def acquire_handle(self):
         print 'Acquire camera handle...'
         return True
