@@ -139,7 +139,7 @@ class AndorBindingService(object):
             print 'handle released'
     def acquire_handle(self):
         print 'Acquire camera handle...'
-        return True
+        # return True
         try:
             self.inst = SystemInstrument().acquire(ZylaInstrument, self.index)
         except Exception as e:
@@ -155,7 +155,7 @@ class AndorBindingService(object):
         return True
     def release_handle(self):
         print 'Release camera handle...'
-        return None
+        # return None
         if self.inst.camera_acquiring:
             raise Exception('Camera is in recording session. Stop first...')
         try:
@@ -167,23 +167,23 @@ class AndorBindingService(object):
             return None
     @property
     def features(self):
-        return test.features
+        # return test.features
         try:
             return [self.inst.meta[key].export()
                 for key in list(self.inst.feat)]
         except:
             return []
     def set_features(self, kwargs):
-        print 'SET FEATURES'
+        # print 'SET FEATURES'
         for key, val in kwargs.items():
             self.set_feature(key, val)
     def set_feature(self, key, val):
         try:
-            print 'SET FEATURE', key, val
-            for f in test.features:
-                if f['key'] == key:
-                    f['value'] = val
-            return
+            # print 'SET FEATURE', key, val
+            # for f in test.features:
+            #     if f['key'] == key:
+            #         f['value'] = val
+            # return
             getattr(self.inst.meta, key).coerce(val)
             # table = dict(IntMeta=int, EnumMeta=int, FloatMeta=float, BoolMeta=bool)
             # origin = getattr(self.inst, feature['key'])
