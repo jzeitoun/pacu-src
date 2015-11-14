@@ -1,11 +1,16 @@
 <input type="hidden" name="{{attrs.name}}" value="{{attrs.value}}">
 <i class="dropdown icon"></i>
-<div class="default text">{{attrs.prompt}}</div>
+<div class="default text">{{if attrs.prompt attrs.prompt 'Please select...'}}</div>
 <div class="menu">
   {{#each attrs.items as |item index|}}
   <div class="item" data-value="{{index}}">
     <i class="{{if item.sui_icon item.sui_icon 'circle thin'}} icon"></i>
-    {{get item valuePath}}
+    {{if valuePath (get item valuePath) item}}
+    {{!-- #if valuePath (get item valuePath) item}}
+      {{get item valuePath}}
+    {{else}}
+      {{item}}
+    {{/if --}}
   </div>
   {{/each}}
 </div>

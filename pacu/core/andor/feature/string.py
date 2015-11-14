@@ -6,6 +6,7 @@ class StringMeta(AbstractMeta):
     @property
     def range(self):
         return 0, self.max_string_length
+    coercer = str
 
 class StringFeature(BaseFeature):
     Meta = StringMeta

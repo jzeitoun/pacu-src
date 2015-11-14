@@ -4,6 +4,7 @@ class EnumMeta(AbstractMeta):
     @property
     def range(self):
         return self.enums
+    coercer = int
 
 class EnumFeature(BaseFeature):
     Meta = EnumMeta

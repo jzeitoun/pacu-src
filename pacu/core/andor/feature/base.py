@@ -6,6 +6,12 @@ class AbstractMeta(object):
         self.handle = inst.handle
         self.attr = attr
         self.inst = inst
+    def coerce(self, value):
+        coerced = self.coercer(value)
+        setattr(self.inst, self.attr, coerced)
+        return coerced
+    def coercer(self, value):
+        return value
     @property
     def current(self):
         return getattr(self.inst, self.attr)

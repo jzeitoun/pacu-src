@@ -20,14 +20,10 @@ export default Ember.Component.extend({
     this.$('input').popup('destroy');
   }.on('willDestroyElement'),
   submit: function(e) {
+    if (this.getAttr('nosubmit')) return false;
     const meta = this.getAttr('meta');
-    this.attrs.onUpdate(meta).then(function(data) {
-      if (data.error) {
-        Ember.set(meta, 'value', data.value);
-        this.toast.error(`Failed to update "${meta.feature}". (${data.detail})`);
-      } else {
-        this.toast.info(`"${meta.feature}" updated successfully.`);
-      }
+    this.attrs.onUpdate(meta).then((data) => {
+      this.toast.info(`"${meta.feature}" updated successfully.`);
     });
     return false;
   }

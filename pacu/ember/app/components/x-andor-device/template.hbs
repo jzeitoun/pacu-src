@@ -1,6 +1,11 @@
 <div class="ui {{if busy 'active'}} dimmer">
   <div class="ui text inverted loader">Please wait...</div>
 </div>
+{{sui-model-select
+  name=sf.name
+  value=sf.value
+  items=sf.items
+}}
 <button {{action "toggleResource"}}
   class="ui inverted {{if state "red" "blue"}} button" >
   Click to {{if state "relaese" "acquire"}} device #{{attrs.src}}...
@@ -20,6 +25,9 @@
     <a class="item"        data-tab="on-air">On Air</a>
   </div>
   <div class="ui bottom attached tab segment active" data-tab="information">
+    <div class="ui raised segment">
+      <p>Basic information about this device.</p>
+    </div>
     {{#if state}}
     <table class="ui compact table">
       {{#each infos as |i|}}
@@ -30,6 +38,17 @@
     {{/if}}
   </div>
   <div class="ui bottom attached tab segment" data-tab="features">
+    <div class="ui raised segment">
+      <p>Below parameters are essential features to setup recoding session.
+         By Andor's design, changing a parameter may cause other parameters 
+         <strong>changed</strong> as well.
+         Also, some of parameters may become 
+         <strong>read-only</strong> or <strong>fixed</strong> 
+         value on a specific acquisition mode.
+         So it is recommended to make sure all parameters correct 
+         before proceed to recording.
+      </p>
+    </div>
     {{#if state}}
     <table class="ui compact table">
       {{#each feats as |f|}}
@@ -41,10 +60,111 @@
     {{/if}}
   </div>
   <div class="ui bottom attached tab segment" data-tab="mode">
+    <div class="ui raised segment">
+      <p>In this tab, you can setup how the camera gathers each frame. 
+         A mode can be explained like a "feature combination" of trigger source, 
+         frame count and rate, exposure time and method, memory buffering and etc.
+         PACU provides optimized presets to meet the most of imaging method needs.
+         Please select one and setup details...
+      </p>
+    </div>
+    <div class="ui cards">
+      <div class="card action-coloring noselect" {{action "setSimpleStreaming"}}>
+        <div class="content">
+          <div class="header">Simple Streaming</div>
+          <div class="meta">Internal Trigger</div>
+          {{! <div class="meta">Indefinite duration</div>}}
+          <div class="description">
+            Most of the time, you would need this for setup your imaging session. 
+            When you physically setup between the viewport of camera and the subject, 
+            it gives you a "preview" of frames being gathered.
+          </div>
+        </div>
+      </div>
+      <div class="card action-coloring noselect" {{action "setStimulationDriven"}}>
+        <div class="content">
+          <div class="header">Stimulation Driven</div>
+          <div class="meta">External Trigger</div>
+          {{!<div class="meta">Fixed duration</div>}}
+          <div class="description">
+            This would be one of the main modes for having your actual imaging session.
+            Frame rate and count are determined by external trigger. Can not vary exposure time a frame by frame.
+            So the stimulation software is responsible for sending accurate timing through the I/O timing cable.
+          </div>
+        </div>
+      </div>
+      <div class="card action-coloring">
+        <div class="content">
+          <div class="header">...</div>
+          <div class="meta">...</div>
+          {{!<div class="meta">Fixed duration</div>}}
+          <div class="description">
+            In preparation...will be added in future version.
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="ui clearing divider"></div>
+    {{#if state}}
+    <table class="ui compact table">
+      {{#each modes as |f|}}
+        <tr><td>{{f}}</td><td>{{x-andor-feature-input
+                              meta=(get features f)
+                              nosubmit=true
+                              onUpdate=(action "setFeature")}}</td></tr>
+      {{/each}}
+    </table>
+    <div class="ui clearing divider"></div>
+    <button class="fluid ui blue button" {{action "updateMode"}}>Update and see if this mode was setup properly.</button>
+    {{/if}}
   </div>
   <div class="ui bottom attached tab segment" data-tab="acquisition">
+    <div class="ui raised segment">
+      <p>* pacu does not guarantees automatic resource cleanup 
+      * timestamp of each frame is made by camera clock. </p>
+    </div>
+
+    <div class="ui cards">
+      <div class="card action-coloring noselect" {{action ""}}>
+        <div class="content">
+          <div class="header">Bypass</div>
+          <div class="description">
+            This simply does nothing. Acquired frames will be discarded. So it is useful for preview.
+          </div>
+        </div>
+      </div>
+      <div class="card action-coloring noselect" {{action ""}}>
+        <div class="content">
+          <div class="header">Write to disk</div>
+          <div class="description">
+            Two files will be saved. Actual TIFF stack and Metadata file. 
+            Metadata is a CSV file which contains timestamp and some useful pre-calculated values.
+          </div>
+        </div>
+      </div>
+      <div class="card action-coloring">
+        <div class="content">
+          <div class="header">...</div>
+          <div class="meta">...</div>
+          <div class="description">
+            In preparation...will be added in future version.
+          </div>
+        </div>
+      </div>
+    </div>
+
   </div>
   <div class="ui bottom attached tab segment" data-tab="on-air">
+
+    <div class="ui raised segment">
+      <p>
+      * pacu does not guarantees automatic resource cleanup 
+      * timestamp of each frame is made by camera clock.
+      * left height, to set fine tuning 
+      * navigation out of this page or current tab will automatically stop acquisition.
+      </p>
+    </div>
+
     <button {{action "toggleRecording"}}
       class="ui inverted {{if onair "red" "blue"}} button" >
       Click to {{if onair "stop" "start"}} recording...

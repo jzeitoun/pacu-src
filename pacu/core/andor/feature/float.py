@@ -4,6 +4,7 @@ class FloatMeta(AbstractMeta):
     @property
     def range(self):
         return self.min_float, self.max_float
+    coercer = float
 
 class FloatFeature(BaseFeature):
     Meta = FloatMeta

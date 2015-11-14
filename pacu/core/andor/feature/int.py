@@ -4,6 +4,7 @@ class IntMeta(AbstractMeta):
     @property
     def range(self):
         return self.min_int, self.max_int
+    coercer = int
 
 class IntFeature(BaseFeature):
     Meta = IntMeta

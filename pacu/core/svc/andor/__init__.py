@@ -9,6 +9,7 @@ from pacu.core.andor.ctypes.callback import c_feat_cb
 from pacu.core.andor.instrument.zyla import ZylaInstrument
 from pacu.core.andor.instrument.system import SystemInstrument
 from pacu.core.andor.acquisition import helper
+from pacu.core.andor.feature import test
 
 # non-streaming
 # from u3 import U3, Counter0, Counter1
@@ -154,28 +155,37 @@ class AndorBindingService(object):
             return None
     @property
     def features(self):
+        return test.features
         try:
             return [self.inst.meta[key].export()
                 for key in list(self.inst.feat)]
         except:
             return []
-    def set_feature(self, feature):
+    def set_features(self, kwargs):
+        print 'SET FEATURES'
+        for key, val in kwargs.items():
+            self.set_feature(key, val)
+    def set_feature(self, key, val):
         try:
-            print 'SET FEATURE'
-            table = dict(IntMeta=int, EnumMeta=int, FloatMeta=float, BoolMeta=bool)
-            origin = getattr(self.inst, feature['key'])
-            key = feature['key']
-            type = feature['type']
-            marshalling = table.get(type, lambda x:x)
-            value = feature['value']
-            typed_value = marshalling(value)
-            setattr(self.inst, key, typed_value)
-            print '%s => %s' % (key, typed_value)
-            return dict(error=False)
+            print 'SET FEATURE', key, val
+            for f in test.features:
+                if f['key'] == key:
+                    f['value'] = val
+            return
+            getattr(self.inst.meta, key).coerce(val)
+            # table = dict(IntMeta=int, EnumMeta=int, FloatMeta=float, BoolMeta=bool)
+            # origin = getattr(self.inst, feature['key'])
+            # key = feature['key']
+            # type = feature['type']
+            # marshalling = table.get(type, lambda x:x)
+            # value = feature['value']
+            # typed_value = marshalling(value)
+            # setattr(self.inst, key, typed_value)
+            # print '%s => %s' % (key, typed_value)
+            # return typed_value
         except Exception as e:
-            print str(e.__class__)
-            print str(e)
-            return dict(error=True, detail=str(e), value=origin)
+            raise Exception('Failed to update value: ' + str(e))
+            # return dict(error=True, detail=str(e), value=origin)
     def get_faeture(self, feature_name):
         print 'GET FEATURE'
         print str(feature_name)

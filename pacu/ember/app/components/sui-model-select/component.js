@@ -9,7 +9,9 @@ export default Ember.Component.extend({
         const item = self.getAttr('items').get(value);
         if (Ember.isNone(self.attrs.onChange)) {
           self.attrs.value.update(value);
-          self.attrs.item.update(item);
+          if (!Ember.isNone(self.attrs.item)) {
+            self.attrs.item.update(item);
+          }
         } else {
           self.attrs.onChange(item);
         }
@@ -29,5 +31,5 @@ export default Ember.Component.extend({
   dnitSUI: function() {
     this.$().dropdown('destroy');
   }.on('willDestroyElement'),
-  valuePath: 'name'
+  valuePath: null //'name'
 });

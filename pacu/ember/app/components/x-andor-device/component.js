@@ -2,14 +2,21 @@ import Ember from 'ember';
 import computed from 'ember-computed-decorators';
 
 const BASIC_INFOS = [
-  'CameraModel', 'ControllerID', 'FirmwareVersion',
-  'InterfaceType', 'SerialNumber',
+  'CameraModel', 'ControllerID',
+  'FirmwareVersion', 'InterfaceType', // 'SerialNumber',
 ];
 const BASIC_FEATS = [
-  'AccumulateCount', 'AOIHeight', 'AOILeft',
-  'AOITop', 'AOIWidth', 'FrameCount',
-  'ExposureTime', 'FrameRate', 'AOIBinning',
+  'AOIHeight', 'AOIWidth', 'AOIBinning',
 ];
+const BASIC_MODES = [
+  'AccumulateCount',
+  // 'FrameCount',
+  'ExposureTime', 'FrameRate',
+  'CycleMode',
+  'TriggerMode',
+];
+  // 'ElectronicShutteringMode',
+  // 'AOILeft', 'AOITop',
 const ADV_FEATS = [
   'AOIStride', 'Baseline', 'ImageSizeBytes',
   'SensorHeight', 'SensorWidth', 'TimestampClock',
@@ -19,9 +26,10 @@ const ADV_FEATS = [
   'StaticBlemishCorrection', 'VerticallyCentreAOI', 'AuxiliaryOutSource',
   'BitDepth', 'EventEnable', 'EventSelector',
   'IOSelector', 'IOInvert', 'PixelEncoding',
-  'PixelReadoutRate', 'SimplePreAmpGainControl', 'CycleMode',
-  'ElectronicShutteringMode', 'SensorTemperature', 'FanSpeed',
-  'TemperatureStatus', 'TriggerMode', 'ReadoutTime',
+  'PixelReadoutRate', 'SimplePreAmpGainControl',
+  'SensorTemperature', 'FanSpeed',
+  'TemperatureStatus',
+  'ReadoutTime',
   'CameraAcquiring', 'FullAOIControl', 'Overlap',
 ];
 
@@ -31,6 +39,7 @@ export default Ember.Component.extend({
   toast: Ember.inject.service(),
   infos: BASIC_INFOS,
   feats: BASIC_FEATS,
+  modes: BASIC_MODES,
   advfs: ADV_FEATS,
   state: '',
   @computed('state') stateStr(s) {
@@ -41,6 +50,7 @@ export default Ember.Component.extend({
   handleError: function(err) {
     this.toast.warning(`${err.title}: ${err.detail}`);
     console.error(err.source.join('\n'));
+    throw err;
   },
   streamITV: 30,
   streamOn: false,
@@ -70,11 +80,7 @@ export default Ember.Component.extend({
       this.wsx.invoke(command).gate('busy').then((state) => {
         this.resetFeatures();
         this.set('state', state);
-        this.wsx.access('features').then((features) => {
-          features.forEach((item) => {
-            this.set(`features.${item.feature}`, item);
-          });
-        });
+        this.updateFeatures();
       }).catch(this.handleError.bind(this));
     },
     toggleRecording: function() {
@@ -88,10 +94,48 @@ export default Ember.Component.extend({
       this.snapStream();
     },
     setFeature: function(feature) {
-      return this.wsx.invoke('set_feature', feature);
+      return this.wsx.invoke(
+        'set_feature', feature.key, feature.value
+      ).catch(this.handleError.bind(this)).finally(() => {
+        this.updateFeatures();
+      });
+    },
+    updateMode: function() {
+      const kwargs = {}
+      this.modes.forEach((key) => {
+        kwargs[this.get(`features.${key}.key`)] = this.get(`features.${key}.value`);
+      });
+      return this.wsx.invoke(
+        'set_features', kwargs
+      ).then(() => {
+        this.toast.info('Mode changed successfully...');
+      }).catch(this.handleError.bind(this)).finally(() => {
+        this.updateFeatures();
+      });
+    },
+    setSimpleStreaming: function() {
+      this.set('features.AccumulateCount.value', 1);
+      this.set('features.FrameRate.value', 30);
+      this.set('features.CycleMode.value', 1); // continue
+      this.set('features.ExposureTime.value', 0.01);
+      this.set('features.TriggerMode.value', 0); // internal
+    },
+    setStimulationDriven: function() {
+      this.set('features.AccumulateCount.value', 1);
+      this.set('features.FrameRate.value', 30);
+      this.set('features.CycleMode.value', 1); // continue
+      this.set('features.ExposureTime.value', 0.01);
+      this.set('features.TriggerMode.value', 1); //external
     }
   },
   socket: Ember.inject.service(),
+  updateFeatures: function() {
+    this.wsx.access('features').then((features) => {
+      features.forEach((item) => {
+        this.set(`features.${item.feature}`, item);
+      });
+    });
+  },
   resetFeatures: function() {
     this.set('features', {});
   }.on('init'),
@@ -116,4 +160,14 @@ export default Ember.Component.extend({
   }.on('didInsertElement'),
   dnitSUI: function() {
   }.on('willDestroyElement'),
+  @computed('features.AOIBinning') sf(feat) {
+//     console.log(feat);
+//     debugger
+// feat.range
+    return {
+      name : feat ? feat.feature : 'aregawr',
+      value: feat ? feat.value : 0,
+      items: feat ? feat.range : []
+    };
+  }
 });

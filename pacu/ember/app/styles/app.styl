@@ -26,6 +26,13 @@ a.active > div.nav
     margin 0.5em
     letter-spacing 0.1em
 
+[data-ember-action]
+  cursor pointer
+  &.action-coloring:hover
+    background-color rgba(0, 0, 200, 0.2)
+  &.action-coloring:active
+    background-color rgba(200, 0, 0, 0.2)
+
 // .app-data-sbx.dropdown
 //   display table
 //   margin 0 auto
@@ -154,3 +161,11 @@ a.active > div.nav
 	stroke: rgba(68, 127, 255, 0.3);
 }
 
+.noselect {
+  -webkit-touch-callout: none;
+    -webkit-user-select: none;
+     -khtml-user-select: none;
+       -moz-user-select: none;
+        -ms-user-select: none;
+            user-select: none;
+}
