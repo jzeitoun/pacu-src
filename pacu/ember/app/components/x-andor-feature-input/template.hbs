@@ -20,4 +20,7 @@
     <i class="{{if attrs.nosubmit 'ellipsis horizontal' 'upload'}} icon"></i>
   </button>
 </div>
+{{#if attrs.meta.guide}}
+  <span class="ui label">{{attrs.meta.guide}}</span>
+{{/if}}
 {{/unless}}

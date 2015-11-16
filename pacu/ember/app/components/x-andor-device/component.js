@@ -1,5 +1,6 @@
 import Ember from 'ember';
 import computed from 'ember-computed-decorators';
+import handlers from 'pacu/components/x-andor-device/handlers';
 
 const BASIC_INFOS = [
   'CameraModel', 'ControllerID',
@@ -34,6 +35,8 @@ const ADV_FEATS = [
 ];
 
 export default Ember.Component.extend({
+  handlers,
+  handlerName: 'bypass',
   busy: false,
   onair: false,
   toast: Ember.inject.service(),
@@ -75,9 +78,15 @@ export default Ember.Component.extend({
     this.wsx.accessAsBinary('current_frame');
   },
   actions: {
-    // updateFeature: function(key, val) {
-    //   Ember.set(this, `features.${key}.value`, val);
-    // },
+    setHandler: function(name, feats) {
+      const args = feats.getEach('value');
+      this.wsx.invoke('set_handler', name, ...args).then(() => {
+        this.toast.info(`${name.capitalize()} handler setup properly.`);
+      }).catch(this.handleError.bind(this));
+    },
+    selectHandler: function(name) {
+      this.set('handlerName', name);
+    },
     toggleResource: function() {
       const command = this.get('state') ? 'release_handle' : 'acquire_handle';
       this.wsx.invoke(command).gate('busy').then((state) => {

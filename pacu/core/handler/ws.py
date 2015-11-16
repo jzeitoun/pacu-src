@@ -77,7 +77,11 @@ class WSHandler(websocket.WebSocketHandler):
             func = getattr(self, ftype)
             rv = func(route, **payload)
         except Exception as e:
-            source = traceback.format_exception(*sys.exc_info())
+            info = sys.exc_info()
+            source = traceback.format_exception(*info)
+            print '\n======== exception on websocket ========'
+            traceback.print_exception(*info)
+            print '======== exception on websocket ========\n'
             er = dict(
                 title = e.__class__.__name__,
                 detail = str(e),
