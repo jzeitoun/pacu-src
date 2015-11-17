@@ -180,8 +180,10 @@ export default Ember.Component.extend({
     };
   },
   aoileftchanged: function() {
-    const value = this.get('features.AOILeft.value');
-    this.wsx.invoke('set_feature', 'aoi_left', value);
+    if (Ember.isPresent(this.wsx)) {
+      const value = this.get('features.AOILeft.value');
+      this.wsx.invoke('set_feature', 'aoi_left', value);
+    }
   }.observes('features.AOILeft.value'),
   @computed('features.AOILeft') aoileftmin(feat) {
     return feat ? feat.range[0] : 0;
