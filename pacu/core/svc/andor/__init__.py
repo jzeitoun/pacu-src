@@ -1,6 +1,7 @@
 import atexit
 import tifffile
 import numpy as np
+import matplotlib.pyplot as plt
 
 from pacu.core.andor.ctypes.library import ctypes
 from pacu.core.andor.ctypes.callback import c_feat_cb
@@ -80,6 +81,8 @@ class AndorBindingService(object):
         self.inst.cycle_mode = 1 # continuous
         self.inst.electronic_shuttering_mode = 1 # global
         self.inst.metadata_enable = 1
+        self.inst.simple_preamp_gain_control = 2 # 16bit !important
+
         return True
     def release_handle(self):
         print 'Release camera handle...'
@@ -92,6 +95,7 @@ class AndorBindingService(object):
             raise e
         else:
             self.inst = None
+            self.handler = None
             return None
     @property
     def features(self):
