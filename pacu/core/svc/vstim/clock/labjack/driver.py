@@ -25,7 +25,7 @@ class LabJackDriverResource(ClockResource):
                 'Could not initialize LabJack Device: ' + str(e))
         return super(LabJackDriverResource, self).__enter__()
     def __exit__(self, type, value, tb):
-        self.trigger.__exit__()
+        self.trigger.__exit__(type, value, tb)
         return super(LabJackDriverResource, self).__exit__(type, value, tb)
         # self.proxy.__exit__(type, value, traceback)
     # this is ugly special magic method

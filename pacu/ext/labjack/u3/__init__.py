@@ -61,6 +61,6 @@ class U3Trigger(object):
         return self
     def __exit__(self, type, value, tb):
         self.instance.close()
-    def fire(pin=0):
+    def fire(self, pin=0):
         self.instance.setFIOState(pin, 1)
         self.instance.setFIOState(pin, 0)
