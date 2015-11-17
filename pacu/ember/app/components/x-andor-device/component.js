@@ -178,5 +178,15 @@ export default Ember.Component.extend({
       value: feat ? feat.value : 0,
       items: feat ? feat.range : []
     };
-  }
+  },
+  aoileftchanged: function() {
+    const value = this.get('features.AOILeft.value');
+    this.wsx.invoke('set_feature', 'aoi_left', value);
+  }.observes('features.AOILeft.value'),
+  @computed('features.AOILeft') aoileftmin(feat) {
+    return feat ? feat.range[0] : 0;
+  },
+  @computed('features.AOILeft') aoileftmax(feat) {
+    return feat ? feat.range[1] : 0;
+  },
 });

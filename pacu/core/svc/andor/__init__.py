@@ -68,7 +68,7 @@ class AndorBindingService(object):
             print 'handle released'
     def acquire_handle(self):
         print 'Acquire camera handle...'
-        # return True
+        return True
         try:
             self.inst = SystemInstrument().acquire(ZylaInstrument, self.index)
         except Exception as e:
@@ -86,7 +86,7 @@ class AndorBindingService(object):
         return True
     def release_handle(self):
         print 'Release camera handle...'
-        # return None
+        return None
         if self.inst and self.inst.camera_acquiring:
             raise Exception('Camera is in recording session. Stop first...')
         try:
@@ -99,7 +99,7 @@ class AndorBindingService(object):
             return None
     @property
     def features(self):
-        # return test.features
+        return test.features
         try:
             return [self.inst.meta[key].export()
                 for key in list(self.inst.feat)]
@@ -114,10 +114,10 @@ class AndorBindingService(object):
             self.set_feature(key, val)
     def set_feature(self, key, val):
         try:
-            # for f in test.features:
-            #     if f['key'] == key:
-            #         f['value'] = val
-            # return
+            for f in test.features:
+                if f['key'] == key:
+                    f['value'] = val
+            return
             getattr(self.inst.meta, key).coerce(val)
         except Exception as e:
             raise Exception('Failed to update value: ' + str(e))
