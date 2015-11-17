@@ -9,6 +9,8 @@ from pacu.core.svc.impl.component import Component
 from pacu.core.svc.vstim.stimulus.duration import OnDuration
 from pacu.core.svc.vstim.stimulus.tex_size import TexSize
 from pacu.core.svc.vstim.stimulus.contrast import Contrast
+from pacu.core.svc.vstim.stimulus.sfrequencies import SFrequencies
+from pacu.core.svc.vstim.stimulus.tfrequencies import TFrequencies
 from pacu.core.svc.vstim.stimulus.sweeping_noise.trial import Trial
 from pacu.core.svc.vstim.stimulus.sweeping_noise.generator import SweepingNoiseGenerator
 
@@ -20,13 +22,16 @@ class StimulusResource(Resource):
         from psychopy.visual import ImageStim # eats some time
         win = self.window.instance
         self.textstim = TextStim(win, text='')
-        # self.instance = GratingStim(win=win, units='deg', tex='sin',
-        #     size = misc.pix2deg(win.size, win.monitor)*2)
-        x, y = win.monitor.getSizePix()
+        x, y = win.size
         afr = win.getActualFrameRate() * 0.5
         logging.msg('Actual frame rate: ' + str(afr))
         self.flip_text('Generating stimulus...it may take a few minutes.')
-        mgen = SweepingNoiseGenerator()
+        mgen = SweepingNoiseGenerator(
+            # spat_freq=self.component.sfrequencies[0],
+            temp_freq=self.component.tfrequencies[0]
+        )
+        # from ipdb import set_trace
+        # set_trace()
         self.movie = mgen.stim_to_movie(
             duration=self.component.on_duration,
             framerate=afr,
@@ -39,11 +44,9 @@ class StimulusResource(Resource):
             win   = win,
             image = Image.new('L', (self.component.tex_size, self.component.tex_size)),
             units = 'pix',
-            size  = win.monitor.getSizePix(),
+            size  = win.size,
             # units = 'deg',
-            # size = misc.pix2deg(win.size, win.monitor)*2
-            # units = 'deg',
-            # size  = misc.pix2deg(self.window.size, self.window.monitor)*2,
+            # size  = misc.pix2deg(self.window.instance.size, self.window.monitor.instance)*2,
         )
         try:
             self.interval = self.window.get_isi()
@@ -90,9 +93,10 @@ class StimulusResource(Resource):
 class SweepingNoiseStimulus(Component):
     sui_icon = 'share alternate'
     package = __package__
-    on_duration = OnDuration(30)
+    on_duration = OnDuration(10)
     off_duration = 0
     tex_size = TexSize(128)
     contrast = Contrast(0.25)
-
+    # sfrequencies = SFrequencies([0.05])
+    tfrequencies = TFrequencies([4.0])
     __call__ = StimulusResource.bind('window', 'clock')

@@ -10,8 +10,11 @@ export default Ember.Route.extend({
     if (Ember.$.isEmptyObject(result)) { return; }
     const self = this;
     const model = self.modelFor('psychopy');
-    const by = model.handler.fields[1].attrs.item.name;
-    const friend = (by === 'Anonymous') ? 'buddy' : by;
+    const handlerWho = model.handler.fields[1].attrs;
+    let friend = 'Buddy';
+    if (Ember.isPresent(handlerWho.item)) {
+      friend = handlerWho.item.name;
+    }
     Ember.set(model, 'result', result);
     swal({
       title: 'Session Complete',
@@ -35,15 +38,14 @@ export default Ember.Route.extend({
       websocket: new Ember.RSVP.Promise((resolve/*, reject*/) => {
         const ws = new WebSocket(`ws://${location.host}/socket/vstim`);
         ws.onopen = function() {
-          console.log('on open');
+          // console.log('on open');
           resolve(this); // `this` is websocket.
         };
         ws.fetch = function(name, payload) {
-          console.log('fetch', name, payload, this);
+          // console.log('fetch', name, payload, this);
           this.send(JSON.stringify([name, payload]));
         };
         ws.onmessage = function(msg) {
-          console.log('on msg', msg);
           if (msg.data instanceof ArrayBuffer) {
               this.onbuffer(msg.data);
           } else {

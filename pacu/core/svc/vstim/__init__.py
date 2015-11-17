@@ -78,6 +78,7 @@ __all__ = specs([
         ('tcp', 'OnewayTCPClock'),
         ('tcp', 'TwowayTCPClock'),
         ('labjack', 'LabJackClock'),
+        ('labjack', 'LabJackDriver'),
     ]),
     spec('handler', 'handlers', [
         ('dryrun', 'DryrunHandler'),

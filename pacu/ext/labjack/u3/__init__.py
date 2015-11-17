@@ -49,3 +49,18 @@ class U3Proxy(object):
         return U3Resource(self.instance, self.horigin, self.lorigin, high, low)
     def __exit__(self, type, value, tb):
         self.instance.close()
+
+class U3Trigger(object):
+    def __init__(self):
+        self.instance = U3(debug=False, autoOpen=False)
+    def __enter__(self):
+        self.instance.open()
+        self.instance.configIO(
+            TimerCounterPinOffset=4, NumberOfTimersEnabled=0,
+            EnableCounter0=0, EnableCounter1=0, FIOAnalog=0)
+        return self
+    def __exit__(self, type, value, tb):
+        self.instance.close()
+    def fire(pin=0):
+        self.instance.setFIOState(pin, 1)
+        self.instance.setFIOState(pin, 0)

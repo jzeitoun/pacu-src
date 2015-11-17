@@ -27,22 +27,15 @@ from pacu.core.svc.andor.handler.writer import WriterHandler
 #     c1, c2 = u3.getFeedback(counter0, counter1)
 #     print c1, c2
 
-# qwe.exposure_time = 0.001 # 0.0001 makes fixed frame rate range
-# qwe.metadata_enable = 1
-#### qwe.trigger_mode = 1 # internal, just run
-#### qwe.trigger_mode = 4 # software trigger, no run when continues cycle
-#### qwe.trigger_mode = 2 # External Start, run when contnues
-#### qwe.trigger_mode = 3 # External Exposure Triggering tick-wise granular
-#### qwe.overlap = 0 # if 1, takes start end at once. if 0, take start and end sequentially
-#### overlap also unwritable when triggermode is 4, software, 6,external
-# qwe.trigger_mode = 6 # External, no wanting to control exposure time
-# qwe.cycle_mode = 0 # 0 for fixed 1 for contigious
-# qwe.frame_count = 100
-# qwe.electronic_shuttering_mode = 1 # global
-# qwe.aoi_height = 1024
-# qwe.aoi_width = 1024
-# rawbuf = qwe.acquisition.alloc_buffer()
-# f = open('deleteme.bin', 'wb')
+# exposure_time = 0.001 # 0.0001 makes fixed frame rate range
+# trigger_mode = 0 # internal, just run
+# trigger_mode = 1 # no user for zyla
+# trigger_mode = 2 # External Start, run when contnues
+# trigger_mode = 3 # External Exposure Triggering tick-wise granular
+# trigger_mode = 4 # software trigger, no run when continues cycle
+# trigger_mode = 6 # Exteral, tick tick tick fire-wise framing
+# overlap = 0 # if 1, takes start end at once. if 0, take start and end sequentially
+# overlap also unwritable when triggermode is 4, software, 6,external
 
 HANDLERS = dict(bypass=BypassHandler, writer=WriterHandler)
 class AndorBindingService(object):
@@ -68,7 +61,7 @@ class AndorBindingService(object):
             print 'handle released'
     def acquire_handle(self):
         print 'Acquire camera handle...'
-        # return True
+        return True
         try:
             self.inst = SystemInstrument().acquire(ZylaInstrument, self.index)
         except Exception as e:
@@ -82,11 +75,12 @@ class AndorBindingService(object):
         self.inst.electronic_shuttering_mode = 1 # global
         self.inst.metadata_enable = 1
         self.inst.simple_preamp_gain_control = 2 # 16bit !important
+        self.inst.vertically_centre_aoi = 0 # !important
 
         return True
     def release_handle(self):
         print 'Release camera handle...'
-        # return None
+        return None
         if self.inst and self.inst.camera_acquiring:
             raise Exception('Camera is in recording session. Stop first...')
         try:
@@ -99,7 +93,7 @@ class AndorBindingService(object):
             return None
     @property
     def features(self):
-        # return test.features
+        return test.features
         try:
             return [self.inst.meta[key].export()
                 for key in list(self.inst.feat)]
@@ -113,10 +107,10 @@ class AndorBindingService(object):
         for key, val in kwargs.items():
             self.set_feature(key, val)
     def set_feature(self, key, val):
+        # print 'SET FEATURE', key, val
         try:
             for f in test.features:
-                if f['key'] == key:
-                    f['value'] = val
+                if f['key'] == key: f['value'] = val
             return
             getattr(self.inst.meta, key).coerce(val)
         except Exception as e:
@@ -132,6 +126,8 @@ class AndorBindingService(object):
             raise Exception('Camera is still in recording session.')
         self.handler.enter()
         self.handler.register()
+        for item in self.inst.feat.items():
+            print item
         self.inst.acquisition()
         return True
     def stop_recording(self):
@@ -145,7 +141,11 @@ class AndorBindingService(object):
         self.handler.rollback()
         self.handler.exit()
         return None
+    def set_cmap(self, name):
+        self.cmap = getattr(plt.cm, name)
+    cmap = plt.cm.gray # jet, hot, hsv
     @property
     def current_frame(self):
-        if self.handler._current_frame is not None:
-            return plt.cm.gray(self.handler._current_frame.view('uint8')[1::2, ...], bytes=True).tostring()
+        frame = self.handler._current_frame
+        if frame is not None:
+            return self.cmap(frame.view('uint8')[1::2, ...], bytes=True).tostring()

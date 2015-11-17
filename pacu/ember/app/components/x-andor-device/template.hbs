@@ -16,7 +16,7 @@
     <a class="item active" data-tab="information">Information</a>
     <a class="item"        data-tab="features">Features</a>
     <a class="item"        data-tab="mode">Mode</a>
-    <a class="item"        data-tab="acquisition">Acquisition</a>
+    <a class="item"        data-tab="handler">Handler</a>
     <a class="item"        data-tab="on-air">On Air</a>
   </div>
   <div class="ui bottom attached tab segment active" data-tab="information">
@@ -114,10 +114,12 @@
     <button class="fluid ui blue button" {{action "updateMode"}}>Update and see if this mode was setup properly.</button>
     {{/if}}
   </div>
-  <div class="ui bottom attached tab segment" data-tab="acquisition">
+  <div class="ui bottom attached tab segment" data-tab="handler">
     <div class="ui raised segment">
-      <p>* pacu does not guarantees automatic resource cleanup 
-      * timestamp of each frame is determined by internal camera clock. </p>
+      <p>When each frame is acquired by the camera, you can setup how the frame should be handled.
+          If you want to setup for preview, select BypassHandler. For now, 
+          WriterHandler writes files to the user's desktop directory.
+      </p>
     </div>
 
     <div class="ui cards">
@@ -169,10 +171,15 @@
 
     <div class="ui raised segment">
       <p>
-      * pacu does not guarantees automatic resource cleanup 
-      * timestamp of each frame is made by camera clock.
-      * left height, to set fine tuning 
-      * navigation out of this page or current tab will automatically stop acquisition.
+        PACU does not automatically turn on and off its acquisition state.
+        This means that even if a synchronization with external stimulus is running,
+        only exposure and buffering will be done automatically.
+        Turning camera on and off should be done manually.
+      </p>
+      <p>At this time, AOI position only can be modified when the recording session is off.
+      Navigating out of this page or current tab will automatically stop current acquisition.
+      Timestamp of each frame is determined by the camera internal clock. So this is reliable.
+      {{!Colormap is only for viewing purpose, it does not affect actual data.}}
       </p>
     </div>
 
@@ -180,6 +187,13 @@
       class="ui inverted {{if onair "red" "blue"}} button" >
       Click to {{if onair "stop" "start"}} recording...
     </button>
+    {{sui-model-select
+      value=0
+      items=cmapNames
+      nofluid=true
+      onChange=(action "setCmap")
+    }}
+    <div class="ui clearing divider"></div>
     {{#if onair}}
       <div class="ui slider checkbox">
         {{input type="checkbox" name="stream" checked=streamOn}}
@@ -189,8 +203,18 @@
         Snap
       </button>
     {{/if}}
-    {{input type="range" step="1"
+    {{input class="andor-feature-aoileft" type="range" step="1"
+        disabled=onair
         min=aoileftmin max=aoileftmax value=features.AOILeft.value}}
+    {{#sui-popup selector=".andor-feature-aoileft" offset=8}}
+      AOILeft: {{features.AOILeft.value}}
+    {{/sui-popup}}
+    {{input class="andor-feature-aoitop" type="range" step="1"
+        disabled=onair
+        min=aoitopmin max=aoitopmax value=features.AOITop.value}}
+    {{#sui-popup selector=".andor-feature-aoitop" offset=8}}
+      AOITop: {{features.AOITop.value}}
+    {{/sui-popup}}
     <div style="margin: 0 auto;
                 width: {{features.AOIWidth.value}}px;
                 height: {{features.AOIHeight.value}}px;">

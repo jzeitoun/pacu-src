@@ -25,6 +25,10 @@ class ClockResource(Resource):
             core.wait(1)
     def synchronize(self, stimulus):
         self.wait(stimulus)
+    # this method should do nothing without obvious resaon.
+    # refer pacu/core/svc/vstim/clock/labjack/driver.py 
+    def flipped(self):
+        pass
 class ClockBase(Component):
     wait_time = WaitTime(0)
     __call__ = ClockResource.bind()

@@ -33,13 +33,13 @@ export default Ember.Route.extend({
     // console.log(model);
     model.monitor_id = 0;
     model.window_id = 0;
-    model.stimulus_id = 0;
+    model.stimulus_id = 1;
     model.projection_id = 0;
     model.clock_id = 0;
     model.handler_id = 0;
     model.monitor = model.monitors[0];
     model.window = model.windows[0];
-    model.stimulus = model.stimuli[0];
+    model.stimulus = model.stimuli[1];
     model.projection = model.projections[0];
     model.clock = model.clocks[0];
     model.handler = model.handlers[0];

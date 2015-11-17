@@ -2,10 +2,10 @@ import tifffile
 import numpy as np
 
 class SweepingNoiseGenerator():
-    def __init__(self):
+    def __init__(self, spat_freq=0.05, temp_freq=4):
         # maybe internal
-        self.spat_freq = .05
-        self.temp_freq = 4
+        self.spat_freq = spat_freq
+        self.temp_freq = temp_freq
         self.nyq_pix = .5
         self.contrast_period = 10
     def stim_to_movie(self,

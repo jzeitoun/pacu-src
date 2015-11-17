@@ -2,7 +2,9 @@ from PIL import Image
 from psychopy import event
 from psychopy.core import CountdownTimer
 from pacu.core.svc.impl.exc import UserAbortException
-# PhaseIncreasingTrial
+
+from ipdb import set_trace
+
 class Trial(object):
     def __init__(self, stimulus, condition, duration, interval):
         self.frameCount = 0
@@ -19,6 +21,7 @@ class Trial(object):
             inst.image = Image.fromarray(frame)
             inst.draw()
             self.stimulus.window.flip()
+            self.stimulus.clock.flipped()
             self.interval.complete()
         # self.getTime = CountdownTimer(self.duration).getTime
         return self

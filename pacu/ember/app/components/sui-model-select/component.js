@@ -1,7 +1,8 @@
 import Ember from 'ember';
 
 export default Ember.Component.extend({
-  classNames: 'ui fluid search selection dropdown',
+  classNames: 'ui search selection dropdown',
+  classNameBindings: ['nofluid::fluid'],
   initSUI: function() {
     const self = this;
     window.ff = this;
@@ -10,7 +11,7 @@ export default Ember.Component.extend({
         const item = self.getAttr('items').get(value);
         if (Ember.isNone(self.attrs.onChange)) {
           self.attrs.value.update(value);
-          if (!Ember.isNone(self.attrs.item)) {
+          if (Ember.isPresent(self.attrs.item)) {
             self.attrs.item.update(item);
           }
         } else {

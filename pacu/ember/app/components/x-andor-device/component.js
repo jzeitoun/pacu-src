@@ -77,7 +77,14 @@ export default Ember.Component.extend({
     this.set('streamOn', false);
     this.wsx.accessAsBinary('current_frame');
   },
+  cmapNames: ['gray', 'jet', 'hot'],
   actions: {
+    setCmap: function(index) {
+      const name = this.get('cmapNames')[index];
+      this.wsx.invoke('set_cmap', name).then(() => {
+        this.toast.info(`Colormap ${name} setup properly.`);
+      }).catch(this.handleError.bind(this));
+    },
     setHandler: function(name, feats) {
       const args = feats.getEach('value');
       this.wsx.invoke('set_handler', name, ...args).then(() => {
@@ -137,7 +144,7 @@ export default Ember.Component.extend({
       this.set('features.FrameRate.value', 30);
       this.set('features.CycleMode.value', 1); // continue
       this.set('features.ExposureTime.value', 0.01);
-      this.set('features.TriggerMode.value', 1); //external
+      this.set('features.TriggerMode.value', 2); //external start
     }
   },
   socket: Ember.inject.service(),
@@ -180,8 +187,8 @@ export default Ember.Component.extend({
     };
   },
   aoileftchanged: function() {
-    if (Ember.isPresent(this.wsx)) {
-      const value = this.get('features.AOILeft.value');
+    const value = this.get('features.AOILeft.value');
+    if (Ember.isPresent(this.wsx) && Ember.isPresent(value)) {
       this.wsx.invoke('set_feature', 'aoi_left', value);
     }
   }.observes('features.AOILeft.value'),
@@ -189,6 +196,18 @@ export default Ember.Component.extend({
     return feat ? feat.range[0] : 0;
   },
   @computed('features.AOILeft') aoileftmax(feat) {
+    return feat ? feat.range[1] : 0;
+  },
+  aoitopchanged: function() {
+    const value = this.get('features.AOITop.value');
+    if (Ember.isPresent(this.wsx) && Ember.isPresent(value)) {
+      this.wsx.invoke('set_feature', 'aoi_top', value);
+    }
+  }.observes('features.AOITop.value'),
+  @computed('features.AOITop') aoitopmin(feat) {
+    return feat ? feat.range[0] : 0;
+  },
+  @computed('features.AOITop') aoitoptmax(feat) {
     return feat ? feat.range[1] : 0;
   },
 });

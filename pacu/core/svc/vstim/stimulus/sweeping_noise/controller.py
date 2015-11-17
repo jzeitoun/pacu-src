@@ -12,7 +12,10 @@ from pacu.core.service.property import IntSpec
 from pacu.core.service.property import FloatSpec
 from pacu.core.service.vstim.stimulus import sweeping_noise_gen as sng
 from pacu.core.service.validator import is_positive
-
+# deprecated?
+# deprecated?
+# deprecated?
+# deprecated?
 class SweepingNoiseStimulus(Spec):
     """
     Sweeping noise. For now, the texture is supposed to
@@ -30,10 +33,10 @@ class SweepingNoiseStimulus(Spec):
         return ImageStim(
             win   = self.window,
             image = Image.new('L', (self.tex_size, self.tex_size)),
-            units = 'pix',
-            size  = self.monitor.getSizePix(),
-            # units = 'deg',
-            # size  = misc.pix2deg(self.window.size, self.window.monitor)*2,
+            # units = 'pix',
+            # size  = self.monitor.getSizePix(),
+            units = 'deg',
+            size  = misc.pix2deg(self.window.size, self.window.monitor)*2,
         )
     @property
     def conditions(self):

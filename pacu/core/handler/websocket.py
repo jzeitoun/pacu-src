@@ -46,7 +46,7 @@ class WebSocketHandler(websocket.WebSocketHandler):
         except AttributeError as e:
             raise e
         try:
-            print 'try bind websocket delegator'
+            # print 'try bind websocket delegator'
             args = filter(None, args.split('/'))
             socket = WebSocket(*args)
             socket.on_open(self)
