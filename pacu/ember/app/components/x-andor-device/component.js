@@ -144,7 +144,7 @@ export default Ember.Component.extend({
       this.set('features.FrameRate.value', 30);
       this.set('features.CycleMode.value', 1); // continue
       this.set('features.ExposureTime.value', 0.01);
-      this.set('features.TriggerMode.value', 2); //external start
+      this.set('features.TriggerMode.value', 6); //external start
     }
   },
   socket: Ember.inject.service(),
