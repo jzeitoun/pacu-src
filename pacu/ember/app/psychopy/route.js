@@ -38,7 +38,7 @@ export default Ember.Route.extend({
     model.clock_id = 0;
     model.handler_id = 0;
     model.monitor = model.monitors[0];
-    model.window = model.windows[0];
+    model.window = model.windows[1];
     model.stimulus = model.stimuli[1];
     model.projection = model.projections[0];
     model.clock = model.clocks[0];

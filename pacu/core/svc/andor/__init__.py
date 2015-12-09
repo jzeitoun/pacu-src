@@ -178,7 +178,8 @@ class AndorBindingService(object):
                 msg.gets['svc.andor.on_external'].remove(self)
             except Exception as e:
                 pass
-            return 'End listening to stimulus signal...'
+            else:
+                return 'End listening to stimulus signal...'
     def on_external(self, handler, protocol, *args, **kwargs):
         """
         curl host:port/msg/svc.andor.on_external/{protocol}/arg/.../arg?kw=arg&...
@@ -190,9 +191,15 @@ class AndorBindingService(object):
             error = dict(type=type(e).__name__, msg=str(e))
             handler.write(dict(data=None, error=error))
     def protocol_state_check(self):
-        EXTERNAL_NA, EXTERNAL_READY = range(2)
-        return EXTERNAL_READY if isinstance(
-            self.handler, WriterHandler) else EXTERNAL_NA
+        is_cont = self.inst.cycle_mode == 1
+        is_ext = self.inst.electronic_shuttering_mode == 6
+        if not is_cont or not is_ext:
+            self.dump_socket('notify', None, 'Mode setup is not for external mode.')
+            return EXTERNAL_NA
+        if isinstance(self.handler, WriterHandler):
+            self.dump_socket('notify', None, 'Handler setup is not for external mode.')
+            return EXTERNAL_NA
+        return EXTERNAL_READY
     def protocol_sync_metadata(self, member, filedir, filename):
         SYNC_FAIL = 0
         SYNC_SUCCESS = 1
@@ -205,7 +212,7 @@ class AndorBindingService(object):
     def protocol_open(self):
         OPEN_FAIL = 0
         OPEN_SUCCESS = 1
-        self.dump_socket('notify', 'Try to start recording...')
+        self.dump_socket('notify', 'Try to start recording...Preview will not update.')
         try:
             if self.start_recording(from_external=True):
                 return OPEN_SUCCESS
