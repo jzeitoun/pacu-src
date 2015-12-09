@@ -195,13 +195,14 @@ class AndorBindingService(object):
         is_ext = self.inst.trigger_mode == 'External'
         print self.inst.cycle_mode, '< Cycle'
         print self.inst.trigger_mode, '< Trigger'
-        if not is_cont or not is_ext:
+        if is_cont and is_ext:
+            if isinstance(self.handler, WriterHandler):
+                return EXTERNAL_READY
+            else:
+                self.dump_socket('notify', None, 'Handler setup is not for external mode.')
+        else:
             self.dump_socket('notify', None, 'Mode setup is not for external mode.')
-            return EXTERNAL_NA
-        if isinstance(self.handler, WriterHandler):
-            self.dump_socket('notify', None, 'Handler setup is not for external mode.')
-            return EXTERNAL_NA
-        return EXTERNAL_READY
+        return EXTERNAL_NA
     def protocol_sync_metadata(self, member, filedir, filename):
         SYNC_FAIL = 0
         SYNC_SUCCESS = 1
