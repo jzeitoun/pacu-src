@@ -44,11 +44,9 @@ class WriterHandler(BaseHandler):
             ts = 0
         else:
             ts = ts - self.first_ts
-        # rgba = pyplot.cm.jet(data, bytes=True)
-        # print epts,
-        # self.tif.save(frame, extratags=[(
-        #     'DateTime', 's', 0, str(epts), False
-        # )])
+        self.tif.save(frame, extratags=[(
+            306, 's', 0, str(ts/40000000.0), False
+        )])
         self.csv.write(u'{}\n'.format(ts))
     def exit(self):
         print 'exit'
