@@ -27,7 +27,7 @@ class StimulusResource(Resource):
         logging.msg('Actual frame rate: ' + str(afr))
         self.flip_text('Generating stimulus...it may take a few minutes.')
         mgen = SweepingNoiseGenerator(
-            # spat_freq=self.component.sfrequencies[0],
+            spat_freq=self.component.sfrequencies[0],
             temp_freq=self.component.tfrequencies[0]
         )
         # from ipdb import set_trace
