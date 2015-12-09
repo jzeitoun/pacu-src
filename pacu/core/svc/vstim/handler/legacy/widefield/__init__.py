@@ -61,9 +61,9 @@ def make_params(monitor, clock, stimulus, window, handler, projection):
     projection = projection['kwargs']
     # {'eyepoint_x': 0.5, 'eyepoint_y': 0.5}
     params = dict(
-        Duration = np.array([[stimulus['on_duration']]], dtype='uint16'),
-        WaitInterval = np.array([[clock['wait_time']]], dtype='uint8'),
-        snp_rotate = np.array([[0]], dtype='uint8')
+        Duration = np.array([[stimulus['on_duration']]], dtype='double'),
+        WaitInterval = np.array([[clock['wait_time']]], dtype='double'),
+        snp_rotate = np.array([[0]], dtype='double')
     )
     print 'PARAMS', params
     return params
@@ -113,3 +113,9 @@ class LegacyWidefieldHandler(HandlerBase):
     sync_host = SyncHost('128.200.21.73')
     sync_port = SyncPort('8761')
     exp_by = ExpBy('kirstie')
+
+d = dict(
+Duration = np.array([[10]], dtype='double'),
+WaitInterval = np.array([[13]], dtype='double'),
+snp_rotate = np.array([[0]], dtype='double')
+)
