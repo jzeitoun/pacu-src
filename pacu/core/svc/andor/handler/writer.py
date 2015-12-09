@@ -30,7 +30,7 @@ class WriterHandler(BaseHandler):
             return True
     def enter(self):
         print 'enter'
-        self.tff = TiffWriter(self.tifpath.str, bigtiff=True)
+        self.tif = TiffWriter(self.tifpath.str, bigtiff=True)
         self.csv = self.csvpath.open('w')
     def exposure_end(self, frame, ts):
         # rgba = pyplot.cm.jet(data, bytes=True)
