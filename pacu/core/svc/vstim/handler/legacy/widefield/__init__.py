@@ -1,6 +1,8 @@
 import ujson
 from datetime import datetime
 
+from scipy import io
+
 from pacu.ext.tornado.httputil.request import Request
 from pacu.util.path import Path
 from pacu.core.svc.vstim.handler.expv1 import ExpV1HandlerResource
