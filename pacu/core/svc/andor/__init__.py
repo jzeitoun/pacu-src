@@ -194,7 +194,7 @@ class AndorBindingService(object):
         is_cont = self.inst.cycle_mode == 'Continuous'
         is_ext = self.inst.trigger_mode == 'External'
         print self.inst.cycle_mode, '< Cycle'
-        print self.inst.electron_shuttering_mode, '< Trigger'
+        print self.inst.trigger_mode, '< Trigger'
         if not is_cont or not is_ext:
             self.dump_socket('notify', None, 'Mode setup is not for external mode.')
             return EXTERNAL_NA
