@@ -1,2 +1,2 @@
-level = 5
+level = 1
 formatter = 'color_formatter'

@@ -108,12 +108,20 @@ class WebSocketEx {
         this.onbinaryFunc(msg.data); return;
     }
     const [seq, argument, error] = JSON.parse(msg.data);
-    const {res, rej} = this.promises[seq];
-    if (delete this.promises[seq]) {
-      if (Ember.isNone(error)) {
-        res(argument);
-      } else {
-        rej(error);
+    if (seq in this.promises) {
+      const {res, rej} = this.promises[seq];
+      if (delete this.promises[seq]) {
+        if (Ember.isNone(error)) {
+          res(argument);
+        } else {
+          rej(error);
+        }
+      }
+    } else { // SSE-ish
+      try {
+        this.context[`on_sse_${seq}`](argument, error);
+      } catch (err) {
+        log('Unhandled SSE message:', `on_sse_${seq}`, err);
       }
     }
   }

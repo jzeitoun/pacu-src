@@ -16,6 +16,7 @@ class WSHandler(websocket.WebSocketHandler):
     """
     url = r'/ws/(?P<modname>[\w\.]+)/(?P<clsname>\w+)'
     inst = None
+    __socket__ = None
     def open(self, modname, clsname):
         self.set_nodelay(True)
         # print 'OPEN', modname, clsname, self.get_argument('files')
@@ -32,12 +33,14 @@ class WSHandler(websocket.WebSocketHandler):
         try:
             # print 'try bind websocket delegator'
             self.inst = cls(**kwargs)
+            self.inst.__socket__ = self
         except Exception as e:
             print 'delegator init error', e
     def on_close(self):
         print 'socket closing...'
         if hasattr(self.inst, '__dnit__'):
             self.inst.__dnit__()
+        self.inst.__socket__ = None
     def access(self, route):
         attrs = route.split('.')
         value = reduce(getattr, attrs, self.inst)
@@ -70,7 +73,7 @@ class WSHandler(websocket.WebSocketHandler):
 #                 dumped = ujson.dumps([seq, str(rv)])
 #             self.write_message(dumped)
     def on_message(self, message):
-        rv, er = None, None
+        rv, err = None, None
         try:
             seq, ftype, route, payload = ujson.loads(message)
             as_binary = payload.pop('as_binary')
@@ -82,7 +85,7 @@ class WSHandler(websocket.WebSocketHandler):
             print '\n======== exception on websocket ========'
             traceback.print_exception(*info)
             print '======== exception on websocket ========\n'
-            er = dict(
+            err = dict(
                 title = e.__class__.__name__,
                 detail = str(e),
                 source = source
@@ -90,8 +93,10 @@ class WSHandler(websocket.WebSocketHandler):
         if as_binary and rv:
             self.write_message(rv, binary=True)
         else:
-            try:
-                dumped = ujson.dumps([seq, rv, er])
-            except: # coerce
-                dumped = ujson.dumps([seq, str(rv), er])
-            self.write_message(dumped)
+            self.dump_message(seq, rv, err)
+    def dump_message(self, seq, rv, err):
+        try:
+            dumped = ujson.dumps([seq, rv, err])
+        except: # coerce
+            dumped = ujson.dumps([seq, str(rv), err])
+        self.write_message(dumped)

@@ -11,6 +11,7 @@ from pacu.core.andor.acquisition import helper
 from pacu.core.andor.feature import test
 from pacu.core.svc.andor.handler.bypass import BypassHandler
 from pacu.core.svc.andor.handler.writer import WriterHandler
+from pacu.core.handler import msg
 
 # non-streaming
 # from u3 import U3, Counter0, Counter1
@@ -38,6 +39,7 @@ from pacu.core.svc.andor.handler.writer import WriterHandler
 # overlap also unwritable when triggermode is 4, software, 6,external
 
 HANDLERS = dict(bypass=BypassHandler, writer=WriterHandler)
+
 class AndorBindingService(object):
     frame_gathered = 0
     _current_frame = None
@@ -49,6 +51,10 @@ class AndorBindingService(object):
         self.index = int(files)
     def __dnit__(self):
         print 'prepare to be destroyed...'
+        try:
+            msg.gets['svc.andor'].remove(self)
+        except:
+            pass
         if self.inst and self.inst.camera_acquiring:
             print 'stop acquiring...'
             self.stop_recording()
@@ -115,9 +121,12 @@ class AndorBindingService(object):
             getattr(self.inst.meta, key).coerce(val)
         except Exception as e:
             raise Exception('Failed to update value: ' + str(e))
-    def start_recording(self):
+    def start_recording(self, from_external=False):
         if self.handler:
-            self.handler.ready()
+            if isinstance(self.handler, WriterHandler) and not from_external:
+                raise Exception('Recording can be started only from external signal.')
+            else:
+                self.handler.ready()
         else:
             raise Exception('Handler has not been assigned.')
         if not self.inst:
@@ -149,3 +158,70 @@ class AndorBindingService(object):
         frame = self.handler._current_frame
         if frame is not None:
             return self.cmap(frame.view('uint8')[1::2, ...], bytes=True).tostring()
+    def enter_on_air(self):
+        if self.inst and self.inst.camera_acquiring:
+            return
+        if not self.handler:
+            raise Exception('Handler is not currently configured. Please setup first...')
+        if isinstance(self.handler, WriterHandler):
+            msg.gets['svc.andor.on_external'].append(self.on_external)
+            return 'Listening to external stimulus signal...stand by...'
+    def exit_on_air(self):
+        if self.inst and self.inst.camera_acquiring:
+            return 'Acquisition will keep going...'
+        if isinstance(self.handler, WriterHandler):
+            try:
+                msg.gets['svc.andor.on_external'].remove(self)
+            except: pass
+            return 'End listening to stimulus signal...'
+    def on_external(self, handler, protocol, *args, **kwargs):
+        """
+        curl host:port/msg/svc.andor.on_external/{protocol}/arg/.../arg?kw=arg&...
+        """
+        try:
+            rv = getattr(self, 'protocol_%s' % protocol)(*args, **kwargs)
+            handler.write(dict(data=rv, error=None))
+        except Exception as e:
+            error = dict(type=type(e).__name__, msg=str(e))
+            handler.write(dict(data=None, error=error))
+    def protocol_state_check(self):
+        EXTERNAL_NA, EXTERNAL_READY = range(2)
+        return EXTERNAL_READY if isinstance(
+            self.handler, WriterHandler) else EXTERNAL_NA
+    def protocol_sync_metadata(self, member, filedir, filename):
+        SYNC_FAIL = 0
+        SYNC_SUCCESS = 1
+        if self.handler.sync_name(member, filedir, filename):
+            self.dump_socket('notify',
+                'Recording location: %s' % self.handler.tifpath.str)
+            return SYNC_SUCCESS
+        else:
+            return SYNC_FAIL
+    def protocol_open(self):
+        OPEN_FAIL = 0
+        OPEN_SUCCESS = 1
+        self.dump_socket('notify', 'Try to start recording...')
+        try:
+            if self.start_recording(from_external=True):
+                return OPEN_SUCCESS
+            else:
+                return OPEN_FAIL
+        except Exception as e:
+            self.dump_socket('notify', None, str(e))
+            raise e
+    def protocol_close(self):
+        CLOSE_FAIL = 0
+        CLOSE_SUCCESS = 1
+        self.dump_socket('notify', 'Try to stop recording...')
+        try:
+            if self.stop_recording(): # return None when normal
+                return CLOSE_FAIL
+            else:
+                return CLOSE_SUCCESS
+        except Exception as e:
+            self.dump_socket('notify', None, str(e))
+            raise e
+    def dump_socket(self, seq, arg, err=None):
+        sc = self.__socket__
+        if sc:
+            sc.dump_message(seq, arg, err)

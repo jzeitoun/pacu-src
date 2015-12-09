@@ -173,8 +173,26 @@ export default Ember.Component.extend({
   }.on('didInsertElement'),
   dnitWS: function() { this.wsx.dnit(); }.on('willDestroyElement'),
   initSUI: function() {
+    const self = this;
     this.$('.tabular.menu .item').tab({
-      onLoad: function(tabPath, parameterArray, historyEvent) {}
+      onLoad: function(tabPath, parameterArray, historyEvent) {
+        if (Ember.isEqual(tabPath, 'on-air')) {
+          self.wsx.invoke('enter_on_air').then(function(msg) {
+            if (Ember.isPresent(msg)) {
+              self.toast.info(msg);
+            }
+          }).catch(self.handleError.bind(self));
+        } else {
+          if (Ember.isEqual(self.prevTabPath, 'on-air')) {
+            self.wsx.invoke('exit_on_air').then(function(msg) {
+              if (Ember.isPresent(msg)) {
+                self.toast.info(msg);
+              }
+            }).catch(self.handleError.bind(self));
+          }
+        }
+        self.prevTabPath = tabPath;
+      }
     });
   }.on('didInsertElement'),
   dnitSUI: function() {
@@ -209,5 +227,12 @@ export default Ember.Component.extend({
   },
   @computed('features.AOITop') aoitoptmax(feat) {
     return feat ? feat.range[1] : 0;
+  },
+  on_sse_notify: function(arg, error) {
+    if (error) {
+      this.toast.warning(error);
+    } else {
+      this.toast.info(arg);
+    }
   },
 });

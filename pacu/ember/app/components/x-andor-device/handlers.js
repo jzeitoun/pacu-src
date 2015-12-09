@@ -8,7 +8,7 @@ const filename = {
   readonly   : false,
   writable   : true,
   implemented: true,
-  guide      : 'Type without file extension...(alphanumeric and underscore only)',
+  guide      : 'Type without file extension. (alphanumeric and underscore only) When this field is blank and mode is stimulation drive, file name and location will be automatically set.',
 };
 export const writer = [
   filename,

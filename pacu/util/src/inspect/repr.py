@@ -1,4 +1,5 @@
 from __future__ import absolute_import
+from __future__ import print_function
 
 import inspect
 
@@ -32,6 +33,6 @@ def test():
         def __init__(self, ref):
             self.ref = ref
         __repr__ = auto_strict
-    print Test1('HT', 708)
-    print Test2('en')
-    print Test3(inspect)
+    print(Test1('HT', 708))
+    print(Test2('en'))
+    print(Test3(inspect))

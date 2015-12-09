@@ -29,12 +29,13 @@ class Request(object):
             method = 'HEAD'
         )
         return self.client.fetch(req)
-    def get(self, resource=''):
+    def get(self, resource='', timeout=10):
         req = HTTPRequest(
             'http://{s.host}:{s.port}/{resource}'.format(
                 s=self, resource=resource),
             user_agent = self.user_agent,
-            method = 'GET'
+            method = 'GET',
+            request_timeout = timeout
         )
         return self.client.fetch(req)
     def post(self, resource='', **kwargs):

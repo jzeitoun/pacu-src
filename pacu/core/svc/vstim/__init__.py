@@ -83,5 +83,6 @@ __all__ = specs([
     spec('handler', 'handlers', [
         ('dryrun', 'DryrunHandler'),
         ('expv1', 'ExpV1Handler'),
+        ('legacy.widefield', 'LegacyWidefieldHandler'),
     ]),
 ], package=__package__, service=VisualStimulusService)

@@ -35,7 +35,7 @@ class WebSocket(object):
             self.run_service(service)
     def run_service(self, service):
         pipe.append(self.write_console)
-        result = service()
+        result = service() or {}
         pipe.remove(self.write_console)
         self.write_as_fetch('svcComplete', **result)
     def write_console(self, messages, context='info'):

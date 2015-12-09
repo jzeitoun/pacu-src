@@ -30,7 +30,7 @@ class LabJackDriverResource(ClockResource):
         # self.proxy.__exit__(type, value, traceback)
     # this is ugly special magic method
     # for sweeping noise this time, entire stimulus is running at
-    # jsut one trials so there is no way to comply with __enter__
+    # just one initial trials so there is no way to comply with __enter__
     # and __exit__ in trial class. In stead of this,
     # the loop in `start` method of trial.py will call
     # this method in every flipping so that this driver catch

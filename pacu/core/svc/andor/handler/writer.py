@@ -11,27 +11,32 @@ from pacu.util.compat import str
 
 re_filename = re.compile(r'^\w+$')
 users_desktop = Path(os.path.expanduser('~'), 'Desktop')
+ip1_datapath = Path('D:', 'data')
 
 class WriterHandler(BaseHandler):
+    def sync_name(self, member, filedir, filename):
+        path = ip1_datapath.joinpath(member, filedir)
+        if not path.is_dir():
+            os.makedirs(path.str)
+        self.tifpath = path.joinpath(filename).with_suffix('.tif')
+        self.csvpath = path.joinpath(filename).with_suffix('.csv')
+        return self.ready()
     def check(self, filename):
-        if not filename:
-            return 'Filename should not be blank.'
-        if not re_filename.match(filename):
-            return 'Filename contains invalid character.'
-        self.tiffpath = users_desktop.joinpath(filename).with_suffix('.tiff')
-        self.metapath = users_desktop.joinpath(filename).with_suffix('.csv')
+        pass
     def ready(self):
-        if self.tiffpath.is_file() or self.metapath.is_file():
+        if self.tifpath.is_file() or self.csvpath.is_file():
             raise Exception('Filename already exists. Please provide new one...')
+        else:
+            return True
     def enter(self):
         print 'enter'
-        self.tiff = TiffWriter(self.tiffpath.str, bigtiff=True)
+        self.tff = TiffWriter(self.tifpath.str, bigtiff=True)
         self.csv = self.metapath.open('w')
     def exposure_end(self, frame, ts):
         # rgba = pyplot.cm.jet(data, bytes=True)
-        self.tiff.save(frame)
+        self.tif.save(frame)
         self.csv.write(u'{}\n'.format(ts))
     def exit(self):
         print 'exit'
-        self.tiff.close()
+        self.tif.close()
         self.csv.close()
