@@ -36,7 +36,7 @@ class WriterHandler(BaseHandler):
     def exposure_end(self, frame, ts):
         # rgba = pyplot.cm.jet(data, bytes=True)
         self.tif.save(frame, extratags=[(
-            'datetime', 'f', 1, time.time(), False
+            'datetime', 's', 0, str(time.time()), False
         )])
         self.csv.write(u'{}\n'.format(ts))
     def exit(self):
