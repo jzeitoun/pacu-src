@@ -37,11 +37,13 @@ def make_datapath(member, now):
 ip1_condpath = Path('D:', 'DropBox', 'Data', 'Conditions', 'Intrinsic')
 def make_condpath(now):
     filedir = now.strftime('%d-%b-%Y')
-    if not filedir.is_dir():
-        os.makedirs(filedir.str)
     filename = ('{d.year}{d.month:02}{d.day:02}T'
             '{d.hour:02}{d.minute:02}{d.second:02}').format(d=now)
-    return ip1_condpath.joinpath(filedir, filename)
+    filepath = ip1_condpath.joinpath(filedir)
+    if not filepath.is_dir():
+        os.makedirs(filepath.str)
+    return filepath.joinpath(filename)
+
 def savemat(path, params):
     io.savemat(path, params)
 
