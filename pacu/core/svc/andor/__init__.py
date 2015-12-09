@@ -120,7 +120,7 @@ class AndorBindingService(object):
             # return
             getattr(self.inst.meta, key).coerce(val)
         except Exception as e:
-            raise Exception('Failed to update value: ' + str(e))
+            raise Exception('Failed to update value: ' + str(e) + '({}: {})'.format(key, val))
     def start_recording(self, from_external=False):
         if self.handler:
             if isinstance(self.handler, WriterHandler) and not from_external:
@@ -174,7 +174,7 @@ class AndorBindingService(object):
             try:
                 msg.gets['svc.andor.on_external'].remove(self)
             except Exception as e:
-                print e
+                pass
             return 'End listening to stimulus signal...'
     def on_external(self, handler, protocol, *args, **kwargs):
         """
