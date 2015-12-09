@@ -26,7 +26,7 @@ def get(req, protocol):
     return data
 
 def make_datapath(member, now):
-    filedir = '{d.month}.{d.day}.{d.year}'.format(d=now)
+    filedir = '{d.month}.{d.day}.{y}'.format(d=now, y=str(now.year)[2:])
     filename = ('{d.year}{d.month:02}{d.day:02}T'
             '{d.hour:02}{d.minute:02}{d.second:02}').format(d=now)
     return '/'.join((member, filedir, filename))
