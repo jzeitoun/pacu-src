@@ -13,7 +13,7 @@ re_filename = re.compile(r'^\w+$')
 users_desktop = Path(os.path.expanduser('~'), 'Desktop')
 ip1_datapath = Path('D:', 'data')
 
-extratags = [('datetime', 'f', 1, 0.0, False)]
+extratags = [('datetime', 'f', 1, 18.18, False)]
 
 class WriterHandler(BaseHandler):
     def sync_name(self, member, filedir, filename):
