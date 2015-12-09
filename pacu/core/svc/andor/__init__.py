@@ -164,15 +164,17 @@ class AndorBindingService(object):
         if not self.handler:
             raise Exception('Handler is not currently configured. Please setup first...')
         if isinstance(self.handler, WriterHandler):
-            msg.gets['svc.andor.on_external'].append(self.on_external)
-            return 'Listening to external stimulus signal...stand by...'
+            if self.on_external not in msg.gets['svc.andor.on_external']:
+                msg.gets['svc.andor.on_external'].append(self.on_external)
+                return 'Listening to external stimulus signal...stand by...'
     def exit_on_air(self):
         if self.inst and self.inst.camera_acquiring:
             return 'Acquisition will keep going...'
         if isinstance(self.handler, WriterHandler):
             try:
                 msg.gets['svc.andor.on_external'].remove(self)
-            except: pass
+            except Exception e:
+                print e
             return 'End listening to stimulus signal...'
     def on_external(self, handler, protocol, *args, **kwargs):
         """
