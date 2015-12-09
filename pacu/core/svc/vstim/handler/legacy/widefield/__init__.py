@@ -57,7 +57,7 @@ class LegacyWidefieldHandlerResource(ExpV1HandlerResource):
         print self.member_name
         params = dict(Duration=10, WaitInterval=1, snp_rotate=0)
         path = make_condpath(self.now)
-        savemat(path, params)
+        savemat(path.str, params)
         return result
     def synchronize(self):
         self.sync_state()
