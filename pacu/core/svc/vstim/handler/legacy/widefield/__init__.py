@@ -42,9 +42,10 @@ class LegacyWidefieldHandlerResource(ExpV1HandlerResource):
         self.synchronize()
         return super(LegacyWidefieldHandlerResource, self).__enter__()
     def dump(self, result):
-        print 'DUMP, DO NOTHING!'
-        print 'sync close'
-        print 'save conditions'
+        print 'DUMP!'
+        self.sync_close()
+        print self.now
+        print self.member_name
         return result
     def synchronize(self):
         self.sync_state()
@@ -58,6 +59,8 @@ class LegacyWidefieldHandlerResource(ExpV1HandlerResource):
         return get(self.req, 'sync_metadata/{}'.format(path))
     def sync_open(self):
         return get(self.req, 'open')
+    def sync_close(self):
+        return get(self.req, 'close')
 
 class LegacyWidefieldHandler(HandlerBase):
     sui_icon = 'database'
