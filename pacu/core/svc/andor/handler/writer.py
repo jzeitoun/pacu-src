@@ -31,7 +31,7 @@ class WriterHandler(BaseHandler):
     def enter(self):
         print 'enter'
         self.tff = TiffWriter(self.tifpath.str, bigtiff=True)
-        self.csv = self.metapath.open('w')
+        self.csv = self.csvpath.open('w')
     def exposure_end(self, frame, ts):
         # rgba = pyplot.cm.jet(data, bytes=True)
         self.tif.save(frame)
