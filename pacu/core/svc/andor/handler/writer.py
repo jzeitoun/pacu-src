@@ -45,9 +45,9 @@ class WriterHandler(BaseHandler):
         else:
             epts = time.time() - self.first_ts
         # rgba = pyplot.cm.jet(data, bytes=True)
-        print epts,
+        # print epts,
         self.tif.save(frame, extratags=[(
-            'datetime', 'f', 1, epts, False
+            'datetime', 's', 0, str(epts), True
         )])
         self.csv.write(u'{}\n'.format(ts))
     def exit(self):
