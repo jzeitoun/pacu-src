@@ -193,6 +193,8 @@ class AndorBindingService(object):
     def protocol_state_check(self):
         is_cont = self.inst.cycle_mode == 1
         is_ext = self.inst.electronic_shuttering_mode == 6
+        print self.inst.cycle_mode, 'CYC'
+        print self.inst.electron_shuttering_mode, 'ELE'
         if not is_cont or not is_ext:
             self.dump_socket('notify', None, 'Mode setup is not for external mode.')
             return EXTERNAL_NA
