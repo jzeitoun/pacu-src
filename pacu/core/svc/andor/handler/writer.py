@@ -44,8 +44,9 @@ class WriterHandler(BaseHandler):
             ts = 0
         else:
             ts = ts - self.first_ts
+        ts = ts / 40000000.0
         self.tif.save(frame, extratags=[(
-            306, 's', 0, str(ts/40000000.0), False
+            306, 's', 0, str(st), False
         )])
         self.csv.write(u'{}\n'.format(ts))
     def exit(self):
