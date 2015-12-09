@@ -111,7 +111,10 @@ class AndorBindingService(object):
         self.handler = HANDLERS.get(clsname)(self, *args)
     def set_features(self, kwargs):
         for key, val in kwargs.items():
-            self.set_feature(key, val)
+            try:
+                self.set_feature(key, val)
+            except Exception as e:
+                print e
     def set_feature(self, key, val):
         # print 'SET FEATURE', key, val
         try:
