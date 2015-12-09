@@ -2,6 +2,7 @@ import os
 import ujson
 from datetime import datetime
 
+import numpy as np
 from scipy import io
 
 from pacu.ext.tornado.httputil.request import Request
@@ -60,9 +61,9 @@ def make_params(monitor, clock, stimulus, window, handler, projection):
     projection = projection['kwargs']
     # {'eyepoint_x': 0.5, 'eyepoint_y': 0.5}
     params = dict(
-        WaitInterval = clock['wait_time'],
-        Duration = stimulus['on_duration'],
-        snp_rotate = 0
+        Duration = np.array([[stimulus['on_duration']]], dtype='uint16'),
+        WaitInterval = np.array([[clock['wait_time']]], dtype='uint8'),
+        snp_rotate = np.array([[0]], dtype='uint8')
     )
     print 'PARAMS', params
     return params
