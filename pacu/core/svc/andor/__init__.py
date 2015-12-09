@@ -173,7 +173,7 @@ class AndorBindingService(object):
         if isinstance(self.handler, WriterHandler):
             try:
                 msg.gets['svc.andor.on_external'].remove(self)
-            except Exception e:
+            except Exception as e:
                 print e
             return 'End listening to stimulus signal...'
     def on_external(self, handler, protocol, *args, **kwargs):
