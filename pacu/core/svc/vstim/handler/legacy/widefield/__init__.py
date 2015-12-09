@@ -32,6 +32,13 @@ def make_datapath(member, now):
     return '/'.join((member, filedir, filename))
 
 ip1_condpath = Path('D:', 'DropBox', 'Data', 'Conditions', 'Intrinsic')
+def make_condpath(now):
+    filedir = now.strftime('%d-%b-%Y')
+    filename = ('{d.year}{d.month:02}{d.day:02}T'
+            '{d.hour:02}{d.minute:02}{d.second:02}').format(d=now)
+    return ip1_condpath.joinpath(filedir, filename)
+def savemat(path, params):
+    io.savemat(path, params)
 
 class LegacyWidefieldHandlerResource(ExpV1HandlerResource):
     def __enter__(self):
@@ -42,10 +49,13 @@ class LegacyWidefieldHandlerResource(ExpV1HandlerResource):
         self.synchronize()
         return super(LegacyWidefieldHandlerResource, self).__enter__()
     def dump(self, result):
-        print 'DUMP!'
         self.sync_close()
+        print result
         print self.now
         print self.member_name
+        params = dict(Duration=10, WaitInterval=1, snp_rotate=0)
+        path = make_condpath(self.now)
+        savemat(path, params)
         return result
     def synchronize(self):
         self.sync_state()
@@ -77,9 +87,7 @@ class LegacyWidefieldHandler(HandlerBase):
     exp_by = ExpBy('kirstie')
 
 
-# io.savemat('ad', dict(Duration=10, WaitInterval=1, snp_rotate=0))
 #
 # '04-Dec-2015'
 #
-# datetime.now().strftime(ff)
 # '20151204T134822'
