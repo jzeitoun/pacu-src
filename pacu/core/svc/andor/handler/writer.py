@@ -39,16 +39,16 @@ class WriterHandler(BaseHandler):
         self.csv = self.csvpath.open('w')
     def exposure_end(self, frame, ts):
         if self.first:
-            self.first_ts = time.time()
-            epts = 0
+            self.first_ts = ts
             self.first = False
+            ts = 0
         else:
-            epts = time.time() - self.first_ts
+            ts = ts - self.first_ts
         # rgba = pyplot.cm.jet(data, bytes=True)
         # print epts,
-        self.tif.save(frame, extratags=[(
-            'DateTime', 's', 0, str(epts), False
-        )])
+        # self.tif.save(frame, extratags=[(
+        #     'DateTime', 's', 0, str(epts), False
+        # )])
         self.csv.write(u'{}\n'.format(ts))
     def exit(self):
         print 'exit'
