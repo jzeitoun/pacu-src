@@ -97,6 +97,6 @@ class SweepingNoiseStimulus(Component):
     off_duration = 0
     tex_size = TexSize(128)
     contrast = Contrast(0.25)
-    # sfrequencies = SFrequencies([0.05])
+    sfrequencies = SFrequencies([0.05])
     tfrequencies = TFrequencies([4.0])
     __call__ = StimulusResource.bind('window', 'clock')
