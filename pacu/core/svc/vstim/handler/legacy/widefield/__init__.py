@@ -62,7 +62,7 @@ def make_params(monitor, clock, stimulus, window, handler, projection):
     params = dict(
         WaitInterval = clock['wait_time'],
         Duration = stimulus['on_duration'],
-        snp_rotate = 9
+        snp_rotate = 0
     )
     print 'PARAMS', params
     return params
