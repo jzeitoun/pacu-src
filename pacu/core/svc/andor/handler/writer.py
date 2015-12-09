@@ -13,6 +13,8 @@ re_filename = re.compile(r'^\w+$')
 users_desktop = Path(os.path.expanduser('~'), 'Desktop')
 ip1_datapath = Path('D:', 'data')
 
+extratags = [('datetime', 'f', 1, 0.0 False)]
+
 class WriterHandler(BaseHandler):
     def sync_name(self, member, filedir, filename):
         path = ip1_datapath.joinpath(member, filedir)
@@ -34,7 +36,7 @@ class WriterHandler(BaseHandler):
         self.csv = self.csvpath.open('w')
     def exposure_end(self, frame, ts):
         # rgba = pyplot.cm.jet(data, bytes=True)
-        self.tif.save(frame)
+        self.tif.save(frame, extratags=extratags)
         self.csv.write(u'{}\n'.format(ts))
     def exit(self):
         print 'exit'
