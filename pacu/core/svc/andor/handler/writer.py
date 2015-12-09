@@ -1,6 +1,7 @@
 import re
 import os
 
+import time
 import numpy
 from matplotlib import pyplot
 from tifffile import TiffWriter
@@ -12,8 +13,6 @@ from pacu.util.compat import str
 re_filename = re.compile(r'^\w+$')
 users_desktop = Path(os.path.expanduser('~'), 'Desktop')
 ip1_datapath = Path('D:', 'data')
-
-extratags = [('datetime', 'f', 1, 18.18, False)]
 
 class WriterHandler(BaseHandler):
     def sync_name(self, member, filedir, filename):
@@ -36,7 +35,9 @@ class WriterHandler(BaseHandler):
         self.csv = self.csvpath.open('w')
     def exposure_end(self, frame, ts):
         # rgba = pyplot.cm.jet(data, bytes=True)
-        self.tif.save(frame, extratags=extratags)
+        self.tif.save(frame, extratags=[(
+            'datetime', 'f', 1, time.time(), False
+        )])
         self.csv.write(u'{}\n'.format(ts))
     def exit(self):
         print 'exit'
