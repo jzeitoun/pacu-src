@@ -15,6 +15,8 @@ users_desktop = Path(os.path.expanduser('~'), 'Desktop')
 ip1_datapath = Path('D:', 'data')
 
 class WriterHandler(BaseHandler):
+    first = None
+    first_ts = None
     def sync_name(self, member, filedir, filename):
         path = ip1_datapath.joinpath(member, filedir)
         if not path.is_dir():
@@ -31,12 +33,20 @@ class WriterHandler(BaseHandler):
             return True
     def enter(self):
         print 'enter'
+        self.first = True
+        self.first_ts = None
         self.tif = TiffWriter(self.tifpath.str, bigtiff=True)
         self.csv = self.csvpath.open('w')
     def exposure_end(self, frame, ts):
+        if self.first:
+            self.first_ts = time.time()
+            ts = 0
+            self.first = False
+        else:
+            ts = time.time() - self.first_ts
         # rgba = pyplot.cm.jet(data, bytes=True)
         self.tif.save(frame, extratags=[(
-            'datetime', 's', 0, str(time.time()), False
+            'datetime', 's', 0, str(ts), False
         )])
         self.csv.write(u'{}\n'.format(ts))
     def exit(self):
