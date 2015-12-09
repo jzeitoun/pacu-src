@@ -3,6 +3,8 @@ import numpy as np
 
 class SweepingNoiseGenerator():
     def __init__(self, spat_freq=0.05, temp_freq=4):
+        print 'sfreq', spat_freq
+        print 'tfreq', temp_freq
         # maybe internal
         self.spat_freq = spat_freq
         self.temp_freq = temp_freq
