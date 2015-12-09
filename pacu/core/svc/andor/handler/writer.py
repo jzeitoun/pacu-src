@@ -20,7 +20,7 @@ class WriterHandler(BaseHandler):
             os.makedirs(path.str)
         self.tifpath = path.joinpath(filename).with_suffix('.tif')
         self.csvpath = path.joinpath(filename).with_suffix('.csv')
-        return self.ready()
+        return True # self.ready()
     def check(self, filename):
         pass
     def ready(self):
