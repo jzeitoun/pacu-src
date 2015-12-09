@@ -191,6 +191,7 @@ class AndorBindingService(object):
             error = dict(type=type(e).__name__, msg=str(e))
             handler.write(dict(data=None, error=error))
     def protocol_state_check(self):
+        EXTERNAL_NA, EXTERNAL_READY = range(2)
         is_cont = self.inst.cycle_mode == 1
         is_ext = self.inst.trigger_mode == 6
         print self.inst.cycle_mode, '< Cycle', is_cont
