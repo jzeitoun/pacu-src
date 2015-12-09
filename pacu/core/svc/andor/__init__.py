@@ -193,8 +193,8 @@ class AndorBindingService(object):
     def protocol_state_check(self):
         is_cont = self.inst.cycle_mode == 'Continuous'
         is_ext = self.inst.trigger_mode == 'External'
-        print self.inst.cycle_mode, '< Cycle'
-        print self.inst.trigger_mode, '< Trigger'
+        print self.inst.cycle_mode, '< Cycle', is_cont
+        print self.inst.trigger_mode, '< Trigger', is_ext
         if is_cont and is_ext:
             if isinstance(self.handler, WriterHandler):
                 return EXTERNAL_READY
