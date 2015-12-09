@@ -43,7 +43,6 @@ def make_condpath(now):
     if not filepath.is_dir():
         os.makedirs(filepath.str)
     return filepath.joinpath(filename)
-
 def savemat(path, params):
     io.savemat(path, params)
 
