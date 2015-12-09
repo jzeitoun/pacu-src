@@ -45,6 +45,27 @@ def make_condpath(now):
     return filepath.joinpath(filename)
 def savemat(path, params):
     io.savemat(path, params)
+def make_params(monitor, clock, stimulus, window, handler, projection):
+    print monitor
+    print clock
+    print stimulus
+    print handler
+    print projection
+    # projection['clsname'] == 'SphericalProjection'
+    monitor = monitor['kwargs']
+    clock = clock['kwargs']
+    stimulus = stimulus['kwargs']
+    window = window['kwargs']
+    handler = handler['kwargs']
+    projection = projection['kwargs']
+    # {'eyepoint_x': 0.5, 'eyepoint_y': 0.5}
+    params = dict(
+        WaitInterval = clock['wait_time'],
+        Duration = stimulus['on_duration'],
+        snp_rotate = 9
+    )
+    print 'PARAMS', params
+    return params
 
 class LegacyWidefieldHandlerResource(ExpV1HandlerResource):
     def __enter__(self):
@@ -56,14 +77,14 @@ class LegacyWidefieldHandlerResource(ExpV1HandlerResource):
         return super(LegacyWidefieldHandlerResource, self).__enter__()
     def dump(self, result):
         self.sync_close()
-        print result
-        print self.now
-        print self.member_name
-        params = dict(Duration=10, WaitInterval=1, snp_rotate=0)
+        payload = result['payload']
+        params = make_params(**payload)
+        # params = dict(Duration=10, WaitInterval=1, snp_rotate=0)
         path = make_condpath(self.now)
         savemat(path.str, params)
         return result
     def synchronize(self):
+        # return
         self.sync_state()
         self.sync_metadata()
         self.sync_open()
@@ -91,9 +112,3 @@ class LegacyWidefieldHandler(HandlerBase):
     sync_host = SyncHost('128.200.21.73')
     sync_port = SyncPort('8761')
     exp_by = ExpBy('kirstie')
-
-
-#
-# '04-Dec-2015'
-#
-# '20151204T134822'
