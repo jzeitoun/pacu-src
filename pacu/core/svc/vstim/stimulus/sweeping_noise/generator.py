@@ -212,9 +212,9 @@ class SweepingNoiseGenerator():
         return moviedata
     def stim_to_file(self):
         movie = self.stim_to_movie()
-        tifffile.imsave('/Volumes/Users/ht/Desktop/gaussianNoise.tif', movie)
+        # tifffile.imsave('/Volumes/Users/ht/Desktop/gaussianNoise.tif', movie)
         # tifffile.imsave('gaussianNoise.tif', movie)
         return self
 
 # qwe = SweepingNoiseGenerator().stim_to_movie()
-SweepingNoiseGenerator().stim_to_file()
+# SweepingNoiseGenerator().stim_to_file()
