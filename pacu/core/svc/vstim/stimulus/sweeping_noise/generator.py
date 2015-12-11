@@ -1,35 +1,90 @@
-import tifffile
+from __future__ import division
+
 import numpy as np
+import scipy.ndimage.interpolation as i
+from scipy.misc import imrotate
+import tifffile
 
 class SweepingNoiseGenerator():
-    def __init__(self, spat_freq=0.05, temp_freq=4):
-        print 'sfreq', spat_freq
-        print 'tfreq', temp_freq
-        # maybe internal
-        self.spat_freq = spat_freq
-        self.temp_freq = temp_freq
-        self.nyq_pix = .5
-        self.contrast_period = 10
-    def stim_to_movie(self,
-            pixel_x=1024, pixel_y=768,
-            duration=5, framerate=30,
-            degX=80, imsize=64, contrast=0.25):
+    def __init__(self,
+            max_spat_freq = 0.05,
+            max_temp_freq = 4,
+            contrast = 0.275,
+            rotation = 0,
+            duration = 10,
+            bandwidth = 5,
+            pixel_x = 1440,
+            pixel_y = 900,
+            framerate = 30,
+            imsize = 60,
+            imageMag = 18, # movieMag
+            screenWidthCm = 39.116, # for 15.4 inch MBPR 15
+            screenDistanceCm = 25
+        ):
+        self.max_spat_freq = max_spat_freq
+        self.max_temp_freq = max_temp_freq
+        self.contrast = contrast
+        self.rotation = rotation
+        self.duration = duration
+        self.bandwidth = bandwidth
+        self.pixel_x = pixel_x
+        self.pixel_y = pixel_y
+        self.framerate = framerate
+        self.imsize = imsize
+        self.imageMag = imageMag
+        self.screenWidthCm = screenWidthCm
+        self.screenDistanceCm = screenDistanceCm
+    def stim_to_movie(self):
+        imsize = self.imsize
+        movieMag = self.imageMag
+        print '======================parameters========================'
+        print 'max sfreq', self.max_spat_freq
+        print 'max tfreq', self.max_temp_freq
+        print 'contrast', self.contrast
+        print 'rotation', self.rotation
+        print 'duration', self.duration
+        print 'bandwidth', self.bandwidth
+        print 'Pixel X', self.pixel_x,
+        print 'Pixel Y', self.pixel_y,
+        print 'framerate', self.framerate,
+        print 'imsize', imsize,
+        print 'imageMag', self.imageMag,
+        print 'screen width cm ', self.screenWidthCm,
+        print 'screen dist cm', self.screenDistanceCm,
+        print '======================parameters========================'
+
         # degX could be # misc.pix2deg(self.pixel_x, monitor)
-        nframes=int(np.ceil(duration*framerate))
+        nframes=int(np.ceil(self.duration*self.framerate))
         # frameT=np.divide(range(nframes), framerate)??
 
-        imageMag=np.floor(float(pixel_y)/imsize)
-        degperpix=(degX/float(pixel_x))*imageMag
+        # imageMag=np.floor(float(pixel_y)/imsize)
+        # python way
+        # degperpix=(degX/float(pixel_x))*imageMag
+        # matalb way
+        screenWidthDeg = 2*np.arctan(
+            0.5*self.screenWidthCm/float(self.screenDistanceCm))*180/np.pi;
+        degperpix = (screenWidthDeg/self.pixel_x)*self.imageMag;
 
         # frequency intervals for FFT
-        freqInt_pix=self.nyq_pix/(.5*imsize)
-        nyq=framerate/2
-        tempFreq_int=nyq/(.5*nframes)
+        # in python way
+        # nyq_pix = .5
+        # freqInt_pix=nyq_pix/(.5*imsize)
+        # nyq=self.framerate/2
+        # tempFreq_int=nyq/(.5*nframes)
+
+        # frequency intervals for FFT
+        # in matlab way
+        nyq_pix = 0.5
+        nyq_deg=nyq_pix/degperpix
+        freqInt_deg = nyq_deg / (0.5*imsize)
+        freqInt_pix = nyq_pix / (0.5*imsize)
+        nyq = self.framerate/2.0
+        tempFreq_int = nyq/(0.5*nframes)
 
         # Cutoffs in terms of frequency intervals
-        tempCutoff = int(np.round(self.temp_freq/tempFreq_int))
-        maxFreq_pix = self.spat_freq*degperpix
-        spatCutoff = int(np.round(maxFreq_pix / freqInt_pix))
+        tempCutoff = np.round(self.max_temp_freq/tempFreq_int)
+        maxFreq_pix = self.max_spat_freq*degperpix
+        spatCutoff = np.round(maxFreq_pix / freqInt_pix)
 
         # generate frequency spectrum (invFFT)
         alpha = -1
@@ -37,24 +92,21 @@ class SweepingNoiseGenerator():
         range_mult = 1
 
         # for noise that extends past cutoff parameter (i.e. if cutoff = 1sigma)
-        spaceRange = np.array(
-            range(
+
+        spaceRange = np.arange(
                 imsize/2 - range_mult*spatCutoff-1,
                 imsize/2 + range_mult*spatCutoff,
                 1
-            )
         ) + 1
-        tempRange = np.array(
-            range(
+        tempRange = np.arange(
                 nframes/2 - range_mult*tempCutoff-1,
                 nframes/2 + range_mult*tempCutoff,
                 1
-            )
         ) + 1
         [x,y,z] = np.meshgrid(
-            range(-range_mult*spatCutoff, range_mult*spatCutoff+1, 1),
-            range(-range_mult*spatCutoff, range_mult*spatCutoff+1, 1),
-            range(-range_mult*tempCutoff, range_mult*tempCutoff+1, 1)
+            np.arange(-range_mult*spatCutoff, range_mult*spatCutoff+1, 1),
+            np.arange(-range_mult*spatCutoff, range_mult*spatCutoff+1, 1),
+            np.arange(-range_mult*tempCutoff, range_mult*tempCutoff+1, 1)
         )
 
         # can put any other function to describe frequency spectrum in here,
@@ -63,9 +115,9 @@ class SweepingNoiseGenerator():
         # use = np.single(((x.^2 + y.^2)<=(spatCutoff^2))& ((z.^2)<(tempCutoff^2)) );
         use = np.multiply(
             (
-                ((x**2 + y**2) <= (spatCutoff**2)).astype(int)
+                ((x**2 + y**2) <= (spatCutoff**2))
                     &
-                ((z**2) < (tempCutoff**2)).astype(int)
+                ((z**2) < (tempCutoff**2))
             ),
             (
                 np.sqrt(np.add(x**2 + y**2, offset))**alpha
@@ -76,15 +128,16 @@ class SweepingNoiseGenerator():
         mu = np.zeros([spaceRange.shape[0], spaceRange.shape[0], tempRange.shape[0]])
         sig = np.ones([spaceRange.shape[0], spaceRange.shape[0], tempRange.shape[0]])
 
+
         complex_num = 0+1j
         mult1 = use*np.random.normal(mu,sig)
         mult2 = np.exp(2*np.pi*complex_num*np.random.random_sample([int(spaceRange.size),int(spaceRange.size),int(tempRange.size)]))
         invFFT[spaceRange[0]:spaceRange[-1]+1,spaceRange[0]:spaceRange[-1]+1,tempRange[0]:tempRange[-1]+1]=np.multiply(mult1,mult2)
 
         # in order to get real values for image, need to make spectrum symmetric
-        fullspace = np.array(range(-range_mult*spatCutoff-1,range_mult*spatCutoff,1))
-        halfspace = np.array(range(0,range_mult*spatCutoff,1))
-        halftemp = np.array(range(0,range_mult*tempCutoff,1))
+        fullspace = np.arange(-range_mult*spatCutoff-1,range_mult*spatCutoff,1)
+        halfspace = np.arange(0,range_mult*spatCutoff,1)
+        halftemp = np.arange(0,range_mult*tempCutoff,1)
 
         fullspace_add = imsize/2 + fullspace+1
         fullspace_sub = imsize/2 - fullspace+1
@@ -120,23 +173,29 @@ class SweepingNoiseGenerator():
 
         imraw_comp = np.fft.ifftn(np.fft.ifftshift(invFFT))
         imraw = imraw_comp.real
-        immax = (imraw.std())/contrast
+        immax = (imraw.std())/self.contrast
+        # print immax
         immin = -1*immax
         imscaled = (imraw-immin-imraw.mean())/(immax-immin)
 
         # Create Gaussian filter
-        sweepingbandwidth_control=5
-        sigma = sweepingbandwidth_control/degperpix
+        # sweepingbandwidth_control=5
+        # sigma = sweepingbandwidth_control/degperpix
+
+        sigma = self.bandwidth/degperpix #/2 # we divided by 2 in order to
+                                           # make compatible with the
+                                           # calculation in PsychStimController.
+                                           # I took off 2 again. should be correct.
         gauss_mask = np.array([
             1/(sigma * np.sqrt(2*np.pi)) * np.exp(-float(x)**2/(2*sigma**2))
-            for x in range(-int(imsize/2),int(imsize/2))
+            for x in np.arange(-(imsize/2),(imsize/2))
         ])
         mask1 = np.tile(gauss_mask/gauss_mask.max(),[imsize,1])
-
+        contr_period = 10
         for f in range(1, nframes+1, 1):
             mask = np.roll(
                 np.transpose(mask1),
-                int(np.round(f*imsize/(self.contrast_period*framerate))),
+                int(np.round(f*imsize/(contr_period*self.framerate))),
                 0
             )
             imscaled[:,:,f-1] = np.transpose(
@@ -144,10 +203,18 @@ class SweepingNoiseGenerator():
             )
         moviedata = ((imscaled[0:imsize,0:imsize,:]+.5)*255)+1
         moviedata = np.uint8(np.floor(moviedata))
-        moviedata = np.transpose(moviedata,(2,1,0))
-        return moviedata
-    def stim_to_file(self, **kwargs):
-        movie = self.stim_to_movie(**kwargs)
-        tifffile.imsave('gaussianNoise.tif', movie)
+        moviedata = np.transpose(moviedata, (2,1,0))
 
-# SweepingNoiseGenerator().stim_to_file()
+        # setting viewport width is done from caller.
+
+        self.shape = moviedata.shape # z, y, x
+        print 'SHAPE', self.shape
+        return moviedata
+    def stim_to_file(self):
+        movie = self.stim_to_movie()
+        tifffile.imsave('/Volumes/Users/ht/Desktop/gaussianNoise.tif', movie)
+        # tifffile.imsave('gaussianNoise.tif', movie)
+        return self
+
+# qwe = SweepingNoiseGenerator().stim_to_movie()
+SweepingNoiseGenerator().stim_to_file()

@@ -1,10 +1,10 @@
-from pacu.util.spec.int import PositiveIntSpec
+from pacu.util.spec.float import PositiveFloatSpec
 from pacu.core.svc.impl.pacu_attr import PacuAttr
 from pacu.core.svc.impl.ember_attr import EmberAttr
 
-class TexSize(PacuAttr, PositiveIntSpec):
+class SNPMaxTFrequency(PacuAttr, PositiveFloatSpec):
     component = 'x-svc-comp-input-text'
     description = EmberAttr('')
     placeholder = EmberAttr('')
-    title = EmberAttr('Texture Size')
+    title = EmberAttr('Max TFrequency')
     tip = EmberAttr('')

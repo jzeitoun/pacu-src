@@ -21,10 +21,10 @@ class GenericMonitor(Component):
     package = __package__
     sui_icon = 'desktop'
     gamma = Gamma(1.0)
-    width = Width(40)
-    unit = Unit('deg')
-    dist = Dist(10)
+    width = Width(39.116)
+    unit = Unit('cm')
+    dist = Dist(25)
     name = Name('GenericMonitor')
     pixel_x = PixelX(1440)
-    pixel_y = PixelY(960)
+    pixel_y = PixelY(900)
     __call__ = MonitorResource.bind()

@@ -1,10 +1,10 @@
-from pacu.util.spec.int import PositiveIntSpec
+from pacu.util.spec.float import PositiveFloatSpec
 from pacu.core.svc.impl.pacu_attr import PacuAttr
 from pacu.core.svc.impl.ember_attr import EmberAttr
 
-class TexSize(PacuAttr, PositiveIntSpec):
+class SNPContrPeriod(PacuAttr, PositiveFloatSpec):
     component = 'x-svc-comp-input-text'
-    description = EmberAttr('')
+    description = EmberAttr('sigma')
     placeholder = EmberAttr('')
-    title = EmberAttr('Texture Size')
+    title = EmberAttr('Contr Period')
     tip = EmberAttr('')
