@@ -36,8 +36,7 @@ class LabJackDriverResource(ClockResource):
     # this method in every flipping so that this driver catch
     # the frame change.
     def flipped(self):
-        pass
-        # self.fire(self.pin)
+        self.fire(self.pin)
 class LabJackDriver(ClockBase):
     sui_icon = 'lightning'
     package = __package__
