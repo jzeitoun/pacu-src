@@ -23,6 +23,7 @@ def exposure_end(handle, feature, context):
     except:
         return 0
     ts = self.inst.acquisition.extract_timestamp(self.rawbuf)
+    ts = self.inst.from_timestamp(ts)
     frame, pointer = helper.get_contigious(self.inst.aoi_height, self.inst.aoi_width)
     self.inst.acquisition.convert_buffer(buf, pointer)
     self._current_frame = frame
