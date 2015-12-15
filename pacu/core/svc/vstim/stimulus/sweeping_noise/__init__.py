@@ -69,7 +69,7 @@ class StimulusResource(Resource):
             print e
 
         print 'gen movie..'
-        self.movie = mgen.stim_to_movie()
+        self.movie = mgen.generate().rotate().moviedata
 
         # Setting viewport width
         if self.component.snp_view_width:
@@ -137,8 +137,7 @@ class SweepingNoiseStimulus(Component):
     snp_max_spat_freq = SNPMaxSFrequency(0.05)
     snp_max_temp_freq = SNPMaxTFrequency(4)
     snp_contrast = SNPContrast(0.275)
-    # snp_rotation = SNPRotation('0')
-    snp_rotation = 0
+    snp_rotation = SNPRotation('0')
     snp_duration = SNPDuration(15)
     snp_bandwidth = SNPBandwidth(5)
     snp_dim = SNPDim(60)

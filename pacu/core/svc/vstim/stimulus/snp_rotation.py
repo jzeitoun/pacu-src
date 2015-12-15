@@ -10,6 +10,8 @@ from pacu.core.svc.impl.ember_attr import EmberAttr
 rotations = [
     EnumItem('0', name='0', sui_icon='clock'),
     EnumItem('90', name='90', sui_icon='clock'),
+    EnumItem('180', name='180', sui_icon='clock'),
+    EnumItem('270', name='270', sui_icon='clock'),
 ]
 
 class SNPRotation(EnumSpec, PacuAttr):
