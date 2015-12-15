@@ -74,7 +74,7 @@ class ZylaInstrument(BaseInstrument):
     def timestamp_clock_reset(self):
         return self.handle.command(u'TimestampClockReset')
     def from_timestamp(self, ts):
-        return ts / self.timestamp_clock_freqeuncy
+        return ts / float(self.timestamp_clock_freqeuncy)
     @property
     def time(self):
         return self.timestamp_clock / self.timestamp_clock_freqeuncy
