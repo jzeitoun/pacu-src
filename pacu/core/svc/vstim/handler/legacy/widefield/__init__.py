@@ -77,10 +77,13 @@ class LegacyWidefieldHandlerResource(ExpV1HandlerResource):
         self.synchronize()
         return super(LegacyWidefieldHandlerResource, self).__enter__()
     def dump(self, result):
-        self.sync_close()
+        try:
+            self.sync_close()
+        except Exception as e:
+            print 'Unable to close remote device!', type(e), e
+
         payload = result['payload']
         params = make_params(**payload)
-        # params = dict(Duration=10, WaitInterval=1, snp_rotate=0)
         path = make_condpath(self.now)
         savemat(path.str, params)
         return result

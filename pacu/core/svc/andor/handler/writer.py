@@ -38,9 +38,10 @@ class WriterHandler(BaseHandler):
         self.csv = self.csvpath.open('w')
     def exposure_end(self, frame, _ts):
         ts = time.time() - self.ready_at
-        self.tif.save(frame, extratags=[(
-            306, 's', 0, str(ts), False
-        )])
+        self.tif.save(frame)
+        # self.tif.save(frame, extratags=[(
+        #     306, 's', 0, str(ts), False
+        # )])
         self.csv.write(u'{}\n'.format(ts))
     def exit(self):
         print 'exit'
