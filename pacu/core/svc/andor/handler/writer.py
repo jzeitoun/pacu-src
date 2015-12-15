@@ -29,11 +29,15 @@ class WriterHandler(BaseHandler):
             raise Exception('Filename already exists. Please provide new one...')
         else:
             return True
+    def register(self):
+        super(WriterHandler, self).register()
+        self.ready_at = time.time()
     def enter(self):
         print 'enter'
         self.tif = TiffWriter(self.tifpath.str, bigtiff=True)
         self.csv = self.csvpath.open('w')
-    def exposure_end(self, frame, ts):
+    def exposure_end(self, frame, _ts):
+        ts = time.time() - self.ready_at
         self.tif.save(frame, extratags=[(
             306, 's', 0, str(ts), False
         )])
