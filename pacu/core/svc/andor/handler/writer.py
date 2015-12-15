@@ -15,8 +15,6 @@ users_desktop = Path(os.path.expanduser('~'), 'Desktop')
 ip1_datapath = Path('D:', 'data')
 
 class WriterHandler(BaseHandler):
-    first = None
-    first_ts = None
     def sync_name(self, member, filedir, filename):
         path = ip1_datapath.joinpath(member, filedir)
         if not path.is_dir():
@@ -37,18 +35,7 @@ class WriterHandler(BaseHandler):
         self.first_ts = None
         self.tif = TiffWriter(self.tifpath.str, bigtiff=True)
         self.csv = self.csvpath.open('w')
-    def exposure_start(self):
-        if self.first:
-            self.inst.timestamp_clock_reset()
-            self.first = False
     def exposure_end(self, frame, ts):
-        # if self.first:
-        #     self.first_ts = ts
-        #     self.first = False
-        #     ts = 0
-        # else:
-        #     ts = ts - self.first_ts
-        # ts = ts / 40000000.0
         self.tif.save(frame, extratags=[(
             306, 's', 0, str(ts), False
         )])

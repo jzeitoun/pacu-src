@@ -10,6 +10,9 @@ def exposure_start(handle, feature, context):
     self = CONTEXTS[context]
     if not self.inst.camera_acquiring:
         return 0
+    if not hasattr(self, '__did_ts_reset__'):
+        self.inst.timestamp_clock_reset()
+        self.__did_ts_reset__ = True
     self.inst.acquisition.queue_buffer(self.rawbuf)
     self.exposure_start()
     return 0
