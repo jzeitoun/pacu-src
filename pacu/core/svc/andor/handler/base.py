@@ -10,9 +10,6 @@ def exposure_start(handle, feature, context):
     self = CONTEXTS[context]
     if not self.inst.camera_acquiring:
         return 0
-    if not hasattr(self, '__did_ts_reset__'):
-        self.inst.timestamp_clock_reset()
-        self.__did_ts_reset__ = True
     self.inst.acquisition.queue_buffer(self.rawbuf)
     self.exposure_start()
     return 0
@@ -51,6 +48,7 @@ class BaseHandler(object):
     rawbuf = None
     _current_frame = None
     frame_gathered = 0
+    __ts_reset_pending__ = True
     def __init__(self, svc, *args):
         err = self.check(*args)
         if err:
@@ -68,6 +66,7 @@ class BaseHandler(object):
                 ('RegisterFeatureCallback' if onoff else 'UnregisterFeatureCallback'),
                 feature, callback, self.context)
     def register(self):
+        self.inst.timestamp_clock_reset()
         self._event_selecting(1)
         self.rawbuf = self.inst.acquisition.alloc_buffer()
     def rollback(self):

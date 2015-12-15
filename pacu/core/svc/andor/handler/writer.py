@@ -31,8 +31,6 @@ class WriterHandler(BaseHandler):
             return True
     def enter(self):
         print 'enter'
-        self.first = True
-        self.first_ts = None
         self.tif = TiffWriter(self.tifpath.str, bigtiff=True)
         self.csv = self.csvpath.open('w')
     def exposure_end(self, frame, ts):
