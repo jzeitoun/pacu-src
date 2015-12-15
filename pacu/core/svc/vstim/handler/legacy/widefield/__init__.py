@@ -18,7 +18,7 @@ def get(req, protocol):
     url = 'msg/svc.andor.on_external/'
     print url + protocol
     try:
-        json = ujson.loads(req.get(url + protocol, timeout=15).body or '{}')
+        json = ujson.loads(req.get(url + protocol, timeout=30).body or '{}')
         print json
     except Exception as e:
         print e
