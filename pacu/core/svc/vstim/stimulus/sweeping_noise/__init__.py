@@ -29,13 +29,6 @@ from pacu.core.svc.vstim.stimulus.snp_image_mag import SNPImageMag
 from pacu.core.svc.vstim.stimulus.snp_view_width import SNPViewWidth
 # from pacu.core.svc.vstim.stimulus.snp_contr_period import SNPContrPeriod
 
-def get_deg_x(monitorwidth_cm, viewing_dist):
-    return np.rad2deg(
-        np.arctan((monitorwidth_cm/2.0)/viewing_dist)
-    ) * 2
-
-from ipdb import set_trace
-
 class StimulusResource(Resource):
     should_stop = False
     def __enter__(self):
@@ -106,16 +99,11 @@ class StimulusResource(Resource):
         for trial in self.trials:
             index = self.trials.thisN
             logging.msg('Entering trial #%s...' % index)
-            self.update_trial(trial)
-            self.trials.addData('on_time', self.clock.getTime())
+            # self.update_trial(trial)
+            # self.trials.addData('on_time', self.clock.getTime())
             yield trial.start()
-            self.trials.addData('off_time', self.clock.getTime())
+            # self.trials.addData('off_time', self.clock.getTime())
             self.flip_blank()
-            # core.wait(self.component.off_duration)
-            # self.instance.opacity = 1.0
-            # if self.should_stop:
-            #     logging.msg('UserAbortException raised!')
-            #     raise UserAbortException()
     def update_trial(self, trial):
         pass
     def update_phase(self, trial):
@@ -140,6 +128,6 @@ class SweepingNoiseStimulus(Component):
     snp_rotation = SNPRotation('0')
     snp_duration = SNPDuration(15)
     snp_bandwidth = SNPBandwidth(5)
-    snp_dim = SNPDim(60)
+    snp_dim = SNPDim(64)
     snp_image_mag = SNPImageMag(18)
     snp_view_width = SNPViewWidth(30)

@@ -15,15 +15,18 @@ class Trial(object):
         self.duration = duration
     def start(self):
         inst = self.stimulus.instance
+        interval = self.interval
+        flip = self.stimulus.window.flip
+        flipped = self.stimulus.clock.flipped
         for frame in self.stimulus.movie:
             if event.getKeys('escape'):
                 raise UserAbortException()
-            self.interval.start()
+            interval.start()
             inst.image = Image.fromarray(frame)
             inst.draw()
-            self.stimulus.window.flip()
-            self.stimulus.clock.flipped()
-            self.interval.complete()
+            flip()
+            flipped()
+            interval.complete()
         # self.getTime = CountdownTimer(self.duration).getTime
         return self
     def __nonzero__(self):
@@ -39,4 +42,5 @@ class Trial(object):
         pass
         # self.interval.complete()
         # self.frameCount += 1
-# random_frame = np.random.randint(256, size=(960, 1440)).astype('uint8')
+random_frame = np.random.randint(256, size=(960, 1440)).astype('uint8')
+img = Image.fromarray(random_frame)

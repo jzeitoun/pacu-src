@@ -215,9 +215,14 @@ class SweepingNoiseGenerator():
         self.stim_to_movie()
         return self
     def rotate(self, direction=None):
+        # 0 rotation= top to bottom (bar is going down)
+        # 180 rotation= bottom to top (bar is going up)
+        # 90 rotation= right to left
+        # 270 rotation= left to right 
         arr = self.moviedata
+        computed = {0:3, 1:2, 2:1, 3:0}.get(direction or self.rotation)
         for index, frame in enumerate(arr):
-            arr[index] = np.rot90(frame, direction or self.rotation)
+            arr[index] = np.rot90(frame, computed)
         return self
     def stim_to_file(self):
         if self.moviedata is None:
@@ -229,6 +234,7 @@ class SweepingNoiseGenerator():
 def tempsave(data):
     tifffile.imsave('/Volumes/Users/ht/Desktop/gaussianNoise.tif', data)
 
-# qwe = SweepingNoiseGenerator().generate().rotate(2)
+# qwe = SweepingNoiseGenerator().generate().rotate(3)
+# tempsave(qwe.moviedata)
 # .stim_to_movie()
 # SweepingNoiseGenerator().stim_to_file()
