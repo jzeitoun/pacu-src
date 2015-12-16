@@ -74,7 +74,7 @@ class AndorBindingService(object):
             raise Exception('Failed to acquire camera: ' + str(e))
         self.inst.aoi_height = 512
         self.inst.aoi_width = 512
-        self.inst.accumulate_count = 1
+        self.inst.accumulate_count = 4
         self.inst.frame_rate = 30.0
         self.inst.exposure_time = 0.01
         self.inst.cycle_mode = 1 # continuous
