@@ -133,14 +133,14 @@ export default Ember.Component.extend({
       });
     },
     setSimpleStreaming: function() {
-      this.set('features.AccumulateCount.value', 1);
+      this.set('features.AccumulateCount.value', 4); // was 1
       this.set('features.FrameRate.value', 30);
       this.set('features.CycleMode.value', 1); // continue
       this.set('features.ExposureTime.value', 0.01);
       this.set('features.TriggerMode.value', 0); // internal
     },
     setStimulationDriven: function() {
-      this.set('features.AccumulateCount.value', 1);
+      this.set('features.AccumulateCount.value', 4); // was 1
       this.set('features.FrameRate.value', 30);
       this.set('features.CycleMode.value', 1); // continue
       this.set('features.ExposureTime.value', 0.01);
