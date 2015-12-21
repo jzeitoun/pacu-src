@@ -182,10 +182,11 @@ class SweepingNoiseGenerator():
         # sweepingbandwidth_control=5
         # sigma = sweepingbandwidth_control/degperpix
 
-        sigma = self.bandwidth/degperpix #/2 # we divided by 2 in order to
+        sigma = self.bandwidth/degperpix/2 # we divided by 2 in order to
                                            # make compatible with the
                                            # calculation in PsychStimController.
                                            # I took off 2 again. should be correct.
+                                           # added 2 for division again
         gauss_mask = np.array([
             1/(sigma * np.sqrt(2*np.pi)) * np.exp(-float(x)**2/(2*sigma**2))
             for x in np.arange(-(imsize/2),(imsize/2))
