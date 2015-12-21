@@ -49,7 +49,7 @@ class SweepingNoiseGenerator():
         print 'screen width cm ', self.screenWidthCm
         print 'screen dist cm', self.screenDistanceCm
         print 'nframes', int(np.ceil(self.duration*self.framerate))
-        print '\n======================init params========================'
+        print '======================init params========================\n'
     def stim_to_movie(self):
         print '01/12'
         imsize = self.imsize
@@ -182,11 +182,15 @@ class SweepingNoiseGenerator():
                 nframes/2+1])
 
         print '09/12'
+        print '\t1/5'
         imraw_comp = np.fft.ifftn(np.fft.ifftshift(invFFT))
+        print '\t2/5'
         imraw = imraw_comp.real
+        print '\t3/5'
         immax = (imraw.std())/self.contrast
-        # print immax
+        print '\t4/5'
         immin = -1*immax
+        print '\t5/5'
         imscaled = (imraw-immin-imraw.mean())/(immax-immin)
 
         # Create Gaussian filter
