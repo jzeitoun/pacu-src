@@ -43,8 +43,9 @@ class StimulusResource(Resource):
         afr = win.getActualFrameRate() * 0.5
         logging.msg('Actual frame rate: ' + str(afr))
         self.flip_text('Generating stimulus...it may take a few minutes.')
-        logging.msg('init movie...')
         try:
+            logging.msg('init movie...')
+            print 'init moviw...'
             mgen = SweepingNoiseGenerator(
                 max_spat_freq = self.component.snp_max_spat_freq,
                 max_temp_freq = self.component.snp_max_temp_freq,

@@ -1,9 +1,7 @@
 from __future__ import division
-
 import numpy as np
-import scipy.ndimage.interpolation as i
-from scipy.misc import imrotate
-import tifffile
+# import scipy.ndimage.interpolation as i
+# from scipy.misc import imrotate
 
 class SweepingNoiseGenerator():
     def __init__(self,
@@ -229,14 +227,15 @@ class SweepingNoiseGenerator():
             arr[index] = np.rot90(frame, computed)
         return self
     def stim_to_file(self):
+        import tifffile
         if self.moviedata is None:
             self.moviedata = self.stim_to_movie()
         tifffile.imsave('/Volumes/Users/ht/Desktop/gaussianNoise.tif', self.moviedata)
         # tifffile.imsave('gaussianNoise.tif', movie)
         return self
 
-def tempsave(data):
-    tifffile.imsave('/Volumes/Users/ht/Desktop/gaussianNoise.tif', data)
+# def tempsave(data):
+#     tifffile.imsave('/Volumes/Users/ht/Desktop/gaussianNoise.tif', data)
 
 # qwe = SweepingNoiseGenerator().generate().rotate(3)
 # tempsave(qwe.moviedata)
