@@ -34,7 +34,7 @@ class SweepingNoiseGenerator():
         self.imageMag = imageMag
         self.screenWidthCm = screenWidthCm
         self.screenDistanceCm = screenDistanceCm
-        print '======================init params========================'
+        print '\n======================init params========================'
         print 'max sfreq', self.max_spat_freq
         print 'max tfreq', self.max_temp_freq
         print 'contrast', self.contrast
@@ -48,8 +48,9 @@ class SweepingNoiseGenerator():
         print 'imageMag', self.imageMag,
         print 'screen width cm ', self.screenWidthCm,
         print 'screen dist cm', self.screenDistanceCm,
-        print '======================init params========================'
+        print '\n======================init params========================'
     def stim_to_movie(self):
+        print '01/10'
         imsize = self.imsize
         movieMag = self.imageMag
 
@@ -66,6 +67,7 @@ class SweepingNoiseGenerator():
             0.5*self.screenWidthCm/float(self.screenDistanceCm))*180/np.pi;
         degperpix = (screenWidthDeg/self.pixel_x)*self.imageMag;
 
+        print '02/10'
         # frequency intervals for FFT
         # in python way
         # nyq_pix = .5
@@ -82,6 +84,7 @@ class SweepingNoiseGenerator():
         nyq = self.framerate/2.0
         tempFreq_int = nyq/(0.5*nframes)
 
+        print '03/10'
         # Cutoffs in terms of frequency intervals
         tempCutoff = np.round(self.max_temp_freq/tempFreq_int)
         maxFreq_pix = self.max_spat_freq*degperpix
@@ -94,6 +97,7 @@ class SweepingNoiseGenerator():
 
         # for noise that extends past cutoff parameter (i.e. if cutoff = 1sigma)
 
+        print '04/10'
         spaceRange = np.arange(
                 imsize/2 - range_mult*spatCutoff-1,
                 imsize/2 + range_mult*spatCutoff,
@@ -110,6 +114,7 @@ class SweepingNoiseGenerator():
             np.arange(-range_mult*tempCutoff, range_mult*tempCutoff+1, 1)
         )
 
+        print '05/10'
         # can put any other function to describe frequency spectrum in here,
         # e.g. gaussian spectrum
         # use = np.exp(-1*((0.5*x.^2/spatCutoff^2) + (0.5*y.^2/spatCutoff^2) + (0.5*z.^2/tempCutoff^2)));
@@ -124,12 +129,14 @@ class SweepingNoiseGenerator():
                 np.sqrt(np.add(x**2 + y**2, offset))**alpha
             )
         )
+        print '06/10'
 
         invFFT = np.zeros([imsize,imsize,nframes],dtype=np.dtype('complex'))
         mu = np.zeros([spaceRange.shape[0], spaceRange.shape[0], tempRange.shape[0]])
         sig = np.ones([spaceRange.shape[0], spaceRange.shape[0], tempRange.shape[0]])
 
 
+        print '07/10'
         complex_num = 0+1j
         mult1 = use*np.random.normal(mu,sig)
         mult2 = np.exp(2*np.pi*complex_num*np.random.random_sample([int(spaceRange.size),int(spaceRange.size),int(tempRange.size)]))
@@ -147,6 +154,7 @@ class SweepingNoiseGenerator():
         halftemp_add = np.round(nframes/2) + halftemp+1
         halftemp_sub = np.round(nframes/2) - halftemp+1
 
+        print '08/10'
         invFFT[
             fullspace_add[0]:fullspace_add[-1]+1,
             fullspace_add[0]:fullspace_add[-1]+1,
@@ -172,6 +180,7 @@ class SweepingNoiseGenerator():
                 imsize/2+1,
                 nframes/2+1])
 
+        print '09/10'
         imraw_comp = np.fft.ifftn(np.fft.ifftshift(invFFT))
         imraw = imraw_comp.real
         immax = (imraw.std())/self.contrast
@@ -194,6 +203,8 @@ class SweepingNoiseGenerator():
         ])
         mask1 = np.tile(gauss_mask/gauss_mask.max(),[imsize,1])
         # contr_period = 10
+
+        print '10/10'
         for f in range(1, nframes+1, 1):
             mask = np.roll(
                 np.transpose(mask1),
