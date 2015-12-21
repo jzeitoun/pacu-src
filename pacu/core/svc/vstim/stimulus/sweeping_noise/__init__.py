@@ -5,6 +5,11 @@ from PIL import Image
 from psychopy import core
 from psychopy import misc
 
+# eats some time
+from psychopy.data import TrialHandler
+from psychopy.visual import TextStim
+from psychopy.visual import ImageStim
+
 from pacu.ext.psychopy import logging
 from pacu.util.prop.memoized import memoized_property
 from pacu.core.svc.impl.resource import Resource
@@ -32,8 +37,6 @@ from pacu.core.svc.vstim.stimulus.snp_contr_period import SNPContrPeriod
 class StimulusResource(Resource):
     should_stop = False
     def __enter__(self):
-        from psychopy.visual import TextStim
-        from psychopy.visual import ImageStim # eats some time
         win = self.window.instance
         self.textstim = TextStim(win, text='')
         x, y = win.size
@@ -62,8 +65,10 @@ class StimulusResource(Resource):
             print 'got exception', type(e)
             print e
         else:
+            print 'generating and rotating...'
             self.movie = mgen.generate().rotate().moviedata
 
+            print 'masking window...'
             # Setting viewport width
             if self.component.snp_view_width:
                 view_width = self.component.snp_view_width
@@ -75,6 +80,7 @@ class StimulusResource(Resource):
 
             self.flip_text('Generating stimulus...done!')
 
+        print 'creating image stim...'
         # imagebuffer to play each frame
         self.instance = ImageStim(
             win = win,
@@ -90,7 +96,6 @@ class StimulusResource(Resource):
         return self
     @memoized_property
     def trials(self):
-        from psychopy.data import TrialHandler # eats some time
         ts = [Trial(self, cond, self.component.snp_duration, self.interval)
             for cond in [self.movie]]
         return TrialHandler(ts, nReps=1, method='random')
