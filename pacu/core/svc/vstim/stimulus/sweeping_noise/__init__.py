@@ -40,8 +40,8 @@ class StimulusResource(Resource):
         win = self.window.instance
         self.textstim = TextStim(win, text='')
         x, y = win.size
-        afr = 16 # int(win.getActualFrameRate() * 0.5)
-        logging.msg('Actual frame rate: ' + str(afr))
+        afr = 30 # int(win.getActualFrameRate() * 0.5)
+        logging.msg('Fixed frame rate: ' + str(afr))
         self.flip_text('Generating stimulus...it may take a few minutes.')
         try:
             logging.msg('init movie...')
