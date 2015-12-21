@@ -13,6 +13,8 @@ class SweepingNoiseGenerator():
             bandwidth = 5,
             pixel_x = 1440,
             pixel_y = 900,
+            # if framerate is given a float, generator will take forever.
+            # at #9 part
             framerate = 30,
             contr_period=10,
             imsize = 60,
