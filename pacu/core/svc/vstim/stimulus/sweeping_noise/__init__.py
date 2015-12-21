@@ -66,9 +66,11 @@ class StimulusResource(Resource):
             print e
         else:
             logging.msg('generating and rotating...')
+            print 'generating and rotating...'
             self.movie = mgen.generate().rotate().moviedata
 
             logging.msg('masking window...')
+            print 'masking window...'
             # Setting viewport width
             if self.component.snp_view_width:
                 view_width = self.component.snp_view_width
@@ -92,7 +94,6 @@ class StimulusResource(Resource):
         try:
             logging.msg('getting ISI...')
             self.interval = self.window.get_isi()
-            logging.msg('ISI is ' + str(self.interval))
         except Exception as e:
             raise ServiceRuntimeException(
                 'Could not acquire window object. Please try again')
