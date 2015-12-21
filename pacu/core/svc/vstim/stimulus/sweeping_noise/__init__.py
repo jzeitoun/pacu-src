@@ -43,7 +43,7 @@ class StimulusResource(Resource):
         afr = win.getActualFrameRate() * 0.5
         logging.msg('Actual frame rate: ' + str(afr))
         self.flip_text('Generating stimulus...it may take a few minutes.')
-        print 'init movie..'
+        logging.msg('init movie...')
         try:
             mgen = SweepingNoiseGenerator(
                 max_spat_freq = self.component.snp_max_spat_freq,
@@ -65,10 +65,10 @@ class StimulusResource(Resource):
             print 'got exception', type(e)
             print e
         else:
-            print 'generating and rotating...'
+            logging.msg('generating and rotating...')
             self.movie = mgen.generate().rotate().moviedata
 
-            print 'masking window...'
+            logging.msg('masking window...')
             # Setting viewport width
             if self.component.snp_view_width:
                 view_width = self.component.snp_view_width
@@ -80,6 +80,7 @@ class StimulusResource(Resource):
 
             self.flip_text('Generating stimulus...done!')
 
+        logging.msg('creating image stim...')
         print 'creating image stim...'
         # imagebuffer to play each frame
         self.instance = ImageStim(
@@ -89,7 +90,9 @@ class StimulusResource(Resource):
         )
         logging.msg('ImageStim size: ' + str(win.size))
         try:
+            logging.msg('getting ISI...')
             self.interval = self.window.get_isi()
+            logging.msg('ISI is ' + str(self.interval))
         except Exception as e:
             raise ServiceRuntimeException(
                 'Could not acquire window object. Please try again')
