@@ -66,9 +66,12 @@ class StimulusResource(Resource):
             print 'got exception', type(e)
             print e
         else:
-            logging.msg('generating and rotating...')
-            print 'generating and rotating...'
-            self.movie = mgen.generate().rotate().moviedata
+            print 'generating...'
+            mgen.generate()
+            print 'rotating...'
+            mgen.rotate()
+            print 'done!'
+            self.movie = mgen.moviedata
 
             logging.msg('masking window...')
             print 'masking window...'

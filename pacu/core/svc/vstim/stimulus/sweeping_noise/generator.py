@@ -20,6 +20,21 @@ class SweepingNoiseGenerator():
             screenWidthCm = 39.116, # for 15.4 inch MBPR 15
             screenDistanceCm = 25
         ):
+        print '======================init params========================'
+        print 'max sfreq', self.max_spat_freq
+        print 'max tfreq', self.max_temp_freq
+        print 'contrast', self.contrast
+        print 'rotation', self.rotation
+        print 'duration', self.duration
+        print 'bandwidth', self.bandwidth
+        print 'Pixel X', self.pixel_x,
+        print 'Pixel Y', self.pixel_y,
+        print 'framerate', self.framerate,
+        print 'imsize', self.imsize,
+        print 'imageMag', self.imageMag,
+        print 'screen width cm ', self.screenWidthCm,
+        print 'screen dist cm', self.screenDistanceCm,
+        print '======================init params========================'
         self.max_spat_freq = max_spat_freq
         self.max_temp_freq = max_temp_freq
         self.contrast = contrast
@@ -37,21 +52,6 @@ class SweepingNoiseGenerator():
     def stim_to_movie(self):
         imsize = self.imsize
         movieMag = self.imageMag
-        print '======================parameters========================'
-        print 'max sfreq', self.max_spat_freq
-        print 'max tfreq', self.max_temp_freq
-        print 'contrast', self.contrast
-        print 'rotation', self.rotation
-        print 'duration', self.duration
-        print 'bandwidth', self.bandwidth
-        print 'Pixel X', self.pixel_x,
-        print 'Pixel Y', self.pixel_y,
-        print 'framerate', self.framerate,
-        print 'imsize', imsize,
-        print 'imageMag', self.imageMag,
-        print 'screen width cm ', self.screenWidthCm,
-        print 'screen dist cm', self.screenDistanceCm,
-        print '======================parameters========================'
 
         # degX could be # misc.pix2deg(self.pixel_x, monitor)
         nframes=int(np.ceil(self.duration*self.framerate))
