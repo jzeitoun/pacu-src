@@ -10,7 +10,7 @@ class Trial(object):
     def __init__(self, stimulus, condition, duration, interval):
         self.frameCount = 0
         self.stimulus = stimulus
-        self.condition = condition
+        # self.condition = condition
         self.interval = interval
         self.duration = duration
     def start(self):

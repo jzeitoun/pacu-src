@@ -124,6 +124,9 @@ class StimulusResource(Resource):
         self.instance.opacity = 0.0
         self.instance.draw()
         self.window.flip()
+    def __exit__(self, type, value, tb):
+        self.movie = None
+        return super(StimulusResource, self).__exit__(type, value, tb)
 class SweepingNoiseStimulus(Component):
     sui_icon = 'share alternate'
     package = __package__
