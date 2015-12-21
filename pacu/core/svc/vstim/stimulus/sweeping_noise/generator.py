@@ -16,6 +16,7 @@ class SweepingNoiseGenerator():
             pixel_x = 1440,
             pixel_y = 900,
             framerate = 30,
+            contr_period=10,
             imsize = 60,
             imageMag = 18, # movieMag
             screenWidthCm = 39.116, # for 15.4 inch MBPR 15
@@ -30,6 +31,7 @@ class SweepingNoiseGenerator():
         self.pixel_x = pixel_x
         self.pixel_y = pixel_y
         self.framerate = framerate
+        self.contr_period = contr_period
         self.imsize = imsize
         self.imageMag = imageMag
         self.screenWidthCm = screenWidthCm
@@ -192,11 +194,11 @@ class SweepingNoiseGenerator():
             for x in np.arange(-(imsize/2),(imsize/2))
         ])
         mask1 = np.tile(gauss_mask/gauss_mask.max(),[imsize,1])
-        contr_period = 10
+        # contr_period = 10
         for f in range(1, nframes+1, 1):
             mask = np.roll(
                 np.transpose(mask1),
-                int(np.round(f*imsize/(contr_period*self.framerate))),
+                int(np.round(f*imsize/(self.contr_period*self.framerate))),
                 0
             )
             imscaled[:,:,f-1] = np.transpose(

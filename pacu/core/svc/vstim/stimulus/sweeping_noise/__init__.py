@@ -27,7 +27,7 @@ from pacu.core.svc.vstim.stimulus.snp_bandwidth import SNPBandwidth
 from pacu.core.svc.vstim.stimulus.snp_dim import SNPDim
 from pacu.core.svc.vstim.stimulus.snp_image_mag import SNPImageMag
 from pacu.core.svc.vstim.stimulus.snp_view_width import SNPViewWidth
-# from pacu.core.svc.vstim.stimulus.snp_contr_period import SNPContrPeriod
+from pacu.core.svc.vstim.stimulus.snp_contr_period import SNPContrPeriod
 
 class StimulusResource(Resource):
     should_stop = False
@@ -52,6 +52,7 @@ class StimulusResource(Resource):
                 pixel_x=x,
                 pixel_y=y,
                 framerate=afr,
+                contr_period=self.component.snp_contr_period,
                 imsize=self.component.snp_dim,
                 imageMag=self.component.snp_image_mag,
                 screenWidthCm = self.window.monitor.component.width,
@@ -131,3 +132,4 @@ class SweepingNoiseStimulus(Component):
     snp_dim = SNPDim(64)
     snp_image_mag = SNPImageMag(18)
     snp_view_width = SNPViewWidth(30)
+    snp_contr_period = SNPContrPeriod(10)
