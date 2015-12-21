@@ -41,16 +41,17 @@ class SweepingNoiseGenerator():
         print 'rotation', self.rotation
         print 'duration', self.duration
         print 'bandwidth', self.bandwidth
-        print 'Pixel X', self.pixel_x,
-        print 'Pixel Y', self.pixel_y,
-        print 'framerate', self.framerate,
-        print 'imsize', self.imsize,
-        print 'imageMag', self.imageMag,
-        print 'screen width cm ', self.screenWidthCm,
-        print 'screen dist cm', self.screenDistanceCm,
+        print 'Pixel X', self.pixel_x
+        print 'Pixel Y', self.pixel_y
+        print 'framerate', self.framerate
+        print 'imsize', self.imsize
+        print 'imageMag', self.imageMag
+        print 'screen width cm ', self.screenWidthCm
+        print 'screen dist cm', self.screenDistanceCm
+        print 'nframes', int(np.ceil(self.duration*self.framerate))
         print '\n======================init params========================'
     def stim_to_movie(self):
-        print '01/10'
+        print '01/12'
         imsize = self.imsize
         movieMag = self.imageMag
 
@@ -67,7 +68,7 @@ class SweepingNoiseGenerator():
             0.5*self.screenWidthCm/float(self.screenDistanceCm))*180/np.pi;
         degperpix = (screenWidthDeg/self.pixel_x)*self.imageMag;
 
-        print '02/10'
+        print '02/12'
         # frequency intervals for FFT
         # in python way
         # nyq_pix = .5
@@ -84,7 +85,7 @@ class SweepingNoiseGenerator():
         nyq = self.framerate/2.0
         tempFreq_int = nyq/(0.5*nframes)
 
-        print '03/10'
+        print '03/12'
         # Cutoffs in terms of frequency intervals
         tempCutoff = np.round(self.max_temp_freq/tempFreq_int)
         maxFreq_pix = self.max_spat_freq*degperpix
@@ -97,7 +98,7 @@ class SweepingNoiseGenerator():
 
         # for noise that extends past cutoff parameter (i.e. if cutoff = 1sigma)
 
-        print '04/10'
+        print '04/12'
         spaceRange = np.arange(
                 imsize/2 - range_mult*spatCutoff-1,
                 imsize/2 + range_mult*spatCutoff,
@@ -114,7 +115,7 @@ class SweepingNoiseGenerator():
             np.arange(-range_mult*tempCutoff, range_mult*tempCutoff+1, 1)
         )
 
-        print '05/10'
+        print '05/12'
         # can put any other function to describe frequency spectrum in here,
         # e.g. gaussian spectrum
         # use = np.exp(-1*((0.5*x.^2/spatCutoff^2) + (0.5*y.^2/spatCutoff^2) + (0.5*z.^2/tempCutoff^2)));
@@ -129,14 +130,14 @@ class SweepingNoiseGenerator():
                 np.sqrt(np.add(x**2 + y**2, offset))**alpha
             )
         )
-        print '06/10'
+        print '06/12'
 
         invFFT = np.zeros([imsize,imsize,nframes],dtype=np.dtype('complex'))
         mu = np.zeros([spaceRange.shape[0], spaceRange.shape[0], tempRange.shape[0]])
         sig = np.ones([spaceRange.shape[0], spaceRange.shape[0], tempRange.shape[0]])
 
 
-        print '07/10'
+        print '07/12'
         complex_num = 0+1j
         mult1 = use*np.random.normal(mu,sig)
         mult2 = np.exp(2*np.pi*complex_num*np.random.random_sample([int(spaceRange.size),int(spaceRange.size),int(tempRange.size)]))
@@ -154,7 +155,7 @@ class SweepingNoiseGenerator():
         halftemp_add = np.round(nframes/2) + halftemp+1
         halftemp_sub = np.round(nframes/2) - halftemp+1
 
-        print '08/10'
+        print '08/12'
         invFFT[
             fullspace_add[0]:fullspace_add[-1]+1,
             fullspace_add[0]:fullspace_add[-1]+1,
@@ -180,7 +181,7 @@ class SweepingNoiseGenerator():
                 imsize/2+1,
                 nframes/2+1])
 
-        print '09/10'
+        print '09/12'
         imraw_comp = np.fft.ifftn(np.fft.ifftshift(invFFT))
         imraw = imraw_comp.real
         immax = (imraw.std())/self.contrast
@@ -192,6 +193,7 @@ class SweepingNoiseGenerator():
         # sweepingbandwidth_control=5
         # sigma = sweepingbandwidth_control/degperpix
 
+        print '10/12'
         sigma = self.bandwidth/degperpix/2 # we divided by 2 in order to
                                            # make compatible with the
                                            # calculation in PsychStimController.
@@ -204,7 +206,7 @@ class SweepingNoiseGenerator():
         mask1 = np.tile(gauss_mask/gauss_mask.max(),[imsize,1])
         # contr_period = 10
 
-        print '10/10'
+        print '11/12'
         for f in range(1, nframes+1, 1):
             mask = np.roll(
                 np.transpose(mask1),
@@ -214,6 +216,8 @@ class SweepingNoiseGenerator():
             imscaled[:,:,f-1] = np.transpose(
                 np.multiply((imscaled[:,:,f-1]-.5), np.transpose(mask))
             )
+
+        print '12/12'
         moviedata = ((imscaled[0:imsize,0:imsize,:]+.5)*255)+1
         moviedata = np.uint8(np.floor(moviedata))
         moviedata = np.transpose(moviedata, (2,1,0))
