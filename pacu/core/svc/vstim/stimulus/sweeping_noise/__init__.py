@@ -45,7 +45,7 @@ class StimulusResource(Resource):
         self.flip_text('Generating stimulus...it may take a few minutes.')
         try:
             logging.msg('init movie...')
-            print 'init moviw...'
+            print 'init movie...'
             mgen = SweepingNoiseGenerator(
                 max_spat_freq = self.component.snp_max_spat_freq,
                 max_temp_freq = self.component.snp_max_temp_freq,

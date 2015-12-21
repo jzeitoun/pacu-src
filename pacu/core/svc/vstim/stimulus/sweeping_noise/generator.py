@@ -20,6 +20,20 @@ class SweepingNoiseGenerator():
             screenWidthCm = 39.116, # for 15.4 inch MBPR 15
             screenDistanceCm = 25
         ):
+        self.max_spat_freq = max_spat_freq
+        self.max_temp_freq = max_temp_freq
+        self.contrast = contrast
+        self.rotation = rotation
+        self.duration = duration
+        self.bandwidth = bandwidth
+        self.pixel_x = pixel_x
+        self.pixel_y = pixel_y
+        self.framerate = framerate
+        self.contr_period = contr_period
+        self.imsize = imsize
+        self.imageMag = imageMag
+        self.screenWidthCm = screenWidthCm
+        self.screenDistanceCm = screenDistanceCm
         print '======================init params========================'
         print 'max sfreq', self.max_spat_freq
         print 'max tfreq', self.max_temp_freq
@@ -35,20 +49,6 @@ class SweepingNoiseGenerator():
         print 'screen width cm ', self.screenWidthCm,
         print 'screen dist cm', self.screenDistanceCm,
         print '======================init params========================'
-        self.max_spat_freq = max_spat_freq
-        self.max_temp_freq = max_temp_freq
-        self.contrast = contrast
-        self.rotation = rotation
-        self.duration = duration
-        self.bandwidth = bandwidth
-        self.pixel_x = pixel_x
-        self.pixel_y = pixel_y
-        self.framerate = framerate
-        self.contr_period = contr_period
-        self.imsize = imsize
-        self.imageMag = imageMag
-        self.screenWidthCm = screenWidthCm
-        self.screenDistanceCm = screenDistanceCm
     def stim_to_movie(self):
         imsize = self.imsize
         movieMag = self.imageMag
