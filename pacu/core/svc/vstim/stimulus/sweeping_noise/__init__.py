@@ -61,9 +61,10 @@ class StimulusResource(Resource):
         except Exception as e:
             print 'got exception', type(e)
             print e
+        else:
+            self.movie = mgen.generate().rotate().moviedata
+            self.flip_text('Generating stimulus...done!')
 
-        print 'gen movie..'
-        self.movie = mgen.generate().rotate().moviedata
 
         # Setting viewport width
         if self.component.snp_view_width:

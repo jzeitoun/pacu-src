@@ -63,6 +63,7 @@ class SweepingNoiseGenerator():
         # python way
         # degperpix=(degX/float(pixel_x))*imageMag
         # matalb way
+
         screenWidthDeg = 2*np.arctan(
             0.5*self.screenWidthCm/float(self.screenDistanceCm))*180/np.pi;
         degperpix = (screenWidthDeg/self.pixel_x)*self.imageMag;

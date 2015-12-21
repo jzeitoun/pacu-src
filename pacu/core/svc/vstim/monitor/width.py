@@ -4,7 +4,7 @@ from pacu.core.svc.impl.ember_attr import EmberAttr
 
 class Width(PacuAttr, PositiveFloatSpec):
     component = 'x-svc-comp-input-text'
-    description = EmberAttr('description for width')
+    description = EmberAttr('viewable screen (cm)')
     placeholder = EmberAttr('place for width')
     title = EmberAttr('Width')
     tooltip = EmberAttr('tooltip for width')
