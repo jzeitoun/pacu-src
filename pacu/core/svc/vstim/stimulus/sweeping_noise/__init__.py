@@ -63,17 +63,17 @@ class StimulusResource(Resource):
             print e
         else:
             self.movie = mgen.generate().rotate().moviedata
+
+            # Setting viewport width
+            if self.component.snp_view_width:
+                view_width = self.component.snp_view_width
+                full_width = misc.pix2deg(x, self.window.monitor.instance)
+                ratio = ((full_width-view_width) / full_width * 100) / 2
+                boundindex =  self.movie.shape[2] * (ratio/100)
+                self.movie[:, :, -boundindex:] = 128
+                self.movie[:, :, :boundindex] = 128
+
             self.flip_text('Generating stimulus...done!')
-
-
-        # Setting viewport width
-        if self.component.snp_view_width:
-            view_width = self.component.snp_view_width
-            full_width = misc.pix2deg(x, self.window.monitor.instance)
-            ratio = ((full_width-view_width) / full_width * 100) / 2
-            boundindex =  self.movie.shape[2] * (ratio/100)
-            self.movie[:, :, -boundindex:] = 128
-            self.movie[:, :, :boundindex] = 128
 
         # imagebuffer to play each frame
         self.instance = ImageStim(
@@ -81,6 +81,7 @@ class StimulusResource(Resource):
             size = win.size,
             units = 'pix',
         )
+        logging.msg('ImageStim size: ' + str(win.size))
         try:
             self.interval = self.window.get_isi()
         except Exception as e:
