@@ -93,6 +93,7 @@ class StimulusResource(Resource):
             win = win,
             size = win.size,
             units = 'pix',
+            interpolate=True
         )
         logging.msg('ImageStim size: ' + str(win.size))
         try:

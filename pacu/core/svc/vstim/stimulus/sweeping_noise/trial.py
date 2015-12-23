@@ -42,5 +42,5 @@ class Trial(object):
         pass
         # self.interval.complete()
         # self.frameCount += 1
-random_frame = np.random.randint(256, size=(960, 1440)).astype('uint8')
-img = Image.fromarray(random_frame)
+# random_frame = np.random.randint(256, size=(960, 1440)).astype('uint8')
+# img = Image.fromarray(random_frame)

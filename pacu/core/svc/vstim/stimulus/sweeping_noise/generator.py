@@ -1,7 +1,45 @@
 from __future__ import division
+from scipy import signal
 import numpy as np
-# import scipy.ndimage.interpolation as i
-# from scipy.misc import imrotate
+# import matplotlib.pyplot as plt
+import matplotlib.colors as colors
+import matplotlib.cm as cm
+
+asd = np.array([
+    0,  0,  0,  1,  1,  1,  1,  1,  2,  2,  2,  2,  2,  3,  3,  3,  3,
+    3,  4,  4,  4,  4,  4,  5,  5,  5,  5,  5,  6,  6,  6,  6,  6,  7,
+    7,  7,  7,  7,  8,  8,  8,  8,  8,  9,  9,  9,  9,  9, 10, 10, 10,
+    10, 10, 11, 11, 11, 11, 11, 12, 12, 12, 12, 12, 13, 13, 13, 13, 13,
+    14, 14, 14, 14, 14, 15, 15, 15, 15, 15, 16, 16, 16, 16, 16, 17, 17,
+    17, 17, 17, 18, 18, 18, 18, 18, 19, 19, 19, 19, 19, 20, 20, 20, 20,
+    20, 21, 21, 21, 21, 21, 22, 22, 22, 22, 22, 23, 23, 23, 23, 23, 24,
+    24, 24, 24, 24, 25, 25, 25, 25, 25, 26, 26, 26, 26, 26, 27, 27, 27,
+    27, 27, 28, 28, 28, 28, 28, 29, 29, 29, 29, 29, 30, 30, 30, 30, 30,
+    31, 31, 31, 31, 31, 32, 32, 32, 32, 32, 33, 33, 33, 33, 33, 34, 34,
+    34, 34, 34, 35, 35, 35, 35, 35, 36, 36, 36, 36, 36, 37, 37, 37, 37,
+    37, 38, 38, 38, 38, 38, 39, 39, 39, 39, 39, 40, 40, 40, 40, 40, 41,
+    41, 41, 41, 41, 42, 42, 42, 42, 42, 43, 43, 43, 43, 43, 44, 44, 44,
+    44, 44, 45, 45, 45, 45, 45, 46, 46, 46, 46, 46, 47, 47, 47, 47, 47,
+    48, 48, 48, 48, 48, 49, 49, 49, 49, 49, 50, 50, 50, 50, 50, 51, 51,
+    51, 51, 51, 52, 52, 52, 52, 52, 53, 53, 53, 53, 53, 54, 54, 54, 54,
+    54, 55, 55, 55, 55, 55, 56, 56, 56, 56, 56, 57, 57, 57, 57, 57, 58,
+    58, 58, 58, 58, 59, 59, 59, 59, 59, 60, 60])
+
+# cdict = dict(
+#     red = (
+#         (0.0, 0.5, 0.5),
+#         (1.0, 1.0, 1.0)
+#     ),
+#     green = (
+#         (0.0, 0.5, 0.5),
+#         (1.0, 1.0, 1.0)
+#     ),
+#     blue = (
+#         (0.0, 0.5, 0.5),
+#         (1.0, 1.0, 1.0)
+#     )
+# )
+# my_cmap = colors.LinearSegmentedColormap('my_cmap', cdict)
 
 class SweepingNoiseGenerator():
     def __init__(self,
@@ -196,44 +234,27 @@ class SweepingNoiseGenerator():
         imscaled = (imraw-immin-imraw.mean())/(immax-immin)
 
         # Create Gaussian filter
-        # sweepingbandwidth_control=5
-        # sigma = sweepingbandwidth_control/degperpix
-
         print '10/12'
+        frames = imscaled.transpose(2, 1, 0) # conventional shaping
         sigma = self.bandwidth/degperpix/2 # we divided by 2 in order to
                                            # make compatible with the
                                            # calculation in PsychStimController.
                                            # I took off 2 again. should be correct.
                                            # added 2 for division again
-        gauss_mask = np.array([
-            1/(sigma * np.sqrt(2*np.pi)) * np.exp(-float(x)**2/(2*sigma**2))
-            for x in np.arange(-(imsize/2),(imsize/2))
-        ])
-        mask1 = np.tile(gauss_mask/gauss_mask.max(),[imsize,1])
-        # contr_period = 10
+        self.gauss1d = signal.gaussian(imsize, sigma, sym=True)
+        self.gauss2d = np.tile(self.gauss1d, (imsize, 1)) # Make it 2D
+        # No need to have something like `gauss3d`. It is just overkill.
 
         print '11/12'
-        for f in range(1, nframes+1, 1):
-            mask = np.roll(
-                np.transpose(mask1),
-                int(np.round(f*imsize/(self.contr_period*self.framerate))),
-                0
-            )
-            imscaled[:,:,f-1] = np.transpose(
-                np.multiply((imscaled[:,:,f-1]-.5), np.transpose(mask))
-            )
+        self.factor = self.contr_period * self.framerate
+        self.offsets = (imsize * np.arange(nframes) / self.factor).round().astype(int)
+        for frame, offset in zip(frames, self.offsets):
+            frame[:] = (frame - 0.5) * np.roll(self.gauss2d, offset)
 
         print '12/12'
-        moviedata = ((imscaled[0:imsize,0:imsize,:]+.5)*255)+1
-        moviedata = np.uint8(np.floor(moviedata))
-        moviedata = np.transpose(moviedata, (2,1,0))
-
-        # setting viewport width is done from caller.
-
-        self.shape = moviedata.shape # z, y, x
-        print 'SHAPE', self.shape
-        self.moviedata = moviedata
-        return moviedata
+        self.moviedata = cm.gray(frames + 0.5, bytes=True)
+        self.shape = self.moviedata.shape # z, y, x
+        return self.moviedata
     def generate(self):
         self.stim_to_movie()
         return self
@@ -255,10 +276,11 @@ class SweepingNoiseGenerator():
         # tifffile.imsave('gaussianNoise.tif', movie)
         return self
 
-# def tempsave(data):
-#     tifffile.imsave('/Volumes/Users/ht/Desktop/gaussianNoise.tif', data)
+def tempsave(data):
+    import tifffile
+    tifffile.imsave('/Volumes/Users/ht/Desktop/gaussianNoise.tif', data)
 
-# qwe = SweepingNoiseGenerator().generate().rotate(3)
-# tempsave(qwe.moviedata)
+qwe = SweepingNoiseGenerator().generate()
+tempsave(qwe.moviedata)
 # .stim_to_movie()
 # SweepingNoiseGenerator().stim_to_file()
