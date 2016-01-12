@@ -23,7 +23,7 @@ class VisualStimulusService(Service):
              self.monitor()                 as monitor   ,\
              self.window(monitor)           as window    ,\
              self.projection(window)        as projection,\
-             self.stimulus(window, clock)   as stimulus  ,\
+             self.stimulus(window, clock, projection)   as stimulus  ,\
              self.handler(stimulus, result) as handler:
             for trial in stimulus.synced: # experiment generating
                 while trial:              # inter-condition-interval

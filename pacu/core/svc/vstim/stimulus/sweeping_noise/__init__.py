@@ -38,6 +38,11 @@ class StimulusResource(Resource):
     should_stop = False
     def __enter__(self):
         win = self.window.instance
+        proj = self.projection.instance
+        try:
+            eyepoint_x = proj.eyepoint[0]
+        except:
+            eyepoint_x = 0.5
         self.textstim = TextStim(win, text='')
         x, y = win.size
         afr = 30 # int(win.getActualFrameRate() * 0.5)
@@ -60,7 +65,8 @@ class StimulusResource(Resource):
                 imsize=self.component.snp_dim,
                 imageMag=self.component.snp_image_mag,
                 screenWidthCm = self.window.monitor.component.width,
-                screenDistanceCm = self.window.monitor.component.dist
+                screenDistanceCm = self.window.monitor.component.dist,
+                eyepoint_x = eyepoint_x
             )
         except Exception as e:
             print 'got exception', type(e)
@@ -93,7 +99,7 @@ class StimulusResource(Resource):
             win = win,
             size = win.size,
             units = 'pix',
-            interpolate=True
+            interpolate=False #True
         )
         logging.msg('ImageStim size: ' + str(win.size))
         try:
@@ -140,7 +146,7 @@ class SweepingNoiseStimulus(Component):
     sui_icon = 'share alternate'
     package = __package__
     off_duration = 0
-    __call__ = StimulusResource.bind('window', 'clock')
+    __call__ = StimulusResource.bind('window', 'clock', 'projection')
 
     snp_max_spat_freq = SNPMaxSFrequency(0.05)
     snp_max_temp_freq = SNPMaxTFrequency(4)

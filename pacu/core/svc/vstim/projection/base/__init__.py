@@ -6,6 +6,7 @@ class ProjectionResource(Resource):
         from psychopy.visual.windowwarp import Warper # eats some time
         comp = self.component
         projection = Warper(self.window.instance, warp=comp.warp,
+            warpGridsize=300,
             eyepoint=[comp.eyepoint_x, comp.eyepoint_y])
         self.instance = projection
         return self

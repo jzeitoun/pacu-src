@@ -1,45 +1,12 @@
 from __future__ import division
-from scipy import signal
+
 import numpy as np
+from scipy import integrate
+from scipy import signal
 # import matplotlib.pyplot as plt
 import matplotlib.colors as colors
 import matplotlib.cm as cm
-
-asd = np.array([
-    0,  0,  0,  1,  1,  1,  1,  1,  2,  2,  2,  2,  2,  3,  3,  3,  3,
-    3,  4,  4,  4,  4,  4,  5,  5,  5,  5,  5,  6,  6,  6,  6,  6,  7,
-    7,  7,  7,  7,  8,  8,  8,  8,  8,  9,  9,  9,  9,  9, 10, 10, 10,
-    10, 10, 11, 11, 11, 11, 11, 12, 12, 12, 12, 12, 13, 13, 13, 13, 13,
-    14, 14, 14, 14, 14, 15, 15, 15, 15, 15, 16, 16, 16, 16, 16, 17, 17,
-    17, 17, 17, 18, 18, 18, 18, 18, 19, 19, 19, 19, 19, 20, 20, 20, 20,
-    20, 21, 21, 21, 21, 21, 22, 22, 22, 22, 22, 23, 23, 23, 23, 23, 24,
-    24, 24, 24, 24, 25, 25, 25, 25, 25, 26, 26, 26, 26, 26, 27, 27, 27,
-    27, 27, 28, 28, 28, 28, 28, 29, 29, 29, 29, 29, 30, 30, 30, 30, 30,
-    31, 31, 31, 31, 31, 32, 32, 32, 32, 32, 33, 33, 33, 33, 33, 34, 34,
-    34, 34, 34, 35, 35, 35, 35, 35, 36, 36, 36, 36, 36, 37, 37, 37, 37,
-    37, 38, 38, 38, 38, 38, 39, 39, 39, 39, 39, 40, 40, 40, 40, 40, 41,
-    41, 41, 41, 41, 42, 42, 42, 42, 42, 43, 43, 43, 43, 43, 44, 44, 44,
-    44, 44, 45, 45, 45, 45, 45, 46, 46, 46, 46, 46, 47, 47, 47, 47, 47,
-    48, 48, 48, 48, 48, 49, 49, 49, 49, 49, 50, 50, 50, 50, 50, 51, 51,
-    51, 51, 51, 52, 52, 52, 52, 52, 53, 53, 53, 53, 53, 54, 54, 54, 54,
-    54, 55, 55, 55, 55, 55, 56, 56, 56, 56, 56, 57, 57, 57, 57, 57, 58,
-    58, 58, 58, 58, 59, 59, 59, 59, 59, 60, 60])
-
-# cdict = dict(
-#     red = (
-#         (0.0, 0.5, 0.5),
-#         (1.0, 1.0, 1.0)
-#     ),
-#     green = (
-#         (0.0, 0.5, 0.5),
-#         (1.0, 1.0, 1.0)
-#     ),
-#     blue = (
-#         (0.0, 0.5, 0.5),
-#         (1.0, 1.0, 1.0)
-#     )
-# )
-# my_cmap = colors.LinearSegmentedColormap('my_cmap', cdict)
+from ipdb import set_trace
 
 class SweepingNoiseGenerator():
     def __init__(self,
@@ -47,18 +14,18 @@ class SweepingNoiseGenerator():
             max_temp_freq = 4,
             contrast = 0.275,
             rotation = 0,
-            duration = 10,
+            duration = 300,
             bandwidth = 5,
             pixel_x = 1440,
             pixel_y = 900,
             # if framerate is given a float, generator will take forever.
-            # at #9 part
             framerate = 30,
             contr_period=10,
             imsize = 60,
             imageMag = 18, # movieMag
             screenWidthCm = 39.116, # for 15.4 inch MBPR 15
-            screenDistanceCm = 25
+            screenDistanceCm = 25,
+            eyepoint_x = 0.5
         ):
         self.max_spat_freq = max_spat_freq
         self.max_temp_freq = max_temp_freq
@@ -74,6 +41,7 @@ class SweepingNoiseGenerator():
         self.imageMag = imageMag
         self.screenWidthCm = screenWidthCm
         self.screenDistanceCm = screenDistanceCm
+        self.eyepoint_x = eyepoint_x
         print '\n======================init params========================'
         print 'max sfreq', self.max_spat_freq
         print 'max tfreq', self.max_temp_freq
@@ -88,6 +56,7 @@ class SweepingNoiseGenerator():
         print 'imageMag', self.imageMag
         print 'screen width cm ', self.screenWidthCm
         print 'screen dist cm', self.screenDistanceCm
+        print 'eyepoint_x', self.eyepoint_x
         print 'nframes', int(np.ceil(self.duration*self.framerate))
         print '======================init params========================\n'
     def stim_to_movie(self):
@@ -96,7 +65,11 @@ class SweepingNoiseGenerator():
         movieMag = self.imageMag
 
         # degX could be # misc.pix2deg(self.pixel_x, monitor)
-        nframes=int(np.ceil(self.duration*self.framerate))
+        nframes = int(np.ceil(self.duration*self.framerate))
+
+        # this is how many frames before the stimulus to repeat
+        frames_per_period = int(np.ceil(self.contr_period*self.framerate))
+
         # frameT=np.divide(range(nframes), framerate)??
 
         # imageMag=np.floor(float(pixel_y)/imsize)
@@ -106,6 +79,7 @@ class SweepingNoiseGenerator():
 
         screenWidthDeg = 2*np.arctan(
             0.5*self.screenWidthCm/float(self.screenDistanceCm))*180/np.pi;
+        # screenWidthDegEyepoint = 
         degperpix = (screenWidthDeg/self.pixel_x)*self.imageMag;
 
         print '02/12'
@@ -246,10 +220,32 @@ class SweepingNoiseGenerator():
         # No need to have something like `gauss3d`. It is just overkill.
 
         print '11/12'
-        self.factor = self.contr_period * self.framerate
-        self.offsets = (imsize * np.arange(nframes) / self.factor).round().astype(int)
-        for frame, offset in zip(frames, self.offsets):
-            frame[:] = (frame - 0.5) * np.roll(self.gauss2d, offset)
+
+        # defines a period
+
+        screenWidthDegEyePoint = np.arctan(
+            (self.screenWidthCm * (1 - self.eyepoint_x)) / self.screenDistanceCm
+        ) + np.arctan((self.screenWidthCm * self.eyepoint_x) / self.screenDistanceCm)
+
+        # set_trace()
+
+        self.theta = screenWidthDegEyePoint / frames_per_period
+        self.space = np.linspace(0, nframes*self.theta, nframes)
+        # self.thetas = self.space % screenWidthDegEyePoint
+        self.thetas = np.fmod(self.space, 0.5*screenWidthDegEyePoint) - (screenWidthDegEyePoint * (1 - self.eyepoint_x))
+        self.offsets = (imsize * self.screenDistanceCm * np.tan(self.thetas) / self.screenWidthCm) - 3*imsize / 4
+
+        for theta, frame, offset in zip(self.thetas, frames, self.offsets):
+            frame[:] = (frame - 0.5) * np.roll(self.gauss2d, int(offset))
+
+        # last_offset = (nframes * ((2 * np.pi) / screenWidthDeg)) / np.pi
+        # off = np.cos(np.linspace(0, last_offset, nframes)) # 1 ~ -1
+        # off_scaled = ((off + 1) / 2) + 0.5 # 1.5 ~ 0.5
+
+        # self.factor = self.contr_period * self.framerate
+        # self.offsets = (off_scaled * imsize * np.arange(nframes) / self.factor).round().astype(int)
+        # for frame, offset in zip(frames, self.offsets):
+        #     frame[:] = (frame - 0.5) * np.roll(self.gauss2d, offset)
 
         print '12/12'
         self.moviedata = cm.gray(frames + 0.5, bytes=True)
@@ -259,10 +255,10 @@ class SweepingNoiseGenerator():
         self.stim_to_movie()
         return self
     def rotate(self, direction=None):
-        # 0 rotation= top to bottom (bar is going down)
-        # 180 rotation= bottom to top (bar is going up)
-        # 90 rotation= right to left
-        # 270 rotation= left to right 
+        #   0: top to bottom
+        # 180: bottom to top
+        #  90: right to left
+        # 270: left to right
         arr = self.moviedata
         computed = {0:3, 1:2, 2:1, 3:0}.get(direction or self.rotation)
         for index, frame in enumerate(arr):
@@ -280,7 +276,9 @@ def tempsave(data):
     import tifffile
     tifffile.imsave('/Volumes/Users/ht/Desktop/gaussianNoise.tif', data)
 
-qwe = SweepingNoiseGenerator().generate()
-tempsave(qwe.moviedata)
+# qwe = SweepingNoiseGenerator(duration=30, eyepoint_x=0.5, screenDistanceCm=20)
+# qwe.generate()
+# qwe.rotate(1)
+# tempsave(qwe.moviedata)
 # .stim_to_movie()
 # SweepingNoiseGenerator().stim_to_file()
