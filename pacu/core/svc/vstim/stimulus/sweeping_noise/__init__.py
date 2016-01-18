@@ -29,10 +29,12 @@ from pacu.core.svc.vstim.stimulus.snp_contrast import SNPContrast
 from pacu.core.svc.vstim.stimulus.snp_rotation import SNPRotation
 from pacu.core.svc.vstim.stimulus.snp_duration import SNPDuration
 from pacu.core.svc.vstim.stimulus.snp_bandwidth import SNPBandwidth
-from pacu.core.svc.vstim.stimulus.snp_dim import SNPDim
 from pacu.core.svc.vstim.stimulus.snp_image_mag import SNPImageMag
 from pacu.core.svc.vstim.stimulus.snp_view_width import SNPViewWidth
 from pacu.core.svc.vstim.stimulus.snp_contr_period import SNPContrPeriod
+from pacu.core.svc.vstim.stimulus.snp_view_port_override import SNPViewPortOverride
+
+from ipdb import set_trace
 
 class StimulusResource(Resource):
     should_stop = False
@@ -51,6 +53,7 @@ class StimulusResource(Resource):
         try:
             logging.msg('init movie...')
             print 'init movie...'
+            width, height = win.monitor.getSizePix()
             mgen = SweepingNoiseGenerator(
                 max_spat_freq = self.component.snp_max_spat_freq,
                 max_temp_freq = self.component.snp_max_temp_freq,
@@ -58,14 +61,15 @@ class StimulusResource(Resource):
                 rotation = self.component.snp_rotation,
                 duration = self.component.snp_duration,
                 bandwidth = self.component.snp_bandwidth,
+                viewwidth = self.component.snp_view_width,
                 pixel_x=x,
                 pixel_y=y,
                 framerate=afr,
                 contr_period=self.component.snp_contr_period,
-                imsize=self.component.snp_dim,
                 imageMag=self.component.snp_image_mag,
                 screenWidthCm = self.window.monitor.component.width,
                 screenDistanceCm = self.window.monitor.component.dist,
+                screenRatio = width / height,
                 eyepoint_x = eyepoint_x
             )
         except Exception as e:
@@ -76,32 +80,37 @@ class StimulusResource(Resource):
             mgen.generate()
             print 'rotating...'
             mgen.rotate()
+            print 'viewmasking...'
+            mgen.viewmask()
+            print 'croping...'
+            # mgen.crop()
             print 'done!'
             self.movie = mgen.moviedata
 
             logging.msg('masking window...')
             print 'masking window...'
             # Setting viewport width
-            if self.component.snp_view_width:
-                view_width = self.component.snp_view_width
-                full_width = misc.pix2deg(x, self.window.monitor.instance)
-                ratio = ((full_width-view_width) / full_width * 100) / 2
-                boundindex =  self.movie.shape[2] * (ratio/100)
-                self.movie[:, :, -boundindex:] = 128
-                self.movie[:, :, :boundindex] = 128
+
+            screenWidthCm = self.window.monitor.component.width
+            screenDistanceCm = self.window.monitor.component.dist
 
             self.flip_text('Generating stimulus...done!')
 
         logging.msg('creating image stim...')
         print 'creating image stim...'
         # imagebuffer to play each frame
+        # pixel_x, pixel_y = win.monitor.getSizePix()
+        override = self.component.snp_viewport_override
+        # set_trace()
         self.instance = ImageStim(
             win = win,
-            size = win.size,
+            size = override if any(override) else win.size,
+            # size = [800, 800],
+            # size = win.size,
             units = 'pix',
-            interpolate=False #True
+            interpolate = True
         )
-        logging.msg('ImageStim size: ' + str(win.size))
+        logging.msg('ImageStim size: ' + str(self.instance.size))
         try:
             logging.msg('getting ISI...')
             self.interval = self.window.get_isi()
@@ -147,14 +156,13 @@ class SweepingNoiseStimulus(Component):
     package = __package__
     off_duration = 0
     __call__ = StimulusResource.bind('window', 'clock', 'projection')
-
     snp_max_spat_freq = SNPMaxSFrequency(0.05)
     snp_max_temp_freq = SNPMaxTFrequency(4)
     snp_contrast = SNPContrast(0.275)
     snp_rotation = SNPRotation('0')
     snp_duration = SNPDuration(15)
     snp_bandwidth = SNPBandwidth(5)
-    snp_dim = SNPDim(64)
-    snp_image_mag = SNPImageMag(18)
-    snp_view_width = SNPViewWidth(30)
+    snp_image_mag = SNPImageMag(10)
+    snp_view_width = SNPViewWidth(0)
     snp_contr_period = SNPContrPeriod(10)
+    snp_viewport_override = SNPViewPortOverride([0, 0])

@@ -92,4 +92,4 @@ class GratingsStimulus(Component):
     tfrequencies = TFrequencies([1.0])
     on_duration = OnDuration(0.1)
     off_duration = OffDuration(0)
-    __call__ = StimulusResource.bind('window', 'clock')
+    __call__ = StimulusResource.bind('window', 'clock', 'projection')

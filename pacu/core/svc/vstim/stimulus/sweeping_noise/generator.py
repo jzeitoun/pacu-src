@@ -4,6 +4,7 @@ import numpy as np
 from scipy import integrate
 from scipy import signal
 # import matplotlib.pyplot as plt
+from psychopy import misc
 import matplotlib.colors as colors
 import matplotlib.cm as cm
 from ipdb import set_trace
@@ -16,15 +17,17 @@ class SweepingNoiseGenerator():
             rotation = 0,
             duration = 300,
             bandwidth = 5,
+            viewwidth = 0,
             pixel_x = 1440,
             pixel_y = 900,
             # if framerate is given a float, generator will take forever.
             framerate = 30,
             contr_period=10,
-            imsize = 60,
-            imageMag = 18, # movieMag
+            # imsize = 128,
+            imageMag = 10, # movieMag
             screenWidthCm = 39.116, # for 15.4 inch MBPR 15
             screenDistanceCm = 25,
+            screenRatio = 0.625,
             eyepoint_x = 0.5
         ):
         self.max_spat_freq = max_spat_freq
@@ -33,14 +36,17 @@ class SweepingNoiseGenerator():
         self.rotation = rotation
         self.duration = duration
         self.bandwidth = bandwidth
+        self.viewwidth = viewwidth
         self.pixel_x = pixel_x
         self.pixel_y = pixel_y
+        self.screenRatio = screenRatio
         self.framerate = framerate
         self.contr_period = contr_period
-        self.imsize = imsize
+        # self.imsize = imsize
         self.imageMag = imageMag
         self.screenWidthCm = screenWidthCm
         self.screenDistanceCm = screenDistanceCm
+        self.screenRatio = screenRatio
         self.eyepoint_x = eyepoint_x
         print '\n======================init params========================'
         print 'max sfreq', self.max_spat_freq
@@ -49,20 +55,22 @@ class SweepingNoiseGenerator():
         print 'rotation', self.rotation
         print 'duration', self.duration
         print 'bandwidth', self.bandwidth
+        print 'viewwidth', self.viewwidth
         print 'Pixel X', self.pixel_x
         print 'Pixel Y', self.pixel_y
         print 'framerate', self.framerate
-        print 'imsize', self.imsize
+        # print 'imsize', self.imsize
         print 'imageMag', self.imageMag
         print 'screen width cm ', self.screenWidthCm
         print 'screen dist cm', self.screenDistanceCm
+        print 'screen ratiom', self.screenRatio
         print 'eyepoint_x', self.eyepoint_x
         print 'nframes', int(np.ceil(self.duration*self.framerate))
         print '======================init params========================\n'
     def stim_to_movie(self):
         print '01/12'
-        imsize = self.imsize
-        movieMag = self.imageMag
+        self.imsize = imsize = self.pixel_x / self.imageMag
+        # imsize = self.imsize
 
         # degX could be # misc.pix2deg(self.pixel_x, monitor)
         nframes = int(np.ceil(self.duration*self.framerate))
@@ -78,9 +86,9 @@ class SweepingNoiseGenerator():
         # matalb way
 
         screenWidthDeg = 2*np.arctan(
-            0.5*self.screenWidthCm/float(self.screenDistanceCm))*180/np.pi;
-        # screenWidthDegEyepoint = 
-        degperpix = (screenWidthDeg/self.pixel_x)*self.imageMag;
+            0.5*self.screenWidthCm/float(self.screenDistanceCm))*180/np.pi
+        self.full_width = screenWidthDeg
+        degperpix = (screenWidthDeg/self.pixel_x)*self.imageMag
 
         print '02/12'
         # frequency intervals for FFT
@@ -232,8 +240,10 @@ class SweepingNoiseGenerator():
         self.theta = screenWidthDegEyePoint / frames_per_period
         self.space = np.linspace(0, nframes*self.theta, nframes)
         # self.thetas = self.space % screenWidthDegEyePoint
-        self.thetas = np.fmod(self.space, 0.5*screenWidthDegEyePoint) - (screenWidthDegEyePoint * (1 - self.eyepoint_x))
-        self.offsets = (imsize * self.screenDistanceCm * np.tan(self.thetas) / self.screenWidthCm) - 3*imsize / 4
+        self.thetas = np.fmod(self.space, screenWidthDegEyePoint) - (screenWidthDegEyePoint * (1 - self.eyepoint_x))
+        # self.thetas = np.fmod(self.space, 0.5*screenWidthDegEyePoint) - (screenWidthDegEyePoint * (1 - self.eyepoint_x))
+        self.offsets = (imsize * self.screenDistanceCm * np.tan(self.thetas) / self.screenWidthCm) - imsize / 2
+        # self.offsets = (imsize * self.screenDistanceCm * np.tan(self.thetas) / self.screenWidthCm) - 3*imsize / 4
 
         for theta, frame, offset in zip(self.thetas, frames, self.offsets):
             frame[:] = (frame - 0.5) * np.roll(self.gauss2d, int(offset))
@@ -251,8 +261,23 @@ class SweepingNoiseGenerator():
         self.moviedata = cm.gray(frames + 0.5, bytes=True)
         self.shape = self.moviedata.shape # z, y, x
         return self.moviedata
+    def viewmask(self):
+        if not self.viewwidth:
+            return
+        ratio = ((self.full_width - self.viewwidth) / self.full_width * 100) / 2
+        boundindex =  self.moviedata.shape[2] * (ratio/100)
+        self.moviedata[:, :, -boundindex:] = 128
+        self.moviedata[:, :, :boundindex] = 128
+        return self
     def generate(self):
         self.stim_to_movie()
+        return self
+    def crop(self):
+        amount = self.imsize - int(self.imsize*self.screenRatio)
+        if self.rotation in [0, 2]:
+            self.moviedata = self.moviedata[:, :, amount:]
+        else:
+            self.moviedata = self.moviedata[:, amount:, :]
         return self
     def rotate(self, direction=None):
         #   0: top to bottom
@@ -276,9 +301,12 @@ def tempsave(data):
     import tifffile
     tifffile.imsave('/Volumes/Users/ht/Desktop/gaussianNoise.tif', data)
 
-# qwe = SweepingNoiseGenerator(duration=30, eyepoint_x=0.5, screenDistanceCm=20)
+# qwe = SweepingNoiseGenerator(duration=10, eyepoint_x=0.5, screenDistanceCm=20)
 # qwe.generate()
-# qwe.rotate(1)
+# qwe.rotate()
+# qwe.viewmask()
+# qwe.crop()
 # tempsave(qwe.moviedata)
+
 # .stim_to_movie()
 # SweepingNoiseGenerator().stim_to_file()

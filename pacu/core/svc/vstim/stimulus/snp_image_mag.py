@@ -7,4 +7,4 @@ class SNPImageMag(PacuAttr, PositiveIntSpec):
     description = EmberAttr('Image magnification factor')
     placeholder = EmberAttr('integer')
     title = EmberAttr('ImageMag')
-    # tip = EmberAttr('')
+    tooltip = EmberAttr('This number determines size of movie. (Dimension of monitor pixels divided by this number.)')

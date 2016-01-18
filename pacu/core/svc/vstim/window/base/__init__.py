@@ -8,6 +8,7 @@ class WindowResource(Resource):
         from psychopy.visual import Window # eats some time
         window = Window((comp.pixel_x, comp.pixel_y),
             useFBO = True,
+            # units='deg',
             monitor = self.monitor.instance,
             allowStencil = True,
             fullscr = comp.fullscr)
