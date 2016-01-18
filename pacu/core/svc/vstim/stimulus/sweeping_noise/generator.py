@@ -39,14 +39,14 @@ class SweepingNoiseGenerator():
         self.viewwidth = viewwidth
         self.pixel_x = pixel_x
         self.pixel_y = pixel_y
-        self.screenRatio = screenRatio
+        # self.screenRatio = screenRatio
         self.framerate = framerate
         self.contr_period = contr_period
         # self.imsize = imsize
         self.imageMag = imageMag
         self.screenWidthCm = screenWidthCm
         self.screenDistanceCm = screenDistanceCm
-        self.screenRatio = screenRatio
+        # self.screenRatio = screenRatio
         self.eyepoint_x = eyepoint_x
         print '\n======================init params========================'
         print 'max sfreq', self.max_spat_freq
@@ -63,7 +63,7 @@ class SweepingNoiseGenerator():
         print 'imageMag', self.imageMag
         print 'screen width cm ', self.screenWidthCm
         print 'screen dist cm', self.screenDistanceCm
-        print 'screen ratiom', self.screenRatio
+        # print 'screen ratiom', self.screenRatio
         print 'eyepoint_x', self.eyepoint_x
         print 'nframes', int(np.ceil(self.duration*self.framerate))
         print '======================init params========================\n'
