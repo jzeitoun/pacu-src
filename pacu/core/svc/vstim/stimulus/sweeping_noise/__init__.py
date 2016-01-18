@@ -69,7 +69,7 @@ class StimulusResource(Resource):
                 imageMag=self.component.snp_image_mag,
                 screenWidthCm = self.window.monitor.component.width,
                 screenDistanceCm = self.window.monitor.component.dist,
-                screenRatio = width / height,
+                # screenRatio = width / height,
                 eyepoint_x = eyepoint_x
             )
         except Exception as e:
@@ -82,7 +82,7 @@ class StimulusResource(Resource):
             mgen.rotate()
             print 'viewmasking...'
             mgen.viewmask()
-            print 'croping...'
+            # print 'croping...'
             # mgen.crop()
             print 'done!'
             self.movie = mgen.moviedata

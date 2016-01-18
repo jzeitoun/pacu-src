@@ -27,7 +27,7 @@ class SweepingNoiseGenerator():
             imageMag = 10, # movieMag
             screenWidthCm = 39.116, # for 15.4 inch MBPR 15
             screenDistanceCm = 25,
-            screenRatio = 0.625,
+            # screenRatio = 0.625,
             eyepoint_x = 0.5
         ):
         self.max_spat_freq = max_spat_freq
@@ -272,13 +272,13 @@ class SweepingNoiseGenerator():
     def generate(self):
         self.stim_to_movie()
         return self
-    def crop(self):
-        amount = self.imsize - int(self.imsize*self.screenRatio)
-        if self.rotation in [0, 2]:
-            self.moviedata = self.moviedata[:, :, amount:]
-        else:
-            self.moviedata = self.moviedata[:, amount:, :]
-        return self
+#     def crop(self):
+#         amount = self.imsize - int(self.imsize*self.screenRatio)
+#         if self.rotation in [0, 2]:
+#             self.moviedata = self.moviedata[:, :, amount:]
+#         else:
+#             self.moviedata = self.moviedata[:, amount:, :]
+#         return self
     def rotate(self, direction=None):
         #   0: top to bottom
         # 180: bottom to top

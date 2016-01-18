@@ -11,6 +11,5 @@ class SNPViewPortOverride(PacuAttr, PositiveFloatListSpec):
         'When you run a warped stimulus with too SHORT distance like 10 cm, '
         'visuals could be rendered off screen. This parameter overrides '
         'the extent of view port. Setting `0, 0` skips override.'
-        '`800, 700` is recommended value for the override so far.'
         'By default, view port is set the same dimension of monitor.'
     )
