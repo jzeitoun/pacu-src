@@ -1,7 +1,15 @@
+import sys
 import importlib
+import traceback
 
-# from ipdb import set_trace
 from ...ext.tornado.web import RequestHandler
+
+def print_exc():
+    info = sys.exc_info()
+    source = traceback.format_exception(*info)
+    print '\n======== exception on api handling ========'
+    traceback.print_exception(*info)
+    print '======== exception on api handling ========\n'
 
 class APIHandler(RequestHandler):
     url = r'/api/(?P<api>[\w-]+)(?P<args>[\w/\-\.]*)'
@@ -29,11 +37,11 @@ class APIHandler(RequestHandler):
         try:
             result = self.http.head(self.request, *self.args, **self.kwargs)
         except TypeError as e:
-            print e, type(e)
+            print_exc()
             self.set_status(400) # possible argument error
             self.write(str(e))
         except Exception as e:
-            print e, type(e)
+            print_exc()
             self.set_status(403)
             self.write(str(e))
         else:
@@ -46,11 +54,11 @@ class APIHandler(RequestHandler):
         try:
             result = self.http.get(self.request, *self.args, **self.kwargs)
         except TypeError as e:
-            print e, type(e)
+            print_exc()
             self.set_status(400) # possible argument error
             self.write(str(e))
         except Exception as e:
-            print e, type(e)
+            print_exc()
             self.set_status(403)
             self.write(str(e))
         else:
@@ -59,11 +67,11 @@ class APIHandler(RequestHandler):
         try:
             result = self.http.post(self.request, *self.args, **self.kwargs)
         except TypeError as e:
-            print e, type(e)
+            print_exc()
             self.set_status(400) # possible argument error
             self.write(str(e))
         except Exception as e:
-            print e, type(e)
+            print_exc()
             self.set_status(403)
             self.write(str(e))
         else:
