@@ -22,3 +22,4 @@ class ExperimentV1(Base):
     order = Column(PickleType, default={})
     off_time = Column(PickleType, default={})
     payload = Column(PickleType, default={})
+    trial_list = Column(PickleType, default={})

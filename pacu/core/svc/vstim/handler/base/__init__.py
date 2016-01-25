@@ -16,13 +16,18 @@ class HandlerResource(Resource):
         return self
     def service_done(self, service):
         trials = self.stimulus.trials
+        try:
+            trial_list = [vars(t.condition) for t in trials.trialList]
+        except:
+            trial_list = []
         self.result.update(
             clsname = type(service).__name__,
             pkgname = type(service).__module__,
             payload = service.as_payload,
             message = self.log.stream.getvalue(),
             sequence = list(trials.sequenceIndices.T.flat),
-            **{k: v.tolist() for k, v in trials.data.items()})
+            trial_list = trial_list,
+            **{k: v.filled().T.flatten().tolist() for k, v in trials.data.items()})
         return self.result
 
 class HandlerBase(Component):
