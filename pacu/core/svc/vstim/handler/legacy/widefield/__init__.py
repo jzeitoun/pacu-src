@@ -8,6 +8,7 @@ from scipy import io
 from pacu.ext.tornado.httputil.request import Request
 from pacu.util.path import Path
 from pacu.core.svc.vstim.handler.expv1 import ExpV1HandlerResource
+from pacu.core.model.experiment import ExperimentV1
 from pacu.core.svc.vstim.handler.base import HandlerBase
 from pacu.core.svc.impl.exc import ServiceException
 from pacu.core.svc.vstim.handler.sync_host import SyncHost
@@ -69,6 +70,7 @@ def make_params(monitor, clock, stimulus, window, handler, projection):
     return params
 
 class LegacyWidefieldHandlerResource(ExpV1HandlerResource):
+    DB = manager.get('db')
     def __enter__(self):
         host = self.component.sync_host
         port = self.component.sync_port
@@ -86,6 +88,18 @@ class LegacyWidefieldHandlerResource(ExpV1HandlerResource):
         params = make_params(**payload)
         path = make_condpath(self.now)
         savemat(path.str, params)
+
+        try:
+            model = ExperimentV1(**result)
+            session = self.DB.instance()
+            session.add(model)
+            session.commit()
+        except Exception as e:
+            print 'An exception from DB!', e
+            result['error'] = str(e)
+        else:
+            result.update(id=model.id, created_at=model.created_at)
+
         return result
     def synchronize(self):
         # return
