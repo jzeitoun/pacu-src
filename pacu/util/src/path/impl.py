@@ -33,6 +33,10 @@ def here(cls, *paths):
     return cls(path).joinpath(*paths)
 def absdir(cls, path):
     return cls(os.path.dirname(os.path.abspath(path)))
+def with_suffixes(self, *suffixes):
+    return map(self.with_suffix, suffixes)
+def stempath(self):
+    return Path(self.stem)
 
 Path.__floordiv__ = Path.with_name
 Path.str = property(Path.__str__)
@@ -44,3 +48,5 @@ Path.peak = peak
 Path.write = write
 Path.here = classmethod(here)
 Path.absdir = classmethod(absdir)
+Path.with_suffixes = with_suffixes
+Path.stempath = property(stempath)

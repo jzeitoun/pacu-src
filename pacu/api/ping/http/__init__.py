@@ -5,10 +5,11 @@ from multiprocessing import Process
 import numpy as np
 
 from pacu.util.path import Path
-from pacu.core.scanbox import FileGroup
+# from pacu.core.scanbox import FileGroup
+from pacu.core.io.scanbox.impl import ScanboxIO
 
-binpath = '/Volumes/Users/ht/tmp/pysbx-data/JZ5/JZ5_000_003'
-binpath = '/Volumes/Users/ht/tmp/pysbx-data/JZ7/9-21-15_000_007'
+# binpath = '/Volumes/Users/ht/tmp/pysbx-data/JZ5/JZ5_000_003'
+# binpath = '/Volumes/Users/ht/tmp/pysbx-data/JZ7/9-21-15_000_007'
 # s = FileGroup(binpath)
 # raw = s.mat.memmap[..., 0]
 
@@ -35,11 +36,12 @@ def get(self, x1, x2, y1, y2, src=''):
     # turn off gzip encoding by setting "application" mime-type
     # data = np.memmap(binpath, dtype=np.int32, mode='r', shape=shape)
 
-    s = FileGroup(src)
-    raw = s.mat.memmap[..., 0]
+    sbx = ScanboxIO(src)
+    # raw = s.p[..., 0]
+    # raw = s.mat.memmap[..., 0]
 
     x1, x2, y1, y2 = map(int, [x1, x2, y1, y2])
-    data = raw[:, y1:y2, x1:x2]
+    data = sbx[:, y1:y2, x1:x2]
     result = np.ctypeslib.as_array(Array(ctypes.c_float, len(data)).get_obj())
     ins, outs = [np.array_split(arr, 8) for arr in (data, result)]
 

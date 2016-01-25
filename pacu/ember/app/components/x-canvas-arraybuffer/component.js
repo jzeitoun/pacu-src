@@ -4,8 +4,11 @@ import computed from 'ember-computed-decorators';
 export default Ember.Component.extend({
   tagName: 'canvas',
   active: true,
-  attributeBindings: ['width', 'height'],
+  attributeBindings: ['width', 'height', 'style'],
   classNameBindings: ['active', 'attrs.staticPos'],
+  @computed('contrast', 'brightness') style(c, b) {
+    return `-webkit-filter: contrast(${c}) brightness(${b})`;
+  },
   @computed('ctx', 'width', 'height') img(c, w, h) {
     if (Ember.isNone(w) || Ember.isNone(h)) { return; }
     return c.getImageData(0, 0, w, h);
@@ -14,16 +17,6 @@ export default Ember.Component.extend({
     return this.$()[0].getContext('2d');
     // or this.element.getContext('2d'); ?
   },
-  // bufferChanged: function() {
-  //   var data = this.getAttr('buf');
-  //   var {img, ctx} = this.getProperties('img', 'ctx');
-  //   if (Ember.isNone(img) || Ember.isNone(data)) { return; }
-  //   var prev = new Uint32Array(img.data.buffer);
-  //   var next = new Uint32Array(data);
-  //   var len = prev.length;
-  //   while(len--) { prev[len] = next[len]; }
-  //   ctx.putImageData(img, 0, 0);
-  // },
   bufferChanged: function() {
     var {img, ctx, buf} = this.getProperties('img', 'ctx', 'buf');
     if (Ember.isNone(img) || Ember.isNone(buf)) { return; }

@@ -76,13 +76,40 @@ class WebSocketEx {
     } else { this.constructionFinallys.push(func); }
     return this; // so that chain can go forth...
   }
-  mirror(route) {
+  _mirror(route) {
     return this.makeRequest('access', route).then((data) => {
       this.context.set(route, data);
     });
   }
-  access(route) {
+  mirror(...routes) {
+    if (routes.length === 1) {
+      return this._mirror(...routes);
+    }
+    return Ember.RSVP.all(
+      routes.map(this._mirror.bind(this))
+    )
+  }
+  _print(route) {
+    return this.access(route).then(log);
+  }
+  print(...routes) {
+    if (routes.length === 1) {
+      return this._print(...routes);
+    }
+    return Ember.RSVP.all(
+      routes.map(this._print.bind(this))
+    )
+  }
+  _access(route) {
     return this.makeRequest('access', route);
+  }
+  access(...routes) {
+    if (routes.length === 1) {
+      return this._access(...routes);
+    }
+    return Ember.RSVP.all(
+      routes.map(this._access.bind(this))
+    )
   }
   accessAsBinary(route) {
     return this.makeRequest('access', route, {as_binary: true});
@@ -105,7 +132,22 @@ class WebSocketEx {
   }
   onmessage(msg) {
     if (msg.data instanceof ArrayBuffer) {
-        this.onbinaryFunc(msg.data); return;
+      const dv = new DataView(msg.data);
+      const seq = dv.getUint32(0);
+      const err = dv.getUint32(4);
+      if (seq in this.promises) {
+        const {res, rej} = this.promises[seq];
+        if (delete this.promises[seq]) {
+          if (err) {
+            rej(err);
+          } else {
+            const chunk = msg.data.slice(8);
+            this.onbinaryFunc(chunk);
+            res(chunk);
+          }
+        }
+      }
+      return;
     }
     const [seq, argument, error] = JSON.parse(msg.data);
     if (seq in this.promises) {

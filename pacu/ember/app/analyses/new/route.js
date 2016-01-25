@@ -4,7 +4,29 @@ export default Ember.Route.extend({
   model: function() {
     return this.store.createRecord('analysis');
   },
+  setupController(controller, model) {
+    this._super(controller, model);
+    controller.set('expTypes', ['ScanImage', 'ScanBox']);
+    controller.set('actions', {
+      experimentTypeEnumChanged: function(model, index) {
+        model.set('conditionid', null);
+        model.set('type', index);
+      }
+    });
+  },
   actions: {
+    searchCondition: function(model) {
+      const type = model.get('type');
+      if (Ember.isNone(type)) {
+        this.toast.warning('Please select experiment type...');
+        return;
+      }
+      $('#search-condition').modal({
+        closable  : false,
+        onDeny    : function() { return true; },
+        onApprove : function() { return true; }
+      }).modal('show');
+    },
     willTransition: function(transition) {
       const model = this.get('currentModel');
       if (model.get('isNew')) {
@@ -33,10 +55,11 @@ export default Ember.Route.extend({
     },
     save: function(model) {
       const self = this;
-      const {title, host, user, desc, src} = model.toJSON();
-      const good = [title, host, user, desc, src].every(Ember.isPresent);
+      const {title, user, desc, imagesrc, conditionid} = model.toJSON();
+      const good = [title, user, imagesrc, conditionid].every(Ember.isPresent);
       if (good) {
         model.save().then((model) => {
+          self.controller.set('steps', []);
           self.replaceWith('analysis', model.id);
         }, (reason) => {
           swal('Oops...',
@@ -45,7 +68,7 @@ export default Ember.Route.extend({
         });
       } else {
         swal('Oops...',
-          'Every field should be provided...',
+          'Some fields are missing...',
           'error');
       }
       return false;

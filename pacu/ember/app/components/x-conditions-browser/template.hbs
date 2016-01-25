@@ -1,0 +1,24 @@
+<table class="ui inverted selectable fixed compact table">
+  <thead>
+    <tr>
+      <th>ID</th>
+      <th>MOUSE_ID</th>
+      <th>FILENAME</th>
+      <th>SFREQUENCIES</th>
+      <th>DURATION</th>
+      <th>DATE</th>
+    </tr>
+  </thead>
+  <tbody>
+  {{#each model as |condition|}}
+    <tr {{action "selectID" condition}}>
+      <td>{{condition.id}}</td>
+      <td>{{condition.mouse_id}}</td>
+      <td>{{condition.filename}}</td>
+      <td>{{condition.spatial_frequencies}}</td>
+      <td>{{condition.total_time_S}}</td>
+      <td>{{from-timestamp condition.date}}</td>
+    </tr>
+  {{/each}}
+  </tbody>
+</table>

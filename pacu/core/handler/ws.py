@@ -3,6 +3,8 @@ import sys
 import importlib
 import traceback
 
+import struct
+import numpy as np
 import ujson
 
 from ...ext.tornado import websocket
@@ -18,8 +20,8 @@ class WSHandler(websocket.WebSocketHandler):
     inst = None
     __socket__ = None
     def open(self, modname, clsname):
+        print 'websocket is opening...'
         self.set_nodelay(True)
-        # print 'OPEN', modname, clsname, self.get_argument('files')
         try:
             cls = getattr(importlib.import_module(modname), clsname)
         except ImportError as e:
@@ -35,12 +37,18 @@ class WSHandler(websocket.WebSocketHandler):
             self.inst = cls(**kwargs)
             self.inst.__socket__ = self
         except Exception as e:
-            print 'delegator init error', e
+            info = sys.exc_info()
+            source = traceback.format_exception(*info)
+            print '\n======== exception on websocket delegation ========'
+            traceback.print_exception(*info)
+            print '======== exception on websocket delegation ========\n'
+            raise e
     def on_close(self):
-        print 'socket closing...'
+        print 'websocket is closing...'
         if hasattr(self.inst, '__dnit__'):
             self.inst.__dnit__()
-        self.inst.__socket__ = None
+        if self.inst:
+            self.inst.__socket__ = None
     def access(self, route):
         attrs = route.split('.')
         value = reduce(getattr, attrs, self.inst)
@@ -90,8 +98,11 @@ class WSHandler(websocket.WebSocketHandler):
                 detail = str(e),
                 source = source
             )
-        if as_binary and rv:
-            self.write_message(rv, binary=True)
+        if as_binary and rv is not None:
+            # two uint32 for seq and error, 8bytes in total
+            # in network byte order (big endian)
+            meta = struct.pack('!II', seq, 0) # 0 for err (temporary)
+            self.write_message(meta + rv, binary=True)
         else:
             self.dump_message(seq, rv, err)
     def dump_message(self, seq, rv, err):
@@ -99,4 +110,5 @@ class WSHandler(websocket.WebSocketHandler):
             dumped = ujson.dumps([seq, rv, err])
         except: # coerce
             dumped = ujson.dumps([seq, str(rv), err])
+            # print dumped
         self.write_message(dumped)

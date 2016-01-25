@@ -159,7 +159,6 @@ export default Ember.Component.extend({
     this.set('features', {});
   }.on('init'),
   initWS: function() {
-    window.asd = this;
     this.wsx = this.get('socket').create(
       this, 'pacu.core.svc.andor', 'AndorBindingService', this.getAttr('src')
     ).then(function(wsx) {

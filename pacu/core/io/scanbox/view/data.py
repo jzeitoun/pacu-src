@@ -1,7 +1,7 @@
 import os
 
 class ScanboxDataView(object):
-    def __init__(self, sbxfile):
-        self.name = sbxfile
-        self.size = os.path.getsize(sbxfile)
-        self.file = open(sbxfile, 'rb')
+    def __init__(self, path):
+        self.path = path
+        self.size = path.stat().st_size
+        self.file = path.open('rb')

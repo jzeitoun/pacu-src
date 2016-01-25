@@ -3,37 +3,49 @@ import computed from 'ember-computed-decorators';
 import d3 from 'd3';
 
 export default Ember.Component.extend({
-  socket: Ember.inject.service(),
   d3: Ember.inject.service(),
+  socket: Ember.inject.service(),
+  toast: Ember.inject.service(),
   initWS: function() {
-    window.qwe = this;
+    const self = this;
     const src = this.getAttr('files');
     this.wsx = this.get('socket').create(
       this, 'pacu.core.svc.analysis.i3d', 'I3DAnalysisService', src
-    ).then(() => {
-      this.wsx.access('stack.shape').then(this.setShape).then(this.zeroFrame);
+    ).then(function(wsx) {
+      this.toast.success('WebSocket connection estabilished.');
+      wsx.mirror('dimension', 'max_index').then(function() {
+        self.requestFrame(0);
+      });
+      wsx.socket.onclose = () => {
+        this.toast.warning('WebSocket connection closed.');
+      };
+    }).onbinary((buf) => {
+      this.set('currentBuffer', buf);
     });
+    window.qwe = this;
   }.on('didInsertElement'),
   dnitWS: function() { this.wsx.dnit(); }.on('willDestroyElement'),
-  setShape(shape) {
-    ['Z', 'Y', 'X'].forEach((e, i) => {
-      this.set(`stack${e}`, shape[i]);
-    });
-  },
-  zeroFrame() {
-    this.wsx.onbinary(this.setBuffer).invokeAsBinary('get_frame', 0);
-  },
-  setBuffer(buf) {
-    this.set('currentBuffer', buf);
-  },
-  @computed('stackZ') maxIndex(z) {
-    return (z || 1) - 1;
-  },
   curIndex: 0, // and maxIndex is 0
   updateFrame: function() {
     const index = parseInt(this.get('curIndex'));
-    this.wsx.invokeAsBinary('get_frame', index);
+    this.requestFrame(index);
   }.observes('curIndex'),
+  requestFrame: function(index) {
+    const self = this;
+    if (this.get('framebusy')) {
+      this.set('staledFrame', index);
+      return;
+    } else {
+      this.wsx.invokeAsBinary('request_frame', index).gate(
+      'framebusy').then(function() {
+        const staledFrame = self.get('staledFrame');
+        if (Ember.isPresent(staledFrame)) {
+          self.set('staledFrame', null);
+          self.requestFrame(staledFrame);
+        }
+      });
+    }
+  },
   currentROIs: function() { return []; }.property(),
   meanOfcROIs: Ember.computed.mapBy('currentROIs', 'mean'),
   actions: {

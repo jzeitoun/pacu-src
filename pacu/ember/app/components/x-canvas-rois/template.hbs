@@ -5,7 +5,9 @@
     y1    = roi.y1
     y2    = roi.y2
     temp  = roi.temp
-    doubleClick = (action "destroyROI" roi)
-    onROIMoved = (action "refreshROI" roi)
+    active= roi.active
+    contextMenu = (action "destroyROI" roi)
+    onROIClick = (action "activateROI" roi)
+    onROIMove = (action "refreshROI" roi)
   }}
 {{/each}}

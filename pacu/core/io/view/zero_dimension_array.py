@@ -2,7 +2,7 @@ from collections import namedtuple
 
 import numpy as np
 
-reserved = {'_items', '_names', '_namedtuple'}
+reserved = {'_items', '_names', '_namedtuple', 'items'}
 reserved_attr_error = Exception(
     'Some of fields used reserved keywords. ({})'.format(', '.join(reserved))
 )
@@ -24,4 +24,12 @@ class ZeroDimensionArrayView(object):
     def __getattr__(self, attr):
         return getattr(self._namedtuple, attr)
     def __iter__(self):
-        return iter(self._namedtuple._asdict().items())
+        return iter(
+            (key, list(val) if isinstance(val, ZeroDimensionArrayView) else str(val))
+            for key, val in self._namedtuple._asdict().items()
+        )
+    def items(self):
+        return {
+            key: (val.items() if isinstance(val, ZeroDimensionArrayView) else str(val))
+            for key, val in self._namedtuple._asdict().items()
+        }

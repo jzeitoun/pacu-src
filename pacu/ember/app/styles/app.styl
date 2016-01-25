@@ -72,11 +72,18 @@ a.active > div.nav
 // //   position absolute
 // svg.roi-canvas
 //   cursor crosshair
+
+input.visual.option
+  background-color #131518
+
 .roi-rect
   fill transparent
   stroke-width 1
   stroke lime
   cursor pointer
+  &.active
+    stroke-width 2
+    stroke yellow
   &:active
     fill RGBA(50, 50, 255, 0.5);
 .roi-rect-temp
@@ -169,3 +176,29 @@ a.active > div.nav
         -ms-user-select: none;
             user-select: none;
 }
+
+svg {
+  font: 9px sans-serif;
+}
+
+.line {
+  fill: none;
+  clip-path: url(#clip);
+  stroke: #f00;
+  stroke-width: 1px !important;
+}
+
+.axis path,
+.axis line {
+  fill: none;
+  stroke: rgba(255,255,255,0.3);
+  stroke-width: 0.5px !important;
+  shape-rendering: crispEdges;
+}
+
+.brush .extent {
+  stroke: #fff;
+  fill-opacity: .125;
+  shape-rendering: crispEdges;
+}
+

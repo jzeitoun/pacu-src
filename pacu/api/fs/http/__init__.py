@@ -4,7 +4,9 @@ from pacu.util.path import Path
 from pacu.util.identity import path
 from pacu.util.newtype.snode.node.base import BaseNode
 from pacu.util.newtype.snode.abc.mapper import BaseMapper
-from pacu.core.scanbox.mapper.mat import MatMapper
+# from pacu.core.scanbox.mapper.mat import MatMapper
+from pacu.core.io.scanbox.impl import ScanboxIO
+from pacu.core.io.scanbox.view.info import ScanboxInfoView
 
 class InfoItem(BaseNode):
     mappers = BaseMapper.extend(icon='info circle', classes='disabled')
@@ -21,7 +23,11 @@ class DirItem(ItemNode):
 class SBXFileItem(ItemNode):
     mappers = BaseMapper.extend(icon='file', classes='fs-file')
     weight = 20
-    checker = MatMapper.can_deal_with
+    @classmethod
+    def check(cls, path):
+        return path.str.endswith('.sbx') and path.with_suffix('.mat').is_file()
+    def on_map(self, mapping):
+        return dict(text=self.data.stem, value=self.data.name)
 class DirectoryScanForSBX(BaseNode):
     routes = (DirItem, SBXFileItem)
     sort_keys = ('weight',)
@@ -42,13 +48,17 @@ class SBXMetaItem(BaseNode):
         return dict(text=self.data)
 class FileScanForSBX(BaseNode):
     InfoNode = SBXMetaItem
-    checker = MatMapper.can_deal_with
+    checker = ScanboxIO.can_resolve
     def nodes(self):
         self.context['actions'].append('select')
-        mat = MatMapper(self.data) # is path
-        ctime = datetime.fromtimestamp(self.data.lstat().st_ctime)
-        for key, val in mat.props.items():
+        sbx = ScanboxIO(self.data)
+        for key, val in (
+            ('Number of frames', sbx.nframes),
+            ('Frame rate', sbx.info.framerate),
+            ('Size', sbx.data.size),
+        ):
             yield self.link_info_node('{}: {}'.format(key, val))
+        ctime = datetime.fromtimestamp(sbx.info.path.stat().st_ctime)
         yield self.link_info_node(
             'created at: {!s}'.format(ctime))
         yield self.link(InfoItem,
@@ -80,6 +90,7 @@ sbxroot = manager.instance('opt').scanbox_root
 
 sbxpath = Path(sbxroot)
 # sbxpath = Path('/Volumes/Users/ht/tmp/pysbx-data')
+# sbxpath = Path('/Volumes/Recordings/scanbox-jack/my4r_1_3')
 
 def get(req, anchor, *hops, **kwargs):
     action = kwargs.get('action')

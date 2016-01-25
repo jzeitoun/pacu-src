@@ -5,15 +5,7 @@
     y1    = roi.y1
     y2    = roi.y2
     temp  = roi.temp
+    active= roi.active
   }}
 {{/each}}
-{{!-- #each objects as |obj|}}
-  {{svg-rect
-    x1    = obj.x1
-    x2    = obj.x2
-    y1    = obj.y1
-    y2    = obj.y2
-    temp  = obj.temp
-  }}
-{{/each --}}
 {{yield}}

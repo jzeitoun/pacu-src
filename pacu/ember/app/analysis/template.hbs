@@ -1,5 +1,49 @@
+{{!--
 <div class="ui center aligned inverted segment">
   <h2 class="ui">#{{model.id}}: {{model.title}}: {{model.index}}</h2>
 </div>
+{{x-i3d2p-plot-overview}}
 {{x-analysis-i3d files=model.src curIndex=model.index}}
 {{outlet}}
+--}}
+<div class="ui {{if busy 'active'}} dimmer">
+  <div class="ui text inverted loader">Please wait...</div>
+</div>
+<div class="ui inverted segment">
+  <div class="ui five column padded grid">
+    <div class="yellow column">{{model.user}}</div>
+    <div class="red column">
+      <p>{{model.title}} - {{curIndex}}</p>
+      <p>{{model.desc}}</p>
+    </div>
+    <div class="blue column">{{model.createdat}}</div>
+    <div class="green column">{{model.imagesrc}}</div>
+    <div class="purple column">
+      <p>Spatial frequency</p>
+      {{sui-model-select
+        name="currentSFrequency"
+        value=current_sfrequency
+        items=condition.spatial_frequencies
+        onChange=(action "currentSFrequencyEnumChange" model)
+      }}
+    </div>
+  </div>
+  <section class="ui clearing divider"></section>
+  <div class="ui one column padded grid">
+    <div class="center aligned column">
+      {{x-i3d-trace currentROI=currentROI
+        trace=trace curIndex=curIndex}}</div>
+  </div>
+  <section class="ui clearing divider"></section>
+  <div class="ui one column padded grid">
+    <div class="column">
+      {{x-i3d-image session=session src=model.imagesrc
+        curIndex=curIndex currentROI=currentROI}}</div>
+  </div>
+  <section class="ui clearing divider"></section>
+  <div class="ui one column padded grid">
+    <div class="center aligned column">
+      {{x-i3d-response session=session roi=currentROI}}
+    </div>
+  </div>
+</div>

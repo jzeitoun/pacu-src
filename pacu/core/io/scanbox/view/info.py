@@ -8,8 +8,9 @@ from pacu.core.io.view.zero_dimension_array import ZeroDimensionArrayView
 Dimension = namedtuple('Dimension', 'height, width')
 
 class ScanboxInfoView(ZeroDimensionArrayView):
-    def __init__(self, filename):
-        array = io.loadmat(filename, squeeze_me=True).get('info')
+    def __init__(self, path):
+        self.path = path
+        array = io.loadmat(path.str, squeeze_me=True).get('info')
         super(ScanboxInfoView, self).__init__(array)
     @property
     def nchan(self):
@@ -34,4 +35,4 @@ class ScanboxInfoView(ZeroDimensionArrayView):
             return Dimension(*dimension)
     def __dir__(self): # quick and dirty: need to use descriptor set
         return super(ScanboxInfoView, self).__dir__() + \
-            'nchan factor framerate recordsPerBuffer sz'.split()
+            'path nchan factor framerate recordsPerBuffer sz'.split()

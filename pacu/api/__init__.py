@@ -48,5 +48,5 @@ def metavars(var, args):
 from . import prof
 from . import serve
 from . import shell
-from . import query
+# from . import query
 # from . import vstim
