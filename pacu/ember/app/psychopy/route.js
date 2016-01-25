@@ -32,7 +32,7 @@ export default Ember.Route.extend({
     // debug
     // console.log(model);
     model.monitor_id = 0;
-    model.window_id = 0;
+    model.window_id = 1;
     model.stimulus_id = 1;
     model.projection_id = 0;
     model.clock_id = 0;

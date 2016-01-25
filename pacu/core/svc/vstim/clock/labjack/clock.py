@@ -1,4 +1,9 @@
 from pacu.ext.labjack.u3 import U3Proxy
+from pacu.ext.labjack import u3
+t0 = u3.u3.Timer0(UpdateReset=True)
+t1 = u3.u3.Timer1(UpdateReset=True)
+c0 = u3.u3.Counter0(Reset=True)
+c1 = u3.u3.Counter1(Reset=True)
 from pacu.ext.psychopy import logging
 from pacu.core.svc.impl.exc import TimeoutException
 from pacu.core.svc.impl.exc import UserAbortException
@@ -39,6 +44,7 @@ class LabJackClockResource(ClockResource):
                 if self.instance.get_counter():
                     logging.msg('counter increased')
                     logging.flush()
+                    self.instance.reset_timer()
                     return
         else: # timeout...
             raise TimeoutException('Could not catch any signal from LabJack.')
@@ -48,3 +54,4 @@ class LabJackClock(ClockBase):
     wait_time = 0
     timeout = Timeout(15)
     __call__ = LabJackClockResource.bind()
+    description = 'This LabJack clock is supposed to work with ScanBox gear. This clock does not control ScanBox recording. So it is user\'s responsibility to stop the recording session.'

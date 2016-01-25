@@ -59,6 +59,8 @@ class VisualStimulusService(Service):
 __all__ = specs([
     spec('monitor', 'monitors', [
         ('generic', 'GenericMonitor'),
+        ('kirsties', 'KirstiesRegularMonitor'),
+        ('kirsties', 'KirstiesLargeMonitor'),
         ('example', 'ExampleComponent'),
     ]),
     spec('window', 'windows', [

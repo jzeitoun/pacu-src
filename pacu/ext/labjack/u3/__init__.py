@@ -11,22 +11,27 @@ class U3Resource(object):
     timer0 = u3.Timer0()
     timer1 = u3.Timer1()
     counter = u3.Counter0()
+    _reset_offset = 0
     def __init__(self, instance, horigin, lorigin, high, low):
         self.instance = instance
         self.horigin = horigin
         self.lorigin = lorigin
         self.high = high
         self.low = low
-    def get_time(self):
+    def get_monotonic(self):
         high, low = self.instance.getFeedback(self.timer1, self.timer0)
         tick = '{:b}{:032b}'.format(high-self.high, low-self.low)
         return int(tick, 2) * 2.5e-07
+    def get_time(self):
+        return self.get_monotonic() - self._reset_offset
     def get_origin(self):
         high, low = self.instance.getFeedback(self.timer1, self.timer0)
         tick = '{:b}{:032b}'.format(high-self.horigin, low-self.lorigin)
         return int(tick, 2) * 2.5e-07
     def get_counter(self):
         return self.instance.getFeedback(self.counter)[0]
+    def reset_timer(self):
+        self._reset_offset = self.get_monotonic()
 
 class U3Proxy(object):
     t0config = u3.Timer0Config(TimerMode=10)
