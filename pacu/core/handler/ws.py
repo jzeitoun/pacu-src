@@ -9,6 +9,14 @@ import ujson
 
 from ...ext.tornado import websocket
 
+def handle_exc(e):
+    info = sys.exc_info()
+    source = traceback.format_exception(*info)
+    print '\n======== exception on websocket delegation ========'
+    traceback.print_exception(*info)
+    print '======== exception on websocket delegation ========\n'
+    raise e
+
 # currently web socket handler does not work in non-main thread
 # thus shell mode does not support web socket in place.
 class WSHandler(websocket.WebSocketHandler):
@@ -25,9 +33,9 @@ class WSHandler(websocket.WebSocketHandler):
         try:
             cls = getattr(importlib.import_module(modname), clsname)
         except ImportError as e:
-            raise e
+            handle_exc(e)
         except AttributeError as e:
-            raise e
+            handle_exc(e)
         kwargs = {key: val
             for key, vals in self.request.arguments.items()
             for val in vals}
@@ -37,12 +45,7 @@ class WSHandler(websocket.WebSocketHandler):
             self.inst = cls(**kwargs)
             self.inst.__socket__ = self
         except Exception as e:
-            info = sys.exc_info()
-            source = traceback.format_exception(*info)
-            print '\n======== exception on websocket delegation ========'
-            traceback.print_exception(*info)
-            print '======== exception on websocket delegation ========\n'
-            raise e
+            handle_exc(e)
     def on_close(self):
         print 'websocket is closing...'
         if hasattr(self.inst, '__dnit__'):
@@ -56,30 +59,6 @@ class WSHandler(websocket.WebSocketHandler):
     def invoke(self, route, args=None, kwargs=None):
         func = self.access(route)
         return func(*args or [], **kwargs or {})
-#     def _on_message(self, message):
-#         try:
-#             seq, ftype, route, payload = ujson.loads(message)
-#             as_binary = payload.pop('as_binary')
-#             # print 'ONMSG', seq, ftype, route, payload, '!!!!!!!!!!!!', as_binary
-#             func = getattr(self, ftype)
-#             rv = func(route, **payload)
-#         except AttributeError as e:
-#             print 'attrerror', e
-#             rv = 'ERROR!'+str(e) # should go for pure ws fetch?
-#         except ValueError as e:
-#             print 'invalid json', e
-#             rv = 'ERROR!'+str(e) # should go for pure ws fetch?
-#         except Exception as e:
-#             print 'invalid json', e
-#             rv = 'ERROR!'+str(e) # should go for pure ws fetch?
-#         if as_binary:
-#             self.write_message(rv, binary=True)
-#         else:
-#             try:
-#                 dumped = ujson.dumps([seq, rv])
-#             except:
-#                 dumped = ujson.dumps([seq, str(rv)])
-#             self.write_message(dumped)
     def on_message(self, message):
         rv, err = None, None
         try:
@@ -108,7 +87,8 @@ class WSHandler(websocket.WebSocketHandler):
     def dump_message(self, seq, rv, err):
         try:
             dumped = ujson.dumps([seq, rv, err])
-        except: # coerce
+        except Exception as e: # coerce
+            print 'Websocket coerces output:', str(e)
             dumped = ujson.dumps([seq, str(rv), err])
             # print dumped
         self.write_message(dumped)

@@ -61,7 +61,8 @@ __all__ = specs([
         ('generic', 'GenericMonitor'),
         ('kirsties', 'KirstiesRegularMonitor'),
         ('kirsties', 'KirstiesLargeMonitor'),
-        ('example', 'ExampleComponent'),
+        ('jacks', 'JacksRegularMonitor'),
+        # ('example', 'ExampleComponent'),
     ]),
     spec('window', 'windows', [
         ('windowed', 'Window'),

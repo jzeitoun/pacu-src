@@ -67,9 +67,11 @@ def getRmax(meanresponses_fit):
     Rmax = max(y_fit)
     return Rmax
 
-def boot_fit(orientations, returns, data): # returns OSI
-    y_meas = data.mean(1)
-    meanresponses_p, _, _, o_peaks = fit(orientations, y_meas)
+def boot_fit(returns, data):
+    vals = data['val']
+    oris = data['ori'][0, :]
+    y_meas = vals.mean(0)
+    meanresponses_p, _, _, o_peaks = fit(oris, y_meas)
     osi = getOSI(meanresponses_p, o_peaks)
     returns.append(osi)
     print '.',
@@ -229,27 +231,43 @@ class Response(object):
             self.max_orientation_index = np.argmax(self.meanresponses)
             self.max_orientation_value = meta.orientations[self.max_orientation_index]
             self.max_orientation = self.orientations[self.max_orientation_index]
-        # debug.enter()
 
-    def bootstrap_stat(self):
-        orientations = self.cond.orientations
-        capture_freq = self.cond.captureFrequency
-        print 'ORIENTATIONS', orientations
-        print 'CAPTURE FREQUENCY', capture_freq
-        responses_for_boot = np.array([
+    def bootstrap_dump(self, filename):
+        data = cPickle.dumps(self.bootstrap_data)
+        with open(filename, 'wb') as f:
+            f.write(data)
+
+    @property
+    def bootstrap_data(self):
+        orientations = self.cond['orientations']
+        capture_freq = self.cond['captureFrequency']
+        resp = np.array([
             [
-                rep.trace[int(1*capture_freq):int(2*capture_freq)].mean()
+                rep.trace[int(1*capture_freq):int(6*capture_freq)].mean()
                 for rep in o.reps
             ] for o in self.orientations
         ])
+        return dict(ori=orientations, cfreq=capture_freq, resp=resp)
+
+    def bootstrap_stat(self, n_samples=500):
+        bdata = self.bootstrap_data
+        orientations = bdata.get('ori')
+        capture_freq = bdata.get('cfreq')
+        responses = bdata.get('resp')
+        bound_dtype = [('val', float), ('ori', float)]
+        bound = [
+            [(value, ori) for value in values]
+            for values, ori in zip(responses, orientations)]
+        bound_response = np.array(bound, dtype=bound_dtype).T # note "T"
+
         returns = []
-        ci = bootstrap.ci(
-            data = responses_for_boot,
-            statfunction = functools.partial(boot_fit, orientations, returns),
-            method = 'pi',
-            n_samples = 500
+        interval = bootstrap.ci(
+            data = bound_response,
+            statfunction = functools.partial(boot_fit, returns),
+            n_samples = n_samples
         )
-        rv = np.array(returns)
-        mean, std = np.nanmean(rv), np.nanstd(rv)
-        print 'MEAN: {}, STD: {}'.format(mean, std)
-        return rv, mean, std
+
+        stats = returns[:n_samples]
+        nmean, nstd = np.nanmean(stats), np.nanstd(stats)
+        print 'MEAN: {}, STD: {}'.format(nmean, nstd)
+        return interval, mean, std

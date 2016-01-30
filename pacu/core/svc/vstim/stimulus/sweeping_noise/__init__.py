@@ -46,7 +46,11 @@ class StimulusResource(Resource):
         except:
             eyepoint_x = 0.5
         self.textstim = TextStim(win, text='')
-        x, y = win.size
+
+        size_overriden = self.component.snp_viewport_override
+        view_size = size_overriden if any(size_overriden) else win.size
+        win_x, win_y = win.size
+        view_x, view_y = view_size
         afr = 30 # int(win.getActualFrameRate() * 0.5)
         logging.msg('Fixed frame rate: ' + str(afr))
         self.flip_text('Generating stimulus...it may take a few minutes.')
@@ -62,14 +66,16 @@ class StimulusResource(Resource):
                 duration = self.component.snp_duration,
                 bandwidth = self.component.snp_bandwidth,
                 viewwidth = self.component.snp_view_width,
-                pixel_x=x,
-                pixel_y=y,
+                pixel_x = win_x,
+                pixel_y = win_y,
+                view_x = view_x,
+                view_y = view_y,
                 framerate=afr,
                 contr_period=self.component.snp_contr_period,
                 imageMag=self.component.snp_image_mag,
                 screenWidthCm = self.window.monitor.component.width,
                 screenDistanceCm = self.window.monitor.component.dist,
-                # screenRatio = width / height,
+                screenRatio = width / height,
                 eyepoint_x = eyepoint_x
             )
         except Exception as e:
@@ -86,6 +92,7 @@ class StimulusResource(Resource):
             # mgen.crop()
             print 'done!'
             self.movie = mgen.moviedata
+            print 'shape is', self.movie.shape
 
             logging.msg('masking window...')
             print 'masking window...'
@@ -99,12 +106,10 @@ class StimulusResource(Resource):
         logging.msg('creating image stim...')
         print 'creating image stim...'
         # imagebuffer to play each frame
-        # pixel_x, pixel_y = win.monitor.getSizePix()
-        override = self.component.snp_viewport_override
-        # set_trace()
         self.instance = ImageStim(
             win = win,
-            size = override if any(override) else win.size,
+            size = view_size,
+            # size = size_overriden if any(size_overriden) else win.size,
             # size = [800, 800],
             # size = win.size,
             units = 'pix',

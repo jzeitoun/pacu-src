@@ -20,6 +20,8 @@ class SweepingNoiseGenerator():
             viewwidth = 0,
             pixel_x = 1440,
             pixel_y = 900,
+            view_x = None,
+            view_y = None,
             # if framerate is given a float, generator will take forever.
             framerate = 30,
             contr_period=10,
@@ -27,7 +29,7 @@ class SweepingNoiseGenerator():
             imageMag = 10, # movieMag
             screenWidthCm = 39.116, # for 15.4 inch MBPR 15
             screenDistanceCm = 25,
-            # screenRatio = 0.625,
+            screenRatio = None,
             eyepoint_x = 0.5
         ):
         self.max_spat_freq = max_spat_freq
@@ -39,14 +41,15 @@ class SweepingNoiseGenerator():
         self.viewwidth = viewwidth
         self.pixel_x = pixel_x
         self.pixel_y = pixel_y
-        # self.screenRatio = screenRatio
+        self.view_x = view_x or pixel_x
+        self.view_y = view_y or pixel_y
+        self.screenRatio = screenRatio or (pixel_x / pixel_y)
         self.framerate = framerate
         self.contr_period = contr_period
         # self.imsize = imsize
         self.imageMag = imageMag
         self.screenWidthCm = screenWidthCm
         self.screenDistanceCm = screenDistanceCm
-        # self.screenRatio = screenRatio
         self.eyepoint_x = eyepoint_x
         print '\n======================init params========================'
         print 'max sfreq', self.max_spat_freq
@@ -56,14 +59,14 @@ class SweepingNoiseGenerator():
         print 'duration', self.duration
         print 'bandwidth', self.bandwidth
         print 'viewwidth', self.viewwidth
-        print 'Pixel X', self.pixel_x
-        print 'Pixel Y', self.pixel_y
+        print 'Pixel XY', self.pixel_x, self.pixel_y
+        print 'View XY', self.view_x, self.view_y
         print 'framerate', self.framerate
         # print 'imsize', self.imsize
         print 'imageMag', self.imageMag
         print 'screen width cm ', self.screenWidthCm
         print 'screen dist cm', self.screenDistanceCm
-        # print 'screen ratiom', self.screenRatio
+        print 'screen ratio', self.screenRatio
         print 'eyepoint_x', self.eyepoint_x
         print 'nframes', int(np.ceil(self.duration*self.framerate))
         print '======================init params========================\n'
@@ -89,6 +92,9 @@ class SweepingNoiseGenerator():
             0.5*self.screenWidthCm/float(self.screenDistanceCm))*180/np.pi
         self.full_width = screenWidthDeg
         degperpix = (screenWidthDeg/self.pixel_x)*self.imageMag
+
+        print 'screnwidthdeg', screenWidthDeg
+        print 'deg per pix', degperpix
 
         print '02/12'
         # frequency intervals for FFT
@@ -223,7 +229,24 @@ class SweepingNoiseGenerator():
                                            # calculation in PsychStimController.
                                            # I took off 2 again. should be correct.
                                            # added 2 for division again
+
+        # sigma compensation for actual size of rendering region
+
+        if self.rotation in [0, 2]:
+            sigma *= self.pixel_y / self.view_y
+        else:
+            sigma *= self.pixel_x / self.view_x
+        if self.rotation in [0, 2]:
+            # if is is elevation, sigma should be fatter.
+            sigma = sigma * self.screenRatio
+            # also refers override stretch parameters
+
         self.gauss1d = signal.gaussian(imsize, sigma, sym=True)
+        # self.gauss1d = np.zeros(imsize)
+        # halfbar = sigma/2 * 3
+        # self.gauss1d[
+        #     imsize/2-halfbar:imsize/2 + halfbar
+        # ] = 1
         self.gauss2d = np.tile(self.gauss1d, (imsize, 1)) # Make it 2D
         # No need to have something like `gauss3d`. It is just overkill.
 
@@ -272,13 +295,13 @@ class SweepingNoiseGenerator():
     def generate(self):
         self.stim_to_movie()
         return self
-#     def crop(self):
-#         amount = self.imsize - int(self.imsize*self.screenRatio)
-#         if self.rotation in [0, 2]:
-#             self.moviedata = self.moviedata[:, :, amount:]
-#         else:
-#             self.moviedata = self.moviedata[:, amount:, :]
-#         return self
+    def crop(self):
+        amount = self.imsize - int(self.imsize*self.screenRatio)
+        if self.rotation in [0, 2]:
+            self.moviedata = self.moviedata[:, :, amount:]
+        else:
+            self.moviedata = self.moviedata[:, amount:, :]
+        return self
     def rotate(self, direction=None):
         #   0: top to bottom
         # 180: bottom to top
@@ -301,12 +324,16 @@ def tempsave(data):
     import tifffile
     tifffile.imsave('/Volumes/Users/ht/Desktop/gaussianNoise.tif', data)
 
-# qwe = SweepingNoiseGenerator(duration=10, eyepoint_x=0.5, screenDistanceCm=20)
-# qwe.generate()
-# qwe.rotate()
-# qwe.viewmask()
-# qwe.crop()
-# tempsave(qwe.moviedata)
+def test():
+    qwe = SweepingNoiseGenerator(
+            duration=10, eyepoint_x=0.5,
+            screenDistanceCm=20, rotation=0)
+    qwe.generate()
+    qwe.rotate()
+    qwe.viewmask()
+    # qwe.crop()
+    tempsave(qwe.moviedata)
+    return qwe
 
 # .stim_to_movie()
 # SweepingNoiseGenerator().stim_to_file()

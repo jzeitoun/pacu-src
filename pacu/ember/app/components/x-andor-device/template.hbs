@@ -69,7 +69,6 @@
         <div class="content">
           <div class="header">Simple Streaming</div>
           <div class="meta">Internal Trigger</div>
-          {{! <div class="meta">Indefinite duration</div>}}
           <div class="description">
             Most of the time, you would need this for setup your imaging session. 
             When you physically setup between the viewport of camera and the subject, 
@@ -81,7 +80,6 @@
         <div class="content">
           <div class="header">Stimulation Driven</div>
           <div class="meta">External Trigger</div>
-          {{!<div class="meta">Fixed duration</div>}}
           <div class="description">
             This would be one of the main modes for having your actual imaging session.
             Frame rate and count are determined by external trigger. Can not vary exposure time a frame by frame.
@@ -93,7 +91,6 @@
         <div class="content">
           <div class="header">...</div>
           <div class="meta">...</div>
-          {{!<div class="meta">Fixed duration</div>}}
           <div class="description">
             In preparation...will be added in future version.
           </div>
@@ -134,18 +131,21 @@
       <div class="card action-coloring noselect" {{action "selectHandler" "writer"}}>
         <div class="content">
           <div class="header">Write to disk</div>
+          <div class="meta">Chunked by trial</div>
           <div class="description">
             Two files will be saved. Actual TIFF stack and Metadata file. 
             Metadata is a CSV file which may contain timestamp and some useful pre-calculated values.
           </div>
         </div>
       </div>
-      <div class="card action-coloring">
+      <div class="card action-coloring noselect" {{action "selectHandler" "writer_by_ttl"}}>
         <div class="content">
-          <div class="header">...</div>
-          <div class="meta">...</div>
+          <div class="header">Write to disk</div>
+          <div class="meta">Chunked by TTL</div>
           <div class="description">
-            In preparation...will be added in future version.
+            Imaging session is controlled by TTL pulse coming through LabJack device.
+            Recording file closed at every rising edge, and new one opened at every falling edge.
+            So this way, users can control a number of recording chunk with TTL pulse.
           </div>
         </div>
       </div>

@@ -4,6 +4,8 @@ from psychopy import event
 from psychopy.core import CountdownTimer
 from pacu.core.svc.impl.exc import UserAbortException
 
+from psychopy import core
+
 class Trial(object):
     def __init__(self, stimulus, condition, duration, interval):
         self.frameCount = 0
@@ -24,6 +26,7 @@ class Trial(object):
             inst.draw()
             flip()
             flipped()
+            # core.wait(3)
             interval.complete()
         # self.getTime = CountdownTimer(self.duration).getTime
         return self

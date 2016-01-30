@@ -169,6 +169,7 @@ export default Ember.Component.extend({
     }).onbinary((buf) => {
       this.set('currentBuffer', buf);
     });
+    window.qwe = this.wsx;
   }.on('didInsertElement'),
   dnitWS: function() { this.wsx.dnit(); }.on('willDestroyElement'),
   initSUI: function() {

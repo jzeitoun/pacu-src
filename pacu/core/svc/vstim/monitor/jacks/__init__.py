@@ -6,22 +6,12 @@ from pacu.core.svc.vstim.monitor.width import Width
 from pacu.core.svc.vstim.monitor.pixel_x import PixelX
 from pacu.core.svc.vstim.monitor.pixel_y import PixelY
 
-class KirstiesRegularMonitor(GenericMonitor):
+class JacksRegularMonitor(GenericMonitor):
     package = __package__
     sui_icon = 'desktop'
     width = Width(53)
-    name = Name("Kirstie's Regular Monitor")
+    name = Name("Jack's Regular Monitor")
     pixel_x = PixelX(1920)
     pixel_y = PixelY(1080)
     __call__ = MonitorResource.bind()
-    description = 'Quick setup for Kirstie\'s experiment.'
-
-class KirstiesLargeMonitor(GenericMonitor):
-    package = __package__
-    sui_icon = 'desktop'
-    width = Width(121)
-    name = Name("Kirstie's Large Monitor")
-    pixel_x = PixelX(1920)
-    pixel_y = PixelY(1080)
-    __call__ = MonitorResource.bind()
-    description = 'This monitor is large one from LG\'s.'
+    description = 'Quick setup for Jack\'s experiment.'
