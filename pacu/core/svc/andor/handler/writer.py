@@ -2,8 +2,6 @@ import re
 import os
 
 import time
-import numpy
-from matplotlib import pyplot
 from tifffile import TiffWriter
 
 from pacu.util.path import Path

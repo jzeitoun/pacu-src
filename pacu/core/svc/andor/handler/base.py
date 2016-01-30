@@ -53,6 +53,7 @@ class BaseHandler(object):
         err = self.check(*args)
         if err:
             raise Exception(err)
+        self.svc = svc
         self.inst = svc.inst
         self.context = id(self)
         CONTEXTS[self.context] = self

@@ -4,6 +4,7 @@ import atexit
 import time
 
 from u3 import U3
+from tifffile import TiffWriter
 
 # u3.configIO(TimerCounterPinOffset=4, NumberOfTimersEnabled=0,
 #     EnableCounter0=False, EnableCounter1=False, FIOAnalog=0)
@@ -58,7 +59,6 @@ class Chunk(object):
 class WriterByTTLHandler(BaseHandler):
     u3 = U3(debug=False, autoOpen=False)
     def check(self, dirname): # 1
-        print 'WriterByTTLHandler check', dirname
         now = time.strftime('%Y-%m-%dT%H-%M-%S', time.localtime())
         self.path = Path(dirname, now)
         try:
@@ -66,12 +66,13 @@ class WriterByTTLHandler(BaseHandler):
         except Exception as e:
             raise Exception('Failed creating a base directory: ' + str(e))
     def ready(self):
-        print 'WriterByTTLHandler ready'
+        self.svc.dump_socket('notify', 'Opening TTL device...')
+        self.u3.open()
     def enter(self):
-        print 'WriterByTTLHandler enter, chunk made'
         self.chunk = Chunk(self.path, self.u3, did_refresh=self.did_refresh)
     def exit(self):
-        print 'WriterByTTLHandler exit'
+        self.svc.dump_socket('notify', 'Closing TTL device...')
+        self.u3.close()
         self.chunk.close()
         self.chunk = None
     def exposure_start(self):
@@ -79,4 +80,5 @@ class WriterByTTLHandler(BaseHandler):
     def exposure_end(self, frame, _ts):
         self.chunk.save(frame)
     def did_refresh(self, tifpath):
-        print 'ONREF', tifpath.str
+        self.svc.dump_socket('notify',
+            'Chunk created at {}.'.format(tifpath.str))
