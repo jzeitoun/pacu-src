@@ -28,6 +28,7 @@ class Chunk(object):
         self.refresh() # to have initial chunk
     def tick(self):
         is_rising = self.u3.getFIOState(6)
+        print is_rising,
         if is_rising:
             self.refresh() # first
         self.is_rising = is_rising
