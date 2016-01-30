@@ -60,9 +60,11 @@ class Chunk(object):
 
 class WriterByTTLHandler(BaseHandler):
     u3 = U3(debug=False, autoOpen=False)
-    def check(self, dirname): # 1
+    def check(self, basedir):
+        self.basedir = basedir
+    def make_path(self):
         now = time.strftime('%Y-%m-%dT%H-%M-%S', time.localtime())
-        self.path = Path(dirname, now)
+        self.path = Path(self.basedir, now)
         try:
             os.makedirs(self.path.str)
         except Exception as e:
@@ -75,6 +77,7 @@ class WriterByTTLHandler(BaseHandler):
             self.svc.dump_socket('notify', None, 'Could not open TTL device...')
     def enter(self):
         try:
+            self.make_path()
             self.chunk = Chunk(self.path, self.u3, did_refresh=self.did_refresh)
         except:
             self.exit()
