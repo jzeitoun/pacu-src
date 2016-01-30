@@ -24,8 +24,8 @@ class Chunk(object):
     def __init__(self, path, u3, did_refresh):
         self.path = path
         self.u3 = u3
-        self.refresh() # to have initial chunk
         self.did_refresh = did_refresh
+        self.refresh() # to have initial chunk
     def tick(self):
         is_rising = self.u3.getFIOState(6)
         if is_rising:
@@ -55,6 +55,8 @@ class Chunk(object):
         if self.csv:
             csv.close()
         self.is_rising = False
+    def did_refresh(self, tifpath):
+        pass
 
 class WriterByTTLHandler(BaseHandler):
     u3 = U3(debug=False, autoOpen=False)
@@ -67,9 +69,15 @@ class WriterByTTLHandler(BaseHandler):
             raise Exception('Failed creating a base directory: ' + str(e))
     def ready(self):
         self.svc.dump_socket('notify', 'Opening TTL device...')
-        self.u3.open()
+        try:
+            self.u3.open()
+        except:
+            self.svc.dump_socket('notify', None, 'Could not open TTL device...')
     def enter(self):
-        self.chunk = Chunk(self.path, self.u3, did_refresh=self.did_refresh)
+        try:
+            self.chunk = Chunk(self.path, self.u3, did_refresh=self.did_refresh)
+        except:
+            self.exit()
     def exit(self):
         self.svc.dump_socket('notify', 'Closing TTL device...')
         self.u3.close()
