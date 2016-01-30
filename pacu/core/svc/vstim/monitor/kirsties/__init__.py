@@ -19,9 +19,10 @@ class KirstiesRegularMonitor(GenericMonitor):
 class KirstiesLargeMonitor(GenericMonitor):
     package = __package__
     sui_icon = 'desktop'
-    width = Width(121)
+    width = Width(70)
     name = Name("Kirstie's Large Monitor")
-    pixel_x = PixelX(1920)
-    pixel_y = PixelY(1080)
+    pixel_x = PixelX(1080)
+    pixel_y = PixelY(1920)
     __call__ = MonitorResource.bind()
-    description = 'This monitor is large one from LG\'s.'
+    description = 'This monitor is large one from LG\'s. This setup is based on PORTRAIT(pivot) mode.'
+
