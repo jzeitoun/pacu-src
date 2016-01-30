@@ -19,24 +19,41 @@ from pacu.core.svc.andor.handler.base import BaseHandler
 class Chunk(object):
     tif = None
     csv = None
-    on_refresh = False
-    def __init__(self, path):
+    is_rising = False
+    def __init__(self, path, u3, did_refresh):
         self.path = path
+        self.u3 = u3
         self.refresh() # to have initial chunk
+        self.did_refresh = did_refresh
+    def tick(self):
+        is_rising = self.u3.getFIOState(6)
+        if is_rising:
+            self.refresh() # first
+        self.is_rising = is_rising
     def save(self, frame):
-        self.on_refresh = False
+        if self.is_rising:
+            return
         self.tif.save(frame)
         self.csv.write(u'{}\n'.format(time.time()))
     def refresh(self):
-        self.on_refresh = True
+        if self.is_rising:
+            return
         self.close()
-        # self.tif = TiffWriter(self.tifpath.str, bigtiff=True)
-        # self.csv = self.csvpath.open('w')
+        self.nudge_path()
+        self.open()
+        self.did_refresh(self.tifpath)
+    def open(self):
+        self.tif = TiffWriter(self.tifpath.str, bigtiff=True)
+        self.csv = self.csvpath.open('w')
+    def nudge_path(self):
+        self.tifpath = self.path.joinpath('{}.tif'.format(time.time()))
+        self.csvpath = self.path.joinpath('{}.csv'.format(time.time()))
     def close(self):
         if self.tif:
             tif.close()
         if self.csv:
             csv.close()
+        self.is_rising = False
 
 class WriterByTTLHandler(BaseHandler):
     u3 = U3(debug=False, autoOpen=False)
@@ -47,22 +64,19 @@ class WriterByTTLHandler(BaseHandler):
         try:
             os.makedirs(self.path.str)
         except Exception as e:
-            raise Exception('Failed creating directory: ' + str(e))
+            raise Exception('Failed creating a base directory: ' + str(e))
     def ready(self):
         print 'WriterByTTLHandler ready'
     def enter(self):
-        print 'WriterByTTLHandler enter'
-        self.chunk = Chunk(self.path)
+        print 'WriterByTTLHandler enter, chunk made'
+        self.chunk = Chunk(self.path, self.u3, did_refresh=self.did_refresh)
     def exit(self):
         print 'WriterByTTLHandler exit'
         self.chunk.close()
         self.chunk = None
     def exposure_start(self):
-        if u3.getFIOState(6): # pulse rising
-            print 'refresh'
-            self.chucnk.refresh()
-        # else: # falling
-        #     if self.chunk.on_refresh:
-        #         print 'start'
+        self.chucnk.tick()
     def exposure_end(self, frame, _ts):
         self.chunk.save(frame)
+    def did_refresh(self, tifpath):
+        print 'ONREF', tifpath.str
