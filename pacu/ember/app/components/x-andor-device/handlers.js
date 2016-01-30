@@ -14,7 +14,7 @@ const dirname = {
   key        : 'dirname',
   type       : 'StringMeta',
   value      : 'E:\\data\\Soyun',
-  feature    : 'Dirname',
+  feature    : 'Base directory',
   range      : [0, 512],
   readable   : true,
   readonly   : false,

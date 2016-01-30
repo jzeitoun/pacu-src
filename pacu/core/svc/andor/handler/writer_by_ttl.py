@@ -59,7 +59,7 @@ class WriterByTTLHandler(BaseHandler):
     u3 = U3(debug=False, autoOpen=False)
     def check(self, dirname): # 1
         print 'WriterByTTLHandler check', dirname
-        now = time.strftime('%Y-%m-%dT%H:%M:%S', time.localtime())
+        now = time.strftime('%Y-%m-%dT%H-%M-%S', time.localtime())
         self.path = Path(dirname, now)
         try:
             os.makedirs(self.path.str)
