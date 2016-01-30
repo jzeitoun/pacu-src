@@ -51,9 +51,9 @@ class Chunk(object):
         self.csvpath = self.path.joinpath('{}.csv'.format(time.time()))
     def close(self):
         if self.tif:
-            tif.close()
+            self.tif.close()
         if self.csv:
-            csv.close()
+            self.csv.close()
         self.is_rising = False
     def did_refresh(self, tifpath):
         pass
@@ -84,7 +84,7 @@ class WriterByTTLHandler(BaseHandler):
         self.chunk.close()
         self.chunk = None
     def exposure_start(self):
-        self.chucnk.tick()
+        self.chunk.tick()
     def exposure_end(self, frame, _ts):
         self.chunk.save(frame)
     def did_refresh(self, tifpath):
