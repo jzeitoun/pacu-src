@@ -39,9 +39,9 @@ class Chunk(object):
     def tick(self):
         state = self.u3.getFIOState(6)
         if self.prev_state is state: # same state
-            if rising:
+            if state: # is rising
                 pass # self.open_state = True
-            else falling:
+            else: # is falling
                 pass # self.open_state = False
         else: # new state
             if state: # is rising
