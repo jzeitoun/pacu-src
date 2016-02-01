@@ -18,28 +18,44 @@ from pacu.util.path import Path
 from pacu.core.svc.andor.handler.base import BaseHandler
 
 class Chunk(object):
+    """
+    when the app is off: 0
+    when app is on: 1
+    when maze on refresh: 0
+    """
     tif = None
     csv = None
-    is_rising = False
+    prev_state = None # should be neither True nor False
+    open_state = False # but app's initial state was designed to be 1
     def __init__(self, path, u3, did_refresh):
         self.path = path
         self.u3 = u3
         self.did_refresh = did_refresh
-        self.refresh() # to have initial chunk
+        # to have initial chunk
+        self.close()
+        self.nudge_path()
+        self.open()
+        self.did_refresh(self.tifpath)
     def tick(self):
-        is_rising = self.u3.getFIOState(6)
-        print is_rising,
-        if is_rising:
-            self.refresh() # first
-        self.is_rising = is_rising
+        state = self.u3.getFIOState(6)
+        if self.prev_state is state: # same state
+            if rising:
+                pass # self.open_state = True
+            else falling:
+                pass # self.open_state = False
+        else: # new state
+            if state: # is rising
+                self.open_state = True
+            else: # is falling
+                self.open_state = False
+                self.refresh()
+        self.prev_state = state
     def save(self, frame):
-        if self.is_rising:
+        if not self.open_state:
             return
         self.tif.save(frame)
         self.csv.write(u'{}\n'.format(time.time()))
     def refresh(self):
-        if self.is_rising:
-            return
         self.close()
         self.nudge_path()
         self.open()
