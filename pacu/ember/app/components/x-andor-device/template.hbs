@@ -187,6 +187,10 @@
       class="ui inverted {{if onair "red" "blue"}} button" >
       Click to {{if onair "stop" "start"}} recording...
     </button>
+    <div class="ui slider checkbox">
+      {{input type="checkbox" name="bypass" checked=bypass}}
+      <label>Bypass</label>
+    </div>
     {{sui-model-select
       value=0
       items=cmapNames

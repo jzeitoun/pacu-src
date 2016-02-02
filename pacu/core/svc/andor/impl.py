@@ -45,6 +45,7 @@ class AndorBindingService(object):
     _current_frame = None
     inst = None
     handler = None
+    bypass = False
     # very rough and magic implementation.
     # no reason to be `files` argument.
     def __init__(self, files=-1):
@@ -105,6 +106,12 @@ class AndorBindingService(object):
                 for key in list(self.inst.feat)]
         except:
             return []
+    def set_bypass(self, bypass):
+        self.bypass = bypass
+        if bypass:
+            self.dump_socket('notify', 'Bypass on...')
+        else:
+            self.dump_socket('notify', 'Bypass off...')
     def set_handler(self, clsname, *args):
         if self.inst and self.inst.camera_acquiring:
             raise Exception('Camera is in recording session. Stop first...')

@@ -86,9 +86,13 @@ export default Ember.Component.extend({
       }).catch(this.handleError.bind(this));
     },
     setHandler: function(name, feats) {
+      const self = this;
       const args = feats.getEach('value');
       this.wsx.invoke('set_handler', name, ...args).then(() => {
         this.toast.info(`${name.capitalize()} handler setup properly.`);
+        if (Em.isEqual('writer_by_ttl', name)) {
+          self.set('bypass', true);
+        }
       }).catch(this.handleError.bind(this));
     },
     selectHandler: function(name) {
@@ -204,6 +208,10 @@ export default Ember.Component.extend({
       items: feat ? feat.range : []
     };
   },
+  bypassChanged: function() {
+    const value = this.get('bypass');
+    this.wsx.invoke('set_bypass', value);
+  }.observes('bypass'),
   aoileftchanged: function() {
     const value = this.get('features.AOILeft.value');
     if (Ember.isPresent(this.wsx) && Ember.isPresent(value)) {

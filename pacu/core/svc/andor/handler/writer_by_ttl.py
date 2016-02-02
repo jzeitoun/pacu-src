@@ -44,6 +44,7 @@ class Chunk(object):
             else: # is falling
                 pass # self.open_state = False
         else: # new state
+            # could write simpler code, future me will be suffering
             if state: # is rising
                 self.open_state = True
             else: # is falling
@@ -106,6 +107,8 @@ class WriterByTTLHandler(BaseHandler):
     def exposure_start(self):
         self.chunk.tick()
     def exposure_end(self, frame, _ts):
+        if self.svc.bypass:
+            return
         self.chunk.save(frame)
     def did_refresh(self, tifpath):
         self.svc.dump_socket('notify',

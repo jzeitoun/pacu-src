@@ -21,6 +21,7 @@ class FakeAndorBindingService(object):
     frame_gathered = 0
     inst = None
     handler = None
+    bypass = False
     # very rough and magic implementation.
     # no reason to be `files` argument.
     def __init__(self, files=-1):
@@ -93,3 +94,9 @@ class FakeAndorBindingService(object):
         sc = self.__socket__
         if sc:
             sc.dump_message(seq, arg, err)
+    def set_bypass(self, bypass):
+        self.bypass = bypass
+        if bypass:
+            self.dump_socket('notify', 'Bypass on...')
+        else:
+            self.dump_socket('notify', 'Bypass off...')

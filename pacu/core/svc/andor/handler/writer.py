@@ -35,6 +35,8 @@ class WriterHandler(BaseHandler):
         self.tif = TiffWriter(self.tifpath.str, bigtiff=True)
         self.csv = self.csvpath.open('w')
     def exposure_end(self, frame, _ts):
+        if self.svc.bypass:
+            return
         ts = time.time() - self.ready_at
         self.tif.save(frame)
         # self.tif.save(frame, extratags=[(
