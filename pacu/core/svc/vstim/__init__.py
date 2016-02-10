@@ -18,13 +18,13 @@ class VisualStimulusService(Service):
     stimulus   = ComponentDependency()
     handler    = ComponentDependency()
     def __call__(self):
-        with self                           as result    ,\
-             self.clock()                   as clock     ,\
-             self.monitor()                 as monitor   ,\
-             self.window(monitor)           as window    ,\
-             self.projection(window)        as projection,\
-             self.stimulus(window, clock, projection)   as stimulus  ,\
-             self.handler(stimulus, result) as handler:
+        with self                                     as result    ,\
+             self.clock()                             as clock     ,\
+             self.monitor()                           as monitor   ,\
+             self.window(monitor)                     as window    ,\
+             self.projection(window)                  as projection,\
+             self.stimulus(window, clock, projection) as stimulus  ,\
+             self.handler(stimulus, result)           as handler:
             for trial in stimulus.synced: # experiment generating
                 while trial:              # inter-condition-interval
                     with trial:           # inter-stimulus-interval

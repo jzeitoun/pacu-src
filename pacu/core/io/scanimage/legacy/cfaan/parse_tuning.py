@@ -129,7 +129,8 @@ class Orientation():
     # with `conditionN`.
     #
     def __init__(self, conditionN, ori, trace, c):
-        ''' condition number is the index of the orientation in c['orientations'].
+        '''
+        condition number is the index of the orientation in c['orientations'].
         '''
         self.name=ori
         self.reps=[]

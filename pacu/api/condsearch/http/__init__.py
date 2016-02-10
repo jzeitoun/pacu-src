@@ -6,6 +6,7 @@ from pacu.core.model.experiment import ExperimentV1
 
 DB = manager.get('db').as_resolved
 ED = manager.get('db').section('ed')
+LIMIT = 1000
 
 def get(req, condtype):
     if condtype == '0': # ScanImage with Matlab VisStim
@@ -17,12 +18,12 @@ def get(req, condtype):
             VisStim2P.spatial_frequencies,
             VisStim2P.total_time_S,
             VisStim2P.date
-        ).order_by(VisStim2P.id.desc())[:100]
+        ).order_by(VisStim2P.id.desc())[:LIMIT]
         return ujson.dumps([m._asdict() for m in models])
     else: # ScanBox with PACU VisStim
         db = DB()
         models = db.query(ExperimentV1
-        ).order_by(ExperimentV1.id.desc())[:100]
+        ).order_by(ExperimentV1.id.desc())[:LIMIT]
         rv = []
         for m in models:
             rv.append(dict(

@@ -1,6 +1,6 @@
 from psychopy import event
 from psychopy.core import CountdownTimer
-# PhaseIncreasingTrial
+
 class Trial(object):
     def __init__(self, stimulus, condition, duration, interval):
         self.frameCount = 0

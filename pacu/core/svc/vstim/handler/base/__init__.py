@@ -1,5 +1,6 @@
 from cStringIO import StringIO
 
+import numpy as np
 import psychopy.logging
 
 from pacu.profile import manager
@@ -17,17 +18,17 @@ class HandlerResource(Resource):
     def service_done(self, service):
         trials = self.stimulus.trials
         try:
-            trial_list = [vars(t.condition) for t in trials.trialList]
+            trial_list = np.array([vars(t.condition) for t in trials.trialList])
         except:
-            trial_list = []
+            trial_list = np.array([])
         self.result.update(
             clsname = type(service).__name__,
             pkgname = type(service).__module__,
             payload = service.as_payload,
             message = self.log.stream.getvalue(),
-            sequence = list(trials.sequenceIndices.T.flat),
+            sequence = list(trials.sequenceIndices),
             trial_list = trial_list,
-            **{k: v.filled().T.flatten().tolist() for k, v in trials.data.items()})
+            **{k: v.filled().tolist() for k, v in trials.data.items()})
         return self.result
 
 class HandlerBase(Component):

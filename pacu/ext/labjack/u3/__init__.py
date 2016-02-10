@@ -7,6 +7,8 @@ except ImportError:
 else:
     U3 = u3.U3
 
+# TODO: needs to have reset_counter to be able to
+#       split between periods in frame counting manner
 class U3Resource(object):
     timer0 = u3.Timer0()
     timer1 = u3.Timer1()
@@ -30,6 +32,8 @@ class U3Resource(object):
         return int(tick, 2) * 2.5e-07
     def get_counter(self):
         return self.instance.getFeedback(self.counter)[0]
+    def reset_counter(self):
+        raise NotImplementedError
     def reset_timer(self):
         self._reset_offset = self.get_monotonic()
 

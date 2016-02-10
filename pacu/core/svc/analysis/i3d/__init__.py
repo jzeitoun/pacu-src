@@ -8,7 +8,9 @@ from ipdb import set_trace
 from pacu.util.path import Path
 from pacu.profile import manager
 from pacu.core.io.scanbox.impl import ScanboxIO
+from pacu.core.io.scanimage.impl import ScanimageIO
 from pacu.core.io.scanbox.condition import ScanboxCondition
+from pacu.core.io.scanimage.condition import ScanimageCondition
 from pacu.core.model.ed.visstim2p import VisStim2P
 from pacu.core.model.experiment import ExperimentV1
 from pacu.core.model.analysis import AnalysisV1
@@ -16,57 +18,65 @@ from pacu.core.method.twophoton.tuning.parse import Response
 from pacu.core.method.twophoton.frequency.spatial.meta import SpatialFrequencyMeta
 
 DB = manager.get('db').as_resolved
+DB = manager.get('db').section('glab')
 ED = manager.get('db').section('ed')
 
 jet = getattr(plt.cm, 'jet')
 
 class I3DAnalysisService(object):
-    sbx = None
+    """
+    imgstack instance should implement following methods and properties.
+    @dimension(self)
+    @max_index(self)
+    request_frame(self, index)
+    grand_trace(self)
+    trace(self, x1, x2, y1, y2)
+
+    and for condition instance...
+    extract(self)
+    """
+    imgstack = None
     def debug(self):
         set_trace()
     def __init__(self, files): # analysis_v1 id will come in
         self.db, self.ed = DB(), ED()
         av1 = self.db.query(AnalysisV1).get(files)
         if av1.type == '0': # ScanImage
-            self.condition = ScanImageCondition(
-                **vars(self.ed.query(VisStim2P).get(av1.conditionid)))
+            vst = self.ed.query(VisStim2P).get(av1.conditionid)
+            self.condition = ScanimageCondition(**vars(vst))
+            self.imgstack = ScanimageIO(av1.imagesrc)
         else: # Scanbox
-            self.condition = ScanboxCondition(
-                **vars(self.db.query(ExperimentV1).get(av1.conditionid)))
+            vst = self.db.query(ExperimentV1).get(av1.conditionid)
+            self.condition = ScanboxCondition(**vars(vst))
+            self.imgstack = ScanboxIO(av1.imagesrc)
         self.av1 = av1
-        self.sbx = ScanboxIO(av1.imagesrc)
         self.sfreq_meta = SpatialFrequencyMeta(self.condition)
     @property
     def dimension(self):
-        height, width = map(int, self.sbx.info.sz) # from numpy int
-        return dict(width=width, height=height)
+        return self.imgstack.dimension
     @property
     def max_index(self):
-        return self.sbx.nframes - 1
+        return self.imgstack.max_index
     def request_frame(self, index):
-        data = self.sbx.io8bit[index]
-        return jet(~data, bytes=True).tostring()
-    def get_grand_response(self):
-        trace = self.get_grand_trace()
-        # set_trace()
+        data = self.imgstack.request_frame(index)
+        return jet(data, bytes=True).tostring()
     def get_grand_trace(self):
         key = 'cache.grand_trace'
         if key not in self.av1.data:
-            value = ~self.sbx.io
-            trace = value.mean(axis=(1,2))
+            trace = self.imgstack.grand_trace()
             self.av1.data[key] = trace.tolist()
             self.db.commit()
         return self.av1.data.get(key)
     def get_current_sfrequency(self):
         key = 'current_sfrequency'
         if key not in self.av1.data:
-            value = 0
-            self.av1.data[key] = value
+            self.av1.data[key] = 0
             self.db.commit()
         return self.av1.data.get(key)
     def get_trace(self, x1, x2, y1, y2):
         # self.get_trace(377, 426, 167, 219)
-        return (~self.sbx.io[:, y1:y2, x1:x2]).mean(axis=(1,2))
+        return self.imgstack.trace(x1, x2, y1, y2)
+        # return (~self.imgstack.io[:, y1:y2, x1:x2]).mean(axis=(1,2))
     def get_response(self, x1, x2, y1, y2):
         trace = self.get_trace(x1, x2, y1, y2)
         try:
@@ -86,98 +96,37 @@ class I3DAnalysisService(object):
             key: "NaN" if math.isnan(val) else float(val)
             for key, val in rv.items()
         }
+    def resp(self, x1=0, x2=10, y1=0, y2=10):
+        trace = self.get_trace(x1, x2, y1, y2)
+        return Response(trace, self.condition, self.sfreq_meta)
 
+# example for scanimage
+# qwe = I3DAnalysisService(15)
 
-# qwe = I3DAnalysisService(4)
-# t = qwe.get_grand_trace()
-# sfm = SpatialFrequencyMeta(qwe.condition)
-# r = Response(t, qwe.condition, sfm)
-
-#     def __init__(self, mmap):
-#         if isinstance(mmap, memmap):
-#             self.raw = mmap[..., 0]
-#             # print 'invmin', 65535 - self.raw.max()
-#             # print 'invmax', 65535 - self.raw.min()
-#             self.mmap8 = 
-#             self.shape = self.raw.shape
-#         else:
-#             self.error = TypeError(mmap)
-#     def get_frame(self, index=0): # returns binary
-#         return jet(~self.mmap8[index], bytes=True).tostring()
-
-#     @property
-#     def width(self):
-#         return self.sbx.shape[0]
-#     @property
-#     def height(self):
-#         return self.sbx.shape[1]
-#     files = Dependency(Files)
-#     stack = Dependency(Stack).on(files, 'mat.memmap')
-#     rois = Dependency(ROIs)
-#     def __init__(self, **kwargs):
-#         for key, val in kwargs.items():
-#             setattr(self, key, val)
-#     deps = DescriptorSet(Dependency)
-#     def get_frame(self, index):
-#         return self.stack.get_frame(index)
-#     def get_mean(self, x1, x2, y1, y2):
-#         pass
-        # jobs = [get_mean_lazy(arr, x1, x2, y1, y2)
-        #         for arr in np.split(self.stack.raw, 8)]
-        # res = p(jobs)
-        # return np.concatenate(res).tolist()
-        # return self.stack.mmap[
-        #     :, y1:y2, x1:x2
-        # ].mean(axis=(1,2)).tolist()
-
-# jz5 = '/Volumes/Users/ht/tmp/pysbx-data/JZ5/JZ5_000_003'
-# jz6 = '/Volumes/Users/ht/tmp/pysbx-data/JZ6/JZ6_000_003'
-# # qwe = I3DAnalysisService(files=jz5)
-# # X1:333, X2:357, Y1:122, Y2:145
-# x1 = 338
-# x2 = 360
-# y1 = 125
-# y2 = 145
-# # print x1, x2, y1, y2
+# get_ipython().magic('pylab')
 # 
-# # larger
-# # x1=262
-# # x2=381
-# # y1=94
-# # y2=164
-# # q1 = qwe.stack.raw[:, y1:y2, x1:x2].mean(axis=(1,2))
-# # q2 = qwe.stack.raw[:, y1:y2, x1:x2].mean(axis=(2,1))
-# # q2 = qwe.stack.raw[:, 0:10, 0:10]  #.mean()
-# # s=time.time();np.concatenate(p(js));print time.time()-s
+# import numpy as np
+# from matplotlib.pyplot import *
 # 
-# # 
-# # s=time.time();multi=np.concatenate(p(js));print time.time()-s
-# # s=time.time();multi=np.concatenate(p(js));print time.time()-s
-# # s=time.time();single=get_mean(qwe.stack.mmap);print time.time()-s
+# qwe = I3DAnalysisService(14)
+# start_times = qwe.condition.start_times
+# response = qwe.resp(447, 475, 140, 166)
+# # response = qwe.resp(461, 482, 247, 265)
+# for i, ori in enumerate(response.orientations):
+#     baseline_length = len(ori.meanbaseline_trace)
+#     ori.baseline_seq = np.arange(baseline_length) + baseline_length*i*2
+#     plot(ori.baseline_seq, ori.meanbaseline_trace, color='blue')
 # 
-# # q = Parallel(n_jobs=2, max_nbytes=1e6)(
-# #     [delayed(np.ones)(10)]
-# # )
-# # qwe.rois
-# # print I3DAnalysisService.file.bindings.items()
+#     response_length = len(ori.meantrace)
+#     ori.response_seq = np.arange(response_length) + ori.baseline_seq[-1] + 1
+#     plot(ori.response_seq, ori.meantrace, color='red')
 # 
+#     for rep in ori.reps:
+#         plot(ori.baseline_seq, rep.baseline_trace, color='gray', linewidth=0.25)
+#         plot(ori.response_seq, rep.trace, color='gray', linewidth=0.25)
 # 
-# # dict(
-# #     pkgname='a.b.c',
-# #     clsname='Something',
-# #     args=(),
-# #     kwargs=dict(
-# #         deeper=dict(
-# #             pkgname='b.c.d',
-# #             clsname='Yeah',
-# #             args=(),
-# #             kwargs=()
-# #         )
-# #     )
-# # )
-# 
-# # pickles
-# #     for
-# #     O2MORM
-# #     O2OORM
-# #     M2MORM
+# xticks(*zip(*[(ori.baseline_seq[0], ori.name) for ori in response.orientations]))
+# axis('auto')
+# xlabel('orientation')
+# ylabel('response')
+# legend(['baseline', 'response'])

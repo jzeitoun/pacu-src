@@ -1,8 +1,19 @@
 import importlib
+import traceback
+import sys
 
 import ujson
 
 from ...ext.tornado import websocket
+
+
+def handle_exc(e):
+    info = sys.exc_info()
+    source = traceback.format_exception(*info)
+    print '\n======== exception on websocket delegation ========'
+    traceback.print_exception(*info)
+    print '======== exception on websocket delegation ========\n'
+    raise e
 
 # currently web socket handler does not work in non-main thread
 # thus shell mode does not support web socket in place.
@@ -29,12 +40,14 @@ class WebSocketHandler(websocket.WebSocketHandler):
                 getattr(self.handler, event)(**kwargs)
             except ValueError as e:
                 # print 'invalid protocol like [`event`, `kwargs`]', e
-                self.handler.write_console('errors: ' + str(e))
+                # self.handler.write_console('errors: ' + str(e))
                 # self.write_message('ERROR!'+str(e))
+                handle_exc(e)
             except Exception as e:
                 # print 'error during fetching', e
-                self.handler.write_console('errors: ' + str(e))
+                # self.handler.write_console('errors: ' + str(e))
                 # self.write_message('ERROR!'+str(e))
+                handle_exc(e)
     def open(self, api, args):
         # print 'OPEN', api, args
         try:

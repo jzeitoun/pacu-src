@@ -29,7 +29,7 @@ class ScanboxCondition(object):
         self.clsname    = clsname
         self.pkgname    = pkgname
         self.on_time    = on_time
-        self.sequence   = sequence
+        self.sequence   = sequence.T.flatten()
         self.created_at = created_at
         self.off_time   = off_time
         self.message    = message
@@ -64,6 +64,9 @@ class ScanboxCondition(object):
     def waitinterval_F(self):
         return np.array(self.stimulus.off_duration) * FRAMERATE
     @property
+    def condition_F(self):
+        return self.waitinterval_F * 2
+    @property
     def ontimes_F(self):
         return (np.array(self.on_time) * FRAMERATE).flatten()
     @property
@@ -72,7 +75,12 @@ class ScanboxCondition(object):
     @property
     def captureFrequency(self):
         return FRAMERATE
-
+    def __getitem__(self, item):
+        return getattr(self, item)
+    @property
+    def start_times(self):
+        start_times = np.array(self.ontimes_F)-self.waitinterval_F
+        return start_times.astype('int')
 
 
 

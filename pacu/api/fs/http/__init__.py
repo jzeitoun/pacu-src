@@ -28,8 +28,16 @@ class SBXFileItem(ItemNode):
         return path.str.endswith('.sbx') and path.with_suffix('.mat').is_file()
     def on_map(self, mapping):
         return dict(text=self.data.stem, value=self.data.name)
-class DirectoryScanForSBX(BaseNode):
-    routes = (DirItem, SBXFileItem)
+class TIFFileItem(ItemNode):
+    mappers = BaseMapper.extend(icon='file', classes='fs-file')
+    weight = 30
+    @classmethod
+    def check(cls, path):
+        return path.str.endswith('.tif')
+    def on_map(self, mapping):
+        return dict(text=self.data.name, value=self.data.name)
+class DirectoryScanForResource(BaseNode):
+    routes = (DirItem, SBXFileItem, TIFFileItem)
     sort_keys = ('weight',)
     checker = Path.is_dir
     InfoNode = InfoItem
@@ -38,10 +46,10 @@ class DirectoryScanForSBX(BaseNode):
     def makeup(self, items):
         if items:
             dirs = len(self.context['DirItem'])
-            files = len(self.context['SBXFileItem'])
+            files = len(self.context['SBXFileItem']) + len(self.context['TIFFileItem'])
             yield self.link_info_node('Directory: {}, File: {}'.format(dirs, files))
         else:
-            yield self.link_info_node('No scanbox files is in this directory...')
+            yield self.link_info_node('No resource files is in this directory...')
 class SBXMetaItem(BaseNode):
     mappers = BaseMapper.extend(icon='info circle', classes='disabled')
     def on_map(self, mapping):
@@ -65,12 +73,28 @@ class FileScanForSBX(BaseNode):
             'Hit Enter key or click the check icon to select this resource...')
     def on_select(self):
         return dict(data=self.data.with_name(self.data.stem).str)
+class FileScanForSCI(BaseNode):
+    InfoNode = SBXMetaItem
+    # checker = ScanboxIO.can_resolve
+    def check(self, path):
+        print 'CHECK', path.is_file()
+        return path.is_file()
+    def nodes(self):
+        self.context['actions'].append('select')
+        ctime = datetime.fromtimestamp(self.data.stat().st_ctime)
+        yield self.link_info_node('Tiff file from ScanImage')
+        yield self.link_info_node('created at: {!s}'.format(ctime))
+        yield self.link(InfoItem,
+            'Hit Enter key or click the check icon to select this resource...')
+    def on_select(self):
+        return dict(data=self.data.with_name(self.data.name).str)
 
 class FSGraph(BaseNode):
     InfoNode = InfoItem
     routes = (
-        DirectoryScanForSBX,
+        DirectoryScanForResource,
         FileScanForSBX,
+        FileScanForSCI,
     )
     def unfold(self):
         yield Path(self.data)
@@ -103,3 +127,5 @@ def get(req, anchor, *hops, **kwargs):
         print e
         raise e
 
+
+# tiff = Path('/Volumes/Gandhi Lab - HT/sci/2014.12.20/x.140801.1/field004.tif')

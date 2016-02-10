@@ -67,3 +67,19 @@ class ScanboxIO(object):
         return self.io.view('uint8')[..., 1::2]
     def __getitem__(self, key):
         return self.io.__getitem__(key)
+
+    # interface methods with i3d analysis
+    @property
+    def dimension(self):
+        height, width = map(int, self.info.sz) # from numpy int
+        return dict(width=width, height=height)
+    @property
+    def max_index(self):
+        return self.nframes - 1
+    def request_frame(self, index):
+        return ~self.io8bit[index]
+    def grand_trace(self):
+        value = ~self.io
+        return value.io.mean(axis=(1,2))
+    def trace(self, x1, x2, y1, y2):
+        return (~self.io[:, y1:y2, x1:x2]).mean(axis=(1,2))
