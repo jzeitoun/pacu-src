@@ -11,7 +11,7 @@ class KirstiesRegularMonitor(GenericMonitor):
     package = __package__
     sui_icon = 'desktop'
     width = Width(53.34)
-    height = height(29.21)
+    height = Height(29.21)
     name = Name("Kirstie's Regular Monitor")
     pixel_x = PixelX(1920)
     pixel_y = PixelY(1080)
@@ -22,7 +22,7 @@ class KirstiesLargeMonitor(GenericMonitor):
     package = __package__
     sui_icon = 'desktop'
     width = Width(68.58)
-    height = height(121.92)
+    height = Height(121.92)
     name = Name("Kirstie's Large Monitor")
     pixel_x = PixelX(1080)
     pixel_y = PixelY(1920)
