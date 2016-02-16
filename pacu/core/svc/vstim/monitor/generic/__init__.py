@@ -13,7 +13,8 @@ class MonitorResource(Resource):
     def __enter__(self):
         from psychopy.monitors import Monitor
         comp = self.component
-        monitor = Monitor(comp.name, width=comp.width, distance=comp.dist) #, gamma=comp.gamma)
+        monitor = Monitor(comp.name, width=comp.width,
+                distance=comp.dist, gamma=1.5) #comp.gamma)
         monitor.setSizePix((comp.pixel_x, comp.pixel_y))
         self.instance = monitor
         return self
@@ -21,9 +22,9 @@ class MonitorResource(Resource):
 class GenericMonitor(Component):
     package = __package__
     sui_icon = 'desktop'
+    dist = Dist(10)
     width = Width(33.169)
     height = Height(20.731)
-    dist = Dist(10)
     name = Name('GenericMonitor')
     pixel_x = PixelX(1440)
     pixel_y = PixelY(900)

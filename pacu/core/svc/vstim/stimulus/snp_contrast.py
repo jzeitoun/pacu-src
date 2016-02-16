@@ -7,4 +7,4 @@ class SNPContrast(PacuAttr, PositiveFloatSpec):
     description = EmberAttr('')
     placeholder = EmberAttr('')
     title = EmberAttr('Contrast')
-    tip = EmberAttr('')
+    tooltip = EmberAttr('Larger number makes stim much slower.')
