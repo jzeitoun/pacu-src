@@ -26,7 +26,6 @@ class Trial(object):
             inst.draw()
             flip()
             flipped()
-            # core.wait(3)
             interval.complete()
         # self.getTime = CountdownTimer(self.duration).getTime
         return self

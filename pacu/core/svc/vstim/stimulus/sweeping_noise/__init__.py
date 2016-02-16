@@ -15,7 +15,6 @@ from pacu.util.prop.memoized import memoized_property
 from pacu.core.svc.impl.resource import Resource
 from pacu.core.svc.impl.component import Component
 from pacu.core.svc.vstim.stimulus.duration import OnDuration
-from pacu.core.svc.vstim.stimulus.tex_size import TexSize
 from pacu.core.svc.vstim.stimulus.contrast import Contrast
 from pacu.core.svc.vstim.stimulus.sfrequencies import SFrequencies
 from pacu.core.svc.vstim.stimulus.tfrequencies import TFrequencies
@@ -27,9 +26,11 @@ from pacu.core.svc.vstim.stimulus.snp_max_spat_freq import SNPMaxSFrequency
 from pacu.core.svc.vstim.stimulus.snp_max_temp_freq import SNPMaxTFrequency
 from pacu.core.svc.vstim.stimulus.snp_contrast import SNPContrast
 from pacu.core.svc.vstim.stimulus.snp_rotation import SNPRotation
+from pacu.core.svc.vstim.stimulus.snp_filter import SNPFilter
 from pacu.core.svc.vstim.stimulus.snp_duration import SNPDuration
 from pacu.core.svc.vstim.stimulus.snp_bandwidth import SNPBandwidth
 from pacu.core.svc.vstim.stimulus.snp_image_mag import SNPImageMag
+from pacu.core.svc.vstim.stimulus.snp_img_size import SNPImgSize
 from pacu.core.svc.vstim.stimulus.snp_view_width import SNPViewWidth
 from pacu.core.svc.vstim.stimulus.snp_contr_period import SNPContrPeriod
 from pacu.core.svc.vstim.stimulus.snp_view_port_override import SNPViewPortOverride
@@ -63,19 +64,20 @@ class StimulusResource(Resource):
                 max_temp_freq = self.component.snp_max_temp_freq,
                 contrast = self.component.snp_contrast,
                 rotation = self.component.snp_rotation,
+                bandfilter = self.component.snp_filter,
                 duration = self.component.snp_duration,
                 bandwidth = self.component.snp_bandwidth,
                 viewwidth = self.component.snp_view_width,
-                pixel_x = win_x,
-                pixel_y = win_y,
-                view_x = view_x,
-                view_y = view_y,
+                imsize = self.component.snp_img_size,
                 framerate=afr,
                 contr_period=self.component.snp_contr_period,
-                imageMag=self.component.snp_image_mag,
+                screenWidthPix = win_x,
+                screenHeightPix = win_y,
+                viewport_x = view_x,
+                viewport_y = view_y,
                 screenWidthCm = self.window.monitor.component.width,
+                screenHeightCm = self.window.monitor.component.height,
                 screenDistanceCm = self.window.monitor.component.dist,
-                screenRatio = width / height,
                 eyepoint_x = eyepoint_x
             )
         except Exception as e:
@@ -97,9 +99,8 @@ class StimulusResource(Resource):
             logging.msg('masking window...')
             print 'masking window...'
             # Setting viewport width
-
-            screenWidthCm = self.window.monitor.component.width
-            screenDistanceCm = self.window.monitor.component.dist
+            # screenWidthCm = self.window.monitor.component.width
+            # screenDistanceCm = self.window.monitor.component.dist
 
             self.flip_text('Generating stimulus...done!')
 
@@ -108,10 +109,8 @@ class StimulusResource(Resource):
         # imagebuffer to play each frame
         self.instance = ImageStim(
             win = win,
+            # size = [1440, 900], # prevent stretch
             size = view_size,
-            # size = size_overriden if any(size_overriden) else win.size,
-            # size = [800, 800],
-            # size = win.size,
             units = 'pix',
             interpolate = True
         )
@@ -163,11 +162,12 @@ class SweepingNoiseStimulus(Component):
     __call__ = StimulusResource.bind('window', 'clock', 'projection')
     snp_max_spat_freq = SNPMaxSFrequency(0.05)
     snp_max_temp_freq = SNPMaxTFrequency(4)
-    snp_contrast = SNPContrast(0.275)
+    snp_contrast = SNPContrast(0.5)
     snp_rotation = SNPRotation('0')
+    snp_filter = SNPFilter('Gaussian')
     snp_duration = SNPDuration(15)
-    snp_bandwidth = SNPBandwidth(5)
-    snp_image_mag = SNPImageMag(10)
+    snp_bandwidth = SNPBandwidth(30)
+    snp_img_size = SNPImgSize(64)
     snp_view_width = SNPViewWidth(0)
     snp_contr_period = SNPContrPeriod(10)
     snp_viewport_override = SNPViewPortOverride([0, 0])

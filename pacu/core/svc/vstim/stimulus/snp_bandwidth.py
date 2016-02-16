@@ -4,7 +4,7 @@ from pacu.core.svc.impl.ember_attr import EmberAttr
 
 class SNPBandwidth(PacuAttr, PositiveFloatSpec):
     component = 'x-svc-comp-input-text'
-    description = EmberAttr('used to get sigma of Gaussian mask')
-    placeholder = EmberAttr('')
+    description = EmberAttr('degree')
+    placeholder = EmberAttr('30')
     title = EmberAttr('Bandwidth')
-    tip = EmberAttr('')
+    tip = EmberAttr('.')
