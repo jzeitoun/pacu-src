@@ -21,7 +21,7 @@ class MSGHandler(RequestHandler):
         except Exception as e:
             self.send_error(500)
     def get(self, msg, args):
-        print 'get', msg, args, gets[msg]
+        # print 'get', msg, args, gets[msg]
         for handler in gets[msg]:
             handler(self, *self.args, **self.kwargs)
     def post(self, msg, args):

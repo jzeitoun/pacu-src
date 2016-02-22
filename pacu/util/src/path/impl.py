@@ -35,8 +35,11 @@ def absdir(cls, path):
     return cls(os.path.dirname(os.path.abspath(path)))
 def with_suffixes(self, *suffixes):
     return map(self.with_suffix, suffixes)
+# def path_without_suffixes(self):
+#     return Path(self.str[:-len(''.join(self.suffixes))])
 def stempath(self):
-    return Path(self.stem)
+    return Path(self.str[:-len(''.join(self.suffixes))])
+    # return Path(self.stem)
 
 Path.__floordiv__ = Path.with_name
 Path.str = property(Path.__str__)
@@ -49,4 +52,5 @@ Path.write = write
 Path.here = classmethod(here)
 Path.absdir = classmethod(absdir)
 Path.with_suffixes = with_suffixes
+# Path.path_without_suffixes = property(path_without_suffixes)
 Path.stempath = property(stempath)

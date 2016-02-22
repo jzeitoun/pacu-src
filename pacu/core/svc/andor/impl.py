@@ -53,7 +53,7 @@ class AndorBindingService(object):
     def __dnit__(self):
         print 'prepare to be destroyed...'
         try:
-            msg.gets['svc.andor'].remove(self)
+            msg.gets['svc.andor.on_external'].remove(self)
         except:
             pass
         if self.inst and self.inst.camera_acquiring:
@@ -195,14 +195,16 @@ class AndorBindingService(object):
             rv = getattr(self, 'protocol_%s' % protocol)(*args, **kwargs)
             handler.write(dict(data=rv, error=None))
         except Exception as e:
+            print 'error on external communication: {}: {}: {}'.format(
+                protocol, str(type(e)), str(e))
             error = dict(type=type(e).__name__, msg=str(e))
             handler.write(dict(data=None, error=error))
     def protocol_state_check(self):
         EXTERNAL_NA, EXTERNAL_READY = range(2)
         is_cont = self.inst.cycle_mode == 1
         is_ext = self.inst.trigger_mode == 6
-        print self.inst.cycle_mode, '< Cycle', is_cont
-        print self.inst.trigger_mode, '< Trigger', is_ext
+        # print self.inst.cycle_mode, '< Cycle', is_cont
+        # print self.inst.trigger_mode, '< Trigger', is_ext
         if is_cont and is_ext:
             if isinstance(self.handler, WriterHandler):
                 return EXTERNAL_READY

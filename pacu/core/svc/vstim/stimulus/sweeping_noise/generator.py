@@ -170,7 +170,7 @@ class SweepingNoiseGenerator(object):
                 np.sqrt(np.add(x**2 + y**2, offset))**alpha
             )
         )
-        invFFT = np.zeros([imsize, imsize, nframes],dtype=np.dtype('complex'))
+        invFFT = np.zeros([imsize, imsize, nframes], dtype=np.dtype('complex'))
         mu = np.zeros([spaceRange.shape[0], spaceRange.shape[0], tempRange.shape[0]])
         sig = np.ones([spaceRange.shape[0], spaceRange.shape[0], tempRange.shape[0]])
 

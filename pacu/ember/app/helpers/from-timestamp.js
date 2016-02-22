@@ -15,4 +15,5 @@ export function fromTimestamp(timestamp /*, hash*/) {
   return `${day} ${monthNames[monthIndex]} ${year}`
 }
 
-export default Ember.HTMLBars.makeBoundHelper(fromTimestamp);
+export default Ember.Helper.helper(fromTimestamp);
+// export default Ember.HTMLBars.makeBoundHelper(fromTimestamp);

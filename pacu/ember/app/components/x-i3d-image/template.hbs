@@ -1,8 +1,12 @@
-<div class="ui clearing inverted segment" style="padding: 0; margin: 0 auto; width: {{dimension.width}}px;">
+<div class="ui clearing inverted segment"
+  style="padding: 0; margin: 0 auto; width: {{dimension.width}}px;">
   <div>
-    <label class="ui"></label>{{input type="range" min="0" max=max_index step="1" value=attrs.curIndex}}
-    <label class="ui"></label>{{input class="visual option" type="range" min=0 max=2 step="0.01" value=contrast}}
-    <label class="ui"></label>{{input class="visual option" type="range" min=0 max=2 step="0.01" value=brightness}}
+    <label class="ui"></label>
+    {{input type="range" min="0" max=max_index step="1" value=attrs.curIndex}}
+    <label class="ui"></label>
+    {{input class="visual option" type="range" min=0 max=2 step="0.01" value=contrast}}
+    <label class="ui"></label>
+    {{input class="visual option" type="range" min=0 max=2 step="0.01" value=brightness}}
   </div>
 </div>
 <div style="margin: 0 auto; width: {{dimension.width}}px; height: {{dimension.height}}px;">
@@ -18,7 +22,8 @@
     }}
   </div>
 </div>
-<div class="ui clearing inverted segment" style="padding: 0; margin: 0 auto; width: {{dimension.width}}px;">
+<div class="ui clearing inverted segment"
+  style="padding: 0; margin: 0 auto; width: {{dimension.width}}px;">
   <div>
     {{!x-d3-line-test width=830 height=360 src=meanOfcROIs curIndex=attrs.curIndex onmmXY=(action "mmXY")}}
     <ul>

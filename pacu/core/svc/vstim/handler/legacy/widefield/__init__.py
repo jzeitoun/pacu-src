@@ -22,9 +22,10 @@ def get(req, protocol):
     try:
         json = ujson.loads(req.get(url + protocol, timeout=30).body or '{}')
         print json
+    except ValueError as e:
+        raise Exception('Communication error: invalid JSON format returned: ' + str(e))
     except Exception as e:
-        print e
-        raise Exception('Communication error.')
+        raise Exception('Communication error: ' + str(e))
     data = json.get('data')
     error = json.get('error')
     if error:
@@ -49,11 +50,11 @@ def make_condpath(now):
 def savemat(path, params):
     io.savemat(path, params)
 def make_params(monitor, clock, stimulus, window, handler, projection):
-    print monitor
-    print clock
-    print stimulus
-    print handler
-    print projection
+    # print monitor
+    # print clock
+    # print stimulus
+    # print handler
+    # print projection
     # projection['clsname'] == 'SphericalProjection'
     monitor = monitor['kwargs']
     clock = clock['kwargs']
@@ -67,7 +68,7 @@ def make_params(monitor, clock, stimulus, window, handler, projection):
         WaitInterval = np.array([[clock['wait_time']]], dtype='double'),
         snp_rotate = np.array([[0]], dtype='double')
     )
-    print 'PARAMS', params
+    # print 'PARAMS', params
     return params
 
 class LegacyWidefieldHandlerResource(ExpV1HandlerResource):
@@ -132,8 +133,8 @@ class LegacyWidefieldHandler(HandlerBase):
     sync_port = SyncPort('8761')
     exp_by = ExpBy('kirstie')
 
-d = dict(
-Duration = np.array([[10]], dtype='double'),
-WaitInterval = np.array([[13]], dtype='double'),
-snp_rotate = np.array([[0]], dtype='double')
-)
+# d = dict(
+# Duration = np.array([[10]], dtype='double'),
+# WaitInterval = np.array([[13]], dtype='double'),
+# snp_rotate = np.array([[0]], dtype='double')
+# )

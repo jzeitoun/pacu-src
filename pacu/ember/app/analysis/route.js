@@ -1,5 +1,4 @@
 import Ember from 'ember';
-import ajax from 'ic-ajax';
 
 const modname = 'pacu.core.svc.analysis.i3d';
 const clsname = 'I3DAnalysisService'

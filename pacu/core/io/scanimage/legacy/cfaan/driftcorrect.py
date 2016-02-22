@@ -149,3 +149,17 @@ def driftcorrect(green,motionVectors):
     for t in np.arange(mt):
         newgreen[t,y[t]:my+y[t],x[t]:mx+x[t],:]=green[t,:,:,:]
     return newgreen
+
+def driftcorrect2(green,motionVectors):
+    ''' motionVectors[n][0] is the change in x position between frames n-1 and n
+    motionVectors[n][1] is the change in y position between frames n-1 and n'''
+    motionVectors=motionVectors.round()
+    x=motionVectors[:,0].astype('int')
+    y=motionVectors[:,1].astype('int')
+    x=x.max()-x
+    y=y.max()-y
+    (mt,my,mx)=np.shape(green) #mc is the number of color channels
+    newgreen=np.zeros([mt,my+y.max(),mx+x.max()], dtype='uint16')
+    for t in np.arange(mt):
+        newgreen[t, y[t]:my+y[t], x[t]:mx+x[t]]=green[t,:,:]
+    return newgreen

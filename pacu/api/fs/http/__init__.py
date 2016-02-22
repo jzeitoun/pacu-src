@@ -77,7 +77,6 @@ class FileScanForSCI(BaseNode):
     InfoNode = SBXMetaItem
     # checker = ScanboxIO.can_resolve
     def check(self, path):
-        print 'CHECK', path.is_file()
         return path.is_file()
     def nodes(self):
         self.context['actions'].append('select')

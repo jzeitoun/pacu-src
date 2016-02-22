@@ -18,7 +18,6 @@ from pacu.core.method.twophoton.tuning.parse import Response
 from pacu.core.method.twophoton.frequency.spatial.meta import SpatialFrequencyMeta
 
 DB = manager.get('db').as_resolved
-DB = manager.get('db').section('glab')
 ED = manager.get('db').section('ed')
 
 jet = getattr(plt.cm, 'jet')
@@ -58,8 +57,9 @@ class I3DAnalysisService(object):
     def max_index(self):
         return self.imgstack.max_index
     def request_frame(self, index):
-        data = self.imgstack.request_frame(index)
-        return jet(data, bytes=True).tostring()
+        return self.imgstack.request_frame(index).tostring()
+        # data = self.imgstack.request_frame(index)
+        # return jet(data, bytes=True).tostring()
     def get_grand_trace(self):
         key = 'cache.grand_trace'
         if key not in self.av1.data:

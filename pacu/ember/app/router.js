@@ -1,7 +1,7 @@
 import Ember from 'ember';
 import config from './config/environment';
 
-var Router = Ember.Router.extend({
+const Router = Ember.Router.extend({
   location: config.locationType
 });
 
@@ -22,6 +22,7 @@ Router.map(function() {
   this.route('andor', function() {
     this.route('device', { path: ':index' });
   });
+  this.route('test-pixi');
 });
 
 export default Router;
