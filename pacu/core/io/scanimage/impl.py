@@ -64,7 +64,7 @@ class ScanimageIO(object):
         return self.io.view('uint8')[..., 1::2]
     @property
     def dimension(self):
-        return dict(width=self.meta.x, height=self.meta.y)
+        return dict(width=self.meta.x, height=self.meta.y, depth=self.meta.z)
     @property
     def max_index(self):
         return self.meta.z - 1

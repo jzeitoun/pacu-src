@@ -35,17 +35,15 @@
         trace=trace curIndex=curIndex}}</div>
   </div>
   <section class="ui clearing divider"></section>
-  <div class="ui one column padded grid">
-    {{!--
-    <div class="column" style="position: relative; padding: 0; margin: 0 auto; width: 512px; height: 512px;">
-      <div style="position: absolute; width: 100%; height: 100%;"></div>
-      <div style="position: absolute; width: 100%; height: 100%;"></div>
-      <div style="position: absolute; width: 100%; height: 100%;"></div>
-    </div>
-      {{! x-i3d-image session=session src=model.imagesrc curIndex=curIndex currentROI=currentROI}}
-    --}}
-    {{#x-layer class="column" width=512 height=512 as |layer|}}
-      {{!lnpm install -g ember-cli@2.3.0ayer.arraybuffer}}
+  <div id="qqq" class="ui one column padded grid">
+    {{! x-i3d-image
+      session=session src=model.imagesrc
+      curIndex=curIndex currentROI=currentROI}}
+    {{input type="range" min="0" max=maxIndex step="1" value=curIndex}}
+    {{#x-layer class="column" width=img.width height=img.height as |layer|}}
+      {{layer.roi-selector}}
+      {{layer.roi-presenter}}
+      {{layer.canvas-2d buffer=img.buffer}}
     {{/x-layer}}
   </div>
   <section class="ui clearing divider"></section>

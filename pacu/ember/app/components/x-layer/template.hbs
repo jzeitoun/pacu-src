@@ -1,1 +1,5 @@
-{{yield this}}
+{{yield (hash
+  roi-selector =(component 'x-layer/roi-selector'  width=width height=height)
+  roi-presenter=(component 'x-layer/roi-presenter' width=width height=height)
+  canvas-2d    =(component 'x-layer/canvas-2d'     width=width height=height)
+)}}

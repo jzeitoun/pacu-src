@@ -75,6 +75,7 @@ __all__ = specs([
     spec('projection', 'projections', [
         ('flat', 'FlatProjection'),
         ('spherical', 'SphericalProjection'),
+        ('cylindrical', 'CylindricalProjection'),
     ]),
     spec('clock', 'clocks', [
         ('internal', 'InternalClock'),

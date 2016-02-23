@@ -22,7 +22,7 @@ class MonitorResource(Resource):
 class GenericMonitor(Component):
     package = __package__
     sui_icon = 'desktop'
-    gamma = Gamma(1.5)
+    gamma = Gamma(1.0)
     dist = Dist(10)
     width = Width(33.169)
     height = Height(20.731)

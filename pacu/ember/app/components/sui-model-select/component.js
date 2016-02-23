@@ -8,14 +8,15 @@ export default Ember.Component.extend({
     window.ff = this;
     this.$().dropdown({
       onChange(value/*text, $choice*/) { // value is index
-        const item = self.getAttr('items').get(value);
+        const enumvalue = parseInt(value);
+        const item = self.getAttr('items').get(enumvalue);
         if (Ember.isNone(self.attrs.onChange)) {
-          self.attrs.value.update(value);
+          self.attrs.value.update(enumvalue);
           if (Ember.isPresent(self.attrs.item)) {
             self.attrs.item.update(item);
           }
         } else {
-          self.attrs.onChange(value);
+          self.attrs.onChange(enumvalue);
         }
       }
     });
@@ -28,7 +29,7 @@ export default Ember.Component.extend({
   },
   valueChanged: function() {
     const index = this.getAttr('value');
-    this.present(index);
+    this.present(parseInt(index));
   }.observes('attrs.value'),
   dnitSUI: function() {
     this.$().dropdown('destroy');

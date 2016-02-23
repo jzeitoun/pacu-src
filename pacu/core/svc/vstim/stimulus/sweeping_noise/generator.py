@@ -89,6 +89,7 @@ class SweepingNoiseGenerator(object):
         print 'bandwidth', self.bandwidth
         print 'viewwidth', self.viewwidth
         print 'framerate', self.framerate
+        print 'cont period', self.contr_period
         print 'imsize', self.imsize
         # print 'imageMag', self.imageMag
         print 'screen width/height cm ', self.screenWidthCm, self.screenHeightCm
@@ -190,12 +191,18 @@ class SweepingNoiseGenerator(object):
         mult2 = np.exp(2*np.pi*complex_num*sample)
         self.mult1 = mult1
         self.mult2 = mult2
-        invFFT[
-            spaceRange[0]:spaceRange[-1]+1,
-            spaceRange[0]:spaceRange[-1]+1,
-            tempRange[0]:tempRange[-1]+1
-        ] = np.multiply(mult1, mult2)
-
+        try:
+            invFFT[
+                spaceRange[0]:spaceRange[-1]+1,
+                spaceRange[0]:spaceRange[-1]+1,
+                tempRange[0]:tempRange[-1]+1
+            ] = np.multiply(mult1, mult2)
+        except ValueError as e:
+            raise ValueError(
+                'Unable to create blobs by {} spatial frequency with {} image size. '
+                'Please increase image size.'
+                .format(self.max_spat_freq, self.imsize)
+        )
         # in order to get real values for image, need to make spectrum symmetric
         fullspace = np.arange(-range_mult*spatCutoff, range_mult*spatCutoff + 1)
         halfspace = np.arange(1, range_mult*spatCutoff + 1)
@@ -331,3 +338,26 @@ def test2(use_random=False):
         bandfilter = 1
         # viewwidth=20,
     ).generate().rotate() # .viewmask()
+def test3():
+    return SweepingNoiseGenerator(
+        max_spat_freq = 0.5,
+        max_temp_freq = 4,
+        contrast = 0.5,
+        rotation = 0,
+        bandfilter = 0, # is gaussian
+        duration = 3,
+        bandwidth = 10,
+        viewwidth = 0,
+        framerate = 30,
+        contr_period = 10,
+        imsize = 128,
+        screenWidthCm = 68.58,
+        screenHeightCm = 121.92,
+        screenWidthPix = 1080,
+        screenHeightPix = 1920,
+        viewport_x = 1080,
+        viewport_y = 1920,
+        screenDistanceCm = 25,
+        eyepoint_x = 0.5,
+        use_random = True,
+    ).generate().rotate().viewmask()
