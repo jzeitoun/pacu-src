@@ -176,7 +176,12 @@ class WebSocketEx {
 }
 export default Ember.Service.extend({
   create(context, modname, clsname, src) {
-    const url = `ws://${location.host}/ws/${modname}/${clsname}?files=${src}`;
+    if (Ember.isNone(src)) {
+      debugger
+      var url = `ws://${location.host}/ws/${modname}/${clsname}`;
+    } else {
+      var url = `ws://${location.host}/ws/${modname}/${clsname}?files=${src}`;
+    }
     return new WebSocketEx.asBufBased(context, url);
   }
 });

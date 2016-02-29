@@ -1,0 +1,67 @@
+<div class="ui {{if busy 'active'}} dimmer">
+  <div class="ui text inverted loader">Please wait...</div>
+</div>
+<h4 class="ui center aligned inverted header">
+  Trial #{{model.index}}
+</h4>
+<div class="ui inverted segment">
+  <div class="ui six column padded grid">
+    <div class="teal column">
+      <div class="ui icon buttons">
+        <button class="ui button" {{action "play"}}>
+          <i class="play icon"></i>
+        </button>
+        <button class="ui button" {{action "stop"}}>
+          <i class="stop icon"></i>
+        </button>
+      </div>
+      {{sui-model-select
+        value=0
+        items=cmapNames
+        nofluid=true
+        onChange=(action "setCmap")}}
+    </div>
+    <div class="yellow column">
+      <p>Index</p><p>{{curIndex}}</p>
+    </div>
+    <div class="red column">
+      <p>Time</p><p>{{curTrj.e}}</p>
+    </div>
+    <div class="blue column">
+      <p>X</p><p>{{curTrj.x}}</p>
+    </div>
+    <div class="green column">
+      <p>Y</p><p>{{curTrj.y}}</p>
+    </div>
+    <div class="purple column">
+      <p>Velocity</p><p>{{curTrj.v}}</p>
+    </div>
+  </div>
+  {{!--
+  <section class="ui clearing divider"></section>
+  <div class="ui one column padded grid">
+    <div class="center aligned column">
+      {{!x-i3d-trace curROI=curROI
+        trace=trace curIndex=curIndex}}</div>
+  </div>
+  --}}
+  <section class="ui clearing divider"></section>
+  <div class="ui grid">
+    {{input type="range" min="0" max=maxIndex step="1" value=curIndex}}
+    <div class="twelve wide column">
+      {{#x-layer width=img.width height=img.height as |layer|}}
+        {{layer.canvas-2d buffer=img.buffer}}
+        {{!layer.roi-selector rois=rois}}
+        {{!layer.roi-presenter rois=rois curROI=curROI
+          onUpdateROI=(action "upsertROI")
+        }}
+      {{/x-layer}}
+    </div>
+    <div class="four wide column">
+      <svg id="trajectory" width="128px" height="512px">
+        <circle cx="{{mouseX}}" cy="{{mouseY}}" r="5" stroke="white" stroke-width="1px" fill="black" />
+      </svg>
+    </div>
+  </div>
+  <section class="ui clearing divider"></section>
+</div>

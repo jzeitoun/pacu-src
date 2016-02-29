@@ -14,10 +14,13 @@ from pacu.core.io.scanimage.condition import ScanimageCondition
 from pacu.core.model.ed.visstim2p import VisStim2P
 from pacu.core.model.experiment import ExperimentV1
 from pacu.core.model.analysis import AnalysisV1
-from pacu.core.method.twophoton.tuning.parse import Response
-from pacu.core.method.twophoton.frequency.spatial.meta import SpatialFrequencyMeta
+from pacu.core.svc.analysis.i3d.twoway.roi import TwowayROI
+
+# from pacu.core.method.twophoton.tuning.parse import Response
+# from pacu.core.method.twophoton.frequency.spatial.meta import SpatialFrequencyMeta
 
 DB = manager.get('db').as_resolved
+DB = manager.get('db').section('ephemeral')
 ED = manager.get('db').section('ed')
 
 jet = getattr(plt.cm, 'jet')
@@ -49,59 +52,89 @@ class I3DAnalysisService(object):
             self.condition = ScanboxCondition(**vars(vst))
             self.imgstack = ScanboxIO(av1.imagesrc)
         self.av1 = av1
-        self.sfreq_meta = SpatialFrequencyMeta(self.condition)
+        # self.sfreq_meta = SpatialFrequencyMeta(self.condition)
     @property
     def dimension(self):
         return self.imgstack.dimension
-    @property
-    def max_index(self):
-        return self.imgstack.max_index
     def request_frame(self, index):
         return self.imgstack.request_frame(index).tostring()
-        # data = self.imgstack.request_frame(index)
-        # return jet(data, bytes=True).tostring()
-    def get_grand_trace(self):
-        key = 'cache.grand_trace'
-        if key not in self.av1.data:
-            trace = self.imgstack.grand_trace()
-            self.av1.data[key] = trace.tolist()
-            self.db.commit()
-        return self.av1.data.get(key)
-    def get_current_sfrequency(self):
-        key = 'current_sfrequency'
-        if key not in self.av1.data:
-            self.av1.data[key] = 0
-            self.db.commit()
-        return self.av1.data.get(key)
-    def get_trace(self, x1, x2, y1, y2):
-        # self.get_trace(377, 426, 167, 219)
-        return self.imgstack.trace(x1, x2, y1, y2)
-        # return (~self.imgstack.io[:, y1:y2, x1:x2]).mean(axis=(1,2))
-    def get_response(self, x1, x2, y1, y2):
-        trace = self.get_trace(x1, x2, y1, y2)
-        try:
-            resp = Response(trace, self.condition, self.sfreq_meta)
-        except Exception as e:
-            raise Exception('Failed to get response: ' + str(e))
-        rv = dict(
-            OSI      = resp.OSI,
-            CV       = resp.CV,
-            DSI      = resp.DSI,
-            sigma    = resp.sigma,
-            OPref    = resp.Opref,
-            RMax     = resp.Rmax,
-            Residual = resp.Residual,
-        )
-        return {
-            key: "NaN" if math.isnan(val) else float(val)
-            for key, val in rv.items()
-        }
-    def resp(self, x1=0, x2=10, y1=0, y2=10):
-        trace = self.get_trace(x1, x2, y1, y2)
-        return Response(trace, self.condition, self.sfreq_meta)
+    def purge_roi(self):
+        keys = [key for key in self.av1.data if key.startswith('roi.')]
+        for key in keys:
+            del self.av1.data[key]
+        self.db.commit()
+    def upsert_roi(self, data, *fields):
+        roi = TwowayROI(**data)
+        self.av1.data[roi.rid] = roi
+        self.db.commit()
+        return roi
+    def delete_roi(self, rid):
+        del self.av1.data[rid]
+        self.db.commit()
+    @property
+    def rois(self):
+        return [val for key, val in self.av1.data.items()
+            if key.startswith('roi.')]
+#    def get_grand_trace(self):
+#        key = 'cache.grand_trace'
+#        if key not in self.av1.data:
+#            trace = self.imgstack.grand_trace()
+#            self.av1.data[key] = trace.tolist()
+#            self.db.commit()
+#        return self.av1.data.get(key)
+#    def get_current_sfrequency(self):
+#        key = 'current_sfrequency'
+#        if key not in self.av1.data:
+#            self.av1.data[key] = 0
+#            self.db.commit()
+#        return self.av1.data.get(key)
+#     def get_trace(self, x1, x2, y1, y2):
+#         # self.get_trace(377, 426, 167, 219)
+#         return self.imgstack.trace(x1, x2, y1, y2)
+#         # return (~self.imgstack.io[:, y1:y2, x1:x2]).mean(axis=(1,2))
+#     def get_response(self, x1, x2, y1, y2):
+#         trace = self.get_trace(x1, x2, y1, y2)
+#         try:
+#             resp = Response(trace, self.condition, self.sfreq_meta)
+#         except Exception as e:
+#             raise Exception('Failed to get response: ' + str(e))
+#         rv = dict(
+#             OSI      = resp.OSI,
+#             CV       = resp.CV,
+#             DSI      = resp.DSI,
+#             sigma    = resp.sigma,
+#             OPref    = resp.Opref,
+#             RMax     = resp.Rmax,
+#             Residual = resp.Residual,
+#         )
+#         return {
+#             key: "NaN" if math.isnan(val) else float(val)
+#             for key, val in rv.items()
+#         }
+#     def resp(self, x1=0, x2=10, y1=0, y2=10):
+#         trace = self.get_trace(x1, x2, y1, y2)
+#         return Response(trace, self.condition, self.sfreq_meta)
+
+
+qwe = I3DAnalysisService(2)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 # example for scanimage
-# qwe = I3DAnalysisService(15)
+# qwe = I3DAnalysisService(2)
 
 # get_ipython().magic('pylab')
 # 

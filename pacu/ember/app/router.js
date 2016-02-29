@@ -19,6 +19,10 @@ Router.map(function() {
     this.route('new');
   });
   this.route('analysis', { path: '/analysis/:analysis_id' });
+  this.route('trj-analyses');
+  this.route('trj-analysis', { path: '/trj-analysis/:tr-session_id' }, function() {
+    this.route('trial', { path: '/trial/:index' });
+  });
   this.route('andor', function() {
     this.route('device', { path: ':index' });
   });

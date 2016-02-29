@@ -3,6 +3,7 @@ from __future__ import division
 import numpy as np
 from scipy import io
 from scipy import signal
+from scipy import special
 import matplotlib.cm as cm
 from ipdb import set_trace
 
@@ -272,8 +273,11 @@ class SweepingNoiseGenerator(object):
         frames_per_period = int(np.ceil(self.contr_period*self.framerate))
         self.theta = screenWidthDegEyePoint / frames_per_period
         self.space = np.linspace(0, nframes*self.theta, nframes)
-        self.thetas = np.fmod(self.space, screenWidthDegEyePoint) - (screenWidthDegEyePoint * (1 - self.eyepoint_x))
-        self.offsets = (imsize * self.uc.distance_cm * np.tan(self.thetas) / self.uc.width_cm) - imsize / 2
+        # self.thetas = np.fmod(self.space, screenWidthDegEyePoint) - (screenWidthDegEyePoint * (1 - self.eyepoint_x))
+        # self.offsets = (imsize * self.uc.distance_cm * np.tan(self.thetas) / self.uc.width_cm) - imsize / 2
+        # no more rolling speed modulation!
+        self.thetas = np.fmod(self.space, screenWidthDegEyePoint)
+        self.offsets = (imsize * self.uc.distance_cm * self.thetas / self.uc.width_cm)
 
         for frame, offset in zip(frames, self.offsets):
             frame[:] = (frame - 0.5) * np.roll(self.gauss2d, int(offset))
@@ -320,7 +324,7 @@ def tempsave(data):
     import tifffile
     tifffile.imsave('/Volumes/Users/ht/Desktop/gaussianNoise.tif', data)
 def test():
-    qwe = SweepingNoiseGenerator(duration=10, screenDistanceCm=20, rotation=0)
+    qwe = SweepingNoiseGenerator(duration=10, screenDistanceCm=20, rotation=1)
     qwe.generate()
     qwe.rotate()
     qwe.viewmask()

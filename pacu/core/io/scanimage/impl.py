@@ -75,7 +75,7 @@ class ScanimageIO(object):
     def trace(self, x1, x2, y1, y2):
         return (self.io[:, y1:y2, x1:x2]).mean(axis=(1,2))
     @memoized_property
-    def smap(self):
+    def smap(self): # bad practice - change name
         norm = Normalize(vmin=0, vmax=self.stat.MAX.max()/256)
         return ScalarMappable(norm=norm, cmap=plt.get_cmap('jet'))
 

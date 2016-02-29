@@ -15,13 +15,13 @@
     {{/sui-popup}}
   {{/if}}
 
-  {{#link-to 'psychopy'}}
-    <div id="get-psypy" class="nav circular ui small icon blue button">
-      <i class="unhide icon"></i>
+  {{#link-to 'andor'}}
+    <div id="get-andor" class="nav circular ui small icon blue button">
+      <i class="camera retro icon"></i>
     </div>
   {{/link-to}}
-  {{#sui-popup selector="#get-psypy" position="bottom left"}}
-    Launch PsychoPy Controller
+  {{#sui-popup selector="#get-andor" position="bottom left"}}
+    Launch Andor Camera Controller
   {{/sui-popup}}
 
   {{#link-to 'analyses'}}
@@ -33,13 +33,22 @@
     Launch Image Stack Analyzer
   {{/sui-popup}}
 
-  {{#link-to 'andor'}}
-    <div id="get-andor" class="nav circular ui small icon blue button">
-      <i class="camera retro icon"></i>
+  {{#link-to 'trj-analyses'}}
+    <div id="get-trajectory-analyzer" class="nav circular ui small icon blue button">
+      <i class="paw icon"></i>
     </div>
   {{/link-to}}
-  {{#sui-popup selector="#get-andor" position="bottom left"}}
-    Launch Andor Camera Controller
+  {{#sui-popup selector="#get-trajectory-analyzer" position="bottom left"}}
+    Launch Image Stack and Trajectory Analyzer
+  {{/sui-popup}}
+
+  {{#link-to 'psychopy'}}
+    <div id="get-psypy" class="nav circular ui small icon blue button">
+      <i class="unhide icon"></i>
+    </div>
+  {{/link-to}}
+  {{#sui-popup selector="#get-psypy" position="bottom left"}}
+    Launch PsychoPy Controller
   {{/sui-popup}}
 
   {{#link-to 'index'}}

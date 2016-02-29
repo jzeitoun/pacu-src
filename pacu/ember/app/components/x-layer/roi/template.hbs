@@ -1,0 +1,8 @@
+{{#if hasBlock}}
+  {{yield this}}
+{{else}}
+  <polygon points={{points}} />
+  {{#each attrs.roi.polygon as |pg|}}
+    <circle cx={{pg.x}} cy={{pg.y}} r="3"/>
+  {{/each}}
+{{/if}}

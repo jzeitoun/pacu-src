@@ -9,6 +9,17 @@ import ujson
 
 from ...ext.tornado import websocket
 
+import contextlib
+import sys
+
+@contextlib.contextmanager
+def print_captured(by): # should be `write` compatible
+    sys.stdout = by
+    try:
+        yield by
+    finally:
+        sys.stdout = sys.__stdout__
+
 def handle_exc(e):
     info = sys.exc_info()
     source = traceback.format_exception(*info)
@@ -24,25 +35,25 @@ class WSHandler(websocket.WebSocketHandler):
     A Generic web socket handler.
       * `check_origin` returns always `True`.
     """
-    url = r'/ws/(?P<modname>[\w\.]+)/(?P<clsname>\w+)'
+    url = r'/ws/(?P<modname>[\w\.]+)/(?P<clsname>[\w\.]+)'
     inst = None
     __socket__ = None
+    def write(self, line):
+        self.dump_message('print', line, None)
     def open(self, modname, clsname):
         print 'websocket is opening...'
         self.set_nodelay(True)
+        kwargs = {key: val
+            for key, vals in self.request.arguments.items()
+            for val in vals}
         try:
             cls = getattr(importlib.import_module(modname), clsname)
         except ImportError as e:
             handle_exc(e)
         except AttributeError as e:
             handle_exc(e)
-        kwargs = {key: val
-            for key, vals in self.request.arguments.items()
-            for val in vals}
-        # print kwargs
         try:
-            # print 'try bind websocket delegator'
-            self.inst = cls(**kwargs)
+            self.inst = cls(**kwargs) if kwargs else cls
             self.inst.__socket__ = self
         except Exception as e:
             handle_exc(e)
@@ -65,7 +76,8 @@ class WSHandler(websocket.WebSocketHandler):
             seq, ftype, route, payload = ujson.loads(message)
             as_binary = payload.pop('as_binary')
             func = getattr(self, ftype)
-            rv = func(route, **payload)
+            with print_captured(self):
+                rv = func(route, **payload)
         except Exception as e:
             info = sys.exc_info()
             source = traceback.format_exception(*info)

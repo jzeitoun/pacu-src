@@ -31,19 +31,18 @@
   <section class="ui clearing divider"></section>
   <div class="ui one column padded grid">
     <div class="center aligned column">
-      {{! x-i3d-trace currentROI=currentROI
+      {{!x-i3d-trace curROI=curROI
         trace=trace curIndex=curIndex}}</div>
   </div>
   <section class="ui clearing divider"></section>
-  <div id="qqq" class="ui one column padded grid">
-    {{! x-i3d-image
-      session=session src=model.imagesrc
-      curIndex=curIndex currentROI=currentROI}}
+  <div style="zoom: 1;" class="ui one column padded grid">
     {{input type="range" min="0" max=maxIndex step="1" value=curIndex}}
     {{#x-layer class="column" width=img.width height=img.height as |layer|}}
-      {{layer.roi-selector}}
-      {{layer.roi-presenter}}
       {{layer.canvas-2d buffer=img.buffer}}
+      {{layer.roi-selector rois=rois}}
+      {{layer.roi-presenter rois=rois curROI=curROI
+        onUpdateROI=(action "upsertROI")
+      }}
     {{/x-layer}}
   </div>
   <section class="ui clearing divider"></section>

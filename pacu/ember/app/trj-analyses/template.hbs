@@ -1,0 +1,38 @@
+<div id="import-progress" class="ui basic modal">
+  <div class="ui loader"></div>
+  <div class="ui icon header">
+    <i class="archive icon"></i> Import session...
+  </div>
+  <div class="content"
+    style="height: 480px; overflow-y: scroll; border: 1px solid red;">
+    {{x-console-stream messages=messages class="ui"}}
+  </div>
+</div>
+
+<div class="ui stackable three column page grid">
+  {{#each model as |s|}}
+    <div class="column">
+      {{#x-anlz-session-card
+        id=s.id
+        title=s.name
+        host="VR"
+        user="Soyun & Kirstie"
+        src=s.ntrials
+      }}
+      {{#if s.hasimported}}
+        <div class="extra content">
+          {{!-- #link-to 'trj-analysis' s.id
+            tagName="div" class="ui basic fluid blue button"}}Open{{/link-to --}}
+          <div class="ui basic fluid blue button" {{action "coldTransition" s}}>Open</div>
+        </div>
+      {{else}}
+        <div class="extra content">
+          <div class="ui basic fluid red button" {{action "importRaw" s}}>Import</div>
+        </div>
+      {{/if}}
+      {{/x-anlz-session-card}}
+    </div>
+  {{else}}
+    <p>No seesions found...</p>
+  {{/each}}
+</div>

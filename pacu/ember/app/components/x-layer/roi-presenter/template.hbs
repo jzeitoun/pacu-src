@@ -1,1 +1,18 @@
-{{yield}}
+{{#each rois as |roi|}}
+  {{#x-layer/roi roi as |r|}}
+    {{x-layer/roi/polygon roi.polygon
+      class=roi.active
+      onCancelROI=(action "removeROI" rois roi)
+      onExclusiveToggleROI=(action "exclusiveToggleROI" rois roi)
+      onRefreshROI=(action "updatePoint" roi)
+    }}
+    {{#each r.circles as |c|}}
+      {{x-layer/roi/circle c
+        onClonePoint=(action "insertPoint" roi)
+        onCancelPoint=(action "cancelPoint" roi)
+        onRemovePoint=(action "removePoint" roi)
+        onRefreshPoint=(action "updatePoint" roi)
+      }}
+    {{/each}}
+  {{/x-layer/roi}}
+{{/each}}
