@@ -110,6 +110,7 @@ class StimulusResource(Resource):
         self.instance = ImageStim(
             win = win,
             # size = [1440, 900], # prevent stretch
+            # size = [900, 900], # for mbpr with 10cm
             size = view_size,
             units = 'pix',
             interpolate = True
@@ -166,8 +167,8 @@ class SweepingNoiseStimulus(Component):
     snp_rotation = SNPRotation('0')
     snp_filter = SNPFilter('Gaussian')
     snp_duration = SNPDuration(15)
-    snp_bandwidth = SNPBandwidth(30)
-    snp_img_size = SNPImgSize(64)
+    snp_bandwidth = SNPBandwidth(10)
+    snp_img_size = SNPImgSize(128)
     snp_view_width = SNPViewWidth(0)
     snp_contr_period = SNPContrPeriod(10)
     snp_viewport_override = SNPViewPortOverride([0, 0])

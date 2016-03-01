@@ -273,14 +273,13 @@ class SweepingNoiseGenerator(object):
         frames_per_period = int(np.ceil(self.contr_period*self.framerate))
         self.theta = screenWidthDegEyePoint / frames_per_period
         self.space = np.linspace(0, nframes*self.theta, nframes)
-        # self.thetas = np.fmod(self.space, screenWidthDegEyePoint) - (screenWidthDegEyePoint * (1 - self.eyepoint_x))
-        # self.offsets = (imsize * self.uc.distance_cm * np.tan(self.thetas) / self.uc.width_cm) - imsize / 2
-        # no more rolling speed modulation!
-        self.thetas = np.fmod(self.space, screenWidthDegEyePoint)
-        self.offsets = (imsize * self.uc.distance_cm * self.thetas / self.uc.width_cm)
+        self.thetas = np.fmod(self.space, screenWidthDegEyePoint) - (screenWidthDegEyePoint * (1 - self.eyepoint_x))
+        self.offsets = (imsize * self.uc.distance_cm * np.tan(self.thetas) / self.uc.width_cm) - imsize / 2
+        # self.thetas = np.fmod(self.space, screenWidthDegEyePoint)
+        # self.offsets = (imsize * self.uc.distance_cm * self.thetas / self.uc.width_cm)
 
         for frame, offset in zip(frames, self.offsets):
-            frame[:] = (frame - 0.5) * np.roll(self.gauss2d, int(offset))
+            frame[:] = (frame - 0.5) * np.roll(self.gauss2d, int(offset) - int(imsize*self.eyepoint_x))
 
         self.moviedata = cm.gray(frames + 0.5, bytes=True)
         self.shape = self.moviedata.shape # z, y, x
@@ -324,7 +323,9 @@ def tempsave(data):
     import tifffile
     tifffile.imsave('/Volumes/Users/ht/Desktop/gaussianNoise.tif', data)
 def test():
-    qwe = SweepingNoiseGenerator(duration=10, screenDistanceCm=20, rotation=1)
+    qwe = SweepingNoiseGenerator(
+            eyepoint_x = 0,
+            duration=10, screenDistanceCm=5, rotation=1, bandwidth=30)
     qwe.generate()
     qwe.rotate()
     qwe.viewmask()
@@ -365,3 +366,5 @@ def test3():
         eyepoint_x = 0.5,
         use_random = True,
     ).generate().rotate().viewmask()
+# get_ipython().magic('pylab')
+# qwe = test()
