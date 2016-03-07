@@ -18,7 +18,7 @@ from pacu.core.svc.vstim.stimulus.duration import OnDuration
 from pacu.core.svc.vstim.stimulus.contrast import Contrast
 from pacu.core.svc.vstim.stimulus.sfrequencies import SFrequencies
 from pacu.core.svc.vstim.stimulus.tfrequencies import TFrequencies
-from pacu.core.svc.vstim.stimulus.sweeping_noise import postprocess
+# from pacu.core.svc.vstim.stimulus.sweeping_noise import postprocess
 from pacu.core.svc.vstim.stimulus.sweeping_noise.trial import Trial
 from pacu.core.svc.vstim.stimulus.sweeping_noise.generator import SweepingNoiseGenerator
 
@@ -34,6 +34,7 @@ from pacu.core.svc.vstim.stimulus.snp_img_size import SNPImgSize
 from pacu.core.svc.vstim.stimulus.snp_view_width import SNPViewWidth
 from pacu.core.svc.vstim.stimulus.snp_contr_period import SNPContrPeriod
 from pacu.core.svc.vstim.stimulus.snp_view_port_override import SNPViewPortOverride
+from pacu.core.svc.vstim.stimulus.snp_cont_thresh import SNPContrThreshold
 
 from ipdb import set_trace
 
@@ -69,6 +70,7 @@ class StimulusResource(Resource):
                 bandwidth = self.component.snp_bandwidth,
                 viewwidth = self.component.snp_view_width,
                 imsize = self.component.snp_img_size,
+                binary_threshold = self.component.snp_cont_thresh,
                 framerate=afr,
                 contr_period=self.component.snp_contr_period,
                 screenWidthPix = win_x,
@@ -172,3 +174,4 @@ class SweepingNoiseStimulus(Component):
     snp_view_width = SNPViewWidth(0)
     snp_contr_period = SNPContrPeriod(10)
     snp_viewport_override = SNPViewPortOverride([0, 0])
+    snp_cont_thresh = SNPContrThreshold(0)

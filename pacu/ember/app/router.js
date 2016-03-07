@@ -27,6 +27,15 @@ Router.map(function() {
     this.route('device', { path: ':index' });
   });
   this.route('test-pixi');
+  this.route('sci-analyses', function() {
+    this.route('years', { path: '/:year' }, function() {
+      this.route('months', { path: '/:month' }, function() {
+        this.route('days', { path: '/:day' }, function() {
+        });
+      });
+    });
+  });
+  this.route('sci-analysis', { path: '/sci-analysis/:year/:month/:day/:mouse/:image' });
 });
 
 export default Router;

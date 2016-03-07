@@ -1,5 +1,7 @@
 <div class="content">
-  <span class="ui right floated blue circular mini label">{{attrs.id}}</span>
+  {{#if attrs.id}}
+    <span class="ui right floated blue circular mini label">{{attrs.id}}</span>
+  {{/if}}
   <div class="header">{{attrs.title}}</div>
   <div class="meta">
     <span class="user">{{attrs.user}}</span>

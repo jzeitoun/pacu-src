@@ -16,4 +16,6 @@ def xform_with_path(profile, strict):
 def default(profile):
     if not profile.scanbox_root:
         profile.scanbox_root = polymorphicStr(identity.path.cwd)
+    if not profile.scanimage_root:
+        profile.scanimage_root = polymorphicStr(identity.path.cwd)
     return xform_with_path(profile, True)

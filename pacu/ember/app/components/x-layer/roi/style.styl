@@ -1,12 +1,27 @@
 &
   cursor pointer
+  stroke-width 0.5px
 
 polygon
   fill rgba(0, 255, 0, 0.4)
   stroke white
   &.active
     stroke red
+  &.busy
+    animation-name: polygon-busy;
+    animation-duration: 0.3s;
+    animation-iteration-count: infinite;
+    animation-timing-function: ease-in-out;
+    animation-direction: alternate;
 
 circle
   stroke black
   fill rgba(50, 50, 50, 0.5)
+  r 2
+
+@keyframes polygon-busy
+  0%
+    fill rgba(0, 255, 0, 0.4)
+  100%
+    fill rgba(255, 255, 0, 0.8)
+

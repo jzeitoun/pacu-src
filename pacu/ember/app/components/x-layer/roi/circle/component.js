@@ -9,7 +9,7 @@ export default Ember.Component.reopenClass({
   attributeBindings: ['cx', 'cy', 'r'],
   cx: Ember.computed.alias('attrs.point.x'),
   cy: Ember.computed.alias('attrs.point.y'),
-  r: 3,
+  r: 2,
   mouseDown({offsetX, offsetY, metaKey}) {
     const [originX, originY] = [offsetX, offsetY];
     if (metaKey) {

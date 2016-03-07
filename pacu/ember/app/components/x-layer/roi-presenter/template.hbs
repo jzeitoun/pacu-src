@@ -1,8 +1,11 @@
 {{#each rois as |roi|}}
   {{#x-layer/roi roi as |r|}}
     {{x-layer/roi/polygon roi.polygon
-      class=roi.active
-      onCancelROI=(action "removeROI" rois roi)
+      active=roi.active
+      busy=roi.busy
+      onDeriveROI=(action "deriveROI" rois roi)
+      onCancelROI=(action "removeROI" rois)
+      onRemoveROI=(action "removeROI" rois roi)
       onExclusiveToggleROI=(action "exclusiveToggleROI" rois roi)
       onRefreshROI=(action "updatePoint" roi)
     }}

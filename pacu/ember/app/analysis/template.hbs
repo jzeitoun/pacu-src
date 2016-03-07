@@ -35,20 +35,26 @@
         trace=trace curIndex=curIndex}}</div>
   </div>
   <section class="ui clearing divider"></section>
-  <div style="zoom: 1;" class="ui one column padded grid">
+  <div class="ui one column padded grid" style="height: 440px;">
     {{input type="range" min="0" max=maxIndex step="1" value=curIndex}}
-    {{#x-layer class="column" width=img.width height=img.height as |layer|}}
+    {{#x-layer class="column type-scanimage" width=img.width height=img.height as |layer|}}
       {{layer.canvas-2d buffer=img.buffer}}
       {{layer.roi-selector rois=rois}}
       {{layer.roi-presenter rois=rois curROI=curROI
         onUpdateROI=(action "upsertROI")
+        onFetchData=(action "fetchData")
       }}
     {{/x-layer}}
   </div>
+  {{#if curROINotBusy}}
   <section class="ui clearing divider"></section>
+  yey
+  {{/if}}
+  {{!--
   <div class="ui one column padded grid">
     <div class="center aligned column">
       {{x-i3d-response session=session roi=currentROI}}
     </div>
   </div>
+  --}}
 </div>

@@ -20,7 +20,7 @@ from pacu.core.svc.analysis.i3d.twoway.roi import TwowayROI
 # from pacu.core.method.twophoton.frequency.spatial.meta import SpatialFrequencyMeta
 
 DB = manager.get('db').as_resolved
-DB = manager.get('db').section('ephemeral')
+# DB = manager.get('db').section('ephemeral')
 ED = manager.get('db').section('ed')
 
 jet = getattr(plt.cm, 'jet')
@@ -40,7 +40,7 @@ class I3DAnalysisService(object):
     imgstack = None
     def debug(self):
         set_trace()
-    def __init__(self, files): # analysis_v1 id will come in
+    def __init__(self, files=None): # analysis_v1 id will come in
         self.db, self.ed = DB(), ED()
         av1 = self.db.query(AnalysisV1).get(files)
         if av1.type == '0': # ScanImage
@@ -71,6 +71,10 @@ class I3DAnalysisService(object):
     def delete_roi(self, rid):
         del self.av1.data[rid]
         self.db.commit()
+    def fetch_roi_data(self, rid):
+        roi = self.av1.data[rid]
+        print rid, roi
+        return dict(a=1)
     @property
     def rois(self):
         return [val for key, val in self.av1.data.items()
@@ -116,7 +120,7 @@ class I3DAnalysisService(object):
 #         return Response(trace, self.condition, self.sfreq_meta)
 
 
-qwe = I3DAnalysisService(2)
+# qwe = I3DAnalysisService(2)
 
 
 

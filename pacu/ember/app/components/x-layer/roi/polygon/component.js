@@ -6,6 +6,7 @@ export default Ember.Component.reopenClass({
 }).extend({
   tagName: 'polygon',
   attributeBindings: ['points'],
+  classNameBindings: ['attrs.active', 'attrs.busy'],
   @computed('attrs.polygon.@each.{x,y}') points(pg) {
     if (Ember.isNone(pg)) { return; }
     return pg.map(point => { return `${point.x},${point.y}`; }).join(' ');
@@ -13,7 +14,7 @@ export default Ember.Component.reopenClass({
   mouseDown({offsetX, offsetY, metaKey}) {
     const [originX, originY] = [offsetX, offsetY];
     if (metaKey) {
-      console.log('clone roi');
+      var derived = this.attrs.onDeriveROI();
     }
     const polygon = this.getAttr('polygon');
     for (let point of polygon) {
@@ -35,7 +36,8 @@ export default Ember.Component.reopenClass({
       Ember.$(xLayer).off('mousemove.polygon');
       if (originX === offsetX && originY === offsetY) {
         if (metaKey) {
-          this.attrs.onCancelROI();
+          this.attrs.onCancelROI(derived);
+          this.attrs.onRemoveROI();
         } else {
           this.staticClick();
         }

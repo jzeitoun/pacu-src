@@ -1,4 +1,5 @@
 import Ember from 'ember';
+import ROI from '../roi/roi';
 
 export default Ember.Component.extend({
   tagName: 'svg',
@@ -21,11 +22,16 @@ export default Ember.Component.extend({
     removeROI(rois, roi) {
       rois.removeObject(roi);
     },
+    deriveROI(rois, roi) {
+      // derive makes original ROI primitive state.
+      return rois.pushObject(roi.derive());
+    },
     exclusiveToggleROI(rois, roi) {
       for (let one of rois) {
         if (Em.isEqual(one, roi)) {
           if (one.toggleProperty('active')) {
             this.set('curROI', one);
+            this.attrs.onFetchData(one);
           } else {
             this.set('curROI', null);
           }

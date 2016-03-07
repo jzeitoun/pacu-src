@@ -1,8 +1,5 @@
 from . import analysis_fixture  as analysis
 from .auth import member_fixture as member
-# from .vstim import program_fixture as program
-# from .vstim import device_fixture as device
-# from .vstim import recording_fixture as recording
 
 class base(object):
     @classmethod
@@ -21,9 +18,6 @@ class base(object):
     def dump(cls, session):
         analysis.dump(session)
         member.dump(session)
-        # program.dump(session)
-        # device.dump(session)
-        # recording.dump(session)
     @classmethod
     def setup(cls, session=None):
         from . import Base

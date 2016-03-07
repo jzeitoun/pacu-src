@@ -1,0 +1,46 @@
+<div id="import-progress" class="ui basic modal">
+  <div class="ui loader"></div>
+  <div class="ui icon header">
+    <i class="archive icon"></i> Import data...
+  </div>
+  <div class="content"
+    style="height: 480px; overflow-y: scroll; border: 1px solid red;">
+    {{x-console-stream messages=messages class="ui"}}
+  </div>
+</div>
+
+<h2>Year {{model.year}}</h2>
+<h2>Month {{model.month}}</h2>
+<h2>Day {{model.day}}</h2>
+<h1>Records</h1>
+
+<div class="ui stackable three column page grid">
+{{#each model.records as |record|}}
+  <div class="column">
+    {{#x-anlz-session-card
+      title=record.name
+      host="2P1"
+      src=record.mouse
+      user=record.user
+      timeAgo=record.date
+    }}
+    {{#if record.package.exists}}
+      <div class="extra content">
+        <div class="ui vertical fluid buttons">
+          {{link-to "Open" "sci-analysis"
+            model.year model.month model.day record.mouse record.name tagName="div" class="ui blue basic button"}}
+          <div class="ui red basic button" {{action "removePackage" record}}>Remove</div>
+        </div>
+      </div>
+    {{else}}
+      <div class="extra content">
+        <div class="ui basic fluid red button" {{action "importRaw" record}}>Import</div>
+      </div>
+    {{/if}}
+    {{/x-anlz-session-card}}
+  </div>
+{{else}}
+  no...
+{{/each}}
+</div>
+{{outlet}}

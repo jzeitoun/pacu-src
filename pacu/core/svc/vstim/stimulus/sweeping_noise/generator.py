@@ -39,6 +39,7 @@ class SweepingNoiseGenerator(object):
             max_spat_freq = 0.05,
             max_temp_freq = 4,
             contrast = 0.5,
+            binary_threshold = 0,
             rotation = 0,
             bandfilter= 0, # is gaussian
             duration = 300,
@@ -62,6 +63,7 @@ class SweepingNoiseGenerator(object):
         self.max_spat_freq = max_spat_freq
         self.max_temp_freq = max_temp_freq
         self.contrast = contrast
+        self.binary_threshold = binary_threshold
         self.rotation = rotation
         self.bandfilter = bandfilter
         self.duration = duration
@@ -84,6 +86,7 @@ class SweepingNoiseGenerator(object):
         print 'max sfreq', self.max_spat_freq
         print 'max tfreq', self.max_temp_freq
         print 'contrast', self.contrast
+        print 'binary_threshold', self.binary_threshold
         print 'rotation', self.rotation
         print 'band filter', self.bandfilter
         print 'duration', self.duration
@@ -264,6 +267,11 @@ class SweepingNoiseGenerator(object):
             ] = 1
             self.gauss2d = np.tile(self.gauss1d, (imsize, 1)) # Make it 2D
 
+        if self.binary_threshold:
+            thresh = np.percentile(frames, self.binary_threshold)
+            frames[frames < thresh] = frames.min()
+            frames[frames > thresh] = frames.max()
+
         # No need to have something like `gauss3d`. It is just overkill.
         # defines a period
         screenWidthDegEyePoint = np.arctan(
@@ -280,7 +288,6 @@ class SweepingNoiseGenerator(object):
 
         for frame, offset in zip(frames, self.offsets):
             frame[:] = (frame - 0.5) * np.roll(self.gauss2d, int(offset) - int(imsize*self.eyepoint_x))
-
         self.moviedata = cm.gray(frames + 0.5, bytes=True)
         self.shape = self.moviedata.shape # z, y, x
         return self.moviedata
@@ -322,10 +329,10 @@ class SweepingNoiseGenerator(object):
 def tempsave(data):
     import tifffile
     tifffile.imsave('/Volumes/Users/ht/Desktop/gaussianNoise.tif', data)
-def test():
+def test(**kwargs):
     qwe = SweepingNoiseGenerator(
             eyepoint_x = 0,
-            duration=10, screenDistanceCm=5, rotation=1, bandwidth=30)
+            duration=10, screenDistanceCm=5, rotation=1, bandwidth=30, **kwargs)
     qwe.generate()
     qwe.rotate()
     qwe.viewmask()
@@ -367,4 +374,4 @@ def test3():
         use_random = True,
     ).generate().rotate().viewmask()
 # get_ipython().magic('pylab')
-# qwe = test()
+qwe = test()

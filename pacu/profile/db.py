@@ -1,7 +1,11 @@
-import tempfile
-
 from sqlalchemy import create_engine
+from sqlalchemy import inspect
 from sqlalchemy.pool import StaticPool
+
+from pacu.profile import manager
+from pacu.core.model import Base
+
+import ipdb
 
 def get_scoped(engine):
     from pacu.ext.sqlalchemy.orm import session
@@ -18,12 +22,23 @@ def _create_sqlite_engine(uri, echo):
         connect_args = dict(check_same_thread=False),
         poolclass = StaticPool)
 
+from ipdb import set_trace
 def ephemeral(profile):
     from pacu.util import identity
+    from pacu.core.model import fixture
+    l = manager.instance('log')
     resource = identity.formattempfile('%s-db-engine-ephemeral.db')
+    set_trace()
     engine = _create_sqlite_engine(profile.uri + resource, profile.echo.bool)
     engine.__pacu_protect__ = profile.PROTECT.bool
-    return get_scoped(engine)
+    s = get_scoped(engine)
+    try:
+        for tname, table in Base.metadata.tables.items():
+            l.info('Table `{}`: {}'.format(tname, s.query(table).count()))
+    except:
+            fixture.base.setup(s)
+            l.info('Tables of ephemeral db has initialized.')
+    return s
 
 def memory(profile):
     from pacu.core.model import fixture
@@ -37,3 +52,4 @@ def memory(profile):
 
 def interim(profile):
     return memory(profile)
+

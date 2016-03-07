@@ -24,13 +24,13 @@
     Launch Andor Camera Controller
   {{/sui-popup}}
 
-  {{#link-to 'analyses'}}
-    <div id="get-analyzer" class="nav circular ui small icon blue button">
+  {{#link-to 'sci-analyses'}}
+    <div id="get-scanimage-analyzer" class="nav circular ui small icon blue button">
       <i class="crosshairs icon"></i>
     </div>
   {{/link-to}}
-  {{#sui-popup selector="#get-analyzer" position="bottom left"}}
-    Launch Image Stack Analyzer
+  {{#sui-popup selector="#get-scanimage-analyzer" position="bottom left"}}
+    Launch Scanimage Data Analyzer
   {{/sui-popup}}
 
   {{#link-to 'trj-analyses'}}
@@ -39,7 +39,7 @@
     </div>
   {{/link-to}}
   {{#sui-popup selector="#get-trajectory-analyzer" position="bottom left"}}
-    Launch Image Stack and Trajectory Analyzer
+    Launch Trajectory Data Analyzer
   {{/sui-popup}}
 
   {{#link-to 'psychopy'}}

@@ -3,6 +3,9 @@ import computed from 'ember-computed-decorators';
 import ROI from '../components/x-layer/roi/roi';
 
 export default Ember.Controller.extend({
+  on_sse_print: function(msg, err) {
+    console.log(`Backend: ${msg}`);
+  },
   @computed() rois() { return []; },
   arrayWillChange: function(array, offset, removes, _) {
     for (let i=offset; i<offset+removes; i++) {
@@ -15,13 +18,18 @@ export default Ember.Controller.extend({
     }
   },
   curROI: null,
+  @computed('curROI', 'curROI.busy') curROINotBusy(roi, busy) {
+    return Ember.isPresent(roi) && !busy;
+  },
   curIndex: 0,
   actions: {
     currentSFrequencyEnumChange: function(_, index) {
       console.log(index);
     },
     deleteROI(roi) {
-      this.get('session').invoke('delete_roi', roi.rid);
+      if (Ember.isPresent(roi.rid)) {
+        this.get('session').invoke('delete_roi', roi.rid);
+      }
     },
     upsertROI(roi, ...fields) {
       this.get('session').invoke('upsert_roi', roi, ...fields).then(data => {
@@ -34,6 +42,15 @@ export default Ember.Controller.extend({
         this.get('rois').pushObjects(rs);
       });
     },
+    fetchData(roi) {
+      if (roi.get('busy')) { return; }
+      roi.set('busy', true);
+      this.get('session').invoke('fetch_roi_data', roi.rid).then(data => {
+        debugger
+      }).finally(() => {
+        roi.set('busy', false);
+      });
+    }
   },
   refresh: function() {
     const session = this.get('session');
