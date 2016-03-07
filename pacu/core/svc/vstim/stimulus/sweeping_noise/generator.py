@@ -374,4 +374,4 @@ def test3():
         use_random = True,
     ).generate().rotate().viewmask()
 # get_ipython().magic('pylab')
-qwe = test()
+# qwe = test()
