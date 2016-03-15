@@ -20,12 +20,15 @@ def print_captured(by): # should be `write` compatible
     finally:
         sys.stdout = sys.__stdout__
 
-def handle_exc(e):
+def print_exc(e):
     info = sys.exc_info()
     source = traceback.format_exception(*info)
     print '\n======== exception on websocket delegation ========'
     traceback.print_exception(*info)
     print '======== exception on websocket delegation ========\n'
+
+def handle_exc(e):
+    print_exc(e)
     raise e
 
 # currently web socket handler does not work in non-main thread
@@ -100,7 +103,7 @@ class WSHandler(websocket.WebSocketHandler):
         try:
             dumped = ujson.dumps([seq, rv, err])
         except Exception as e: # coerce
-            print 'Websocket coerces output:', str(e)
+            print 'Websocket coerces exception:'
+            print_exc(e)
             dumped = ujson.dumps([seq, str(rv), err])
-            # print dumped
         self.write_message(dumped)

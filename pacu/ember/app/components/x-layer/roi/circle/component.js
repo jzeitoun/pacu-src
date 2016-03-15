@@ -14,7 +14,7 @@ export default Ember.Component.reopenClass({
     const [originX, originY] = [offsetX, offsetY];
     if (metaKey) {
       var curPoint = this.getAttr('point');
-      var newPoint = this.attrs.onClonePoint(curPoint);
+      var newPoint = this.attrs.onClone(curPoint);
     }
     const xLayer = this.parentView.parentView.parentView.element;
     Ember.$(xLayer).on('mousemove.circle', ({offsetX, offsetY}) => {
@@ -25,11 +25,11 @@ export default Ember.Component.reopenClass({
       Ember.$(xLayer).off('mousemove.circle');
       if (originX === offsetX && originY === offsetY) {
         if (metaKey) {
-          this.attrs.onCancelPoint(newPoint);
-          this.attrs.onRemovePoint(curPoint);
+          this.attrs.onCancel(newPoint);
+          this.attrs.onRemove(curPoint);
         }
       } else { // point was moved
-        this.attrs.onRefreshPoint();
+        this.attrs.onRefresh();
       }
     });
   },

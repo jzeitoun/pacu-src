@@ -1,125 +1,124 @@
+from __future__ import division
 import shutil
 import ujson
-import struct
-from collections import namedtuple
 
 import tifffile
 import numpy as np
-import matplotlib.pyplot as plt
-from matplotlib.colors import Normalize
-from matplotlib.cm import ScalarMappable
 
+from pacu.profile import manager
 from pacu.util.path import Path
 from pacu.util.prop.memoized import memoized_property
-from pacu.core.io.scanimage.legacy.cfaan import driftcorrect
+from pacu.core.io.scanimage.channel import ScanimageChannel
+from pacu.core.io.scanimage.session import ScanimageSession
+from pacu.core.io.scanimage.adaptor.db import ScanimageDBAdaptor
+from pacu.core.io.scanimage import util
+from pacu.core.io.scanimage.roi import ROI
+from pacu.core.io.scanimage.response.impl import Response
+from pacu.core.io.scanimage.response.main import MainResponse
+from pacu.core.io.scanimage.response.roi import ROIResponse
+from pacu.core.io.scanimage.response.orientation import Orientation
 
 from ipdb import set_trace
 
 class ScanimageIO(object):
+    session = None
+    channel = None
     def __init__(self, path):
         self.path = Path(path).with_suffix('.imported')
     @property
     def exists(self):
         return self.path.is_dir()
+    @memoized_property
+    def tiff(self):
+        tiffpath = self.path.with_suffix('.tif')
+        print 'Import from {}...'.format(tiffpath)
+        return tifffile.imread(tiffpath.str)
     def import_raw(self):
-        print 1
         if self.exists:
             return False
-        self.path.mkdir()
-        print 'DONE!'
+        nchan = util.infer_nchannels(self.tiff)
+        if nchan:
+            self.create_package_path()
+            self.convert_channels(nchan)
+        else:
+            print 'Unable to import data.'
+        print 'Import done!'
         return self.toDict()
+    def create_package_path(self):
+        self.path.mkdir()
+        print 'Path `{}` created.'.format(self.path.str)
     def remove_package(self):
         shutil.rmtree(self.path.str)
         return self.toDict()
+    def convert_channels(self, nchan):
+        for index in range(nchan):
+            self.convert_channel(index)
+    def convert_channel(self, chan):
+        print 'Converting channel {}...'.format(chan)
+        tiff = self.tiff[chan::2]
+        return getattr(self, 'ch{}'.format(chan)).import_raw(tiff)
     def toDict(self):
-        return dict(
-            exists = self.exists,
-            path = self.path.str
-        )
-# gene = '6s3I'
-# Meta = namedtuple('ScanimageMeta', 'dtype z y x')
-# Pathz = namedtuple('Pathz', 'ch1mmp str rec')
-# suffixes = '.ch1.mmp', '.str', '.rec.npy'
-# 
-# class ScanimageIO(object):
-#     @classmethod
-#     def import_raw(cls, path):
-#         path = Path(path).resolve()
-#         tiff = tifffile.imread(path.str)
-#         chan1 = tiff[0::2, ...] # green?
-#         drift = driftcorrect.getdrift3(chan1)
-#         corr = driftcorrect.driftcorrect2(chan1, drift)
-#         record = struct.pack(gene, corr.dtype.name, *corr.shape)
-#         meta = Meta(*struct.unpack(gene, record))
-#         max = corr.max(axis=(1,2))
-#         min = corr.min(axis=(1,2))
-#         mean = corr.mean(axis=(1,2))
-#         std = corr.std(axis=(1,2))
-#         rec = np.rec.fromarrays([max, min, mean, std], names='MAX, MIN, MEAN, STD')
-#         mmppath, strpath, recpath = path.with_suffixes(*suffixes)
-#         mmp = np.memmap(mmppath.str,
-#             mode='w+', dtype=corr.dtype, shape=corr.shape)
-#         mmp[:] = corr[:]
-#         strpath.write(record, mode='wb')
-#         np.save(recpath.str, rec)
-#         return cls(recpath.stempath)
-#     @classmethod
-#     def can_resolve(cls, filename):
-#         try   : cls.resolve_path(filename)
-#         except: return False
-#         else  : return True
-#     @classmethod
-#     def resolve_path(cls, stempath):
-#         return Pathz(*[
-#             path.resolve() for path
-#             in Path(stempath).with_suffixes(*suffixes)
-#         ])
-#     def __init__(self, stempath):
-#         self.pathz = self.resolve_path(stempath)
-#         self.meta = Meta(*struct.unpack(gene, self.pathz.str.read('rb')))
-#         stat = np.load(self.pathz.rec.str)
-#         self.stat = np.rec.fromrecords(stat, dtype=stat.dtype)
-#         shape = self.meta.z, self.meta.y, self.meta.x
-#         self.io = np.memmap(self.pathz.ch1mmp.str,
-#                 dtype=self.meta.dtype, mode='r', shape=shape)
-#     @memoized_property
-#     def io8bit(self):
-#         return self.io.view('uint8')[..., 1::2]
-#     @property
-#     def dimension(self):
-#         return dict(width=self.meta.x, height=self.meta.y, depth=self.meta.z)
-#     @property
-#     def max_index(self):
-#         return self.meta.z - 1
-#     def grand_trace(self):
-#         return self.stat.MEAN
-#     def request_frame(self, index):
-#         return self.smap.to_rgba(self.io8bit[index], bytes=True)
-#     def trace(self, x1, x2, y1, y2):
-#         return (self.io[:, y1:y2, x1:x2]).mean(axis=(1,2))
-#     @memoized_property
-#     def smap(self): # bad practice - change name
-#         norm = Normalize(vmin=0, vmax=self.stat.MAX.max()/256)
-#         return ScalarMappable(norm=norm, cmap=plt.get_cmap('jet'))
-# 
-# def test():
-#     test ='/Volumes/Gandhi Lab - HT/sci/2014.12.20/x.140801.1/field004.tif'
-#     # qwe = ScanimageIO.import_raw(test)
-#     qwe = ScanimageIO(test)
-#     from matplotlib.pyplot import imshow
-#     get_ipython().magic('pylab')
-#     imshow(qwe.request_frame(0))
-#     return qwe
+        return dict(exists=self.exists, path=self.path.str, sessions=self.sessions)
+    @memoized_property
+    def ch0(self):
+        return ScanimageChannel(self.path.joinpath('ch0'))
+    @memoized_property
+    def ch1(self):
+        return ScanimageChannel(self.path.joinpath('ch1'))
+    @memoized_property
+    def db(self):
+        return ScanimageDBAdaptor(self.session.ed)
+    @property
+    def sessions(self):
+        sessions = self.path.ls('*.session')
+        return [ScanimageSession(path) for path in sorted(sessions)]
+    def create_session(self, name):
+        path = self.path.joinpath(name).with_suffix('.session')
+        ScanimageSession(path).data.create()
+    def remove_session(self, name):
+        path = self.path.joinpath(name).with_suffix('.session')
+        ScanimageSession(path).data.remove()
+    def with_session(self, name):
+        path = self.path.joinpath(name).with_suffix('.session')
+        self.session = ScanimageSession(path)
+        return self
+    def with_channel(self, chan=0):
+        self.channel = getattr(self, 'ch{}'.format(chan))
+        return self
+    def upsert_roi(self, roi):
+        return self.session.upsert(ROI(**roi))
+    def remove_roi(self, roi):
+        return self.session.remove(ROI(**roi))
+    def make_response(self, roi):
+        roi = ROI(**roi)
+        trace = roi.trace(self.channel.mmap)
+        response = ROIResponse.from_adaptor(trace, self.db)
+        return self.session.upsert(roi, response=response)
+    @property
+    def main_response(self):
+        return MainResponse.from_adaptor(self.channel.stat.MEAN, self.db)
 
-test ='/Volumes/Gandhi Lab - HT/sci/2014.12.20/x.140801.1/field004.tif'
-# qwe = ScanimageIO(test)
-# from matplotlib.pyplot import *
-# get_ipython().magic('pylab')
-# 
-# import matplotlib.pyplot as plt
-# from matplotlib.colors import Normalize
-# from matplotlib.cm import ScalarMappable
-# 
-# norm = Normalize(vmin=0, vmax=53)
-# smap = ScalarMappable(norm=norm, cmap=plt.get_cmap('jet'))
-# imshow(smap.to_rgba(qwe.io8bit[0], bytes=True))
+def testdump():
+    path = 'tmp/Dario/2015.12.02/x.151101.2/bV1_Contra_004'
+    qwe = ScanimageIO(path).with_session('main').with_channel(1)
+    qwe.session.data.purge().save()
+    from pacu.util.identity import path
+    rois = path.cwd.ls('*pickle')[0].load_pickle().get('rois')
+
+# oneroi = rois[0]
+# pgs = [dict(x=x, y=y) for x, y in oneroi]
+# roi = ROI(polygon=pgs)
+# atrace = roi.trace(qwe.channel.mmap)
+
+    pgs = [[dict(x=x, y=y) for x, y in roi] for roi in rois]
+    pgs = [dict(polygon=p) for p in pgs]
+    import time
+    for pg in pgs:
+        time.sleep(0.01)
+        qwe.upsert_roi(pg)
+
+def ScanimageIOFetcher(year, month, day, mouse, image, session):
+    root = manager.instance('opt').scanimage_root
+    date = '{}.{:2}.{:2}'.format(year, month, day)
+    path = Path(root).joinpath(date, mouse, image)
+    return ScanimageIO(path).with_session(session).with_channel(1)

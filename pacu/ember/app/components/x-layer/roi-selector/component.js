@@ -16,7 +16,7 @@ export default Ember.Component.extend({
       this.$().off('mousemove.roi-selector');
       this.get('interimROIs').removeObject(roi); // anyway
       if (!(originX === offsetX && originY === offsetY)) {
-        this.getAttr('rois').pushObject(roi);
+        this.attrs.onExportROI(roi);
       }
     });
   },

@@ -1,5 +1,6 @@
 import os
 import inspect
+import cPickle as pickle
 
 from ..compat.pathlib import Path
 
@@ -12,6 +13,9 @@ def has_file(self, filename):
 def read(self, mode='r'):
     with self.open(mode) as f:
         return f.read()
+def load_pickle(self):
+    with self.open('rb') as f:
+        return pickle.load(f)
 def peak(self):
     try:
         return self.read()
@@ -40,6 +44,10 @@ def with_suffixes(self, *suffixes):
 def stempath(self):
     return Path(self.str[:-len(''.join(self.suffixes))])
     # return Path(self.stem)
+def mkdir_if_none(self, mode=511, parent=True):
+    if not self.is_dir():
+        self.mkdir(mode=mode, parent=parent)
+    return self
 
 Path.__floordiv__ = Path.with_name
 Path.str = property(Path.__str__)
@@ -47,6 +55,7 @@ Path.ls = ls
 Path.lsmodule = lsmodule
 Path.has_file = has_file
 Path.read = read
+Path.load_pickle = load_pickle
 Path.peak = peak
 Path.write = write
 Path.here = classmethod(here)
@@ -54,3 +63,4 @@ Path.absdir = classmethod(absdir)
 Path.with_suffixes = with_suffixes
 # Path.path_without_suffixes = property(path_without_suffixes)
 Path.stempath = property(stempath)
+Path.mkdir_if_none = mkdir_if_none

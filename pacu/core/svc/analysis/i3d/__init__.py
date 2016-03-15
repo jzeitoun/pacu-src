@@ -21,7 +21,7 @@ from pacu.core.svc.analysis.i3d.twoway.roi import TwowayROI
 
 DB = manager.get('db').as_resolved
 # DB = manager.get('db').section('ephemeral')
-ED = manager.get('db').section('ed')
+ED = manager.get('db').section('ed')()
 
 jet = getattr(plt.cm, 'jet')
 

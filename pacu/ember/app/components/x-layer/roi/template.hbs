@@ -1,8 +1,13 @@
 {{#if hasBlock}}
-  {{yield this}}
+  {{yield}}
 {{else}}
-  <polygon points={{points}} />
+  {{x-layer/roi/polygon attrs.roi.polygon
+    active=attrs.roi.active
+    busy=attrs.roi.busy
+    error=attrs.roi.error
+    invalidated=attrs.roi.invalidated
+  }}
   {{#each attrs.roi.polygon as |pg|}}
-    <circle cx={{pg.x}} cy={{pg.y}} r="3"/>
+    {{x-layer/roi/circle pg}}
   {{/each}}
 {{/if}}

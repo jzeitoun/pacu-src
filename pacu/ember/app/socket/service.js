@@ -5,6 +5,14 @@ function log(...msgs) { console.log(...msgs); }
 
 let sequence = 0;
 
+
+function mirrorTo(target, route) {
+  return this.makeRequest('access', route).then((data) => {
+    target.set(route, data);
+    return data;
+  });
+}
+
 class PromiseEx extends Ember.RSVP.Promise {
   constructor(resolver, label, context) {
     super(resolver, label);
@@ -20,6 +28,20 @@ class PromiseEx extends Ember.RSVP.Promise {
       super.finally(() => {
         this.gatenames.forEach((name) => {
           Ember.set(this.context, name, false);
+        });
+      });
+    }
+    return this;
+  }
+  gateTo(target, ...names) {
+    if (Ember.isNone(this.gatenames)) {
+      this.gatenames = names;
+      this.gatenames.forEach((name) => {
+        Ember.set(target, name, true);
+      });
+      super.finally(() => {
+        this.gatenames.forEach((name) => {
+          Ember.set(target, name, false);
         });
       });
     }
@@ -88,6 +110,11 @@ class WebSocketEx {
     return Ember.RSVP.all(
       routes.map(this._mirror.bind(this))
     )
+  }
+  // `mirrorTo` is preferred than just `mirror`
+  mirrorTo(target, ...routes) {
+    return Ember.RSVP.all(
+      routes.map(route => mirrorTo.call(this, target, route)))
   }
   _print(route) {
     return this.access(route).then(log);

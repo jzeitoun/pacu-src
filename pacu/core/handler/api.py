@@ -76,3 +76,16 @@ class APIHandler(RequestHandler):
             self.write(str(e))
         else:
             self.finish(result)
+    def delete(self, api, args):
+        try:
+            result = self.http.delete(self.request, *self.args, **self.kwargs)
+        except TypeError as e:
+            print_exc()
+            self.set_status(400) # possible argument error
+            self.write(str(e))
+        except Exception as e:
+            print_exc()
+            self.set_status(403)
+            self.write(str(e))
+        else:
+            self.finish(result)

@@ -13,11 +13,14 @@ polygon
     animation-iteration-count: infinite;
     animation-timing-function: ease-in-out;
     animation-direction: alternate;
-
+  &.error
+    fill rgba(255, 0, 0, 0.5)
+  &.invalidated
+    fill rgba(0, 0, 0, 0.0)
 circle
   stroke black
   fill rgba(50, 50, 50, 0.5)
-  r 2
+  r 1.5
 
 @keyframes polygon-busy
   0%

@@ -1,6 +1,11 @@
 import Ember from 'ember';
+import computed from 'ember-computed-decorators';
 
 const ROI = Ember.Object.extend(Em.Copyable, {
+  @computed() invalidated() { return true; },
+  invalidate() {
+    return this.setProperties({invalidated: true, active: false});
+  },
   initialExpand(x, y) {
     this.set('polygon.1.x', x);
     this.set('polygon.2.x', x);
@@ -11,7 +16,8 @@ const ROI = Ember.Object.extend(Em.Copyable, {
     return ROI.create({
       active: this.active,
       busy: this.busy,
-      rid: this.rid,
+      id: this.id,
+      invalidated: this.get('invalidated'),
       polygon: this.polygon.map(point => { return {
         x: point.x,
         y: point.y
@@ -23,15 +29,20 @@ const ROI = Ember.Object.extend(Em.Copyable, {
     this.setProperties({
       active: null,
       busy: null,
-      rid: null
+      id: +(new Date()),
+      invalidated: true,
     });
     return newroi;
   }
 }).reopenClass({
   fromPoint: function(x, y) {
     return this.create({
-      polygon: [{x, y}, {x, y}, {x, y}, {x, y}]
+      polygon: [{x, y}, {x, y}, {x, y}, {x, y}],
+      id: +(new Date())
     });
+  },
+  validate: function(roi) {
+    return this.create(roi, {invalidated: Ember.isNone(roi.response)});
   }
 });
 

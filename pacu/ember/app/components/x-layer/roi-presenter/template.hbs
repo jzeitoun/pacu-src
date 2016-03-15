@@ -1,20 +1,22 @@
 {{#each rois as |roi|}}
-  {{#x-layer/roi roi as |r|}}
+  {{#x-layer/roi roi}}
     {{x-layer/roi/polygon roi.polygon
       active=roi.active
       busy=roi.busy
-      onDeriveROI=(action "deriveROI" rois roi)
-      onCancelROI=(action "removeROI" rois)
-      onRemoveROI=(action "removeROI" rois roi)
-      onExclusiveToggleROI=(action "exclusiveToggleROI" rois roi)
-      onRefreshROI=(action "updatePoint" roi)
+      error=roi.error
+      invalidated=roi.invalidated
+      onStaticClick=(route-action "exclToggleROI" rois roi)
+      onRefresh=(route-action "updateROI" roi)
+      onDerive=(route-action "deriveROI" rois roi)
+      onRemove=(route-action "removeROI" rois roi)
+      onCancel=(route-action "removeROI" rois)
     }}
-    {{#each r.circles as |c|}}
-      {{x-layer/roi/circle c
-        onClonePoint=(action "insertPoint" roi)
-        onCancelPoint=(action "cancelPoint" roi)
-        onRemovePoint=(action "removePoint" roi)
-        onRefreshPoint=(action "updatePoint" roi)
+    {{#each roi.polygon as |pg|}}
+      {{x-layer/roi/circle pg
+        onClone=(route-action "insertPoint" roi)
+        onCancel=(route-action "cancelPoint" roi)
+        onRemove=(route-action "removePoint" roi)
+        onRefresh=(route-action "updateROI" roi)
       }}
     {{/each}}
   {{/x-layer/roi}}

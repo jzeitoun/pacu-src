@@ -2,8 +2,20 @@ import importlib
 
 import ujson
 
-def get(req, modname, fncname, *args):
+def get(req, modname, fncname, *args, **kwargs):
     module = importlib.import_module('pacu.api.json.http.{}'.format(modname))
-    func = getattr(module, fncname)
-    rv = func(req, *args)
+    func = getattr(module, 'get_{}'.format(fncname))
+    rv = func(req, *args, **kwargs)
+    return ujson.dumps(rv or {})
+
+def post(req, modname, fncname, *args, **kwargs):
+    module = importlib.import_module('pacu.api.json.http.{}'.format(modname))
+    func = getattr(module, 'post_{}'.format(fncname))
+    rv = func(req, *args, **kwargs)
+    return ujson.dumps(rv or {})
+
+def delete(req, modname, fncname, *args, **kwargs):
+    module = importlib.import_module('pacu.api.json.http.{}'.format(modname))
+    func = getattr(module, 'delete_{}'.format(fncname))
+    rv = func(req, *args, **kwargs)
     return ujson.dumps(rv or {})

@@ -35,7 +35,8 @@ Router.map(function() {
       });
     });
   });
-  this.route('sci-analysis', { path: '/sci-analysis/:year/:month/:day/:mouse/:image' });
+  this.route('sci-analysis',
+      { path: '/sci-analysis/:year/:month/:day/:mouse/:image/:session' });
 });
 
 export default Router;

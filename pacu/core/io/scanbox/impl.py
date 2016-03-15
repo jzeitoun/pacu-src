@@ -1,3 +1,4 @@
+import tifffile
 import numpy as np
 from scipy import io
 
@@ -42,6 +43,7 @@ class ScanboxIO(object):
         }
     def __init__(self, filename):
         pathz = ScanboxIO.resolve_path(filename)
+        self.path = Path(filename)
         self.info = ScanboxInfoView(pathz.get('.mat'))
         self.data = ScanboxDataView(pathz.get('.sbx'))
     @property
@@ -63,6 +65,16 @@ class ScanboxIO(object):
             dtype='uint16', mode='r', shape=self.shape, order='F'
         ).transpose(3, 1, 0, 2)[..., 0]
     @memoized_property
+    def io0(self):
+        return np.memmap(self.data.file,
+            dtype='uint16', mode='r', shape=self.shape, order='F'
+        ).transpose(3, 1, 0, 2)[..., 0]
+    @memoized_property
+    def io1(self):
+        return np.memmap(self.data.file,
+            dtype='uint16', mode='r', shape=self.shape, order='F'
+        ).transpose(3, 1, 0, 2)[..., 1]
+    @memoized_property
     def io8bit(self):
         return self.io.view('uint8')[..., 1::2]
     def __getitem__(self, key):
@@ -83,3 +95,20 @@ class ScanboxIO(object):
         return value.io.mean(axis=(1,2))
     def trace(self, x1, x2, y1, y2):
         return (~self.io[:, y1:y2, x1:x2]).mean(axis=(1,2))
+
+testpath = Path('/Volumes/Data/Recordings/scanbox-jack/Dario/Tox3/Tox3_000_000')
+def conv(path):
+    sbx = ScanboxIO(path)
+    x, y, _, z = sbx.shape
+    rgb = np.zeros((z, y, x, 3), dtype=sbx.io.dtype)
+    rgb[..., 0] = ~sbx.io0
+    rgb[..., 1] = ~sbx.io1
+    tiffpath = sbx.path.with_name('tiff').mkdir_if_none()
+    dest = tiffpath.joinpath(sbx.path.name).with_suffix('.tiff')
+    tifffile.imsave(dest.str, rgb)
+def conv_all(path):
+    for sbxpath in path.parent.ls('*.sbx'):
+        print 'converting...', sbxpath
+        conv(sbxpath)
+# sbx = ScanboxIO(testpath)
+# get_ipython().magic('pylab')

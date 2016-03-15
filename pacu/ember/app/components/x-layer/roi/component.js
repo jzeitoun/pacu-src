@@ -8,6 +8,5 @@ export default Ember.Component.reopenClass({
   @computed('roi.polygon.@each.{x,y}') points(pgs) {
     if (Ember.isNone(pgs)) { return; }
     return pgs.map(point => { return `${point.x},${point.y}`; }).join(' ');
-  },
-  circles: Ember.computed.alias('roi.polygon')
+  }
 });

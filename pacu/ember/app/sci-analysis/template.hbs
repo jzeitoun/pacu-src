@@ -1,1 +1,70 @@
-{{outlet}}
+<div class="ui inverted segment">
+  <div class="ui five column padded grid">
+    <div class="yellow column">{{model.user}}</div>
+    <div class="red column">
+      <p>{{model.title}} - {{curIndex}}</p>
+      <p>{{model.desc}}</p>
+    </div>
+    <div class="blue column">{{model.createdat}}</div>
+    <div class="green column">{{model.imagesrc}}</div>
+    <div class="purple column">
+      <p>Spatial frequency</p>
+      {{!sui-model-select
+        name="currentSFrequency"
+        value=current_sfrequency
+        items=condition.spatial_frequencies
+        onChange=(action "currentSFrequencyEnumChange" model)
+      }}
+    </div>
+  </div>
+  <section class="ui clearing divider"></section>
+  <div class="ui inverted segment">
+    <div class="ui {{model.socketStatusClass}} text loader">Fetching...</div>
+    {{x-sci-analysis/response/overview src=model.response.overview}}
+  </div>
+  <section class="ui clearing divider"></section>
+  <div class="ui">
+    {{input type="range" min="0" step="1"
+      max=model.img.maxIndex value=model.img.curIndex}}
+  </div>
+  <section class="ui clearing divider"></section>
+  <div class="ui stackable padded grid">
+    {{#x-zoomable-container class="six wide column"}}
+      {{#x-layer width=model.img.width height=model.img.height as |layer|}}
+        {{layer.canvas-2d buffer=model.img.buffer}}
+        {{layer.roi-selector rois=model.rois
+          onExportROI=(route-action "insertROI" model.rois)}}
+        {{layer.roi-presenter rois=model.rois}}
+      {{/x-layer}}
+    {{/x-zoomable-container}}
+    <div class="ten wide column">
+      <div class="ui {{model.socketStatusClass}} text loader">Fetching...</div>
+      <div class="ui grid">
+        <div class="ten wide column">
+          {{x-sci-analysis/response/orientations src=model.response.orientations}}
+        </div>
+        <div class="six wide teal column">Decay</div>
+      </div>
+      <div class="ui grid">
+        <div class="ten wide column">
+          {{x-sci-analysis/response/normalfit src=model.response.fit}}
+        </div>
+        <div class="six wide column">
+          {{x-sci-analysis/response/polarfit src=model.response.fit}}
+        </div>
+      </div>
+    </div>
+  </div>
+  <section class="ui clearing divider"></section>
+  <div class="ui one column padded grid">
+    <div class="center aligned column">
+      {{! x-i3d2p-plot-overview src=model.curTrace curIndex=model.img.curIndex}}
+    </div>
+  </div>
+  <section class="ui clearing divider"></section>
+  <div class="ui one column padded grid">
+    <div class="center aligned column">
+      {{!x-sci-analysis-response src=model.curResponse}}
+    </div>
+  </div>
+</div>
