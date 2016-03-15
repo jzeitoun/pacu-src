@@ -107,7 +107,7 @@ def conv(path):
     dest = tiffpath.joinpath(sbx.path.name).with_suffix('.tiff')
     tifffile.imsave(dest.str, rgb)
 def conv_all(path):
-    for sbxpath in path.parent.ls('*.sbx'):
+    for sbxpath in Path(path).parent.ls('*.sbx'):
         print 'converting...', sbxpath
         conv(sbxpath)
 # sbx = ScanboxIO(testpath)
