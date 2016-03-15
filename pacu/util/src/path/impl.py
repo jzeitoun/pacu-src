@@ -44,9 +44,9 @@ def with_suffixes(self, *suffixes):
 def stempath(self):
     return Path(self.str[:-len(''.join(self.suffixes))])
     # return Path(self.stem)
-def mkdir_if_none(self, mode=511, parent=True):
+def mkdir_if_none(self, mode=511, parents=True):
     if not self.is_dir():
-        self.mkdir(mode=mode, parent=parent)
+        self.mkdir(mode=mode, parents=parents)
     return self
 
 Path.__floordiv__ = Path.with_name

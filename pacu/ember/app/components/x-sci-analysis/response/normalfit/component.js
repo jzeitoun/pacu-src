@@ -6,6 +6,7 @@ const yAxes = {
   position: 'left',
   gridLines: {
     color: 'rgba(100, 100, 100, 0.1)',
+    zeroLineColor: 'rgba(255, 255, 255, 0.5)',
     display: true,
     drawTicks: false
   },
@@ -25,6 +26,7 @@ const xAxes = {
   gridLines: {
     display: true,
     color: 'rgba(100, 100, 100, 0.1)',
+    zeroLineColor: 'rgba(255, 255, 255, 0.5)',
     // drawOnChartArea: false,
     drawTicks: false
   },
