@@ -1,4 +1,5 @@
 import Ember from 'ember';
+
 import computed from 'ember-computed-decorators';
 
 const yAxes = {
@@ -10,7 +11,7 @@ const yAxes = {
   },
   scaleLabel: {
     display: true,
-    labelString: 'dF/F0'
+    labelString: 'F'
   },
   ticks: { display: true, }
 };
@@ -19,13 +20,12 @@ const xAxes = {
   position: 'bottom',
   scaleLabel: {
     display: false,
-    labelString: 'Orientation of Stimulus'
   },
   gridLines: {
     display: false,
     color: 'rgba(255, 255, 255, 0.5)',
-    // drawOnChartArea: false,
-    // drawTicks: true
+    drawOnChartArea: false,
+    drawTicks: true
   },
   ticks: {
     autoSkip: false,
@@ -35,12 +35,13 @@ const xAxes = {
     // }
   },
 };
+
 const type = 'line';
 const data = { labels:[], datasets:[] }; // dummy
 const options =  {
   title: {
     display: true,
-    text: 'Orientation of Stimulus',
+    text: 'Decay at',
     fontStyle: 'normal'
   },
   legend: {display: false},
@@ -62,19 +63,33 @@ const options =  {
     }
   }
 };
+
 const Data = Ember.Object.extend({
   traces: [[]],
   indices: {},
   mean: [],
+  y_fit: [],
+  name: '',
+  @computed('name') text(name) {
+    if (Ember.isEmpty(name)) { return 'Decay of max orientation'; }
+    return `Decay at ${name}`;
+  },
   @computed('mean') labels(mean) {
     return mean.map((e, i) => i);
   },
-  @computed('traces', 'mean') datasets(traces, mean) {
-    const ds = [{
-      borderColor: 'rgba(0, 255, 255, 1)',
-      borderWidth: 0.5,
-      data: mean,
-    }];
+  @computed('traces', 'mean', 'y_fit') datasets(traces, mean, y_fit) {
+    const ds = [
+      {
+        borderColor: 'rgba(0, 255, 255, 1)',
+        borderWidth: 0.5,
+        data: mean,
+      },
+      {
+        borderColor: 'rgba(255, 0, 0, 1)',
+        borderWidth: 1,
+        data: y_fit,
+      },
+    ];
     for (let trace of traces) {
       ds.push({
         borderColor: 'rgba(255, 255, 255, 0.1)',
@@ -87,8 +102,8 @@ const Data = Ember.Object.extend({
 
 export default Ember.Component.extend({
   tagName: 'canvas',
-  width: 220,
-  height: 120,
+  width: 100,
+  height: 100,
   attributeBindings: ['width', 'height'],
   @computed() ctx() { return this.element.getContext('2d'); },
   @computed() config() { return { type, data, options }; },
@@ -96,11 +111,13 @@ export default Ember.Component.extend({
   indices: Ember.computed.alias('data.indices'),
   labels: Ember.computed.alias('data.labels'),
   datasets: Ember.computed.alias('data.datasets'),
+  text: Ember.computed.alias('data.text'),
   @computed('ctx', 'config') chart(ctx, cfg) { return new Chart(ctx, cfg); },
   draw: function() {
-    const {chart, labels, datasets, indices
-    } = this.getProperties('chart', 'labels', 'datasets', 'indices');
+    const {chart, labels, datasets, indices, text
+    } = this.getProperties('chart', 'labels', 'datasets', 'indices', 'text');
     const ticks = chart.config.options.scales.xAxes[0].ticks;
+    chart.titleBlock.options.text = text;
     ticks.userCallback = (value, index, values) => indices[index];
     chart.data.labels = labels;
     chart.data.datasets = datasets;

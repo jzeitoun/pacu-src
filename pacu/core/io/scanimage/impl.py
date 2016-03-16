@@ -12,7 +12,7 @@ from pacu.core.io.scanimage.channel import ScanimageChannel
 from pacu.core.io.scanimage.session import ScanimageSession
 from pacu.core.io.scanimage.adaptor.db import ScanimageDBAdaptor
 from pacu.core.io.scanimage import util
-from pacu.core.io.scanimage.roi import ROI
+from pacu.core.io.scanimage.roi.impl import ROI
 from pacu.core.io.scanimage.response.impl import Response
 from pacu.core.io.scanimage.response.main import MainResponse
 from pacu.core.io.scanimage.response.roi import ROIResponse
@@ -98,6 +98,8 @@ class ScanimageIO(object):
     def main_response(self):
         return MainResponse.from_adaptor(self.channel.stat.MEAN, self.db)
 
+# path = 'tmp/Dario/2015.12.02/x.151101.2/bV1_Contra_004'
+# qwe = ScanimageIO(path).with_session('main').with_channel(1)
 def testdump():
     path = 'tmp/Dario/2015.12.02/x.151101.2/bV1_Contra_004'
     qwe = ScanimageIO(path).with_session('main').with_channel(1)
@@ -121,4 +123,4 @@ def ScanimageIOFetcher(year, month, day, mouse, image, session):
     root = manager.instance('opt').scanimage_root
     date = '{}.{:2}.{:2}'.format(year, month, day)
     path = Path(root).joinpath(date, mouse, image)
-    return ScanimageIO(path).with_session(session).with_channel(1)
+    return ScanimageIO(path).with_session(session).with_channel(0)

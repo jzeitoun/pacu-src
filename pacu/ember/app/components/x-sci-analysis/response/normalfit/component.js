@@ -85,8 +85,8 @@ const Data = Ember.Object.extend({
 });
 export default Ember.Component.extend({
   tagName: 'canvas',
-  width: 240,
-  height: 100,
+  width: 220,
+  height: 120,
   attributeBindings: ['width', 'height'],
   @computed() ctx() { return this.element.getContext('2d'); },
   @computed() config() { return { type, data, options }; },

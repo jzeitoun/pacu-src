@@ -32,3 +32,6 @@ class NormalfitResponse(object):
         self.fit = Fit(*meanresponses_fit)
         self.stretched = measure_stretch
         return self
+    @property
+    def max_orientation_index(self):
+        return np.argmax(self.measure)

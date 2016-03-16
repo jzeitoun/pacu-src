@@ -75,6 +75,11 @@ class ScanboxIO(object):
             dtype='uint16', mode='r', shape=self.shape, order='F'
         ).transpose(3, 1, 0, 2)[..., 1]
     @memoized_property
+    def channels(self):
+        return np.memmap(self.data.file,
+            dtype='uint16', mode='r', shape=self.shape, order='F'
+        ).transpose(3, 1, 0, 2)
+    @memoized_property
     def io8bit(self):
         return self.io.view('uint8')[..., 1::2]
     def __getitem__(self, key):
@@ -96,19 +101,34 @@ class ScanboxIO(object):
     def trace(self, x1, x2, y1, y2):
         return (~self.io[:, y1:y2, x1:x2]).mean(axis=(1,2))
 
-testpath = Path('/Volumes/Data/Recordings/scanbox-jack/Dario/Tox3/Tox3_000_000')
-def conv(path):
+testpath = Path('/Volumes/Data/Recordings/scanbox-jack/Dario/test')
+def conv(path, nchan=2):
     sbx = ScanboxIO(path)
     x, y, _, z = sbx.shape
     rgb = np.zeros((z, y, x, 3), dtype=sbx.io.dtype)
-    rgb[..., 0] = ~sbx.io0
-    rgb[..., 1] = ~sbx.io1
+    if nchan == 2:
+        rgb[..., 0] = ~sbx.io0
+        rgb[..., 1] = ~sbx.io1
+    elif nchan == 1:
+        rgb[..., 0] = ~sbx.io0
     tiffpath = sbx.path.with_name('tiff').mkdir_if_none()
     dest = tiffpath.joinpath(sbx.path.name).with_suffix('.tiff')
     tifffile.imsave(dest.str, rgb)
-def conv_all(path):
-    for sbxpath in Path(path).ls('*.sbx'):
+def conv_all(path, nchan=2, ls='*.sbx'):
+    for sbxpath in Path(path).ls(ls):
         print 'converting...', sbxpath
-        conv(sbxpath)
+        conv(sbxpath, nchan=nchan)
+# sbx = ScanboxIO(testpath)
+# get_ipython().magic('pylab')
+
+# path = testpath.parent.joinpath('tiff', 'STACK 1').ls()
+# movie = np.concatenate([
+#     tifffile.imread(filename.str).mean(axis=0)[np.newaxis, ...]
+#     for filename in path.ls()
+# ])
+# tifffile.imsave(path.parent.joinpath('AVG', 'stack2.mean.tiff').str, movie)
+# consider using just stack instead of concatenate
+
+# testpath = Path('/Volumes/Data/Recordings/scanbox-jack/Dario/Tox3/Tox3_000_400')
 # sbx = ScanboxIO(testpath)
 # get_ipython().magic('pylab')
