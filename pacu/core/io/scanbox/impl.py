@@ -75,10 +75,15 @@ class ScanboxIO(object):
             dtype='uint16', mode='r', shape=self.shape, order='F'
         ).transpose(3, 1, 0, 2)[..., 1]
     @memoized_property
-    def channels(self):
-        return np.memmap(self.data.file,
-            dtype='uint16', mode='r', shape=self.shape, order='F'
-        ).transpose(3, 1, 0, 2)
+    def ch0(self):
+        x, y, c, z = self.shape
+        return np.memmap(self.data.file, dtype='uint16', mode='r', order='F'
+            )[0::self.info.nchan].reshape((z, y, x))
+    @memoized_property
+    def ch1(self):
+        x, y, c, z = self.shape
+        return np.memmap(self.data.file, dtype='uint16', mode='r', order='F'
+            )[1::self.info.nchan].reshape((z, y, x))
     @memoized_property
     def io8bit(self):
         return self.io.view('uint8')[..., 1::2]
@@ -101,16 +106,16 @@ class ScanboxIO(object):
     def trace(self, x1, x2, y1, y2):
         return (~self.io[:, y1:y2, x1:x2]).mean(axis=(1,2))
 
-testpath = Path('/Volumes/Data/Recordings/scanbox-jack/Dario/test')
+# testpath = Path('/Volumes/Data/Recordings/scanbox-jack/Dario/test')
 def conv(path, nchan=2):
     sbx = ScanboxIO(path)
     x, y, _, z = sbx.shape
     rgb = np.zeros((z, y, x, 3), dtype=sbx.io.dtype)
     if nchan == 2:
-        rgb[..., 0] = ~sbx.io0
-        rgb[..., 1] = ~sbx.io1
+        rgb[..., 0] = ~sbx.ch0
+        rgb[..., 1] = ~sbx.ch1
     elif nchan == 1:
-        rgb[..., 0] = ~sbx.io0
+        rgb[..., 0] = ~sbx.ch0
     tiffpath = sbx.path.with_name('tiff').mkdir_if_none()
     dest = tiffpath.joinpath(sbx.path.name).with_suffix('.tiff')
     tifffile.imsave(dest.str, rgb)
@@ -118,17 +123,23 @@ def conv_all(path, nchan=2, ls='*.sbx'):
     for sbxpath in Path(path).ls(ls):
         print 'converting...', sbxpath
         conv(sbxpath, nchan=nchan)
-# sbx = ScanboxIO(testpath)
+
+# testpath = Path('/Volumes/Data/Recordings/scanbox-jack/Dario/test2/test2_000_002')
+
+# def combine(sbxpath):
+#     path = Path(sbxpath).parent.joinpath('tiff', 'STACK 1').ls()
+#     movie = np.concatenate([
+#         tifffile.imread(filename.str).mean(axis=0)[np.newaxis, ...]
+#         for filename in path.ls()
+#     ])
+#     tifffile.imsave(path.parent.joinpath('AVG', 'stack2.mean.tiff').str, movie)
+    # consider using just stack instead of concatenate
+
+# testpath = Path('/Volumes/Users/ht/Desktop/test2/test2_000_001')
+# s1 = ScanboxIO(testpath)
+# testpath = Path('/Volumes/Users/ht/Desktop/test2/test2_000_002')
+# s2 = ScanboxIO(testpath)
 # get_ipython().magic('pylab')
 
-# path = testpath.parent.joinpath('tiff', 'STACK 1').ls()
-# movie = np.concatenate([
-#     tifffile.imread(filename.str).mean(axis=0)[np.newaxis, ...]
-#     for filename in path.ls()
-# ])
-# tifffile.imsave(path.parent.joinpath('AVG', 'stack2.mean.tiff').str, movie)
-# consider using just stack instead of concatenate
-
-# testpath = Path('/Volumes/Data/Recordings/scanbox-jack/Dario/Tox3/Tox3_000_400')
-# sbx = ScanboxIO(testpath)
-# get_ipython().magic('pylab')
+# testpath = Path('/Volumes/Data/Recordings/scanbox-jack/Dario/tox3')
+# conv_all(testpath, nchan=2, ls='Tox3_000_*.sbx')
