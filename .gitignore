@@ -60,3 +60,6 @@ doc/_templates/
 
 # domain specific
 pacu.bat
+
+# tmp whynot?
+tmp/
