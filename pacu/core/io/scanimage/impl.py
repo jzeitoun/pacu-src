@@ -21,10 +21,12 @@ from pacu.core.io.scanimage.response.orientation import Orientation
 from ipdb import set_trace
 
 class ScanimageIO(object):
-    session = None
-    channel = None
+    session_name = 'main'
     def __init__(self, path):
         self.path = Path(path).with_suffix('.imported')
+    @classmethod
+    def get_record(cls, rec_path):
+        return ScanimageRecord(rec_path)
     @property
     def exists(self):
         return self.path.is_dir()
@@ -66,61 +68,107 @@ class ScanimageIO(object):
     def ch1(self):
         return ScanimageChannel(self.path.joinpath('ch1'))
     @memoized_property
+    def channel(self):
+        chan = self.session.opt.setdefault('channel', 0)
+        return getattr(self, 'ch{}'.format(chan))
+    @channel.invalidator
+    def set_channel(self, channel):
+        self.session.opt['channel'] = channel
+        return self
+    @memoized_property
+    def sfrequency(self):
+        return self.session.opt.setdefault(
+            'sfrequency', self.db.sfrequencies[0])
+    @memoized_property
+    def sfrequency_index(self):
+        return self.sfrequencies.index(self.sfrequency)
+    @property
+    def sfrequencies(self):
+        return self.db.locator.sfrequencies
+    @sfrequency.invalidator
+    def set_sfrequency(self, sfreq):
+        self.sfrequencies.set_cursor_by_item(sfreq)
+        self.session.opt['sfrequency'] = sfreq
+        return self
+    @memoized_property
     def db(self):
         return ScanimageDBAdaptor(self.session.ed)
     @property
-    def sessions(self):
-        sessions = self.path.ls('*.session')
-        return [ScanimageSession(path) for path in sorted(sessions)]
-    def create_session(self, name):
-        path = self.path.joinpath(name).with_suffix('.session')
-        ScanimageSession(path).data.create()
-    def remove_session(self, name):
-        path = self.path.joinpath(name).with_suffix('.session')
-        ScanimageSession(path).data.remove()
-    def with_session(self, name):
-        path = self.path.joinpath(name).with_suffix('.session')
-        self.session = ScanimageSession(path)
-        return self
-    def with_channel(self, chan=0):
-        self.channel = getattr(self, 'ch{}'.format(chan))
-        return self
-    def upsert_roi(self, roi):
-        return self.session.upsert(ROI(**roi))
-    def remove_roi(self, roi):
-        return self.session.remove(ROI(**roi))
-    def make_response(self, roi):
-        roi = ROI(**roi)
-        trace = roi.trace(self.channel.mmap)
-        response = ROIResponse.from_adaptor(trace, self.db)
-        return self.session.upsert(roi, response=response)
-    @property
     def main_response(self):
         return MainResponse.from_adaptor(self.channel.stat.MEAN, self.db)
+    @property
+    def sessions(self):
+        return map(ScanimageSession, sorted(self.path.ls('*.session')))
+    @memoized_property
+    def session(self):
+        return ScanimageSession(
+            self.path.joinpath(self.session_name).with_suffix('.session'))
+    @session.invalidator
+    def set_session(self, session_name):
+        self.session_name = session_name
+        return self
+    def upsert_roi(self, roi_kwargs):
+        return self.session.roi.upsert(ROI(**roi_kwargs))
+    def make_response(self, id):
+        roi = self.session.roi[id]
+        extras = self.session.roi.values()
+        extras.remove(roi)
+        main_trace, main_mask = roi.trace(self.channel.mmap)
+        neur_trace, neur_mask = roi.neuropil_trace(self.channel.mmap, extras)
+        # neuropil_mask, roi_mask = roi.trim_bounding_mask(neur_mask, main_mask)
+        trace = main_trace - neur_trace*0.7
+        roi.invalidated = False
+        roi.response = ROIResponse.from_adaptor(trace, self.db)
+        # roi.masks = dict(
+        #     neuripil = neuropil_mask.tolist(),
+        #     roi = roi_mask.tolist())
+        return self.session.roi.upsert(roi)
+
+class ScanimageRecord(object):
+    """
+    For `compatible_path`,
+    the path should be formed like below. For example,
+    '/Volumes/Data/Recordings/2P1/Dario/2015.11.20/x.151101.4/ref_p19_005.tif',
+    This will be considered as,
+    {whatever_basepath}/{experimenter}/{date}/{mousename}/{imagename}
+    So the directory structure always will matter.
+    """
+    def __init__(self, compatible_path):
+        self.tiff_path = Path(compatible_path).with_suffix('.tif')
+        self.package_path = Path(compatible_path).with_suffix('.imported')
+        self.mouse, self.date, self.user = self.tiff_path.parts[::-1][1:4]
+    def toDict(self):
+        return dict(
+            user = self.user,
+            mouse = self.mouse,
+            date = self.date,
+            name = self.tiff_path.stem,
+            package = self.package
+        )
+    @memoized_property
+    def package(self):
+        return ScanimageIO(self.package_path)
 
 # path = 'tmp/Dario/2015.12.02/x.151101.2/bV1_Contra_004'
-# qwe = ScanimageIO(path).with_session('main').with_channel(1)
+# qwe = ScanimageIO(path)
+# qwe.db.locator.sfrequencies.set_cursor(1)...I# 
+# qwe.session.roi.clear()
+# qwe.session.opt.clear()
+
 def testdump():
     path = 'tmp/Dario/2015.12.02/x.151101.2/bV1_Contra_004'
-    qwe = ScanimageIO(path).with_session('main').with_channel(1)
-    qwe.session.data.purge().save()
+    qwe = ScanimageIO(path)
+    qwe.session.roi.clear()
+    qwe.session.opt.clear()
     from pacu.util.identity import path
     rois = path.cwd.ls('*pickle')[0].load_pickle().get('rois')
-
-# oneroi = rois[0]
-# pgs = [dict(x=x, y=y) for x, y in oneroi]
-# roi = ROI(polygon=pgs)
-# atrace = roi.trace(qwe.channel.mmap)
-
     pgs = [[dict(x=x, y=y) for x, y in roi] for roi in rois]
-    pgs = [dict(polygon=p) for p in pgs]
-    import time
-    for pg in pgs:
-        time.sleep(0.01)
-        qwe.upsert_roi(pg)
+    kws = [dict(polygon=p) for p in pgs]
+    for kw in kws:
+        qwe.session.roi.upsert(ROI(**kw))
 
 def ScanimageIOFetcher(year, month, day, mouse, image, session):
     root = manager.instance('opt').scanimage_root
     date = '{}.{:2}.{:2}'.format(year, month, day)
     path = Path(root).joinpath(date, mouse, image)
-    return ScanimageIO(path).with_session(session).with_channel(0)
+    return ScanimageIO(path).set_session(session)

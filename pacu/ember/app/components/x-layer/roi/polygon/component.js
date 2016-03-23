@@ -1,9 +1,7 @@
 import Ember from 'ember';
 import computed from 'ember-computed-decorators';
 
-export default Ember.Component.reopenClass({
-  positionalParams: ['polygon']
-}).extend({
+export default Ember.Component.extend({
   tagName: 'polygon',
   attributeBindings: ['points'],
   classNameBindings: [
@@ -51,4 +49,6 @@ export default Ember.Component.reopenClass({
     this.attrs.onRefresh();
     e.preventDefault();
   }
+}).reopenClass({
+  positionalParams: ['polygon']
 });

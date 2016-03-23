@@ -6,6 +6,7 @@ class CursoredList(list):
     _cursor = 0
     @classmethod
     def with_cursor(cls, iterable, cursor=0):
+        # TODO: rename with->from_iterable_with_cursor?
         self = cls(iterable)
         self.cursor = cursor
         return self
@@ -21,6 +22,12 @@ class CursoredList(list):
         if val >= len(self):
             raise IndexError('Can not have such an index `{}`.'.format(val))
         self._cursor = val
+    def set_cursor(self, cursor):
+        self.cursor = cursor
+        return self
+    def set_cursor_by_item(self, item):
+        self.cursor = self.index(item)
+        return self
     @property
     def current(self):
         return self[self.cursor]

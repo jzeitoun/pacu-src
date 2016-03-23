@@ -1,4 +1,11 @@
 <div class="ui inverted segment">
+  {{#x-modal-for-object (mut model.roiOnDetail)
+    onApprove=(route-action "updateAndFetchROI" model.roiOnDetail)
+    approveText="Update Now"
+    cancelText="Update Later"
+    icon="sun" header="ROI Details" as |modal|}}
+    {{x-sci-analysis/roi-detail modal.object}}
+  {{/x-modal-for-object}}
   <div class="ui five column padded grid">
     <div class="yellow column">{{model.user}}</div>
     <div class="red column">
@@ -9,11 +16,11 @@
     <div class="green column">{{model.imagesrc}}</div>
     <div class="purple column">
       <p>Spatial frequency</p>
-      {{!sui-model-select
-        name="currentSFrequency"
-        value=current_sfrequency
-        items=condition.spatial_frequencies
-        onChange=(action "currentSFrequencyEnumChange" model)
+      {{x-sui-value-select
+        name="spatial-frequency"
+        value=model.sfrequency_index
+        items=model.sfrequencies
+        onValueChanged=(route-action "sfrequencyIndexChanged")
       }}
     </div>
   </div>

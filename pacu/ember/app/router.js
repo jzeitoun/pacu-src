@@ -15,18 +15,18 @@ Router.map(function() {
     this.route('review-loading');
     this.route('broadcast-onair');
   });
-  this.route('analyses', function() {
-    this.route('new');
-  });
-  this.route('analysis', { path: '/analysis/:analysis_id' });
-  this.route('trj-analyses');
-  this.route('trj-analysis', { path: '/trj-analysis/:tr-session_id' }, function() {
-    this.route('trial', { path: '/trial/:index' });
-  });
   this.route('andor', function() {
     this.route('device', { path: ':index' });
   });
-  this.route('test-pixi');
+  // this.route('analyses', function() { this.route('new'); });
+  // this.route('analysis', { path: '/analysis/:analysis_id' });
+  this.route('trj-analyses', function() {
+    this.route('recordings', { path: '/:recording' }, function() {
+      this.route('trials', { path: '/:trial' });
+    });
+  });
+  this.route('trj-analysis',
+    { path: '/trj-analysis/:recording/:trial/:session' });
   this.route('sci-analyses', function() {
     this.route('years', { path: '/:year' }, function() {
       this.route('months', { path: '/:month' }, function() {
@@ -36,7 +36,7 @@ Router.map(function() {
     });
   });
   this.route('sci-analysis',
-      { path: '/sci-analysis/:year/:month/:day/:mouse/:image/:session' });
+    { path: '/sci-analysis/:year/:month/:day/:mouse/:image/:session' });
 });
 
 export default Router;

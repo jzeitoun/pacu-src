@@ -1,6 +1,6 @@
 import Ember from 'ember';
 import computed from 'ember-computed-decorators';
-import ROI from '../components/x-layer/roi/roi';
+import ROI from 'pacu/components/x-layer/roi/roi';
 
 const Image = Ember.Object.extend({
   buffer: null,
@@ -30,11 +30,20 @@ export default Ember.Object.extend({
     return new Ember.Handlebars.SafeString(stat);
   },
   initialize(route) {
-    this.mirror('main_response', 'channel').then(() => {
+    // window.qwe = this;
+    this.mirror(
+      'main_response', 'channel', 'sfrequencies', 'sfrequency_index'
+    ).then((x) => {
       this.requestFrame(0);
     }).then(() => {
-      this.invoke('session.search', 'roi').then(rois => {
-        this.get('rois').setObjects(rois.map(roi => ROI.validate(roi)));
+      this.invoke('session.roi.values').then(rois => {
+        this.get('rois').setObjects(
+          rois.map(roi => ROI.create(roi).notifyPropertyChange('polygon'))
+        );
+        if (Ember.isEmpty(rois)) {
+          route.toast.info(`Hey buddy, you have no ROIs in this session. 
+            How about drawing some?`);
+        }
       });
     });
   },

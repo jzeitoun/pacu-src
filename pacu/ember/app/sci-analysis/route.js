@@ -1,6 +1,6 @@
 import Ember from 'ember';
-import actions from './actions';
-import SocketModel from './socketmodel';
+import actions from 'pacu/sci-analysis/actions';
+import SocketModel from 'pacu/sci-analysis/socketmodel';
 
 const modname = 'pacu.core.io.scanimage.impl';
 const clsname = 'ScanimageIOFetcher'
@@ -28,13 +28,3 @@ export default Ember.Route.extend({
     console.log(`Backend: ${msg}`);
   }
 });
-      // const payload = Ember.getProperties(
-      //   param, 'year month day mouse image'.w());
-      // {
-      //     year: param.year,
-      //     month: param.month,
-      //     day: param.day,
-      //     image: param.image,
-      //     mouse: param.mouse,
-      //     session: param.session
-      // }

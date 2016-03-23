@@ -1,0 +1,23 @@
+<div class="ui inverted labeled disabled fluid input">
+  <div class="ui label">ID</div>
+  {{input type="text" value=roi.id readonly=true}}
+</div>
+<div class="ui inverted divider"></div>
+<div class="ui inverted labeled fluid input">
+  <div class="ui label">
+    Neuropil Enabled
+  </div>
+  <div class="ui segment input-checkbox-override">
+    <div class="ui fitted toggle checkbox">
+      {{input type="checkbox" checked=roi.npEnabled}}
+      <label></label>
+    </div>
+  </div>
+</div>
+<div class="ui inverted divider"></div>
+<div class="ui inverted labeled {{if roi.npDisabled "disabled"}} fluid input">
+  <div class="ui label">
+    Neuropil Distance Ratio
+  </div>
+  {{input type="number" value=roi.npDistRatio step=0.1 min=3 max=8}}
+</div>

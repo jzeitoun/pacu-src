@@ -5,9 +5,9 @@ export default Ember.Component.extend({
   classNameBindings: ['nofluid::fluid'],
   initSUI: function() {
     const self = this;
-    window.ff = this;
     this.$().dropdown({
       onChange(value/*text, $choice*/) { // value is index
+        debugger
         const enumvalue = parseInt(value);
         const item = self.getAttr('items').get(enumvalue);
         if (Ember.isNone(self.attrs.onChange)) {

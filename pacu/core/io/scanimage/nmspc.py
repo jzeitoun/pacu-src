@@ -1,6 +1,20 @@
-import cPickle as pickle
+from collections import namedtuple
+
+Item = namedtuple('Item', 'key val')
+
+def pass_exception(func):
+    def have_mercy(*args, **kwargs):
+        try:
+            return func(*args, **kwargs)
+        except Exception as e:
+            pass
+    return have_mercy
+
+AMBIGUOUS_ID = True, False, None
 
 class HybridNamespace(dict):
+    path = None
+    defer_save = False
     @classmethod
     def from_path(cls, path):
         self = cls()
@@ -11,20 +25,18 @@ class HybridNamespace(dict):
         return '{}({}, {})'.format(type(self).__name__,
             super(HybridNamespace, self).__repr__(), repr(vars(self)))
     def save(self):
-        with open(self.path.str, 'w') as f:
-            pickle.dump(self, f)
+        if self.defer_save:
+            return
+        self.path.dump_pickle(self)
         return self
     def load(self):
-        with open(self.path.str, 'r') as f:
-            self.update(pickle.load(f))
-        return self
+        return self.updated(self.path.load_pickle())
+    @pass_exception
     def peak(self):
-        try:
-            self.load()
-        except:
-            pass
-    def purge(self):
-        self.clear()
+        return self.load()
+    def clear(self):
+        super(HybridNamespace, self).clear()
+        self.save()
         return self
     @property
     def has_data(self):
@@ -33,7 +45,7 @@ class HybridNamespace(dict):
         if self.has_data:
             raise Exception('Namespace `{}` already exists.'.format(self.path.stem))
         self.save()
-    def remove(self):
+    def unlink(self):
         if not self.has_data:
             raise Exception('Namespace `{}` does not exists.'.format(self.path.stem))
         self.path.unlink()
@@ -46,6 +58,9 @@ class HybridNamespace(dict):
     def update(self, *args, **kwargs):
         super(HybridNamespace, self).update(*args, **kwargs)
         self.save()
+    def updated(self, *args, **kwargs): # a notation for mutation
+        self.update(*args, **kwargs)
+        return self
     def setdefault(self, *args, **kwargs):
         rv = super(HybridNamespace, self).setdefault(*args, **kwargs)
         self.save()
@@ -54,3 +69,37 @@ class HybridNamespace(dict):
         rv = super(HybridNamespace, self).pop(key, default)
         self.save()
         return rv
+    def remove(self, key):
+        del self[key]
+    def one(self):
+        try:
+            return Item(*next(iter(self.items())))
+        except StopIteration:
+            raise StopIteration('There is nothing yet.')
+    def upsert(self, instance):
+        try:
+            id = instance.id
+            if id in AMBIGUOUS_ID:
+                raise ValueError(
+                    '`id` `{}` is too ambiguous. '
+                    'It should not be nay of `{}`.'.format(id, AMBIGUOUS_ID))
+        except AttributeError as e:
+            raise AttributeError('`upsert` requires the instance `{!r}` '
+                'to have `id` attribute.'.format(instance))
+        else:
+            previous = super(HybridNamespace, self).setdefault(id, instance)
+        vars(previous).update(vars(instance))
+        self.save()
+        return previous
+    def upsert_bulk(self, *instances):
+        with self.bulk_on:
+            return [self.upsert(inst) for inst in instances]
+    @property
+    def bulk_on(self):
+        self.defer_save = True
+        return self
+    def __enter__(self):
+        return self
+    def __exit__(self, type, value, traceback):
+        self.defer_save = False
+        self.save()

@@ -1,16 +1,13 @@
 from pacu.profile import manager
 from pacu.core.io.scanimage.impl import ScanimageIO
-from pacu.core.io.scanimage.record.impl import ScanimageRecord
 
 opt = manager.instance('opt')
-
-from ipdb import set_trace
 
 def index_record(year, month, day):
     rec_paths = sorted(
         path.stempath for path in opt.scanimage_root.ls(
             '{}.{:2}.{:2}/*/*.tif'.format(year, month, day)))
-    records = map(ScanimageRecord, rec_paths)
+    records = map(ScanimageIO.get_record, rec_paths)
     return dict(year=year, month=month, day=day, records=records)
 
 def index_day(year, month):
@@ -39,10 +36,10 @@ def get_index(req, year=None, month=None, day=None):
 
 def post_session(req, path, session):
     rec = ScanimageIO(path)
-    rec.create_session(session)
+    rec.set_session(session).session.create()
     return rec
 
 def delete_session(req, path, session):
     rec = ScanimageIO(path)
-    rec.remove_session(session)
+    rec.set_session(session).session.remove()
     return rec

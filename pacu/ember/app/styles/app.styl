@@ -37,6 +37,22 @@ a.active > div.nav
   color black
 .sci-analyses-open-session:hover
   color red
+.trj-analyses input
+  color black
+.trjci-analyses-open-session:hover
+  color red
+#route-trj-analysis
+  polygon
+    stroke-width 1.5px
+  circle
+    stroke-width 1.5px
+    r 3
+  circle.centroid
+    stroke-width 1.5px
+    r 3
+    &:hover
+      r 9
+
 // .app-data-sbx.dropdown
 //   display table
 //   margin 0 auto
@@ -121,7 +137,12 @@ input.visual.option
 
 
 
-
+.ui.segment.input-checkbox-override
+  margin 0
+  border-top-left-radius 0
+  border-bottom-left-radius 0
+  border-left 0
+  padding 6px 12px 3px 12px
 
 
 
@@ -168,8 +189,8 @@ input.visual.option
 	cursor: pointer;
 }
 
-#trajectory
-  border 1px solid white
+// #trajectory
+//   border 1px solid white
 
 .dot:hover {
 	stroke: rgba(68, 127, 255, 0.3);

@@ -3,44 +3,47 @@ from operator import itemgetter
 
 import cv2
 import numpy as np
-from ipdb import set_trace
 
 from pacu.util.inspect import repr
 
 class ROI(object):
     """
-    Bulk insert may introduce same-time-id instance. We need salt.
+    Bulk insert may introduce same-time-id instance. We need some salt.
     """
+    polygon = ()
+    neuropil = ()
     __repr__ = repr.auto_strict
-    def __init__(self, polygon=None, id=None, **kwargs):
-        self.polygon = polygon or []
-        self.id = id or time.time()
+    def __init__(self, id=None, **kwargs):
+        self.id = id or '{:6f}'.format(time.time())
+        self.__dict__.update(kwargs)
+    def toDict(self):
+        return vars(self)
+    def mask(self, shape):
+        mask = np.zeros(shape, dtype='uint8')
+        cv2.drawContours(mask, [self.inner_contours], 0, 255, -1)
+        return mask
+    def neuropil_mask(self, shape, others):
+        mask = np.zeros(shape, dtype='uint8')
+        cv2.drawContours(mask, [self.outer_contours], 0, 255, -1)
+        cv2.drawContours(mask, [self.inner_contours], 0, 0, -1)
+        for other in others:
+            cv2.drawContours(mask, [other.inner_contours], 0, 0, -1)
+        return mask
     @property
-    def hashed(self):
-        return 'roi.{}'.format(self.id)
+    def outer_contours(self):
+        return np.array(list(map(itemgetter('x', 'y'), self.neuropil)))
+    @property
+    def inner_contours(self):
+        return np.array(list(map(itemgetter('x', 'y'), self.polygon)))
     def trace(self, frames): # as in numpy array TODO: REFAC
-        contours = np.array(list(map(itemgetter('x', 'y'), self.polygon)))
-        mask = np.zeros(frames.shape[1:], dtype='uint8')
-        cv2.drawContours(mask, [contours], 0, 255, -1)
-        return np.array([cv2.mean(frame, mask)[0] for frame in frames])
-
-def test_get_roi():
-    polygon = [
-        {u'y': 80, u'x': 63},
-        {u'y': 74, u'x': 71},
-        {u'y': 75, u'x': 79},
-        {u'y': 85, u'x': 77},
-        {u'y': 86, u'x': 68}]
-    return ROI(polygon=polygon)
-def test():
-    np.random.seed(1234)
-    frames = np.random.randint(0, 256*256, (64, 128, 128))
-    return test_get_roi(), frames
-def test_trace():
-    pass
-    # np.random.seed(1234)
-    # contours = np.array([[point['x'], point['y']] for point in polygon])
-    # frames = np.random.randint(0, 256*256, (64, 128, 128))
-    # mask = np.ma.zeros(frames.shape[1:], dtype='uint8')
-    # cv2.drawContours(mask, [contours], 0, 255, -1)
-    # trace = np.array([cv2.mean(frame, mask)[0] for frame in frames])
+        mask = self.mask(frames.shape[1:])
+        return np.stack(cv2.mean(frame, mask)[0] for frame in frames), mask
+    def neuropil_trace(self, frames, others):
+        mask = self.neuropil_mask(frames.shape[1:], others)
+        return np.stack(cv2.mean(frame, mask)[0] for frame in frames), mask
+    def trim_bounding_mask(self, outer, inner):
+        bounding = np.argwhere(outer)
+        if len(bounding):
+            ystart, xstart = bounding.min(0) - 1
+            ystop, xstop = bounding.max(0) + 2
+            return outer[ystart:ystop, xstart:xstop], inner[ystart:ystop, xstart:xstop]

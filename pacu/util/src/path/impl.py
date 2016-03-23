@@ -13,9 +13,14 @@ def has_file(self, filename):
 def read(self, mode='r'):
     with self.open(mode) as f:
         return f.read()
-def load_pickle(self):
-    with self.open('rb') as f:
+def load_pickle(self, mode='rb'):
+    with self.open(mode) as f:
         return pickle.load(f)
+def dump_pickle(self, obj, mode='wb'):
+    with self.open(mode) as f:
+        return pickle.dump(obj, f)
+# load json
+# dump json
 def peak(self):
     try:
         return self.read()
@@ -37,8 +42,35 @@ def here(cls, *paths):
     return cls(path).joinpath(*paths)
 def absdir(cls, path):
     return cls(os.path.dirname(os.path.abspath(path)))
+def merge_suffix(self, suffix, on):
+    suffixes = self.suffixes
+    if suffix in suffixes:
+        return self
+    try:
+        suffixes[suffixes.index(on)] = suffix
+    except ValueError as e:
+        raise ValueError(
+            '{!r} is not in the suffixes. ({!r})'.format(on, suffixes))
+    return self.with_name(self.stem_least).with_suffix(''.join(suffixes))
+def merge_or_join_suffix(self, suffix, on):
+    try:
+        return self.merge_suffix(suffix, on=on)
+    except ValueError:
+        return self.join_suffixes(suffix)
+def stem_least(self):
+    return self.name[:-len(''.join(self.suffixes))]
 def with_suffixes(self, *suffixes):
     return map(self.with_suffix, suffixes)
+def join_suffixes(self, *suffixes):
+    for suffix in suffixes:
+        drv, root, parts = self._flavour.parse_parts((suffix,))
+        if drv or root or len(parts) != 1:
+            raise ValueError("Invalid suffix %r" % (suffix))
+        suffix = parts[0]
+        if not suffix.startswith('.'):
+            raise ValueError("Invalid suffix %r" % (suffix))
+    return self.with_name(self.stem_least
+            ).with_suffix(''.join(self.suffixes + list(suffixes)))
 # def path_without_suffixes(self):
 #     return Path(self.str[:-len(''.join(self.suffixes))])
 def stempath(self):
@@ -56,11 +88,16 @@ Path.lsmodule = lsmodule
 Path.has_file = has_file
 Path.read = read
 Path.load_pickle = load_pickle
+Path.dump_pickle = dump_pickle
 Path.peak = peak
 Path.write = write
 Path.here = classmethod(here)
 Path.absdir = classmethod(absdir)
 Path.with_suffixes = with_suffixes
+Path.merge_suffix = merge_suffix
+Path.merge_or_join_suffix = merge_or_join_suffix
+Path.join_suffixes = join_suffixes
+Path.stem_least = property(stem_least)
 # Path.path_without_suffixes = property(path_without_suffixes)
 Path.stempath = property(stempath)
 Path.mkdir_if_none = mkdir_if_none

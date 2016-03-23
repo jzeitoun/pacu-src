@@ -3,7 +3,7 @@ import Ember from 'ember';
 const modname = 'pacu.core.io.scanimage.impl';
 const clsname = 'ScanimageIO'
 
-function removePackage(record) {
+function removePackage(modname, clsname, record) {
   this.get('socket').create(
     this, modname, clsname, {path: record.package.path}).then(wsx => {
     wsx.invoke('remove_package').then(pkg => {
@@ -22,7 +22,7 @@ function removePackage(record) {
   });
 }
 
-function importRaw(record) {
+function importRaw(modname, clsname, record) {
   const $console = Ember.$('#import-progress');
   const messages = this.controller.messages;
   $console.modal('show', {closable: false});
@@ -51,6 +51,7 @@ function importRaw(record) {
   });
 }
 
+export { importRaw, removePackage }
 export default Ember.Route.extend({
   socket: Ember.inject.service(),
   model() {
@@ -70,12 +71,12 @@ export default Ember.Route.extend({
         'current-feature', 'Scanimage Data Manager');
     },
     importRaw(record) {
-      importRaw.call(this, record);
+      importRaw.call(this, modname, clsname, record);
     },
     newSession(record) {
       swal({
         title: "New session...",
-        text: "Provide a unique session name.",
+        text: 'Provide a unique session name. I suggest "main" as a default name.',
         customClass: "sci-analyses",
         type: "input",
         showCancelButton: true,
@@ -110,7 +111,7 @@ export default Ember.Route.extend({
         confirmButtonColor: "#DD6B55",
         confirmButtonText: "Yes, delete it!",
       }, () => {
-        removePackage.call(this, record);
+        removePackage.call(this, modname, clsname, record);
       });
     },
     removeSession(record, session) {

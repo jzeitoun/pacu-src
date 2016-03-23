@@ -1,9 +1,7 @@
 import Ember from 'ember';
 import computed from 'ember-computed-decorators';
 
-export default Ember.Component.reopenClass({
-  positionalParams: ['point']
-}).extend({
+export default Ember.Component.extend({
   tagName: 'circle',
   classNameBindings: ['attrs.point.moving:moving'],
   attributeBindings: ['cx', 'cy', 'r'],
@@ -33,4 +31,6 @@ export default Ember.Component.reopenClass({
       }
     });
   },
+}).reopenClass({
+  positionalParams: ['point']
 });

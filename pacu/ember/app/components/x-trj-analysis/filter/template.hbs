@@ -1,0 +1,65 @@
+<h3 class="ui center aligned teal inverted header">
+  Velocity Information
+</h3>
+<div class="ui inverted equal width segment form">
+  <div class="fields">
+    <div class="field">
+      <label>MAX: {{object.velocity.max}}</label>
+    </div>
+    <div class="field">
+      <label>MIN: {{object.velocity.min}}</label>
+    </div>
+    <div class="field">
+      <label>MEAN: {{object.velocity.mean}}</label>
+    </div>
+  </div>
+</div>
+
+<h3 class="ui center aligned teal inverted header">
+  Filter Setup
+</h3>
+<div class="ui inverted segment form">
+
+  <div class="inline fields">
+    <div class="field">
+      <div class="ui slider checkbox">
+        <input id="none" type="radio" name="filter-type">
+        <label for="none">None </label>
+      </div>
+    </div>
+  </div>
+
+  <div class="inline fields">
+    <div class="field">
+      <div class="ui slider checkbox">
+        <input id="active-pass" type="radio" name="filter-type">
+        <label for="active-pass">Active-Pass (greater than)</label>
+      </div>
+    </div>
+    <div class="field">
+      {{input type="number" placeholder="number" value=object.activePassValue}}
+    </div>
+  </div>
+
+  <div class="inline fields">
+    <div class="field">
+      <div class="ui slider checkbox">
+        <input id="passive-pass" type="radio" name="filter-type">
+        <label for="passive-pass">Passive-Pass (less than)</label>
+      </div>
+    </div>
+    <div class="field">
+      {{input type="number" placeholder="number" value=object.passivePassValue}}
+    </div>
+  </div>
+
+  <div class="inline fields">
+    <div class="field">
+      <div class="ui slider checkbox checked">
+        <input id="positive-pass" type="radio" name="filter-type">
+        <label for="positive-pass">Positive-Pass</label>
+      </div>
+    </div>
+  </div>
+
+</div>

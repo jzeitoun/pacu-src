@@ -1,5 +1,6 @@
 {{#each rois as |roi|}}
   {{#x-layer/roi roi}}
+    {{x-layer/roi/static-polygon roi.neuropil class="neuropil"}}
     {{x-layer/roi/polygon roi.polygon
       active=roi.active
       busy=roi.busy
@@ -19,5 +20,7 @@
         onRefresh=(route-action "updateROI" roi)
       }}
     {{/each}}
+    {{x-layer/roi/static-circle roi.centroid class="centroid"
+      click=(route-action "openROIModal" rois roi)}}
   {{/x-layer/roi}}
 {{/each}}

@@ -1,9 +1,11 @@
 import Ember from 'ember';
 import computed from 'ember-computed-decorators';
+import Centroid from 'pacu/components/x-layer/roi/centroid';
+import Neuropil from 'pacu/components/x-layer/roi/neuropil';
 
-const ROI = Ember.Object.extend(Em.Copyable, {
+const ROI = Ember.Object.extend(Em.Copyable, Centroid, Neuropil, {
   @computed() invalidated() { return true; },
-  invalidate() {
+  invalidate: function() {
     return this.setProperties({invalidated: true, active: false});
   },
   initialExpand(x, y) {
@@ -13,36 +15,25 @@ const ROI = Ember.Object.extend(Em.Copyable, {
     this.set('polygon.3.y', y);
   },
   copy() {
-    return ROI.create({
-      active: this.active,
-      busy: this.busy,
-      id: this.id,
-      invalidated: this.get('invalidated'),
-      polygon: this.polygon.map(point => { return {
-        x: point.x,
-        y: point.y
-      }; })
-    });
+    const newROI = ROI.create();
+    const keys = Object.keys(this).removeObjects(['toString']);
+    for (let key of keys) {
+      newROI.set(key, Ember.copy(this[key], true));
+    }
+    return newROI;
   },
   derive() {
+    // newroi will stay at same location as if it was the original.
+    // And `this` will be acting like a newly copied roi.
     const newroi = this.copy();
-    this.setProperties({
-      active: null,
-      busy: null,
-      id: +(new Date()),
-      invalidated: true,
-    });
+    delete this.id;
     return newroi;
   }
 }).reopenClass({
   fromPoint: function(x, y) {
     return this.create({
       polygon: [{x, y}, {x, y}, {x, y}, {x, y}],
-      id: +(new Date())
     });
-  },
-  validate: function(roi) {
-    return this.create(roi, {invalidated: Ember.isNone(roi.response)});
   }
 });
 

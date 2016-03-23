@@ -28,3 +28,17 @@ circle
   100%
     fill rgba(255, 255, 0, 0.8)
 
+
+polygon.neuropil
+  fill none
+  stroke white
+  stroke-width 0.1
+  cursor initial
+circle.centroid
+  r 1
+  fill rgba(255, 255, 255, 0.5)
+  transition r 0.25s, fill 0.25s
+  &:hover
+    r 5
+    fill rgba(255, 0, 0, 0.5)
+    cursor help

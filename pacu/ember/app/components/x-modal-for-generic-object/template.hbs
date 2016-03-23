@@ -1,0 +1,13 @@
+<div class="ui icon header">
+  <i class="{{object.headerIcon}} icon"></i> {{object.headerText}}
+</div>
+<div class="content" style="overflow-y: scroll; border: 1px solid red;">
+  {{component object.component object=object}}
+</div>
+<div class="actions">
+  <div class="ui basic approve blue button">{{object.approveText}}</div>
+  {{#if object.cancelText}}
+    <div class="ui basic cancel red button">Cancel</div>
+  {{/if}}
+</div>
+

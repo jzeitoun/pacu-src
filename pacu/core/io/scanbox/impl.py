@@ -128,10 +128,14 @@ def conv_all(path, nchan=2, ls='*.sbx'):
 
 def combine(tiffpath, dest, ls='*.tiff'):
     path = Path(tiffpath)
-    movie = np.concatenate([
-        tifffile.imread(filename.str).mean(axis=0)[np.newaxis, ...]
+    # movie = np.concatenate([
+    #     tifffile.imread(filename.str).mean(axis=0)[np.newaxis, ...]
+    #     for filename in path.ls(ls)
+    # ])
+    movie = np.stack(
+        tifffile.imread(filename.str).mean(axis=0)
         for filename in path.ls(ls)
-    ])
+    )
     tifffile.imsave(path.joinpath(dest).with_suffix('.tiff').str, movie)
     # consider using just stack instead of concatenate
 
