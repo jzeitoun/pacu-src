@@ -10,9 +10,9 @@ export default Ember.Component.extend({
     if (Ember.isNone(pg)) { return; }
     return pg.map(point => { return `${point.x},${point.y}`; }).join(' ');
   },
-  mouseDown({offsetX, offsetY, metaKey}) {
+  mouseDown({offsetX, offsetY, altKey}) {
     const [originX, originY] = [offsetX, offsetY];
-    if (metaKey) {
+    if (altKey) {
       var derived = this.attrs.onDerive();
     }
     const polygon = this.getAttr('polygon');
@@ -34,7 +34,7 @@ export default Ember.Component.extend({
     Ember.$(document).one('mouseup.polygon', ({offsetX, offsetY}) => {
       Ember.$(xLayer).off('mousemove.polygon');
       if (originX === offsetX && originY === offsetY) {
-        if (metaKey) {
+        if (altKey) {
           this.attrs.onCancel(derived);
           this.attrs.onRemove();
         } else {

@@ -38,14 +38,18 @@ ERRORS = [
     ('AT_ERR_DEVICEINUSE'            , 38 , 'Function failed to connect to a device because it is already being used.'),
     ('AT_ERR_HARDWARE_OVERFLOW'      , 100, 'The software was not able to retrieve data from the card or camera fast enough to avoid the internal hardware buffer bursting.'),
 ]
+
 ERROR_DICT = {}
+
 for code, number, message in ERRORS:
     ERROR_DICT[number] = message
+
 def parse(number):
     return ERROR_DICT.get(number, 'Unknown Error')
 
 class ZylaException(Exception):
     pass
+
 class ZylaError(Exception):
     def __init__(self, number):
         self.number = number

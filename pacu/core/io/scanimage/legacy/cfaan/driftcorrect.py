@@ -90,17 +90,19 @@ def getdrift3(green,sample_interval=100):
     estimating the rigid transform.'''
     frames=[]
     nframes=int(np.ceil(green.shape[0]/sample_interval))+1
-    #create the list of frames
+    print '\t* create the list of frames'
     for n in np.arange(nframes):
         if green[n*sample_interval:(n+1)*sample_interval].shape[0]>0:
             f=green[n*sample_interval:(n+1)*sample_interval].mean(0)
             f=(f*256/green.max()).astype('uint8')
         frames.append(f)
     allvectors=[]
+    print '\t* applying adaptive threshold'
     for n in np.arange(nframes):
         frames[n]=cv2.adaptiveThreshold(frames[n],255,cv2.ADAPTIVE_THRESH_GAUSSIAN_C,cv2.THRESH_BINARY, 11,0)
         #frames[n]=cv2.Canny(frames[n],20,60)
-    
+
+    print '\t* collect vectors'
     for i in range(nframes-1):
         motionVectors=[]
         for j in range(nframes-1):
@@ -114,8 +116,8 @@ def getdrift3(green,sample_interval=100):
                 motionVectors.append([flow[0,2],flow[1,2]])
         motionVectors=np.array(motionVectors)
         allvectors.append(motionVectors)
-        
-    # take the derivative so all the vectors look similar
+
+    print '\t* take the derivative so all the vectors look similar'
     allvectors_d=[]
     for v in allvectors:
         motionVectors_d=[np.array([0,0])]
@@ -125,17 +127,17 @@ def getdrift3(green,sample_interval=100):
         allvectors_d.append(motionVectors_d)
     allvectors_d=np.array(allvectors_d)
     motionVectors=np.median(allvectors_d,0)
-    
-    # take the integral so we have position rather than velocity
+
+    print '\t* take the integral so we have position rather than velocity'
     for i in np.arange(motionVectors.shape[0]-1)+1:
         motionVectors[i]=motionVectors[i]+motionVectors[i-1] #take the integral, so we have position rather than velocity
     motionVectors=np.repeat(motionVectors,sample_interval,axis=0)
-    
+
     motionVectors2=smoothMotion(motionVectors,3)     #fit with polynomial
     return motionVectors2
 
-    
-    
+
+
 def driftcorrect(green,motionVectors):
     ''' motionVectors[n][0] is the change in x position between frames n-1 and n
     motionVectors[n][1] is the change in y position between frames n-1 and n'''

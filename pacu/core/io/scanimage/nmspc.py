@@ -82,7 +82,7 @@ class HybridNamespace(dict):
             if id in AMBIGUOUS_ID:
                 raise ValueError(
                     '`id` `{}` is too ambiguous. '
-                    'It should not be nay of `{}`.'.format(id, AMBIGUOUS_ID))
+                    'Please consider not using these ids `{}`.'.format(id, AMBIGUOUS_ID))
         except AttributeError as e:
             raise AttributeError('`upsert` requires the instance `{!r}` '
                 'to have `id` attribute.'.format(instance))

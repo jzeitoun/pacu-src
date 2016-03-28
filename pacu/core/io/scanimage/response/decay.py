@@ -30,7 +30,7 @@ class DecayResponse(object):
             c_value, self.x, self.y_fit = tau.fit(self.mean)
             self.tau = 1.0 / (adaptor.capture_frequency * c_value)
         except Exception as e:
-            raise Exception('Failed to get decay/tau fit: ' + str(e))
+            print 'Failed to get decay/tau fit: ' + str(e)
         return self
     @memoized_property
     def traces(self):

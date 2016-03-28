@@ -64,6 +64,7 @@ class TrajectoryIO(object):
         self.create_package_path()
         print 'Looking for matching VR log file...'
         log = TrajectoryLog.query(self.datetime)
+        # it can fail but never reports.
         print 'Converting channel and timestamps...'
         tss = np.fromfile(self.path.with_suffix('.csv').str,
             sep='\n', dtype='float64')

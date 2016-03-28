@@ -18,8 +18,6 @@ from pacu.core.io.scanimage.response.main import MainResponse
 from pacu.core.io.scanimage.response.roi import ROIResponse
 from pacu.core.io.scanimage.response.orientation import Orientation
 
-from ipdb import set_trace
-
 class ScanimageIO(object):
     session_name = 'main'
     def __init__(self, path):
@@ -33,7 +31,7 @@ class ScanimageIO(object):
     @memoized_property
     def tiff(self):
         tiffpath = self.path.with_suffix('.tif')
-        print 'Import from {}...'.format(tiffpath)
+        print 'Import from {}...Please allow a few minutes.'.format(tiffpath.name)
         return tifffile.imread(tiffpath.str)
     def import_raw(self):
         if self.exists:
@@ -54,10 +52,10 @@ class ScanimageIO(object):
         return self.toDict()
     def convert_channels(self, nchan):
         for index in range(nchan):
-            self.convert_channel(index)
-    def convert_channel(self, chan):
-        print 'Converting channel {}...'.format(chan)
-        tiff = self.tiff[chan::2]
+            self.convert_channel(nchan, index)
+    def convert_channel(self, nchan, chan):
+        tiff = self.tiff[chan::nchan]
+        print 'Converting channel {}...({} frames.)'.format(chan, len(tiff))
         return getattr(self, 'ch{}'.format(chan)).import_raw(tiff)
     def toDict(self):
         return dict(exists=self.exists, path=self.path.str, sessions=self.sessions)
@@ -86,10 +84,12 @@ class ScanimageIO(object):
     def sfrequencies(self):
         return self.db.locator.sfrequencies
     @sfrequency.invalidator
-    def set_sfrequency(self, sfreq):
-        self.sfrequencies.set_cursor_by_item(sfreq)
-        self.session.opt['sfrequency'] = sfreq
-        return self
+    def set_sfrequency_index(self, sfreq_index):
+        self.sfrequencies.set_cursor(sfreq_index)
+        self.session.opt['sfrequency'] = self.sfrequencies.current
+        self.session.opt.save()
+        self.invalidate_rois()
+        return dict(index=sfreq_index, value=self.sfrequency)
     @memoized_property
     def db(self):
         return ScanimageDBAdaptor(self.session.ed)
@@ -109,6 +109,11 @@ class ScanimageIO(object):
         return self
     def upsert_roi(self, roi_kwargs):
         return self.session.roi.upsert(ROI(**roi_kwargs))
+    def invalidate_rois(self):
+        for roi in self.session.roi.values():
+            roi.invalidated = True
+            roi.response = None
+        self.session.roi.save()
     def make_response(self, id):
         roi = self.session.roi[id]
         extras = self.session.roi.values()
@@ -142,18 +147,43 @@ class ScanimageRecord(object):
             user = self.user,
             mouse = self.mouse,
             date = self.date,
+            desc = self.desc,
             name = self.tiff_path.stem,
             package = self.package
-        )
+       )
     @memoized_property
     def package(self):
         return ScanimageIO(self.package_path)
+    @property
+    def desc(self):
+        return '{}'.format(
+            tifffile.format_size(self.tiff_path.stat().st_size)
+        )
 
 # path = 'tmp/Dario/2015.12.02/x.151101.2/bV1_Contra_004'
+# path = 'tmp/Dario/2016.02.26/x.151114.1/DM3_RbV1_Contra_00002'
 # qwe = ScanimageIO(path)
-# qwe.db.locator.sfrequencies.set_cursor(1)...I# 
-# qwe.session.roi.clear()
-# qwe.session.opt.clear()
+# print 'image depth is', len(qwe.channel.mmap)
+# roi = qwe.session.roi.one().val
+# asd = qwe.make_response(roi.id)
+# print 'ORIS', roi.response.orientations.names
+# os = roi.response.orientations
+# print 'data', os.data['traces'].shape
+# print 'data', sorted(list(os.data['indices']))
+# ori = roi.response.orientations.responses[0]
+# bss = np.array(os.bss)
+# ons = np.array(os.ons)
+# bssons = np.concatenate([bss, ons], axis=2)
+
+# print 'offtime shape', ori.offtimes[0].array.shape
+
+# print 'baselines indices', qwe.db.indice.baselines
+# print 'ontimes indices', qwe.db.indice.ontimes
+# print 'oftimes indices', qwe.db.indice.offtimes
+# print 'frame duration', qwe.db.frame.duration
+# print 'frame interval', qwe.db.frame.interval
+# print 'frame baseline', qwe.db.frame.baseline
+
 
 def testdump():
     path = 'tmp/Dario/2015.12.02/x.151101.2/bV1_Contra_004'

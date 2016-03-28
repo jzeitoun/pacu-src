@@ -1,6 +1,6 @@
 def infer_nchannels(tiff):
     try:
-        print 'Inferring how many channels there is...'
+        print 'Inferring how many channels there are...'
         maybe1 = tiff[0::2].mean()
         maybe2 = tiff[1::2].mean()
         print '`mean` of [0::2]', maybe1

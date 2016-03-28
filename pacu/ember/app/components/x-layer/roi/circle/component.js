@@ -8,9 +8,9 @@ export default Ember.Component.extend({
   cx: Ember.computed.alias('attrs.point.x'),
   cy: Ember.computed.alias('attrs.point.y'),
   r: 2,
-  mouseDown({offsetX, offsetY, metaKey}) {
+  mouseDown({offsetX, offsetY, altKey}) {
     const [originX, originY] = [offsetX, offsetY];
-    if (metaKey) {
+    if (altKey) {
       var curPoint = this.getAttr('point');
       var newPoint = this.attrs.onClone(curPoint);
     }
@@ -22,7 +22,7 @@ export default Ember.Component.extend({
     Ember.$(document).one('mouseup.circle', ({offsetX, offsetY}) => {
       Ember.$(xLayer).off('mousemove.circle');
       if (originX === offsetX && originY === offsetY) {
-        if (metaKey) {
+        if (altKey) {
           this.attrs.onCancel(newPoint);
           this.attrs.onRemove(curPoint);
         }

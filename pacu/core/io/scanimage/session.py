@@ -12,7 +12,7 @@ from pacu.core.model.analysis import AnalysisV1
 from pacu.core.io.scanimage.nmspc import HybridNamespace
 
 ED = manager.get('db').section('ed')()
-print 'dev overide: pacu.core.io.scanimage.session'
+# print 'dev overide: pacu.core.io.scanimage.session'
 class ScanimageSession(object):
     roi = None
     opt = None
@@ -46,7 +46,5 @@ class ScanimageSession(object):
     def remove(self):
         shutil.rmtree(self.path.str)
 
-# test = ("/Volumes/Gandhi Lab - HT/Dario/2015.12.02/x.151101.2/"
-#         "bV1_Contra_001.imported/main.session")
 # testpath = 'tmp/Dario/2015.12.02/x.151101.2/bV1_Contra_004.imported/main.session'
 # qwe = ScanimageSession(testpath)

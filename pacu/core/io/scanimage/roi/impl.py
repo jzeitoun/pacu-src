@@ -12,6 +12,7 @@ class ROI(object):
     """
     polygon = ()
     neuropil = ()
+    response = None
     __repr__ = repr.auto_strict
     def __init__(self, id=None, **kwargs):
         self.id = id or '{:6f}'.format(time.time())

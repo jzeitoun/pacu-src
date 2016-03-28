@@ -79,10 +79,11 @@ class ZylaAcquisition(BaseAcquisition):
         frame, pointer = helper.get_contigious(self.inst.aoi_height, self.inst.aoi_width)
         self.convert_buffer(buf, pointer) # fills `frame` (which `pointer` refers)
         return ts, frame
-#     def burst(self, counts, timeout=FIVE_SECONDS):
-#         rawbufs = [self.queue_buffer() for c in range(counts)]
-#         bufs = [self.wait_buffer(timeout, matching_buf=rawbuf) for rawbuf in rawbufs]
-#         tss = [self.extract_timestamp(rawbuf) for rawbuf in rawbufs]
-#         frames, pointers = zip(*[helper.get_contigious(self.inst.aoi_height, self.inst.aoi_width) for rawbuf in rawbufs])
-#         _ = [self.convert_buffer(buf, pointer) for buf, pointer in zip(bufs, pointers)]
-#         return tss, frames
+    # DEPRECATED - DOES NOT WORK
+    # def burst(self, counts, timeout=FIVE_SECONDS):
+    #     rawbufs = [self.queue_buffer() for c in range(counts)]
+    #     bufs = [self.wait_buffer(timeout, matching_buf=rawbuf) for rawbuf in rawbufs]
+    #     tss = [self.extract_timestamp(rawbuf) for rawbuf in rawbufs]
+    #     frames, pointers = zip(*[helper.get_contigious(self.inst.aoi_height, self.inst.aoi_width) for rawbuf in rawbufs])
+    #     _ = [self.convert_buffer(buf, pointer) for buf, pointer in zip(bufs, pointers)]
+    #     return tss, frames
