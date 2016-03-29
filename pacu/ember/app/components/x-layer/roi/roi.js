@@ -5,6 +5,13 @@ import Neuropil from 'pacu/components/x-layer/roi/neuropil';
 
 const ROI = Ember.Object.extend(Em.Copyable, Centroid, Neuropil, {
   @computed() invalidated() { return true; },
+  @computed() responses() { return {}; },
+  @computed('responses') responseCount(resp) {
+    return Object.keys(resp).length;
+  },
+  @computed('responseCount') responseCountPlusOne(c) {
+    return c + 1;
+  },
   invalidate: function() {
     return this.setProperties({invalidated: true, active: false});
   },

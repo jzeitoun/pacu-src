@@ -12,11 +12,13 @@ class ROI(object):
     """
     polygon = ()
     neuropil = ()
-    response = None
+    responses = None
     __repr__ = repr.auto_strict
     def __init__(self, id=None, **kwargs):
         self.id = id or '{:6f}'.format(time.time())
         self.__dict__.update(kwargs)
+        if self.responses is None:
+            self.responses = {}
     def toDict(self):
         return vars(self)
     def mask(self, shape):

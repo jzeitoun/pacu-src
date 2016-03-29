@@ -19,9 +19,15 @@ export default Ember.Object.extend({
     return rois.findBy('active');
   },
   @computed(
-    'main_response', 'curROI.response', 'curROI.busy'
-  ) response(main, cur, busy) {
+    'main_response', 'curROI.responses', 'curROI.busy', 'sfrequency_index'
+  ) response(main, cur, busy, sfreqIndex) {
     if (busy) { return; }
+    if (Ember.isPresent(cur)) {
+      const sfreq = this.get('sfrequencies')[sfreqIndex];
+      return cur[sfreq];
+    } else {
+      return main;
+    }
     return cur || main;
   },
   @computed('channel') img(ch) { return Image.create(ch); },

@@ -6,6 +6,7 @@
     icon="sun" header="ROI Details" as |modal|}}
     {{x-sci-analysis/roi-detail modal.object}}
   {{/x-modal-for-object}}
+
   <div class="ui five column padded grid">
     <div class="yellow column">{{model.user}}</div>
     <div class="red column">
@@ -24,6 +25,7 @@
       }}
     </div>
   </div>
+
   <section class="ui clearing divider"></section>
   <div class="ui inverted segment">
     <div class="ui {{model.socketStatusClass}} text loader">Fetching...</div>
@@ -34,6 +36,7 @@
     {{input type="range" min="0" step="1"
       max=model.img.maxIndex value=model.img.curIndex}}
   </div>
+
   <section class="ui clearing divider"></section>
   <div class="ui stackable padded grid">
     {{#x-zoomable-container class="six wide column"}}
@@ -64,6 +67,10 @@
       </div>
     </div>
   </div>
+
+  <section class="ui clearing divider"></section>
+  {{x-sci-analysis/stats/wide model.rois}}
+
   <section class="ui clearing divider"></section>
   <div class="ui one column padded grid">
     <div class="center aligned column">

@@ -88,7 +88,6 @@ class ScanimageIO(object):
         self.sfrequencies.set_cursor(sfreq_index)
         self.session.opt['sfrequency'] = self.sfrequencies.current
         self.session.opt.save()
-        self.invalidate_rois()
         return dict(index=sfreq_index, value=self.sfrequency)
     @memoized_property
     def db(self):
@@ -112,7 +111,7 @@ class ScanimageIO(object):
     def invalidate_rois(self):
         for roi in self.session.roi.values():
             roi.invalidated = True
-            roi.response = None
+            roi.responses = {}
         self.session.roi.save()
     def make_response(self, id):
         roi = self.session.roi[id]
@@ -123,7 +122,8 @@ class ScanimageIO(object):
         # neuropil_mask, roi_mask = roi.trim_bounding_mask(neur_mask, main_mask)
         trace = main_trace - neur_trace*0.7
         roi.invalidated = False
-        roi.response = ROIResponse.from_adaptor(trace, self.db)
+        roi.responses[
+            self.sfrequency] = ROIResponse.from_adaptor(trace, self.db)
         # roi.masks = dict(
         #     neuripil = neuropil_mask.tolist(),
         #     roi = roi_mask.tolist())
@@ -160,11 +160,23 @@ class ScanimageRecord(object):
             tifffile.format_size(self.tiff_path.stat().st_size)
         )
 
-# path = 'tmp/Dario/2015.12.02/x.151101.2/bV1_Contra_004'
+# # path = 'tmp/Dario/2015.12.02/x.151101.2/bV1_Contra_004'
 # path = 'tmp/Dario/2016.02.26/x.151114.1/DM3_RbV1_Contra_00002'
 # qwe = ScanimageIO(path)
-# print 'image depth is', len(qwe.channel.mmap)
 # roi = qwe.session.roi.one().val
+# roi = qwe.make_response(roi.id)
+# fo = roi.response.normalfit.fit
+
+
+
+
+
+
+
+
+
+# print roi.response.orientations.names
+# print 'mr', roi.response.meanresponses
 # asd = qwe.make_response(roi.id)
 # print 'ORIS', roi.response.orientations.names
 # os = roi.response.orientations

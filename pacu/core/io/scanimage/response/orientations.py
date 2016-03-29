@@ -11,8 +11,7 @@ class OrientationsResponse(object):
         self = cls()
         self.responses = [
             Orientation.from_adaptor(ori, response.trace, adaptor)
-            for ori in adaptor.locator.orientations.loop()
-        ]
+            for ori in adaptor.locator.orientations.loop()]
         return self
     @property
     def names(self):

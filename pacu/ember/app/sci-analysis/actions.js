@@ -96,7 +96,7 @@ export default {
   sfrequencyIndexChanged(index) {
     this.get('wsx').invoke('set_sfrequency_index', index).then(data => {
       const roi = this.currentModel.get('curROI');
-      this.currentModel.get('rois').forEach(roi => roi.invalidate());
+      // this.currentModel.get('rois').forEach(roi => roi.invalidate());
       if (Ember.isPresent(roi)) {
         roi.set('active', true);
         this.send('fetchROI', roi);
