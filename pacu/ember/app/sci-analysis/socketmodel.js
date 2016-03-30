@@ -22,7 +22,6 @@ export default Ember.Object.extend({
   },
   @computed('sfrequencies', 'sfrequency_index') curSF(sfs, index) {
     if (Ember.isNone(sfs)) { return; }
-    console.log(sfs, index);
     return sfs[index];
   },
   @computed(
@@ -50,9 +49,11 @@ export default Ember.Object.extend({
       this.requestFrame(0);
     }).then(() => {
       this.invoke('session.roi.values').then(rois => {
-        this.get('rois').setObjects(
+        const news = this.get('rois').setObjects(
           rois.map(roi => ROI.create(roi).notifyPropertyChange('polygon'))
         );
+        // news[0].set('active', true);
+        // this.set('sfrequency_index', 1);
         if (Ember.isEmpty(rois)) {
           route.toast.info(`Hey buddy, you have no ROIs in this session. 
             How about drawing some?`);
