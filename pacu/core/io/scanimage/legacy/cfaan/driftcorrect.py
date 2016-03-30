@@ -97,7 +97,7 @@ def getdrift3(green,sample_interval=100):
             f=(f*256/green.max()).astype('uint8')
         frames.append(f)
     allvectors=[]
-    print '\t* applying adaptive threshold'
+    print '\t* apply adaptive threshold'
     for n in np.arange(nframes):
         frames[n]=cv2.adaptiveThreshold(frames[n],255,cv2.ADAPTIVE_THRESH_GAUSSIAN_C,cv2.THRESH_BINARY, 11,0)
         #frames[n]=cv2.Canny(frames[n],20,60)

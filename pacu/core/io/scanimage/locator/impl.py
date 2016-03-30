@@ -54,36 +54,60 @@ class Locator(object):
         return cls([s-1 for s in seq], *args, **kwargs)
     @memoized_property
     def condition_product(self):
-        return list(itertools.product(self.sfrequencies,
-            self.tfrequencies, self.orientations))
+        return list(itertools.product(self.orientations,
+            self.tfrequencies, self.sfrequencies))
+        # return list(itertools.product(self.sfrequencies,
+        #     self.tfrequencies, self.orientations))
     @property
     def current_condition_index(self):
         return self.condition_product.index(
             self.current_condition_combination)
     @property
+    def blank_condition_index(self):
+        if self.blank:
+            return len(self.condition_product)
+    @property
+    def flicker_condition_index(self):
+        if self.flicker:
+            return len(self.condition_product) + int(self.blank)
+    @property
     def current_condition_combination(self):
         return (
-            self.sfrequencies.current,
+            self.orientations.current,
             self.tfrequencies.current,
-            self.orientations.current)
+            self.sfrequencies.current)
+        # return (
+        #     self.sfrequencies.current,
+        #     self.tfrequencies.current,
+        #     self.orientations.current)
     @property
     def arg_condition_indice(self):
         """
         Returns a list like that current conditions repeatedly
         happened `nth` occurrence of it in actual order.
+        Can be overridden by blank and flicker.
         """
-        return [arg for arg, seq in enumerate(self.sequence)
+        if self.blank_on:
+            return self.arg_blank_indice
+        elif self.flicker_on:
+            return self.arg_flicker_indice
+        else:
+            return [arg for arg, seq in enumerate(self.sequence)
             if seq == self.current_condition_index]
+    @property
+    def arg_blank_indice(self):
+        return [arg for arg, seq in enumerate(self.sequence)
+            if seq == self.blank_condition_index]
+    @property
+    def arg_flicker_indice(self):
+        return [arg for arg, seq in enumerate(self.sequence)
+            if seq == self.flicker_condition_index]
     def map_condition_indice_from(self, array):
         return [array[index] for index in self.arg_condition_indice]
-    @property
-    def blank_condition_number(self):
-        if self.blank:
-            return len(self.condition_product)
-    @property
-    def flicker_condition_number(self):
-        if self.flicker:
-            return len(self.condition_product) + int(self.blank)
+    def map_blank_indice_from(self, array):
+        return [array[index] for index in self.arg_blank_indice]
+    def map_flicker_indice_from(self, array):
+        return [array[index] for index in self.arg_flicker_indice]
     @property
     def total_conditions(self):
         return len(self.condition_product) + int(self.blank) + int(self.flicker)
@@ -91,6 +115,20 @@ class Locator(object):
     def arg_last_sequence(self):
         return max(arg for arg, seq in enumerate(self.sequence)
             if seq == max(self.sequence))
+    flicker_on = False
+    blank_on = False
+    def override_blank(self, on):
+        self.blank_on = on
+        self.flicker_on = False
+        return True if on and self.blank else False
+    def override_flicker(self, on):
+        self.blank_on = False
+        self.flicker_on = on
+        return True if on and self.flicker else False
+    def override(self, blank=False, flicker=False):
+        self.blank_on = blank
+        self.flicker_on = flicker
+        return self
 # nreps is 4
 # nconds is 13
 # blank = True

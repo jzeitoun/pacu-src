@@ -12,7 +12,7 @@ from pacu.core.model.analysis import AnalysisV1
 from pacu.core.io.scanimage.nmspc import HybridNamespace
 
 ED = manager.get('db').section('ed')()
-# print 'dev overide: pacu.core.io.scanimage.session'
+print 'dev overide: pacu.core.io.scanimage.session'
 class ScanimageSession(object):
     roi = None
     opt = None
@@ -33,6 +33,7 @@ class ScanimageSession(object):
         return datetime.strptime(self.date, '%Y.%m.%d')
     @memoized_property
     def ed(self):
+        return Path('tmp/Dario/2016.01.27/r.151117.3/DM9_RbV1_Contra004004.pickle').load_pickle()
         # return Path('ed.2015.12.02.bV1_Contra_004.pickle').load_pickle()
         return self.query_experiment_db().one()
     @property

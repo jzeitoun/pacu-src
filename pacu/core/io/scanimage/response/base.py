@@ -16,25 +16,17 @@ class BaseResponse(object):
     @classmethod
     def from_adaptor(cls, trace, adaptor):
         self = cls(trace)
+        self.sfreq = adaptor.locator.sfrequencies.current
         self.overview = OverviewResponse.from_adaptor(self, adaptor)
         self.orientations = OrientationsResponse.from_adaptor(self, adaptor)
         self.normalfit = NormalfitResponse.from_adaptor(self, adaptor)
         self.decay = DecayResponse.from_adaptor(self, adaptor)
-        self.sfreq = adaptor.locator.sfrequencies.current
         return self
     def toDict(self):
         return dict(
+            sfreq = self.sfreq,
             overview = self.overview,
             orientations = self.orientations,
             fit = self.normalfit,
             decay = self.decay,
-            stats = self.stats
-        )
-
-    # <p>OSI: {{model.response.stats.osi}}</p>
-    # <p>DSI: {{model.response.stats.dsi}}</p>
-    # <p>Sigma: {{model.response.stats.sigma}}</p>
-    # <p>OPref: {{model.response.stats.o_pref}}</p>
-    # <p>RMax: {{model.response.stats.r_max}}</p>
-    # <p>Residual: {{model.response.stats.residual}}</p>
-    # <p>CV: {{model.response.stats.cv}}</p>
+            stats = self.stats)

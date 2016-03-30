@@ -93,7 +93,6 @@ def fit(x, y_meas):
         o1=oOppos
     oPref=o1
     oOppos=o2
-    print oPref, oOppos
 
     y_fit=get(x_fit,p_fit)
     residuals=get_residuals_leastsq(p_fit,y_meas_stretch,x_fit)

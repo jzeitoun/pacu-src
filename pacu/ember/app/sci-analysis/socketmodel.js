@@ -16,7 +16,14 @@ export default Ember.Object.extend({
   invoke(func, ...args) { return this.get('wsx').invoke(func, ...args); },
   @computed() rois() { return []; },
   @computed('rois.@each.active') curROI(rois) {
-    return rois.findBy('active');
+    const cur = rois.findBy('active');
+    window.cur = cur;
+    return cur;
+  },
+  @computed('sfrequencies', 'sfrequency_index') curSF(sfs, index) {
+    if (Ember.isNone(sfs)) { return; }
+    console.log(sfs, index);
+    return sfs[index];
   },
   @computed(
     'main_response', 'curROI.responses', 'curROI.busy', 'sfrequency_index'

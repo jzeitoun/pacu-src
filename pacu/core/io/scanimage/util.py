@@ -1,3 +1,5 @@
+import numpy as np
+
 def infer_nchannels(tiff):
     try:
         print 'Inferring how many channels there are...'
@@ -13,3 +15,14 @@ def infer_nchannels(tiff):
         return 0
     else:
         return nchan
+
+def nan_for_json(dt):
+    new = {}
+    for key, val in dt.items():
+        if isinstance(val, np.ndarray):
+            new[key] = val
+        elif np.isnan(val):
+            new[key] = 'nan'
+        else:
+            new[key] = val
+    return new

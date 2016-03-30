@@ -1,3 +1,5 @@
+import numpy as np
+
 from pacu.core.io.scanimage.trace.whole import WholeTrace
 
 class Orientation(object):
@@ -17,3 +19,6 @@ class Orientation(object):
         return cls(value, ontimes, offtimes, baselines)
     def __repr__(self):
         return '{}({})'.format(type(self).__name__, self.value)
+    @property
+    def mean(self):
+        return np.array([rep.array for rep in self.ontimes]).mean(0).mean()

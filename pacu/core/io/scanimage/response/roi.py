@@ -1,20 +1,22 @@
 import numpy as np
 
 from pacu.core.io.scanimage.response.base import BaseResponse
+from pacu.core.io.scanimage import util
 
 class ROIResponse(BaseResponse):
     cv = None
     @property
     def stats(self):
         g = self.normalfit.gaussian
-        return dict(
+        return util.nan_for_json(dict(
+            tau = self.decay.tau,
             osi = g.osi,
             dsi = g.dsi,
             sigma = g.sigma,
             o_pref = g.o_pref,
             r_max = g.r_max,
             residual = g.residual,
-            cv = self.cv)
+            cv = self.cv))
     @property
     def cv(self):
         angles = self.orientations.names
@@ -25,7 +27,3 @@ class ROIResponse(BaseResponse):
             sum((r_thetas * sin(two_thetas)))**2 +
             sum((r_thetas * cos(two_thetas)))**2
         ) / sum(r_thetas)
-
-# stats['blank_m'] = self.response.blank.meantrace.mean() if self.response.blank else None
-# stats['fff_m'] = self.response.flicker.meantrace.mean() if self.response.flicker else None
-# stats['tau'] = self.tiffFig.responseFig.tau

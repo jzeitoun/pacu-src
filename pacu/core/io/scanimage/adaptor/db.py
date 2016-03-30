@@ -37,11 +37,10 @@ class ScanimageDBAdaptor(object):
     @memoized_property
     def frame(self):
         return Frame(
-            np.floor(self.rec.duration_F).astype(int),
-            np.floor(self.rec.waitinterval_F).astype(int),
-            np.floor(self.rec.ontimes_F).astype(int),
-            int(2*self.capture_frequency)
-        )
+            np.round(self.rec.duration_F).astype(int),
+            np.round(self.rec.waitinterval_F).astype(int),
+            np.round(self.rec.ontimes_F).astype(int),
+            int(0.5*self.capture_frequency))
     @property
     def indice(self):
         return ScanimageIndiceAdaptor(self)

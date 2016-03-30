@@ -5,6 +5,7 @@ import cv2
 import numpy as np
 
 from pacu.util.inspect import repr
+from pacu.core.io.scanimage.fit.gasussian.sfreqdog import SpatialFrequencyDogFit
 
 class ROI(object):
     """
@@ -12,6 +13,8 @@ class ROI(object):
     """
     polygon = ()
     neuropil = ()
+    blank = None
+    flicker = None
     responses = None
     __repr__ = repr.auto_strict
     def __init__(self, id=None, **kwargs):
@@ -20,7 +23,7 @@ class ROI(object):
         if self.responses is None:
             self.responses = {}
     def toDict(self):
-        return vars(self)
+        return dict(vars(self), sfreqfit=self.sfreqfit)
     def mask(self, shape):
         mask = np.zeros(shape, dtype='uint8')
         cv2.drawContours(mask, [self.inner_contours], 0, 255, -1)
@@ -50,3 +53,17 @@ class ROI(object):
             ystart, xstart = bounding.min(0) - 1
             ystop, xstop = bounding.max(0) + 2
             return outer[ystart:ystop, xstart:xstop], inner[ystart:ystop, xstart:xstop]
+    @property
+    def sfreqfit(self):
+        if not self.responses:
+            return
+        rmax = list(sorted(
+            (sfreq, resp.stats['r_max'])
+            for sfreq, resp in self.responses.items()))
+        flicker = self.flicker.mean if self.flicker else None
+        blank = self.blank.mean if self.flicker else None
+        return SpatialFrequencyDogFit(rmax, flicker, blank)
+    def updates_by_io(self, io):
+        return io.update_responses(self.id)
+    def trace_by_io(self, io):
+        return io.make_trace(self)

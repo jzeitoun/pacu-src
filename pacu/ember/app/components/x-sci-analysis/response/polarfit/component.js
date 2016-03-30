@@ -63,7 +63,7 @@ const Data = Ember.Object.extend({
 export default Ember.Component.extend({
   tagName: 'canvas',
   width: 100,
-  height: 100,
+  height: 140,
   attributeBindings: ['width', 'height'],
   @computed() ctx() { return this.element.getContext('2d'); },
   @computed() config() { return { type, data, options }; },
@@ -87,7 +87,7 @@ export default Ember.Component.extend({
     chart.data.labels = labels;
     chart.data.datasets = datasets;
     chart.update();
-  }.observes('src'),
+  }.observes('src').on('didInsertElement'),
   dinitialize: function() {
     this.get('chart').destroy();
   }.on('willDestroyElement')

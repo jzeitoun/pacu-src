@@ -12,6 +12,9 @@ const ROI = Ember.Object.extend(Em.Copyable, Centroid, Neuropil, {
   @computed('responseCount') responseCountPlusOne(c) {
     return c + 1;
   },
+  @computed('responses') sortedResponses(resp) {
+    return Object.keys(resp).sort().map(k => resp[k]);
+  },
   invalidate: function() {
     return this.setProperties({invalidated: true, active: false});
   },

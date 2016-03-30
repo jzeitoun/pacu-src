@@ -50,18 +50,21 @@
     <div class="ten wide column">
       <div class="ui {{model.socketStatusClass}} text loader">Fetching...</div>
       <div class="ui grid">
-        <div class="ten wide column">
+        <div class="eight wide column">
           {{x-sci-analysis/response/orientations src=model.response.orientations}}
         </div>
-        <div class="six wide column">
-          {{x-sci-analysis/response/decay src=model.response.decay}}
+        <div class="eight wide column">
+          {{x-sci-analysis/response/normalfit src=model.response.fit}}
         </div>
       </div>
       <div class="ui grid">
-        <div class="ten wide column">
-          {{x-sci-analysis/response/normalfit src=model.response.fit}}
-        </div>
         <div class="six wide column">
+          {{x-sci-analysis/response/sfreqfit src=model.curROI.sfreqfit}}
+        </div>
+        <div class="five wide column">
+          {{x-sci-analysis/response/decay src=model.response.decay}}
+        </div>
+        <div class="five wide column">
           {{x-sci-analysis/response/polarfit src=model.response.fit}}
         </div>
       </div>
@@ -69,18 +72,8 @@
   </div>
 
   <section class="ui clearing divider"></section>
-  {{x-sci-analysis/stats/wide model.rois}}
+  <div style="overflow-x: scroll;">
+    {{x-sci-analysis/stats/wide model.rois curSF=model.curSF}}
+  </div>
 
-  <section class="ui clearing divider"></section>
-  <div class="ui one column padded grid">
-    <div class="center aligned column">
-      {{! x-i3d2p-plot-overview src=model.curTrace curIndex=model.img.curIndex}}
-    </div>
-  </div>
-  <section class="ui clearing divider"></section>
-  <div class="ui one column padded grid">
-    <div class="center aligned column">
-      {{!x-sci-analysis-response src=model.curResponse}}
-    </div>
-  </div>
 </div>

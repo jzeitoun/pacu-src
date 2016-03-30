@@ -21,7 +21,7 @@ class ScanimageIndiceAdaptor(object):
             print("Error: The first pre-stimulus blank isn't long enough. "
                 "This could make some side effect on the analysis.")
             first_frames[:] = 0
-        last_frames = ontime_first_frames # - 1
+        last_frames = ontime_first_frames - 1
         return Indices(first_frames, last_frames)
     @property
     def offtimes(self):

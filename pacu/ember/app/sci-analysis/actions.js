@@ -19,7 +19,7 @@ export default {
   fetchROI(roi) {
     if (roi.get('busy')) { return; }
     roi.set('busy', true);
-    return this.get('wsx').invoke('make_response', roi.get('id')).gateTo(
+    return this.get('wsx').invoke('update_responses', roi.get('id')).gateTo(
       this.currentModel, 'roiFetching'
     ).then(data => {
       roi.setProperties(data);
@@ -99,7 +99,7 @@ export default {
       // this.currentModel.get('rois').forEach(roi => roi.invalidate());
       if (Ember.isPresent(roi)) {
         roi.set('active', true);
-        this.send('fetchROI', roi);
+        // this.send('fetchROI', roi);
       }
     });
   }

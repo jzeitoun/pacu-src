@@ -1,7 +1,7 @@
 <thead class="center aligned">
   <tr>
     <th rowspan="2">Cell ID</th>
-    <th rowspan="2">SF</th>
+    <th colspan="6">SF</th>
     <th rowspan="2">OSI</th>
     <th rowspan="2">CV</th>
     <th rowspan="2">DSI</th>
@@ -10,14 +10,17 @@
     <th rowspan="2">OPref</th>
     <th rowspan="2">RMax</th>
     <th rowspan="2">Residual</th>
-    <th rowspan="2">Blank</th>
-    <th rowspan="2">FFF</th>
     <th colspan="3">Anova</th>
     <th colspan="2">Bootstrap</th>
     <th colspan="2">Pixel</th>
-    <th colspan="3">SF</th>
   </tr>
   <tr>
+    <th class="cell-sf-peak">Peak</th>
+    <th class="cell-sf-pref">Pref</th>
+    <th class="cell-sf-ratio">Ratio</th>
+    <th class="cell-sf-blank-mean">Blank</th>
+    <th class="cell-sf-flicker-mean">Flicker</th>
+    <th class="cell-sf-at">@</th>
     <th class="cell-anova">All</th>
     <th class="cell-anova">F</th>
     <th class="cell-anova">P</th>
@@ -25,9 +28,6 @@
     <th class="cell-bootstrap">SD</th>
     <th class="cell-pixel">Value</th>
     <th class="cell-pixel">Blank</th>
-    <th class="cell-sf">Pref</th>
-    <th class="cell-sf">Fit</th>
-    <th class="cell-sf">Ratio</th>
   </tr>
 </thead>
 <tbody class="center aligned">
@@ -35,31 +35,36 @@
   <tr>
     <td class="{{if roi.active "positive"}} cell-cell-id"
         rowspan="{{roi.responseCountPlusOne}}">{{roi.id}}</td>
+    <td class="cell-sf-peak"
+        rowspan="{{roi.responseCountPlusOne}}">{{roi.sfreqfit.peak}}</td>
+    <td class="cell-sf-pref"
+        rowspan="{{roi.responseCountPlusOne}}">{{roi.sfreqfit.pref}}</td>
+    <td class="cell-sf-ratio"
+        rowspan="{{roi.responseCountPlusOne}}">{{roi.sfreqfit.ratio}}</td>
+    <td class="cell-sf-blank-mean"
+        rowspan="{{roi.responseCountPlusOne}}">{{roi.sfreqfit.blank}}</td>
+    <td class="cell-sf-flicker-mean"
+        rowspan="{{roi.responseCountPlusOne}}">{{roi.sfreqfit.flicker}}</td>
   </tr>
-    {{#each-in roi.responses as |sfreq r|}}
-    <tr>
-      <td class="cell-sf"            >{{sfreq}}</td>
-      <td class="cell-osi"           >{{or-icon "red help" r.stats.osi}}</td>
-      <td class="cell-cv"            >{{or-icon "red help" r.stats.cv}}</td>
-      <td class="cell-dsi"           >{{or-icon "red help" r.stats.dsi}}</td>
-      <td class="cell-sigma"         >{{or-icon "red help" r.stats.sigma}}</td>
-      <td class="cell-tau"           >{{or-icon "red help" r.stats.tau}}</td>
-      <td class="cell-o-pref"        >{{or-icon "red help" r.stats.o_pref}}</td>
-      <td class="cell-r-max"         >{{or-icon "red help" r.stats.r_max}}</td>
-      <td class="cell-residual"      >{{or-icon "red help" r.stats.residual}}</td>
-      <td class="cell-blank"         >{{or-icon "red help" r.stats.blank}}</td>
-      <td class="cell-fff"           >{{or-icon "red help" r.stats.fff}}</td>
-      <td class="cell-anova-all"     >{{or-icon "red help" r.stats.anova_all}}</td>
-      <td class="cell-anova-f"       >{{or-icon "red help" r.stats.anova_f}}</td>
-      <td class="cell-anova-p"       >{{or-icon "red help" r.stats.anova_p}}</td>
-      <td class="cell-bootstrap-mean">{{or-icon "red help" r.stats.bootstrap_mean}}</td>
-      <td class="cell-bootstrap-sd"  >{{or-icon "red help" r.stats.bootstrap_sd}}</td>
-      <td class="cell-pixel-value"   >{{or-icon "red help" r.stats.pixel_value}}</td>
-      <td class="cell-pixel-blank"   >{{or-icon "red help" r.stats.pixel_blank}}</td>
-      <td class="cell-sf-pref"       >{{or-icon "red help" r.stats.sf_pref}}</td>
-      <td class="cell-sf-fit"        >{{or-icon "red help" r.stats.sf_fit}}</td>
-      <td class="cell-sf-ratio"      >{{or-icon "red help" r.stats.sf_ratio}}</td>
-    </tr>
-    {{/each-in}}
+  {{#each roi.sortedResponses as |r|}}
+  <tr class="{{if-eq-then-class attrs.curSF r.sfreq "positive"}}">
+    <td class="cell-sf-at"         >{{r.sfreq}}</td>
+    <td class="cell-osi"           >{{or-icon "red help" r.stats.osi}}</td>
+    <td class="cell-cv"            >{{or-icon "red help" r.stats.cv}}</td>
+    <td class="cell-dsi"           >{{or-icon "red help" r.stats.dsi}}</td>
+    <td class="cell-sigma"         >{{or-icon "red help" r.stats.sigma}}</td>
+    <td class="cell-tau"           >{{or-icon "red help" r.stats.tau}}</td>
+    <td class="cell-o-pref"        >{{or-icon "red help" r.stats.o_pref}}</td>
+    <td class="cell-r-max"         >{{or-icon "red help" r.stats.r_max}}</td>
+    <td class="cell-residual"      >{{or-icon "red help" r.stats.residual}}</td>
+    <td class="cell-anova-all"     >{{or-icon "red help" r.stats.anova_all}}</td>
+    <td class="cell-anova-f"       >{{or-icon "red help" r.stats.anova_f}}</td>
+    <td class="cell-anova-p"       >{{or-icon "red help" r.stats.anova_p}}</td>
+    <td class="cell-bootstrap-mean">{{or-icon "red help" r.stats.bootstrap_mean}}</td>
+    <td class="cell-bootstrap-sd"  >{{or-icon "red help" r.stats.bootstrap_sd}}</td>
+    <td class="cell-pixel-value"   >{{or-icon "red help" r.stats.pixel_value}}</td>
+    <td class="cell-pixel-blank"   >{{or-icon "red help" r.stats.pixel_blank}}</td>
+  </tr>
+  {{/each}}
   {{/each}}
 </tbody>

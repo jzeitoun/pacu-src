@@ -73,17 +73,17 @@ class ScanimageIO(object):
     def set_channel(self, channel):
         self.session.opt['channel'] = channel
         return self
-    @memoized_property
+    @property
     def sfrequency(self):
-        return self.session.opt.setdefault(
-            'sfrequency', self.db.sfrequencies[0])
-    @memoized_property
+        return self.db.locator.sfrequencies.current
+        # return self.session.opt.setdefault(#  'sfrequency', )
+    @property
     def sfrequency_index(self):
         return self.sfrequencies.index(self.sfrequency)
     @property
     def sfrequencies(self):
         return self.db.locator.sfrequencies
-    @sfrequency.invalidator
+    # @sfrequency.invalidator
     def set_sfrequency_index(self, sfreq_index):
         self.sfrequencies.set_cursor(sfreq_index)
         self.session.opt['sfrequency'] = self.sfrequencies.current
@@ -111,23 +111,62 @@ class ScanimageIO(object):
     def invalidate_rois(self):
         for roi in self.session.roi.values():
             roi.invalidated = True
+            roi.blank = None
+            roi.flicker = None
             roi.responses = {}
         self.session.roi.save()
-    def make_response(self, id):
-        roi = self.session.roi[id]
+    def make_trace(self, roi): # checked same function
         extras = self.session.roi.values()
         extras.remove(roi)
         main_trace, main_mask = roi.trace(self.channel.mmap)
         neur_trace, neur_mask = roi.neuropil_trace(self.channel.mmap, extras)
         # neuropil_mask, roi_mask = roi.trim_bounding_mask(neur_mask, main_mask)
-        trace = main_trace - neur_trace*0.7
-        roi.invalidated = False
-        roi.responses[
-            self.sfrequency] = ROIResponse.from_adaptor(trace, self.db)
         # roi.masks = dict(
         #     neuripil = neuropil_mask.tolist(),
         #     roi = roi_mask.tolist())
-        return self.session.roi.upsert(roi)
+        return main_trace - neur_trace*0.7
+    def update_responses(self, id):
+        roi = self.session.roi[id]
+        trace = self.make_trace(roi)
+        with self.session.roi.bulk_on:
+            for sf in self.db.locator.sfrequencies.loop():
+                response = ROIResponse.from_adaptor(trace, self.db)
+                roi.responses[self.sfrequency] = response
+            try:
+                if self.db.locator.override_blank(True):
+                    roi.blank = Orientation.from_adaptor('blank', trace, self.db)
+                if self.db.locator.override_flicker(True):
+                    roi.flicker = Orientation.from_adaptor('flicker', trace, self.db)
+            finally:
+                self.db.locator.override()
+            roi.invalidated = False
+            return self.session.roi.upsert(roi)
+
+# from pacu.core.io.scanimage.response.orientation import Orientation
+# path = 'tmp/Dario/2015.12.02/x.151101.2/bV1_Contra_004'
+# path = 'tmp/Dario/2016.02.26/x.151114.1/DM3_RbV1_Contra_00002'
+# path = 'tmp/Dario/2016.01.27/r.151117.3/DM9_RbV1_Contra004004'
+# qwe = ScanimageIO(path)
+# roi = qwe.session.roi.one().val
+# qwe.db.locator.sfrequencies.set_cursor(4)
+# ind = qwe.db.indice
+# trace = qwe.make_trace(roi)
+# qwe.db.locator.sfrequencies.set_cursor(1)
+# asd = Orientation.from_adaptor(0.0, trace, qwe.db)
+
+# asd = roi.updates_by_io(qwe)
+# ori = asd.orientations.responses[0]
+# tr = ori.ontimes[0]
+
+
+# stats['blank_m'] = self.response.blank.meantrace.mean() if self.response.blank else None
+# stats['fff_m'] = self.response.flicker.meantrace.mean() if self.response.flicker else None
+# stats['tau'] = self.tiffFig.responseFig.tau
+
+
+
+
+
 
 class ScanimageRecord(object):
     """
@@ -160,42 +199,6 @@ class ScanimageRecord(object):
             tifffile.format_size(self.tiff_path.stat().st_size)
         )
 
-# # path = 'tmp/Dario/2015.12.02/x.151101.2/bV1_Contra_004'
-# path = 'tmp/Dario/2016.02.26/x.151114.1/DM3_RbV1_Contra_00002'
-# qwe = ScanimageIO(path)
-# roi = qwe.session.roi.one().val
-# roi = qwe.make_response(roi.id)
-# fo = roi.response.normalfit.fit
-
-
-
-
-
-
-
-
-
-# print roi.response.orientations.names
-# print 'mr', roi.response.meanresponses
-# asd = qwe.make_response(roi.id)
-# print 'ORIS', roi.response.orientations.names
-# os = roi.response.orientations
-# print 'data', os.data['traces'].shape
-# print 'data', sorted(list(os.data['indices']))
-# ori = roi.response.orientations.responses[0]
-# bss = np.array(os.bss)
-# ons = np.array(os.ons)
-# bssons = np.concatenate([bss, ons], axis=2)
-
-# print 'offtime shape', ori.offtimes[0].array.shape
-
-# print 'baselines indices', qwe.db.indice.baselines
-# print 'ontimes indices', qwe.db.indice.ontimes
-# print 'oftimes indices', qwe.db.indice.offtimes
-# print 'frame duration', qwe.db.frame.duration
-# print 'frame interval', qwe.db.frame.interval
-# print 'frame baseline', qwe.db.frame.baseline
-
 
 def testdump():
     path = 'tmp/Dario/2015.12.02/x.151101.2/bV1_Contra_004'
@@ -204,6 +207,21 @@ def testdump():
     qwe.session.opt.clear()
     from pacu.util.identity import path
     rois = path.cwd.ls('*pickle')[0].load_pickle().get('rois')
+    pgs = [[dict(x=x, y=y) for x, y in roi] for roi in rois]
+    kws = [dict(polygon=p) for p in pgs]
+    for kw in kws:
+        qwe.session.roi.upsert(ROI(**kw))
+
+def testdump2():
+    path = 'tmp/Dario/2016.01.27/r.151117.3/DM9_RbV1_Contra004004'
+    qwe = ScanimageIO(path)
+    qwe.session.roi.clear()
+    qwe.session.opt.clear()
+    rois = [
+        ([75,27], [71,27], [69,30], [69,34], [71,36], [75,36], [78,35], [79,32], [78,29]),
+        ([60,72], [57,72], [55,75], [56,78], [58,79], [62,79], [64,76], [63,73]),
+        ([53,47], [51,44], [48,43], [45,43], [43,46], [43,49], [46,51], [50,51], [52,50]),
+    ]
     pgs = [[dict(x=x, y=y) for x, y in roi] for roi in rois]
     kws = [dict(polygon=p) for p in pgs]
     for kw in kws:

@@ -4,6 +4,7 @@ import numpy as np
 
 from pacu.util.prop.memoized import memoized_property
 from pacu.core.io.scanimage.fit import tau
+from pacu.core.io.scanimage import util
 
 class DecayResponse(object):
     tau = None
@@ -13,14 +14,14 @@ class DecayResponse(object):
     def __init__(self, orientation):
         self.orientation = orientation
     def toDict(self):
-        return dict(
+        return util.nan_for_json(dict(
             traces = self.traces,
             mean = self.mean,
             name = self.orientation.value,
             tau = self.tau,
             x = self.x,
             y_fit = self.y_fit
-        )
+        ))
     @classmethod
     def from_adaptor(cls, response, adaptor):
         self = cls(response.trace)
@@ -31,6 +32,7 @@ class DecayResponse(object):
             self.tau = 1.0 / (adaptor.capture_frequency * c_value)
         except Exception as e:
             print 'Failed to get decay/tau fit: ' + str(e)
+            self.tau = np.nan
         return self
     @memoized_property
     def traces(self):

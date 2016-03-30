@@ -5,8 +5,10 @@ const yAxes = {
   type: 'linear',
   position: 'left',
   gridLines: {
-    color: 'rgba(255, 255, 255, 0.5)',
-    display: false
+    color: 'rgba(255, 255, 255, 0.25)',
+    zeroLineColor: 'rgba(255, 255, 255, 0.5)',
+    drawTicks: false,
+    display: true
   },
   scaleLabel: {
     display: true,
@@ -23,7 +25,7 @@ const xAxes = {
   gridLines: {
     display: false,
     color: 'rgba(255, 255, 255, 0.5)',
-    drawOnChartArea: false,
+    drawOnChartArea: true,
     drawTicks: true
   },
   ticks: {
@@ -40,7 +42,7 @@ const data = { labels:[], datasets:[] }; // dummy
 const options =  {
   title: {
     display: true,
-    text: 'Decay at',
+    text: 'SF Tuning Curve',
     fontStyle: 'normal'
   },
   legend: {display: false},
@@ -56,7 +58,9 @@ const options =  {
       tension: 0
     },
     point: {
-      radius: 0,
+      radius: 3,
+      backgroundColor: 'rgba(5,5,5,1)',
+      borderColor: 'rgba(255,255,255,1)',
       hoverRadius: 0,
       hitRadius: 0
     }
@@ -64,45 +68,34 @@ const options =  {
 };
 
 const Data = Ember.Object.extend({
-  traces: [[]],
-  indices: {},
-  mean: [],
-  y_fit: [],
-  name: '',
-  @computed('name') text(name) {
-    if (Ember.isEmpty(name)) { return 'Decay of max orientation'; }
-    return `Decay at ${name}`;
-  },
-  @computed('mean') labels(mean) {
-    return mean.map((e, i) => i);
-  },
-  @computed('traces', 'mean', 'y_fit') datasets(traces, mean, y_fit) {
-    const ds = [
-      {
-        borderColor: 'rgba(0, 255, 255, 1)',
-        borderWidth: 0.5,
-        data: mean,
-      },
-      {
-        borderColor: 'rgba(255, 0, 0, 1)',
-        borderWidth: 1,
-        data: y_fit,
-      },
-    ];
-    for (let trace of traces) {
-      ds.push({
-        borderColor: 'rgba(255, 255, 255, 0.1)',
-        data: trace,
-      })
-    }
-    return ds;
-  }
+   indices: {},
+   sfx: [],
+   sfy: [],
+   dog_x: [],
+   dog_y: [],
+   @computed('sfx') labels(x) {
+     return x.map((e, i) => e);
+   },
+   @computed('sfy') datasets(y) {
+     return [
+       // {
+       //   borderColor: 'rgba(0, 255, 255, 1)',
+       //   borderWidth: 0.5,
+       //   data: y,
+       // },
+       {
+         borderColor: 'rgba(255, 255, 255, 0.5)',
+         borderWidth: 1,
+         data: y,
+       },
+     ];
+   }
 });
 
 export default Ember.Component.extend({
   tagName: 'canvas',
   width: 100,
-  height: 140,
+  height: 100,
   attributeBindings: ['width', 'height'],
   @computed() ctx() { return this.element.getContext('2d'); },
   @computed() config() { return { type, data, options }; },
@@ -110,14 +103,12 @@ export default Ember.Component.extend({
   indices: Ember.computed.alias('data.indices'),
   labels: Ember.computed.alias('data.labels'),
   datasets: Ember.computed.alias('data.datasets'),
-  text: Ember.computed.alias('data.text'),
   @computed('ctx', 'config') chart(ctx, cfg) { return new Chart(ctx, cfg); },
   draw: function() {
-    const {chart, labels, datasets, indices, text
-    } = this.getProperties('chart', 'labels', 'datasets', 'indices', 'text');
-    const ticks = chart.config.options.scales.xAxes[0].ticks;
-    chart.titleBlock.options.text = text;
-    ticks.userCallback = (value, index, values) => indices[index];
+    const {chart, labels, datasets, indices
+    } = this.getProperties('chart', 'labels', 'datasets', 'indices');
+    // const ticks = chart.config.options.scales.xAxes[0].ticks;
+    // ticks.userCallback = (value, index, values) => indices[index];
     chart.data.labels = labels;
     chart.data.datasets = datasets;
     chart.update();
