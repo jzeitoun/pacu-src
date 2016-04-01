@@ -146,10 +146,11 @@ class ScanimageIO(object):
 # from pacu.core.io.scanimage.response.orientation import Orientation
 # path = 'tmp/Dario/2015.12.02/x.151101.2/bV1_Contra_004'
 # path = 'tmp/Dario/2016.02.26/x.151114.1/DM3_RbV1_Contra_00002'
-
+# 
 # path = 'tmp/Dario/2016.01.27/r.151117.3/DM9_RbV1_Contra004004'
 # qwe = ScanimageIO(path)
 # roi = qwe.session.roi.one().val
+
 # asd = roi.responses[0.1]
 
 # oris = [

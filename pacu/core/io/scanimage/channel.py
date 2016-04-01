@@ -63,7 +63,7 @@ class ScanimageChannel(object):
         stat = np.load(self.statpath.str)
         return np.rec.fromrecords(stat, dtype=stat.dtype)
     def import_raw(self, tiff):
-        print 'Drift correct...each steps may take a few minutes...'
+        print 'Drift correct...each step may take a few minutes...'
         drift = driftcorrect.getdrift3(tiff)
         print 'Got drift data...try to correct.'
         corr = driftcorrect.driftcorrect2(tiff, drift)

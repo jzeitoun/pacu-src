@@ -26,8 +26,9 @@ class ROI(object):
             self.responses = {}
     def toDict(self):
         return dict(vars(self),
+            sfreqft = self.sfreqfit,
             rs_at_best_o_pref = self.rs_at_best_o_pref,
-            sfreqfit=self.sfreqfit, anova_all=self.anova_all)
+            anova_all=self.anova_all)
     def mask(self, shape):
         mask = np.zeros(shape, dtype='uint8')
         cv2.drawContours(mask, [self.inner_contours], 0, 255, -1)
@@ -91,6 +92,8 @@ class ROI(object):
 #         return SpatialFrequencyDogFit(rmax, flicker, blank)
     @property
     def sfreqfit(self): # this is new.
+        if not self.responses:
+            return
         rmax = self.rs_at_best_o_pref
         flicker = self.flicker.mean if self.flicker else None
         blank = self.blank.mean if self.flicker else None
