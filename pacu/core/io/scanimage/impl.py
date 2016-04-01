@@ -129,9 +129,6 @@ class ScanimageIO(object):
         roi = self.session.roi[id]
         trace = self.make_trace(roi)
         with self.session.roi.bulk_on:
-            for sf in self.db.locator.sfrequencies.loop():
-                response = ROIResponse.from_adaptor(trace, self.db)
-                roi.responses[self.sfrequency] = response
             try:
                 if self.db.locator.override_blank(True):
                     roi.blank = Orientation.from_adaptor('blank', trace, self.db)
@@ -139,15 +136,38 @@ class ScanimageIO(object):
                     roi.flicker = Orientation.from_adaptor('flicker', trace, self.db)
             finally:
                 self.db.locator.override()
+            for sf in self.db.locator.sfrequencies.loop():
+                response = ROIResponse.from_adaptor(roi, trace, self.db)
+                roi.responses[self.sfrequency] = response
             roi.invalidated = False
             return self.session.roi.upsert(roi)
+
 
 # from pacu.core.io.scanimage.response.orientation import Orientation
 # path = 'tmp/Dario/2015.12.02/x.151101.2/bV1_Contra_004'
 # path = 'tmp/Dario/2016.02.26/x.151114.1/DM3_RbV1_Contra_00002'
+
 # path = 'tmp/Dario/2016.01.27/r.151117.3/DM9_RbV1_Contra004004'
 # qwe = ScanimageIO(path)
 # roi = qwe.session.roi.one().val
+# asd = roi.responses[0.1]
+
+# oris = [
+#     [ont.array.mean() for ont in ori.ontimes]
+#     for ori in self.orientations.responses]
+# f, p = stats.f_oneway(blank, *oris)
+
+
+# (2.6221229192686382, 0.0045797445941786405)
+
+
+
+
+
+
+
+
+
 # qwe.db.locator.sfrequencies.set_cursor(4)
 # ind = qwe.db.indice
 # trace = qwe.make_trace(roi)
@@ -225,7 +245,8 @@ def testdump2():
     pgs = [[dict(x=x, y=y) for x, y in roi] for roi in rois]
     kws = [dict(polygon=p) for p in pgs]
     for kw in kws:
-        qwe.session.roi.upsert(ROI(**kw))
+        roi = qwe.session.roi.upsert(ROI(**kw))
+        qwe.update_responses(roi.id)
 
 def ScanimageIOFetcher(year, month, day, mouse, image, session):
     root = manager.instance('opt').scanimage_root

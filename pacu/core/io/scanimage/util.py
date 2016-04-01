@@ -21,6 +21,8 @@ def nan_for_json(dt):
     for key, val in dt.items():
         if isinstance(val, np.ndarray):
             new[key] = val
+        elif isinstance(val, dict):
+            new[key] = nan_for_json(val)
         elif np.isnan(val):
             new[key] = 'nan'
         else:

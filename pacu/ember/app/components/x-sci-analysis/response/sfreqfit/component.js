@@ -1,73 +1,6 @@
 import Ember from 'ember';
 import computed from 'ember-computed-decorators';
 
-// const yAxes = {
-//   type: 'linear',
-//   position: 'left',
-//   gridLines: {
-//     color: 'rgba(255, 255, 255, 0.25)',
-//     zeroLineColor: 'rgba(255, 255, 255, 0.5)',
-//     drawTicks: false,
-//     display: true
-//   },
-//   scaleLabel: {
-//     display: true,
-//     labelString: 'F'
-//   },
-//   ticks: { display: true, }
-// };
-// const xAxes = {
-//   type: 'category',
-//   position: 'bottom',
-//   scaleLabel: {
-//     display: false,
-//   },
-//   gridLines: {
-//     display: false,
-//     color: 'rgba(255, 255, 255, 0.5)',
-//     drawOnChartArea: true,
-//     drawTicks: true
-//   },
-//   ticks: {
-//     autoSkip: false,
-//     display: true,
-//     // userCallback: function(value, index, values) {
-//     //   return asd.repetition.indices[index];
-//     // }
-//   },
-// };
-// 
-// const type = 'line';
-// const data = { labels:[], datasets:[] }; // dummy
-// const options =  {
-//   title: {
-//     display: true,
-//     text: 'SF Tuning Curve',
-//     fontStyle: 'normal'
-//   },
-//   legend: {display: false},
-//   tooltips: {enabled: false},
-//   scales: {
-//     yAxes: [yAxes],
-//     xAxes: [xAxes],
-//   },
-//   elements: {
-//     line: {
-//       borderWidth: 1,
-//       fill: false,
-//       tension: 0
-//     },
-//     point: {
-//       radius: 3,
-//       backgroundColor: 'rgba(5,5,5,1)',
-//       borderColor: 'rgba(255,255,255,1)',
-//       hoverRadius: 0,
-//       hitRadius: 0
-//     }
-//   }
-// };
-
-
 const yFAxes = {
   type: 'linear',
   position: 'left',
@@ -83,6 +16,7 @@ const yFAxes = {
   },
   ticks: {
     display: true,
+    beginAtZero: true,
     min: 0,
     max: 1
   }
@@ -120,6 +54,7 @@ const yMAxes = {
   },
   ticks: {
     display: true,
+    beginAtZero: true,
     min: 0,
     max: 1
   }

@@ -21,4 +21,7 @@ class Orientation(object):
         return '{}({})'.format(type(self).__name__, self.value)
     @property
     def mean(self):
-        return np.array([rep.array for rep in self.ontimes]).mean(0).mean()
+        return self.meantrace.mean()
+    @property
+    def meantrace(self):
+        return np.array([rep.array for rep in self.ontimes]).mean(0)

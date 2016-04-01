@@ -1,4 +1,4 @@
-<div class="ui inverted segment">
+<div id="route-sci-analysis" class="ui inverted segment">
   {{#x-modal-for-object (mut model.roiOnDetail)
     onApprove=(route-action "updateAndFetchROI" model.roiOnDetail)
     approveText="Update Now"
@@ -39,7 +39,7 @@
 
   <section class="ui clearing divider"></section>
   <div class="ui stackable padded grid">
-    {{#x-zoomable-container class="six wide column"}}
+    {{#x-zoomable-container class="eight wide column"}}
       {{#x-layer width=model.img.width height=model.img.height as |layer|}}
         {{layer.canvas-2d buffer=model.img.buffer}}
         {{layer.roi-selector rois=model.rois
@@ -47,17 +47,19 @@
         {{layer.roi-presenter rois=model.rois}}
       {{/x-layer}}
     {{/x-zoomable-container}}
-    <div class="ten wide column">
+    <div class="eight wide column">
       <div class="ui {{model.socketStatusClass}} text loader">Fetching...</div>
-      <div class="ui grid">
-        <div class="eight wide column">
+      <div class="ui grid compact-margin">
+        <div class="row">
           {{x-sci-analysis/response/orientations src=model.response.orientations}}
         </div>
-        <div class="eight wide column">
+      </div>
+      <div class="ui grid compact-margin">
+        <div class="row">
           {{x-sci-analysis/response/normalfit src=model.response.fit}}
         </div>
       </div>
-      <div class="ui grid">
+      <div class="ui grid compact-margin">
         <div class="six wide column">
           {{x-sci-analysis/response/sfreqfit src=model.curROI.sfreqfit}}
         </div>

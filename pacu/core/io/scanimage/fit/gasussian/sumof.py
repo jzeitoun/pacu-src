@@ -231,3 +231,8 @@ class SumOfGaussianFit(object):
     @property
     def r_max(self):
         return self.y_fit.max()
+    @property
+    def r_pref(self):
+        return self.function(self.o_pref, self.fit_params)
+    def response_at(self, orientation):
+        return self.function(orientation, self.fit_params)

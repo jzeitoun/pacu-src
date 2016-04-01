@@ -1,4 +1,5 @@
 import numpy as np
+from scipy import stats
 
 from pacu.core.io.scanimage.response.base import BaseResponse
 from pacu.core.io.scanimage import util
@@ -16,6 +17,7 @@ class ROIResponse(BaseResponse):
             o_pref = g.o_pref,
             r_max = g.r_max,
             residual = g.residual,
+            anova = self.anova,
             cv = self.cv))
     @property
     def cv(self):
@@ -27,3 +29,15 @@ class ROIResponse(BaseResponse):
             sum((r_thetas * sin(two_thetas)))**2 +
             sum((r_thetas * cos(two_thetas)))**2
         ) / sum(r_thetas)
+
+    @property
+    def anova(self):
+        try:
+            blank = self.blank.meantrace if self.blank else []
+            oris = [
+                [ont.array.mean() for ont in ori.ontimes]
+                for ori in self.orientations.responses]
+            f, p = stats.f_oneway(blank, *oris)
+            return dict(f=f, p=p)
+        except Exception as e:
+            return {}

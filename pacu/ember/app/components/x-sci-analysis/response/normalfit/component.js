@@ -5,7 +5,7 @@ const yAxes = {
   type: 'linear',
   position: 'left',
   gridLines: {
-    color: 'rgba(100, 100, 100, 0.1)',
+    color: 'rgba(255, 255, 255, 0.1)',
     zeroLineColor: 'rgba(255, 255, 255, 0.5)',
     display: true,
     drawTicks: false
@@ -25,9 +25,8 @@ const xAxes = {
   },
   gridLines: {
     display: true,
-    color: 'rgba(100, 100, 100, 0.1)',
+    color: 'rgba(255, 255, 255, 0.1)',
     zeroLineColor: 'rgba(255, 255, 255, 0.5)',
-    // drawOnChartArea: false,
     drawTicks: false
   },
   ticks: {
@@ -86,7 +85,7 @@ const Data = Ember.Object.extend({
 export default Ember.Component.extend({
   tagName: 'canvas',
   width: 220,
-  height: 120,
+  height: 80,
   attributeBindings: ['width', 'height'],
   @computed() ctx() { return this.element.getContext('2d'); },
   @computed() config() { return { type, data, options }; },
