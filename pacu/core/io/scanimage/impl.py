@@ -139,6 +139,7 @@ class ScanimageIO(object):
             for sf in self.db.locator.sfrequencies.loop():
                 response = ROIResponse.from_adaptor(roi, trace, self.db)
                 roi.responses[self.sfrequency] = response
+            roi.update_with_adaptor(self.db)
             roi.invalidated = False
             return self.session.roi.upsert(roi)
 
@@ -146,47 +147,10 @@ class ScanimageIO(object):
 # from pacu.core.io.scanimage.response.orientation import Orientation
 # path = 'tmp/Dario/2015.12.02/x.151101.2/bV1_Contra_004'
 # path = 'tmp/Dario/2016.02.26/x.151114.1/DM3_RbV1_Contra_00002'
-# 
+
 # path = 'tmp/Dario/2016.01.27/r.151117.3/DM9_RbV1_Contra004004'
 # qwe = ScanimageIO(path)
 # roi = qwe.session.roi.one().val
-
-# asd = roi.responses[0.1]
-
-# oris = [
-#     [ont.array.mean() for ont in ori.ontimes]
-#     for ori in self.orientations.responses]
-# f, p = stats.f_oneway(blank, *oris)
-
-
-# (2.6221229192686382, 0.0045797445941786405)
-
-
-
-
-
-
-
-
-
-# qwe.db.locator.sfrequencies.set_cursor(4)
-# ind = qwe.db.indice
-# trace = qwe.make_trace(roi)
-# qwe.db.locator.sfrequencies.set_cursor(1)
-# asd = Orientation.from_adaptor(0.0, trace, qwe.db)
-
-# asd = roi.updates_by_io(qwe)
-# ori = asd.orientations.responses[0]
-# tr = ori.ontimes[0]
-
-
-# stats['blank_m'] = self.response.blank.meantrace.mean() if self.response.blank else None
-# stats['fff_m'] = self.response.flicker.meantrace.mean() if self.response.flicker else None
-# stats['tau'] = self.tiffFig.responseFig.tau
-
-
-
-
 
 
 class ScanimageRecord(object):
@@ -220,7 +184,6 @@ class ScanimageRecord(object):
             tifffile.format_size(self.tiff_path.stat().st_size)
         )
 
-
 def testdump():
     path = 'tmp/Dario/2015.12.02/x.151101.2/bV1_Contra_004'
     qwe = ScanimageIO(path)
@@ -242,6 +205,7 @@ def testdump2():
         ([75,27], [71,27], [69,30], [69,34], [71,36], [75,36], [78,35], [79,32], [78,29]),
         ([60,72], [57,72], [55,75], [56,78], [58,79], [62,79], [64,76], [63,73]),
         ([53,47], [51,44], [48,43], [45,43], [43,46], [43,49], [46,51], [50,51], [52,50]),
+        ([53, 104], [55, 108], [59, 110], [64, 109], [65, 105], [63, 101], [58, 100], [55, 101])
     ]
     pgs = [[dict(x=x, y=y) for x, y in roi] for roi in rois]
     kws = [dict(polygon=p) for p in pgs]

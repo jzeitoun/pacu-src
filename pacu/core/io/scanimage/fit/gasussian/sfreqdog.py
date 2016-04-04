@@ -118,7 +118,7 @@ class SpatialFrequencyDogFit(object):
     def bandwidth_ratio(self):
         try:
             left, right = self.solve_bandwidth()
-            return right[0] / left[0]
+            return np.sqrt(right[0] / left[0])
         except Exception as e:
             print 'exception in bandwidth_ratio:', type(e), str(e)
             return np.nan

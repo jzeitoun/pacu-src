@@ -8,8 +8,8 @@
     <th rowspan="2">CV</th>
     <th rowspan="2">DSI</th>
     <th rowspan="2">Sigma</th>
-    <th rowspan="2">Tau</th>
     <th rowspan="2">OPref</th>
+    <th rowspan="2">Tau</th>
     <th rowspan="2">RMax</th>
     <th rowspan="2">Residual</th>
     <th colspan="2">Anova Each</th>
@@ -42,10 +42,10 @@
         rowspan="{{roi.responseCountPlusOne}}">{{roi.sfreqfit.blank}}</td>
     <td class="cell-mean-flicker"
         rowspan="{{roi.responseCountPlusOne}}">{{roi.sfreqfit.flicker}}</td>
-    <td class="cell-anova-all-p"
-        rowspan="{{roi.responseCountPlusOne}}">{{roi.anova_all.p}}</td>
     <td class="cell-anova-all-f"
         rowspan="{{roi.responseCountPlusOne}}">{{roi.anova_all.f}}</td>
+    <td class="cell-anova-all-p"
+        rowspan="{{roi.responseCountPlusOne}}">{{roi.anova_all.p}}</td>
     <td class="cell-sf-peak"
         rowspan="{{roi.responseCountPlusOne}}">{{roi.sfreqfit.peak}}</td>
     <td class="cell-sf-pref"
@@ -60,8 +60,8 @@
     <td class="cell-cv"            >{{or-icon "red help" r.stats.cv}}</td>
     <td class="cell-dsi"           >{{or-icon "red help" r.stats.dsi}}</td>
     <td class="cell-sigma"         >{{or-icon "red help" r.stats.sigma}}</td>
-    <td class="cell-tau"           >{{or-icon "red help" r.stats.tau}}</td>
     <td class="cell-o-pref"        >{{or-icon "red help" r.stats.o_pref}}</td>
+    <td class="cell-tau"           >{{or-icon "red help" r.stats.tau}}</td>
     <td class="cell-r-max"         >{{or-icon "red help" r.stats.r_max}}</td>
     <td class="cell-residual"      >{{or-icon "red help" r.stats.residual}}</td>
     <td class="cell-anova-each-f"  >{{or-icon "red help" r.stats.anova.f}}</td>

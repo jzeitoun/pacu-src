@@ -6,6 +6,7 @@ import cv2
 import numpy as np
 
 from pacu.util.inspect import repr
+from pacu.core.io.scanimage.fit.gasussian.sumof import SumOfGaussianFit
 from pacu.core.io.scanimage.fit.gasussian.sfreqdog import SpatialFrequencyDogFit
 from pacu.core.io.scanimage import util
 
@@ -18,6 +19,8 @@ class ROI(object):
     blank = None
     flicker = None
     responses = None
+    best_sf_responses = None
+    best_o_pref = None
     __repr__ = repr.auto_strict
     def __init__(self, id=None, **kwargs):
         self.id = id or '{:6f}'.format(time.time())
@@ -26,9 +29,11 @@ class ROI(object):
             self.responses = {}
     def toDict(self):
         return dict(vars(self),
-            sfreqft = self.sfreqfit,
-            rs_at_best_o_pref = self.rs_at_best_o_pref,
-            anova_all=self.anova_all)
+            sfreqfit = self.sfreqfit,
+            sfreqfit_legacy = self.sfreqfit_legacy,
+            best_o_pref = self.best_o_pref,
+            best_sf_responses = self.best_sf_responses,
+            anova_all = self.anova_all)
     def mask(self, shape):
         mask = np.zeros(shape, dtype='uint8')
         cv2.drawContours(mask, [self.inner_contours], 0, 255, -1)
@@ -68,40 +73,47 @@ class ROI(object):
             for ori in resp.orientations.responses]
         f, p = stats.f_oneway(blank, *all_oris)
         return util.nan_for_json(dict(f=f, p=p))
-    @property
-    def best_o_pref(self):
-        _, max_sf = max((rp.normalfit.gaussian.r_pref, sf)
-            for sf, rp in self.responses.items())
-        return self.responses[max_sf].normalfit.gaussian.o_pref
-    @property
-    def rs_at_best_o_pref(self):
-        return sorted(
-            (sf, v.normalfit.gaussian.response_at(self.best_o_pref))
-            for sf, v in self.responses.items())
     def updates_by_io(self, io):
         return io.update_responses(self.id)
     def trace_by_io(self, io):
         return io.make_trace(self)
-#     @property
-#     def sfreqfit(self): # this is legacy.
-#         rmax = list(sorted(
-#             (sfreq, resp.stats['r_max'])
-#             for sfreq, resp in self.responses.items()))
-#         flicker = self.flicker.mean if self.flicker else None
-#         blank = self.blank.mean if self.flicker else None
-#         return SpatialFrequencyDogFit(rmax, flicker, blank)
+    @property
+    def sfreqfit_legacy(self): # this is legacy.
+        if not self.responses:
+            return
+        rmax = list(sorted(
+            (sfreq, resp.stats['r_max'])
+            for sfreq, resp in self.responses.items()))
+        flicker = self.flicker.mean if self.flicker else None
+        blank = self.blank.mean if self.flicker else None
+        return SpatialFrequencyDogFit(rmax, flicker, blank)
     @property
     def sfreqfit(self): # this is new.
         if not self.responses:
             return
-        rmax = self.rs_at_best_o_pref
+        rmax = self.best_sf_responses
         flicker = self.flicker.mean if self.flicker else None
         blank = self.blank.mean if self.flicker else None
         return SpatialFrequencyDogFit(rmax, flicker, blank)
-
-
-
-
+    @property
+    def sorted_responses(self):
+        responses = self.responses or []
+        return sorted((sf, resp) for sf, resp in responses.items())
+    def meanresponse_over_sf(self, adaptor):
+        cfreq = adaptor.capture_frequency
+        return np.array([
+            resp.orientations.ons[...,
+            int(1*cfreq):int(2*cfreq)
+        ].mean(axis=(1, 2)) for sf, resp in self.sorted_responses]).mean(axis=0)
+    def rs_at_best_o_pref(self, adaptor):
+        gaussian = SumOfGaussianFit(adaptor.orientations,
+            self.meanresponse_over_sf(adaptor))
+        self.best_o_pref = gaussian.o_pref
+        return [
+            (sf, v.normalfit.gaussian.response_at(self.best_o_pref))
+            for sf, v in self.sorted_responses]
+    def update_with_adaptor(self, adaptor):
+        self.best_sf_responses = self.rs_at_best_o_pref(adaptor)
 
 
 
