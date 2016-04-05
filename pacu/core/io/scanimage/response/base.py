@@ -22,13 +22,11 @@ class BaseResponse(object):
     @classmethod
     def from_adaptor(cls, roi, trace, adaptor):
         self = cls(trace)
+        self.blank = roi.blank
+        self.flicker = roi.flicker
         self.sfreq = adaptor.locator.sfrequencies.current
         self.overview = OverviewResponse.from_adaptor(self, adaptor)
         self.orientations = OrientationsResponse.from_adaptor(self, adaptor)
-        self.normalfit = NormalfitResponse.from_adaptor(self, adaptor)
-        self.decay = DecayResponse.from_adaptor(self, adaptor)
-        self.blank = roi.blank
-        self.flicker = roi.flicker
         return self
     def toDict(self):
         return dict(
@@ -38,3 +36,7 @@ class BaseResponse(object):
             fit = self.normalfit,
             decay = self.decay,
             stats = self.stats)
+    def update_fit_and_decay(self, roi, adaptor):
+        self.normalfit = NormalfitResponse.from_adaptor(
+            self, adaptor, roi.best_o_pref)
+        self.decay = DecayResponse.from_adaptor(self, adaptor)

@@ -108,9 +108,11 @@ from collections import namedtuple
 Fit = namedtuple('Fit', 'y x') # note order
 
 class SumOfGaussianFit(object):
-    def __init__(self, xoris, ymeas):
+    def __init__(self, xoris, ymeas, global_o_pref=None):
+        print 'init sumofgaussian', global_o_pref
         self.xoris = xoris
         self.ymeas = ymeas
+        self.global_o_pref = global_o_pref
     def function(self, x, params):
         A_1, A_2, sigma, offset = params
         return (
@@ -121,6 +123,9 @@ class SumOfGaussianFit(object):
             offset) if sigma > 0 else np.ones(x.shape)*offset
     @memoized_property
     def preferred_orientation(self): # Niell and Stryker 2008
+        if self.global_o_pref:
+            print 'Using global OPref', self.global_o_pref
+            return self.global_o_pref/2
         x_rad = np.deg2rad(self.xoris)
         numerator = sum(self.ymeas*np.exp(2j*x_rad))
         o_pref = np.angle(numerator/sum(self.ymeas), deg=True)

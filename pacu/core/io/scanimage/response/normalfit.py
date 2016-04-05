@@ -19,7 +19,8 @@ class NormalfitResponse(object):
             fit = self.fit._asdict(),
         )
     @classmethod
-    def from_adaptor(cls, response, adaptor):
+    def from_adaptor(cls, response, adaptor, best_o_pref):
+        print 'make normalfit respo', best_o_pref
         self = cls(response.trace)
         self.names = response.orientations.names
         self.measure = response.orientations.ons[ # aka meanresponses
@@ -32,7 +33,7 @@ class NormalfitResponse(object):
         self.o_peaks           ,\
         self.measure_stretch   = sum_of_gaussians.fit(self.names, self.measure)
         self.fit = Fit(*self.meanresponses_fit)
-        self.gaussian = SumOfGaussianFit(self.names, self.measure)
+        self.gaussian = SumOfGaussianFit(self.names, self.measure, best_o_pref)
         return self
     @property
     def max_orientation_index(self):

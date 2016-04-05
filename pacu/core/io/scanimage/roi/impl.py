@@ -91,13 +91,16 @@ class ROI(object):
     def sfreqfit(self): # this is new.
         if not self.responses:
             return
-        rmax = self.best_sf_responses
+        rmax = list(sorted(
+            (sfreq, resp.stats['r_max'])
+            for sfreq, resp in self.responses.items()))
+        # rmax = self.best_sf_responses
         flicker = self.flicker.mean if self.flicker else None
         blank = self.blank.mean if self.flicker else None
         return SpatialFrequencyDogFit(rmax, flicker, blank)
     @property
     def sorted_responses(self):
-        responses = self.responses or []
+        responses = self.responses or {}
         return sorted((sf, resp) for sf, resp in responses.items())
     def meanresponse_over_sf(self, adaptor):
         cfreq = adaptor.capture_frequency
@@ -105,16 +108,16 @@ class ROI(object):
             resp.orientations.ons[...,
             int(1*cfreq):int(2*cfreq)
         ].mean(axis=(1, 2)) for sf, resp in self.sorted_responses]).mean(axis=0)
-    def rs_at_best_o_pref(self, adaptor):
+    def update_with_adaptor(self, adaptor):
         gaussian = SumOfGaussianFit(adaptor.orientations,
             self.meanresponse_over_sf(adaptor))
         self.best_o_pref = gaussian.o_pref
-        return [
-            (sf, v.normalfit.gaussian.response_at(self.best_o_pref))
-            for sf, v in self.sorted_responses]
-    def update_with_adaptor(self, adaptor):
-        self.best_sf_responses = self.rs_at_best_o_pref(adaptor)
+    #     # self.best_sf_responses = self.rs_at_best_o_pref(adaptor)
 
+    # def rs_at_best_o_pref(self, adaptor):
+    #     return [
+    #         (sf, v.normalfit.gaussian.response_at(self.best_o_pref))
+    #         for sf, v in self.sorted_responses]
 
 
 

@@ -3,7 +3,7 @@
     <th rowspan="2">Cell ID</th>
     <th colspan="2">Mean</th>
     <th colspan="2">Anova All</th>
-    <th colspan="4">SF</th>
+    <th colspan="5">SF</th>
     <th rowspan="2">OSI</th>
     <th rowspan="2">CV</th>
     <th rowspan="2">DSI</th>
@@ -24,6 +24,7 @@
     <th class="cell-sf-peak">Peak</th>
     <th class="cell-sf-pref">Pref</th>
     <th class="cell-sf-ratio">Ratio</th>
+    <th class="cell-sf-global-o-pref">Global OPref</th>
     <th class="cell-sf-at">@</th>
     <th class="cell-anova-each-f">F</th>
     <th class="cell-anova-each-p">P</th>
@@ -52,6 +53,8 @@
         rowspan="{{roi.responseCountPlusOne}}">{{roi.sfreqfit.pref}}</td>
     <td class="cell-sf-ratio"
         rowspan="{{roi.responseCountPlusOne}}">{{roi.sfreqfit.ratio}}</td>
+    <td class="cell-sf-global-o-pref"
+        rowspan="{{roi.responseCountPlusOne}}">{{roi.best_o_pref}}</td>
   </tr>
   {{#each roi.sortedResponses as |r|}}
   <tr class="{{if-eq-then-class attrs.curSF r.sfreq "positive"}}">
