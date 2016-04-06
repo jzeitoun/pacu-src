@@ -44,7 +44,8 @@ export default Ember.Object.extend({
   initialize(route) {
     // window.qwe = this;
     this.mirror(
-      'main_response', 'channel', 'sfrequencies', 'sfrequency_index'
+      'main_response', 'channel', 'sfrequencies',
+      'sfrequency_index', 'sog_initial_guess'
     ).then((x) => {
       this.requestFrame(0);
     }).then(() => {

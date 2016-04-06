@@ -1,10 +1,12 @@
 import Ember from 'ember';
 
 function upsertROI(roi) {
-  const data = roi.getProperties(
+  const data = roi.getProperties('guessParams',
     'polygon', 'neuropil', 'id', 'invalidated', 'npEnabled');
-  this.get('wsx').invoke('upsert_roi', data).then(data => {
+  return this.get('wsx').invoke('upsert_roi', data).then(data => {
     roi.setProperties(data);
+  }).catch(err => {
+    this.toast.error(err.detail);
   });
 }
 export default {
@@ -90,6 +92,7 @@ export default {
     roi.polygon.removeObject(point);
   },
   openROIModal(rois, roi) {
+    window.roi = roi;
     this.currentModel.set('roiOnDetail', roi);
     Ember.run.later(this, 'send', 'exclActivateROI', rois, roi, 500);
   },
@@ -102,5 +105,19 @@ export default {
         // this.send('fetchROI', roi);
       }
     });
+  },
+  updateSoGInitialGuessForThisSF(roi, params, sfreq) {
+    const guessParams = {};
+    guessParams[sfreq] = params;
+    roi.set('guessParams', guessParams);
+    this.send('updateAndFetchROI', roi);
+  },
+  updateSoGInitialGuessForAllSF(roi, params) {
+    const guessParams = {};
+    for (let resp of roi.get('sortedResponses')) {
+      guessParams[resp.sfreq] = params;
+    }
+    roi.set('guessParams', guessParams);
+    this.send('updateAndFetchROI', roi);
   }
 }

@@ -108,11 +108,21 @@ from collections import namedtuple
 Fit = namedtuple('Fit', 'y x') # note order
 
 class SumOfGaussianFit(object):
-    def __init__(self, xoris, ymeas, global_o_pref=None):
-        print 'init sumofgaussian', global_o_pref
+    def __init__(self,
+            xoris,
+            ymeas,
+            global_o_pref=None,
+            initial_guess=None,
+        ):
         self.xoris = xoris
         self.ymeas = ymeas
+        self.initial_guess = initial_guess or ((0, 1), (0, 1), (15, 60), (0, 0.01))
         self.global_o_pref = global_o_pref
+        if global_o_pref:
+            print '\n====================================='
+            print 'global o_pref', global_o_pref
+            print 'o_prefs', self.o_prefs
+            print '=====================================\n'
     def function(self, x, params):
         A_1, A_2, sigma, offset = params
         return (
@@ -124,8 +134,8 @@ class SumOfGaussianFit(object):
     @memoized_property
     def preferred_orientation(self): # Niell and Stryker 2008
         if self.global_o_pref:
-            print 'Using global OPref', self.global_o_pref
-            return self.global_o_pref/2
+            print 'using global OPref', self.global_o_pref
+            return self.global_o_pref
         x_rad = np.deg2rad(self.xoris)
         numerator = sum(self.ymeas*np.exp(2j*x_rad))
         o_pref = np.angle(numerator/sum(self.ymeas), deg=True)
@@ -152,7 +162,7 @@ class SumOfGaussianFit(object):
             return sum(err**2)
         fit_params, _, _, _ = optimize.brute(
             get_residuals,
-            ((0, 1), (0, 1), (15, 60), (0, 0.01)),
+            self.initial_guess,
             args = self.stretched,
             Ns = 5, full_output = True, finish = None)
         return fit_params
@@ -166,6 +176,8 @@ class SumOfGaussianFit(object):
             maxfev = 100,
             full_output = True,
             diag = (1, 1, 100, 1)
+            # diag : sequence, optional
+            # N positive entries that serve as a scale factors for the variables.
         )
         return fit_params
     @memoized_property

@@ -14,7 +14,7 @@ function outerPointsByRatio(polygon, centroid, m, n=2) {
 
 export default Ember.Mixin.create({
   npDistRatio: 4,
-  npEnabled: false,
+  npEnabled: true,
   npDisabled: Ember.computed.not('npEnabled'),
   @computed('centroid', 'npDistRatio', 'npEnabled') neuropil: {
     get(centroid, ratio, enabled) {

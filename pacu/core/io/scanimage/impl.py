@@ -18,6 +18,21 @@ from pacu.core.io.scanimage.response.main import MainResponse
 from pacu.core.io.scanimage.response.roi import ROIResponse
 from pacu.core.io.scanimage.response.orientation import Orientation
 
+def validate_guess_params(params):
+    validated = {}
+    try:
+        for sf, param in params.items():
+            (p1, p2), (p3, p4), (p5, p6), (p7, p8) = param
+            validated[float(sf)] = (
+                (float(p1), float(p2)),
+                (float(p3), float(p4)),
+                (float(p5), float(p6)),
+                (float(p7), float(p8)),
+            )
+    except Exception as e:
+        raise Exception(
+            'Can not initialize initial guess. Did you set correct numbers?')
+    return validated
 class ScanimageIO(object):
     session_name = 'main'
     def __init__(self, path):
@@ -107,7 +122,8 @@ class ScanimageIO(object):
         self.session_name = session_name
         return self
     def upsert_roi(self, roi_kwargs):
-        return self.session.roi.upsert(ROI(**roi_kwargs))
+        gp = validate_guess_params(roi_kwargs.pop('guessParams', {}))
+        return self.session.roi.upsert(ROI(guess_params=gp, **roi_kwargs))
     def invalidate_rois(self):
         for roi in self.session.roi.values():
             roi.invalidated = True
@@ -141,10 +157,11 @@ class ScanimageIO(object):
                 roi.responses[self.sfrequency] = response
             roi.update_with_adaptor(self.db)
             for sf, resp in roi.sorted_responses:
-                print '\tudpate fit and decay for', sf
-                resp.update_fit_and_decay(roi, self.db)
+                gp = roi.guess_params.get(sf)
+                resp.update_fit_and_decay(roi, self.db, gp)
             roi.invalidated = False
             return self.session.roi.upsert(roi)
+    sog_initial_guess = ((0, 1), (0, 1), (15, 60), (0, 0.01))
 
 
 # from pacu.core.io.scanimage.response.orientation import Orientation
@@ -156,7 +173,6 @@ class ScanimageIO(object):
 # roi = qwe.session.roi.one().val
 # for sf, re in roi.sorted_responses:
 #     print re.normalfit.gaussian.r_max
-#     print re.normalfit.gaussian.o_peaks
 
 
 class ScanimageRecord(object):
@@ -202,7 +218,7 @@ def testdump():
     for kw in kws:
         qwe.session.roi.upsert(ROI(**kw))
 
-def testdump2():
+def test():
     path = 'tmp/Dario/2016.01.27/r.151117.3/DM9_RbV1_Contra004004'
     qwe = ScanimageIO(path)
     qwe.session.roi.clear()
@@ -217,7 +233,7 @@ def testdump2():
     kws = [dict(polygon=p) for p in pgs]
     for kw in kws:
         roi = qwe.session.roi.upsert(ROI(**kw))
-        qwe.update_responses(roi.id)
+        # qwe.update_responses(roi.id)
 
 def ScanimageIOFetcher(year, month, day, mouse, image, session):
     root = manager.instance('opt').scanimage_root

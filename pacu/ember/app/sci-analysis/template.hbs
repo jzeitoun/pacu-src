@@ -2,9 +2,14 @@
   {{#x-modal-for-object (mut model.roiOnDetail)
     onApprove=(route-action "updateAndFetchROI" model.roiOnDetail)
     approveText="Update Now"
-    cancelText="Update Later"
+    cancelText="Close"
     icon="sun" header="ROI Details" as |modal|}}
-    {{x-sci-analysis/roi-detail modal.object}}
+    {{x-sci-analysis/roi-detail modal.object model=model
+      updateSoGInitialGuessForThisSF=(
+        route-action "updateSoGInitialGuessForThisSF")
+      updateSoGInitialGuessForAllSF=(
+        route-action "updateSoGInitialGuessForAllSF")
+    }}
   {{/x-modal-for-object}}
 
   <div class="ui five column padded grid">
@@ -14,7 +19,15 @@
       <p>{{model.desc}}</p>
     </div>
     <div class="blue column">{{model.createdat}}</div>
-    <div class="green column">{{model.imagesrc}}</div>
+    <div class="green column">
+      <p>SoG Default Initial Guess</p>
+      {{#with model.sog_initial_guess as |g|}}
+        <span class="ui mini label">{{get g "0"}}</span>
+        <span class="ui mini label">{{get g "1"}}</span>
+        <span class="ui mini label">{{get g "2"}}</span>
+        <span class="ui mini label">{{get g "3"}}</span>
+      {{/with}}
+    </div>
     <div class="purple column">
       <p>Spatial frequency</p>
       {{x-sui-value-select

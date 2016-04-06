@@ -21,16 +21,18 @@ class ROI(object):
     responses = None
     best_sf_responses = None
     best_o_pref = None
+    guess_params = None
     __repr__ = repr.auto_strict
     def __init__(self, id=None, **kwargs):
         self.id = id or '{:6f}'.format(time.time())
         self.__dict__.update(kwargs)
         if self.responses is None:
             self.responses = {}
+        if self.guess_params is None:
+            self.guess_params = {}
     def toDict(self):
         return dict(vars(self),
             sfreqfit = self.sfreqfit,
-            sfreqfit_legacy = self.sfreqfit_legacy,
             best_o_pref = self.best_o_pref,
             best_sf_responses = self.best_sf_responses,
             anova_all = self.anova_all)
@@ -66,38 +68,34 @@ class ROI(object):
     @property
     def anova_all(self):
         blank = self.blank.meantrace if self.blank else []
+        flicker = self.flicker.meantrace if self.flicker else []
         all_oris = [
             # ori.meantrace
             [ont.array.mean() for ont in ori.ontimes]
-            for resp in self.responses.values() 
+            for resp in self.responses.values()
             for ori in resp.orientations.responses]
-        f, p = stats.f_oneway(blank, *all_oris)
+        print 'number of alll oris', len(all_oris)
+        # print 'number of alll oris', len(all_oris)
+        f, p = stats.f_oneway(blank, flicker, *all_oris)
         return util.nan_for_json(dict(f=f, p=p))
     def updates_by_io(self, io):
         return io.update_responses(self.id)
     def trace_by_io(self, io):
         return io.make_trace(self)
     @property
-    def sfreqfit_legacy(self): # this is legacy.
-        if not self.responses:
-            return
-        rmax = list(sorted(
-            (sfreq, resp.stats['r_max'])
-            for sfreq, resp in self.responses.items()))
-        flicker = self.flicker.mean if self.flicker else None
-        blank = self.blank.mean if self.flicker else None
-        return SpatialFrequencyDogFit(rmax, flicker, blank)
-    @property
     def sfreqfit(self): # this is new.
         if not self.responses:
             return
-        rmax = list(sorted(
-            (sfreq, resp.stats['r_max'])
-            for sfreq, resp in self.responses.items()))
-        # rmax = self.best_sf_responses
-        flicker = self.flicker.mean if self.flicker else None
-        blank = self.blank.mean if self.flicker else None
-        return SpatialFrequencyDogFit(rmax, flicker, blank)
+        try:
+            rmax = list(sorted(
+                (sfreq, resp.stats['r_max'])
+                for sfreq, resp in self.responses.items()))
+            # rmax = self.best_sf_responses
+            flicker = self.flicker.mean if self.flicker else None
+            blank = self.blank.mean if self.flicker else None
+            return SpatialFrequencyDogFit(rmax, flicker, blank)
+        except:
+            return {}
     @property
     def sorted_responses(self):
         responses = self.responses or {}
@@ -109,21 +107,8 @@ class ROI(object):
             int(1*cfreq):int(2*cfreq)
         ].mean(axis=(1, 2)) for sf, resp in self.sorted_responses]).mean(axis=0)
     def update_with_adaptor(self, adaptor):
-        gaussian = SumOfGaussianFit(adaptor.orientations,
-            self.meanresponse_over_sf(adaptor))
+        gaussian = SumOfGaussianFit(
+            adaptor.orientations,
+            self.meanresponse_over_sf(adaptor)
+        )
         self.best_o_pref = gaussian.o_pref
-    #     # self.best_sf_responses = self.rs_at_best_o_pref(adaptor)
-
-    # def rs_at_best_o_pref(self, adaptor):
-    #     return [
-    #         (sf, v.normalfit.gaussian.response_at(self.best_o_pref))
-    #         for sf, v in self.sorted_responses]
-
-
-
-
-
-
-
-
-

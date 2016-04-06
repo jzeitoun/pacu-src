@@ -17,6 +17,7 @@ class BaseResponse(object):
     blank = None
     flicker = None
     anova = None
+    sog_initial_guess = None
     def __init__(self, trace):
         self.trace = trace
     @classmethod
@@ -35,8 +36,10 @@ class BaseResponse(object):
             orientations = self.orientations,
             fit = self.normalfit,
             decay = self.decay,
-            stats = self.stats)
-    def update_fit_and_decay(self, roi, adaptor):
+            stats = self.stats,
+            sog_initial_guess = self.sog_initial_guess)
+    def update_fit_and_decay(self, roi, adaptor, initial_guess=None):
+        self.sog_initial_guess = initial_guess
         self.normalfit = NormalfitResponse.from_adaptor(
             self, adaptor, roi.best_o_pref)
         self.decay = DecayResponse.from_adaptor(self, adaptor)
