@@ -12,13 +12,13 @@ def index_record(year, month, day):
 
 def index_day(year, month):
     days = sorted(
-        set(path.suffix[1:]
+        set(unicode(path.suffix[1:])
             for path in opt.scanimage_root.ls('{}.{:2}.*'.format(year, month))))
     return dict(year=year, month=month, days=days)
 
 def index_month(year):
     months = sorted(
-        set(path.stem[5:]
+        set(unicode(path.stem[5:])
         for path in opt.scanimage_root.ls('{}.*'.format(year))
         if path.is_dir()))
     return dict(year=year, months=months)
