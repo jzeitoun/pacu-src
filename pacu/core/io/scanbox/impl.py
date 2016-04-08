@@ -139,6 +139,25 @@ def combine(tiffpath, dest, ls='*.tiff'):
     tifffile.imsave(path.joinpath(dest).with_suffix('.tiff').str, movie)
     # consider using just stack instead of concatenate
 
+def conv_comb(path, lspath='*', nchan=2):
+    """
+    path = '/media/Data/Recordings/scanbox-jack/Dario/Convert Please/Tox 3 D3'
+    ls = 'D3_000_*'
+    nchan = 2
+    """
+    path = Path(path)
+    lspath = Path(lspath)
+    print 'path', path
+    print 'for', lspath
+    tiffpath = path.joinpath('tiff')
+    print 'conv all first'
+    conv_all(path, nchan=nchan, ls=lspath.with_suffix('.sbx').str)
+    print 'combine...'
+    combine(tiffpath, '{}.mean.tiff'.format(lspath.str), ls=lspath.stem)
+
+
+# from pacu.core.io.scanbox import impl as sbx
+
 # testpath = Path('/Volumes/Users/ht/Desktop/test2/test2_000_001')
 # s1 = ScanboxIO(testpath)
 # testpath = Path('/Volumes/Users/ht/Desktop/test2/test2_000_002')
@@ -150,8 +169,8 @@ def combine(tiffpath, dest, ls='*.tiff'):
 
 # from pacu.util.path import Path
 # from pacu.util.path import Path
-# 
-#                                                                                                                                                                              
+#
+#
 # from pacu.core.io.scanbox import impl as sbx
 # sbx.conv_all('/media/Data/Recordings/scanbox-jack/Dario/Tox3', nchan=2, ls='Tox3_000_*')
 # sbx.conv_all('/media/Data/Recordings/scanbox-jack/Dario/Tox3', nchan=2, ls='Tox3_001_*')
