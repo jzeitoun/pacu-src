@@ -1,16 +1,6 @@
-# import time
-# import struct
-# from collections import namedtuple
-
-# import numpy as np
-# import tifffile
-
 import shutil
 
 from pacu.util.path import Path
-# from pacu.util.prop.memoized import memoized_property
-# from pacu.core.io.trajectory.trial import TrajectoryTrial
-
 from pacu.util.inspect import repr
 from pacu.util.prop.memoized import memoized_property
 from pacu.core.io.scanimage.nmspc import HybridNamespace

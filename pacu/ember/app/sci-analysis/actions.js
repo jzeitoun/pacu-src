@@ -96,6 +96,9 @@ export default {
     this.currentModel.set('roiOnDetail', roi);
     Ember.run.later(this, 'send', 'exclActivateROI', rois, roi, 500);
   },
+  openModal(genericObject) {
+    this.currentModel.set('objectForModal', genericObject);
+  },
   sfrequencyIndexChanged(index) {
     this.get('wsx').invoke('set_sfrequency_index', index).then(data => {
       const roi = this.currentModel.get('curROI');
@@ -119,5 +122,13 @@ export default {
     }
     roi.set('guessParams', guessParams);
     this.send('updateAndFetchROI', roi);
+  },
+  updateColormap(mapName, xmid, ymid) {
+    const p = this.get('wsx').invoke('channel.update_colormap', mapName, xmid, ymid);
+    return p.then(data => {
+      this.currentModel.indexChanged();
+    }).catch(err => {
+      this.toast.error(err.detail);
+    });
   }
 }

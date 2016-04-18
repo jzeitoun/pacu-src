@@ -4,6 +4,7 @@ import ujson
 
 import numpy as np
 import matplotlib.pyplot as plt
+from matplotlib import cm
 from matplotlib.colors import Normalize
 from matplotlib.cm import ScalarMappable
 from ipdb import set_trace
@@ -12,6 +13,8 @@ from pacu.util.path import Path
 from pacu.util.inspect import repr
 from pacu.util.prop.memoized import memoized_property
 from pacu.core.io.scanimage.legacy.cfaan import driftcorrect
+
+from pacu.core.io.util.colormap.distorted import DistortedColormap
 
 class ScanimageChannelMeta(object):
     __repr__ = repr.auto_strict
@@ -33,14 +36,23 @@ class ScanimageChannel(object):
     cmap_name = 'jet'
     def __init__(self, path):
         self.path = Path(path)
+        self.dcmap = DistortedColormap('jet', xmid=0.5, ymid=0.5)
     @property
     def mmappath(self):
         return self.path.with_suffix('.mmap.npy')
     @memoized_property
-    def cmap8bit(self):
-        norm = Normalize(
+    def norm(self):
+        return Normalize(
             vmin=self.stat.MIN.min()/256, vmax=self.stat.MAX.max()/256)
-        return ScalarMappable(norm=norm, cmap=plt.get_cmap(self.cmap_name))
+    @memoized_property
+    def cmap8bit(self):
+        return ScalarMappable(norm=self.norm, cmap=self.dcmap.distorted)
+    @cmap8bit.invalidator
+    def update_colormap(self, name, xmid, ymid):
+        x = float(xmid) / 100
+        y = float(ymid) / 100
+        print 'UPDATE', name, "X", x, "Y", y
+        self.dcmap = DistortedColormap('jet', xmid=x, ymid=y)
     @memoized_property
     def mmap(self):
         shape = (self.meta.z, self.meta.y, self.meta.x)
@@ -86,4 +98,7 @@ class ScanimageChannel(object):
         z, y, x = self.mmap.shape
         return dict(depth=z, height=y, width=x)
     def request_frame(self, index):
+        # frame = self.mmap8bit[index]
+        # self.cmap8bit.set_clim(frame.min(), frame.max())
+        # return self.cmap8bit.to_rgba(frame, bytes=True).tostring()
         return self.cmap8bit.to_rgba(self.mmap8bit[index], bytes=True).tostring()

@@ -1,8 +1,11 @@
 import os
+import shutil
 import inspect
+from datetime import datetime
 import cPickle as pickle
 
 from ..compat.pathlib import Path
+from ..misc.unit.size import SizeUnit
 
 def ls(self, glob='*'):
     return list(self.glob(glob))
@@ -59,6 +62,12 @@ def merge_or_join_suffix(self, suffix, on):
         return self.join_suffixes(suffix)
 def stem_least(self):
     return self.name[:-len(''.join(self.suffixes))]
+def ensure_suffix(self, suffix):
+    if self.suffix != suffix:
+        raise ValueError(
+            'Path `{}` failed to match {!r} == {!r}.'.format(
+                self, self.suffix, suffix))
+    return self
 def with_suffixes(self, *suffixes):
     return map(self.with_suffix, suffixes)
 def join_suffixes(self, *suffixes):
@@ -80,6 +89,13 @@ def mkdir_if_none(self, mode=511, parents=True):
     if not self.is_dir():
         self.mkdir(mode=mode, parents=parents)
     return self
+def created_at(self):
+    return datetime.fromtimestamp(self.stat().st_ctime)
+def size(self):
+    return SizeUnit(self.stat().st_size)
+def rmtree(self, ignore_errors=True, onerror=None):
+    return shutil.rmtree(self.str,
+        ignore_errors=ignore_errors, onerror=onerror)
 
 Path.__floordiv__ = Path.with_name
 Path.str = property(Path.__str__)
@@ -94,10 +110,14 @@ Path.write = write
 Path.here = classmethod(here)
 Path.absdir = classmethod(absdir)
 Path.with_suffixes = with_suffixes
+Path.ensure_suffix = ensure_suffix
 Path.merge_suffix = merge_suffix
 Path.merge_or_join_suffix = merge_or_join_suffix
 Path.join_suffixes = join_suffixes
 Path.stem_least = property(stem_least)
 # Path.path_without_suffixes = property(path_without_suffixes)
+Path.created_at = property(created_at)
+Path.size = property(size)
 Path.stempath = property(stempath)
 Path.mkdir_if_none = mkdir_if_none
+Path.rmtree = rmtree

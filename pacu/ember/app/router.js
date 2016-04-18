@@ -18,8 +18,6 @@ Router.map(function() {
   this.route('andor', function() {
     this.route('device', { path: ':index' });
   });
-  // this.route('analyses', function() { this.route('new'); });
-  // this.route('analysis', { path: '/analysis/:analysis_id' });
   this.route('trj-analyses', function() {
     this.route('recordings', { path: '/:recording' }, function() {
       this.route('trials', { path: '/:trial' });
@@ -37,6 +35,9 @@ Router.map(function() {
   });
   this.route('sci-analysis',
     { path: '/sci-analysis/:year/:month/:day/:mouse/:image/:session' });
+  this.route('sbx-analyses', function() {
+    this.route('directory', { path: ':directory' }, function() {});
+  });
 });
 
 export default Router;

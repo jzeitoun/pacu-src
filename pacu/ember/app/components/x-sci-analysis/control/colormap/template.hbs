@@ -1,0 +1,23 @@
+<svg width="100px" height="100px">
+  <line x1="0" y1="0" x2="{{xmid}}" y2="{{ymid}}" />
+  <line x1="{{xmid}}" y1="{{ymid}}" x2="100" y2="100" />
+  {{x-draggable/circle class="handle" cx=(mut xmid) cy=(mut ymid)
+    onCircleMoving=(action "updateMidPoint")
+  }}
+</svg>
+<style>
+#{{elementId}} svg {
+  border: 1px solid white;
+  transform: scale(1,-1);
+}
+#{{elementId}} line {
+  stroke: white;
+  stroke-width: 1;
+}
+#{{elementId}} circle.handle {
+  stroke: yellow;
+  fill: black;
+  r: 5;
+  cursor: pointer;
+}
+</style>

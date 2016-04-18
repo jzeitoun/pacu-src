@@ -1,6 +1,7 @@
 import Ember from 'ember';
 import computed from 'ember-computed-decorators';
 import ROI from 'pacu/components/x-layer/roi/roi';
+// import ColormapModal from 'pacu/components/x-sci-analysis/colormap';
 
 const Image = Ember.Object.extend({
   buffer: null,

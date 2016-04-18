@@ -12,13 +12,28 @@
     }}
   {{/x-modal-for-object}}
 
+  {{x-modal-for-generic-object model.objectForModal}}
+
+  {{! HEADER }}
   <div class="ui five column padded grid">
-    <div class="yellow column">{{model.user}}</div>
-    <div class="red column">
-      <p>{{model.title}} - {{curIndex}}</p>
-      <p>{{model.desc}}</p>
+    <div class="yellow column">
+      <button class="ui simple dropdown button">
+        <i class="settings icon"></i>
+        <span>Settings</span>
+        <i class="dropdown icon"></i>
+        <div class="menu">
+          <div class="item"
+            {{action "openModal" model.colormapModal}}>
+            <i class="line chart icon"></i> Colormap</div>
+        </div>
+      </button>
     </div>
-    <div class="blue column">{{model.createdat}}</div>
+    <div class="red column"></div>
+    <div class="center aligned blue column">
+      {{x-sci-analysis/control/colormap xmid=50 ymid=50
+        onMidPointChanged=(route-action "updateColormap" "jet")
+      }}
+    </div>
     <div class="green column">
       <p>SoG Default Initial Guess</p>
       {{#with model.sog_initial_guess as |g|}}
