@@ -135,5 +135,18 @@ export default {
   invalidateTrajectory(roi) {
     roi.set('invalidated', true);
     upsertROI.call(this, roi);
+  },
+  exportAllAnova(roi) {
+    const lines = [];
+    for (let rep of roi.anova_all.matrix) {
+      lines.push(rep.join('\t'));
+    }
+    const joined = lines.join('\n');
+    swal({
+      title: "Please CTRL+A and CTRL+C yourself. (Blank -> Flicker -> Oris)",
+      text: `<textarea>${joined}</textarea>`,
+      html: true
+    });
+
   }
 }

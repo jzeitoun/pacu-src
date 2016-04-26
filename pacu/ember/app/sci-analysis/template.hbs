@@ -28,7 +28,18 @@
         </div>
       </button>
     </div>
-    <div class="red column"></div>
+    <div class="red column">
+      <button class="ui simple dropdown button">
+        <i class="settings icon"></i>
+        <span>Actions</span>
+        <i class="dropdown icon"></i>
+        <div class="menu">
+          <div class="item"
+            {{action "exportAllAnova" model.curROI}}>
+            <i class="line chart icon"></i> Export All Anova</div>
+        </div>
+      </button>
+    </div>
     <div class="center aligned blue column">
       {{x-sci-analysis/control/colormap xmid=50 ymid=50
         onMidPointChanged=(route-action "updateColormap" "jet")
