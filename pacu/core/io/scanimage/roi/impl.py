@@ -89,7 +89,7 @@ class ROI(object):
         all_oris = [
             # ori.meantrace
             [ont.array.mean() for ont in ori.ontimes]
-            for resp in self.responses.values()
+            for sf, resp in self.sorted_responses
             for ori in resp.orientations.responses]
         print 'number of alll oris', len(all_oris)
         # print 'number of alll oris', len(all_oris)
