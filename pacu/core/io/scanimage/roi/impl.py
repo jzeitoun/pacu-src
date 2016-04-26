@@ -94,9 +94,12 @@ class ROI(object):
         print 'number of alll oris', len(all_oris)
         # print 'number of alll oris', len(all_oris)
         f, p = stats.f_oneway(blank, flicker, *all_oris)
-        f_reps = [ont.array.mean() for ont in self.flicker.ontimes]
-        b_reps = [ont.array.mean() for ont in self.blank.ontimes]
-        matrix = np.array([b_reps, f_reps] + all_oris).T
+        if self.flicker and self.blank:
+            f_reps = [ont.array.mean() for ont in self.flicker.ontimes]
+            b_reps = [ont.array.mean() for ont in self.blank.ontimes]
+            matrix = np.array([b_reps, f_reps] + all_oris).T
+        else:
+            matrix = [[]]
         return util.nan_for_json(dict(f=f, p=p, matrix=matrix))
     def updates_by_io(self, io):
         return io.update_responses(self.id)
