@@ -150,6 +150,10 @@ class SumOfGaussianFit(object):
         o_oppo1 = o_pref1 + 180
         o_pref2 = o_pref1 + 360
         o_oppo2 = o_pref1 - 180
+        o_pref1 %= 360
+        o_pref2 %= 360
+        o_oppo1 %= 360
+        o_oppo2 %= 360
         return o_pref1, o_pref2, o_oppo1, o_oppo2
     @memoized_property
     def stretched(self):
