@@ -39,8 +39,8 @@ class ScanboxIO(object):
 
 # import numpy as np
 # import ujson
-# testpath = '/Volumes/Users/ht/dev/current/pacu/tmp/Jack/jc6/jc6_1_120_006.io'
-# s = ScanboxIO(testpath)
+testpath = '/Volumes/Users/ht/dev/current/pacu/tmp/Jack/jc6/jc6_1_120_006.io'
+s = ScanboxIO(testpath)
 
 
 
