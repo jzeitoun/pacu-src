@@ -141,7 +141,9 @@ class SumOfGaussianFit(object):
         o_pref = np.angle(numerator/sum(self.ymeas), deg=True)
         if o_pref < 0:
             o_pref += 360
-        return o_pref/2
+        half_phase = o_pref/2
+        half_phase %= 360
+        return half_phase
     @memoized_property
     def o_prefs(self):
         o_pref1 = self.preferred_orientation
