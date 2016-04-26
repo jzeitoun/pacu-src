@@ -1,6 +1,12 @@
 {{#each rois as |roi|}}
   {{#x-layer/roi roi}}
+    {{#each roi.trajectories as |t|}}
+    <line class="vector trajectory"
+      stroke-dasharray="1, 1"
+      x1="{{t.x1}}" y1="{{t.y1}}" x2="{{t.x2}}" y2="{{t.y2}}"/>
+    {{/each}}
     {{x-layer/roi/static-polygon roi.neuropil class="neuropil"}}
+    {{x-layer/roi/static-polygon roi.dPolygon class="drift"}}
     {{x-layer/roi/polygon roi.polygon
       active=roi.active
       busy=roi.busy

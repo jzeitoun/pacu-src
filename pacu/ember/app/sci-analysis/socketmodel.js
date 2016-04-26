@@ -18,7 +18,7 @@ export default Ember.Object.extend({
   @computed() rois() { return []; },
   @computed('rois.@each.active') curROI(rois) {
     const cur = rois.findBy('active');
-    window.cur = cur;
+    // window.cur = cur;
     return cur;
   },
   @computed('sfrequencies', 'sfrequency_index') curSF(sfs, index) {
@@ -70,6 +70,8 @@ export default Ember.Object.extend({
     });
   },
   indexChanged: function() {
-    this.requestFrame(this.get('img.curIndex'));
+    const index = this.get('img.curIndex');
+    this.get('rois').forEach(roi => roi.indexChanged(index));
+    this.requestFrame(index);
   }.observes('img.curIndex')
 });

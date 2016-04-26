@@ -1,0 +1,59 @@
+<table class="ui compact inverted table">
+  <thead>
+    <tr>
+      <th class="center aligned" colspan="4">
+        <span class="ui teal small header">Manual ROI Vector Control</span>
+      </th>
+    </tr>
+    {{#if roi.vectors}}
+    <tr>
+      <th>Index</th>
+      <th>X</th>
+      <th colspan="2">Y</th>
+    </tr>
+    {{/if}}
+  </thead>
+  <tbody>
+    {{! <tr> <td>0</td><td>0</td><td colspan="2">0</td> </tr>}}
+    {{#each roi.vectors as |v|}}
+    <tr>
+      <td>{{v.index}}</td><td>{{v.x}}</td><td>{{v.y}}</td>
+      <td><span class="ui fluid basic red button"
+        {{action "removeVector" v}}>-</span></td>
+    </tr>
+    {{/each}}
+  </tbody>
+  <tfoot class="full-width">
+    <tr>
+      <th colspan="4">
+        <div class="ui inverted form">
+          <div class="four fields">
+            <div class="field">
+              <label>Index</label>
+              {{input type="number" value=index}}
+            </div>
+            <div class="field">
+              <label>X</label>
+              {{input type="number" value=x}}
+            </div>
+            <div class="field">
+              <label>Y</label>
+              {{input type="number" value=y}}
+            </div>
+            <div class="field">
+              <label>Append</label>
+              <div class="ui fluid basic blue button"
+                {{action "insertVector" index x y}}>+</div>
+            </div>
+          </div>
+        </div>
+      </th>
+    </tr>
+    <tr>
+      <th colspan="4">
+        <div class="ui fluid basic green button"
+          {{action "activateInteractive"}}>Pickup Coordinates</div>
+      </th>
+    </tr>
+  </tfoot>
+</table>

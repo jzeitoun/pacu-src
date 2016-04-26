@@ -14,7 +14,7 @@ function getCentroid(polygon) {
   const cy = mat.add(pointYs.slice(0, -1), pointYs.slice(1));
   const x = mat.sum(mat.mul(cx, areaDiff)) / (6 * area);
   const y = mat.sum(mat.mul(cy, areaDiff)) / (6 * area);
-  return { x, y };
+  return { x:parseInt(x), y:parseInt(y) };
 }
 export default Ember.Mixin.create({
   @computed('polygon.@each.{x,y}') centroid(polygon) {

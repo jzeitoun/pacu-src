@@ -67,37 +67,54 @@
 
   <section class="ui clearing divider"></section>
   <div class="ui stackable padded grid">
-    {{#x-zoomable-container class="eight wide column"}}
+    {{#x-zoomable-container class="eight wide column"
+      containerStyle=(mut containerStyle)}}
       {{#x-layer width=model.img.width height=model.img.height as |layer|}}
         {{layer.canvas-2d buffer=model.img.buffer}}
         {{layer.roi-selector rois=model.rois
           onExportROI=(route-action "insertROI" model.rois)}}
         {{layer.roi-presenter rois=model.rois}}
+        {{layer.point-locator x=curX y=curY active=pointLocatorActive}}
       {{/x-layer}}
     {{/x-zoomable-container}}
-    <div class="eight wide column">
-      <div class="ui {{model.socketStatusClass}} text loader">Fetching...</div>
-      <div class="ui grid compact-margin">
-        <div class="row">
-          {{x-sci-analysis/response/orientations src=model.response.orientations}}
+    <div class="eight wide column" style={{containerStyle}}>
+
+      {{#x-keynum-tabs}}
+      <div class="ui inverted active tab segment">
+        <div class="ui {{model.socketStatusClass}} text loader">Fetching...</div>
+        <div class="ui grid compact-margin">
+          <div class="row">
+            {{x-sci-analysis/response/orientations src=model.response.orientations}}
+          </div>
+        </div>
+        <div class="ui grid compact-margin">
+          <div class="row">
+            {{x-sci-analysis/response/normalfit src=model.response.fit}}
+          </div>
+        </div>
+        <div class="ui grid compact-margin">
+          <div class="six wide column">
+            {{x-sci-analysis/response/sfreqfit src=model.curROI.sfreqfit}}
+          </div>
+          <div class="five wide column">
+            {{x-sci-analysis/response/decay src=model.response.decay}}
+          </div>
+          <div class="five wide column">
+            {{x-sci-analysis/response/polarfit src=model.response.fit}}
+          </div>
         </div>
       </div>
-      <div class="ui grid compact-margin">
-        <div class="row">
-          {{x-sci-analysis/response/normalfit src=model.response.fit}}
-        </div>
+
+      <div class="ui inverted tab segment">
+        {{x-sci-analysis/roi-trajectory/form roi=model.curROI
+          curIndex=model.img.curIndex curX=curX curY=curY
+          pointLocatorActive=pointLocatorActive
+          invalidateTrajectory=(route-action "invalidateTrajectory")
+          }}
       </div>
-      <div class="ui grid compact-margin">
-        <div class="six wide column">
-          {{x-sci-analysis/response/sfreqfit src=model.curROI.sfreqfit}}
-        </div>
-        <div class="five wide column">
-          {{x-sci-analysis/response/decay src=model.response.decay}}
-        </div>
-        <div class="five wide column">
-          {{x-sci-analysis/response/polarfit src=model.response.fit}}
-        </div>
-      </div>
+
+      {{/x-keynum-tabs}}
+
     </div>
   </div>
 

@@ -2,7 +2,8 @@ import Ember from 'ember';
 
 function upsertROI(roi) {
   const data = roi.getProperties('guessParams',
-    'polygon', 'neuropil', 'id', 'invalidated', 'npEnabled');
+    'centroid',
+    'vectors', 'polygon', 'neuropil', 'id', 'invalidated', 'npEnabled');
   return this.get('wsx').invoke('upsert_roi', data).then(data => {
     roi.setProperties(data);
   }).catch(err => {
@@ -130,5 +131,9 @@ export default {
     }).catch(err => {
       this.toast.error(err.detail);
     });
+  },
+  invalidateTrajectory(roi) {
+    roi.set('invalidated', true);
+    upsertROI.call(this, roi);
   }
 }

@@ -90,14 +90,14 @@ class ScanimageIO(object):
         return self
     @property
     def sfrequency(self):
-        return self.db.locator.sfrequencies.current
+        return self.db.locator.sfrequencies.current if self.db else ''
         # return self.session.opt.setdefault(#  'sfrequency', )
     @property
     def sfrequency_index(self):
-        return self.sfrequencies.index(self.sfrequency)
+        return self.sfrequencies.index(self.sfrequency) if self.sfrequency else 0
     @property
     def sfrequencies(self):
-        return self.db.locator.sfrequencies
+        return self.db.locator.sfrequencies if self.db else []
     # @sfrequency.invalidator
     def set_sfrequency_index(self, sfreq_index):
         self.sfrequencies.set_cursor(sfreq_index)
@@ -106,7 +106,7 @@ class ScanimageIO(object):
         return dict(index=sfreq_index, value=self.sfrequency)
     @memoized_property
     def db(self):
-        return ScanimageDBAdaptor(self.session.ed)
+        return ScanimageDBAdaptor(self.session.ed) if self.session.ed else None
     @property
     def main_response(self):
         return MainResponse.from_adaptor(self.channel.stat.MEAN, self.db)
@@ -131,52 +131,66 @@ class ScanimageIO(object):
             roi.flicker = None
             roi.responses = {}
         self.session.roi.save()
-    def make_trace(self, roi): # checked same function
-        extras = self.session.roi.values()
-        extras.remove(roi)
-        main_trace, main_mask = roi.trace(self.channel.mmap)
-        neur_trace, neur_mask = roi.neuropil_trace(self.channel.mmap, extras)
-        # neuropil_mask, roi_mask = roi.trim_bounding_mask(neur_mask, main_mask)
-        # roi.masks = dict(
-        #     neuripil = neuropil_mask.tolist(),
-        #     roi = roi_mask.tolist())
-        return main_trace - neur_trace*0.7
     def update_responses(self, id):
         roi = self.session.roi[id]
         trace = self.make_trace(roi)
-        with self.session.roi.bulk_on:
-            try:
-                if self.db.locator.override_blank(True):
-                    roi.blank = Orientation.from_adaptor('blank', trace, self.db)
-                if self.db.locator.override_flicker(True):
-                    roi.flicker = Orientation.from_adaptor('flicker', trace, self.db)
-            finally:
-                self.db.locator.override()
-            for sf in self.db.locator.sfrequencies.loop():
-                response = ROIResponse.from_adaptor(roi, trace, self.db)
-                roi.responses[self.sfrequency] = response
+        if self.session.ed:
+            with self.session.roi.bulk_on:
+                try:
+                    if self.db.locator.override_blank(True):
+                        roi.blank = Orientation.from_adaptor('blank', trace, self.db)
+                    if self.db.locator.override_flicker(True):
+                        roi.flicker = Orientation.from_adaptor('flicker', trace, self.db)
+                finally:
+                    self.db.locator.override()
+                for sf in self.db.locator.sfrequencies.loop():
+                    response = ROIResponse.from_adaptor(roi, trace, self.db)
+                    roi.responses[self.sfrequency] = response
+                roi.update_with_adaptor(self.db)
+                for sf, resp in roi.sorted_responses:
+                    gp = roi.guess_params.get(sf)
+                    resp.update_fit_and_decay(roi, self.db, gp)
+                roi.invalidated = False
+                return self.session.roi.upsert(roi)
+        else:
+            response = ROIResponse.from_scanbox(roi, trace)
+            roi.responses[self.sfrequency] = response
             roi.update_with_adaptor(self.db)
-            for sf, resp in roi.sorted_responses:
-                gp = roi.guess_params.get(sf)
-                resp.update_fit_and_decay(roi, self.db, gp)
             roi.invalidated = False
             return self.session.roi.upsert(roi)
     sog_initial_guess = ((0, 1), (0, 1), (15, 60), (0, 0.01))
+    def make_delta_trace(self, roi, trace, dx=0, dy=0):
+        extras = self.session.roi.values()
+        extras.remove(roi)
+        main_trace, main_mask = roi.trace(trace, dx, dy)
+        neur_trace, neur_mask = roi.neuropil_trace(trace, extras, dx, dy)
+        return main_trace - neur_trace*0.7
+    def make_trace(self, roi, old=False): # checked same function
+        if old:
+            print 'no centroid yet...perform old'
+            extras = self.session.roi.values()
+            extras.remove(roi)
+            main_trace, main_mask = roi.trace(self.channel.mmap)
+            neur_trace, neur_mask = roi.neuropil_trace(self.channel.mmap, extras)
+            # neuropil_mask, roi_mask = roi.trim_bounding_mask(neur_mask, main_mask)
+            # roi.masks = dict(
+            #     neuripil = neuropil_mask.tolist(),
+            #     roi = roi_mask.tolist())
+            return main_trace - neur_trace*0.7
+        else:
+            print 'has centroid...perform new'
+            vecs = roi.split_by_vectors(len(self.channel.mmap))
+            traces = np.split(self.channel.mmap, vecs.index[1:])
+            return np.concatenate([
+                self.make_delta_trace(roi, trace, dx, dy)
+                for dx, dy, trace in zip(vecs.x, vecs.y, traces)])
 
-
+# import pandas as pd
 # from pacu.core.io.scanimage.response.orientation import Orientation
 # path = 'tmp/Dario/2015.12.02/x.151101.2/bV1_Contra_004'
-path = 'tmp/Dario/2016.02.26/x.151114.1/DM3_RbV1_Contra_00002'
-
-
-# path = 'tmp/Dario/2016.01.27/r.151117.3/DM9_RbV1_Contra004004'
+# path = 'tmp/Dario/2016.02.26/x.151114.1/DM3_RbV1_Contra_00002'
 # qwe = ScanimageIO(path)
-# norm = Normalize(vmin=0, vmax=3)
-# a = ScalarMappable(norm=norm, cmap='jet')
 # roi = qwe.session.roi.one().val
-# for sf, re in roi.sorted_responses:
-#     print re.normalfit.gaussian.r_max
-# get_ipython().magic('pylab')
 
 class ScanimageRecord(object):
     """

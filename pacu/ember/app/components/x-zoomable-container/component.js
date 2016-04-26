@@ -36,11 +36,13 @@ export default Ember.Component.extend({ //TODO: Simplify
     const scale = containerWidth/childWidth;
     this.element.firstElementChild.style.transform = `scale(${scale})`;
     this.element.firstElementChild.style.transformOrigin = 'left top';
-    const d = { height, pTop, pBtm, scale};
+    const d = { height, pTop, pBtm, scale };
     this.set('dimension', d);
-    return new Ember.Handlebars.SafeString(
+    const style = new Ember.Handlebars.SafeString(
       `height: calc(${d.height}px + ${d.pTop} + ${d.pBtm});`
     );
+    this.set('containerStyle', style);
+    return style;
   },
   @computed() child() { return Child.create(); },
   @computed() observer() {

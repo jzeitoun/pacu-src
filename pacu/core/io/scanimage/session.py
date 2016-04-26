@@ -35,7 +35,11 @@ class ScanimageSession(object):
     def ed(self):
         # return Path('tmp/Dario/2016.01.27/r.151117.3/DM9_RbV1_Contra004004.pickle').load_pickle()
         # return Path('ed.2015.12.02.bV1_Contra_004.pickle').load_pickle()
-        return self.query_experiment_db().one()
+        try:
+            return self.query_experiment_db().one()
+        except:
+            print 'NONE DB ENTITY'
+            return None
     @property
     def has_ed(self):
         return bool(self.query_experiment_db().count())

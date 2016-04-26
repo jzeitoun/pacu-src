@@ -21,6 +21,14 @@ class BaseResponse(object):
     def __init__(self, trace):
         self.trace = trace
     @classmethod
+    def from_scanbox(cls, roi, trace):
+        self = cls(trace)
+        self.blank = roi.blank
+        self.flicker = roi.flicker
+        self.overview = OverviewResponse.from_adaptor(self, None)
+        self.orientations = None
+        return self
+    @classmethod
     def from_adaptor(cls, roi, trace, adaptor):
         self = cls(trace)
         self.blank = roi.blank

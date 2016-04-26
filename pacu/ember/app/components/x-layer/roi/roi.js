@@ -2,8 +2,9 @@ import Ember from 'ember';
 import computed from 'ember-computed-decorators';
 import Centroid from 'pacu/components/x-layer/roi/centroid';
 import Neuropil from 'pacu/components/x-layer/roi/neuropil';
+import Trajectory from 'pacu/components/x-layer/roi/trajectory';
 
-const ROI = Ember.Object.extend(Em.Copyable, Centroid, Neuropil, {
+const ROI = Ember.Object.extend(Em.Copyable, Centroid, Neuropil, Trajectory, {
   @computed() invalidated() { return true; },
   @computed() responses() { return {}; },
   @computed('responses') responseCount(resp) {
