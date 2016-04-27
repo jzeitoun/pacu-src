@@ -40,7 +40,7 @@ class ScanimageDBAdaptor(object):
             np.round(self.rec.duration_F).astype(int),
             np.round(self.rec.waitinterval_F).astype(int),
             np.round(self.rec.ontimes_F).astype(int),
-            int(0.5*self.capture_frequency))
+            int(1.5*self.capture_frequency))
     @property
     def indice(self):
         return ScanimageIndiceAdaptor(self)
