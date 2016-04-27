@@ -11,7 +11,7 @@ class ScanboxIO(object):
         self.matpath = self.path.with_suffix('.mat')
     @property
     def session(self):
-        return sorted(self.path.ls('*.session')))
+        return sorted(self.path.ls('*.session'))
     @property
     def mat(self):
         return ScanboxMatView(self.matpath)

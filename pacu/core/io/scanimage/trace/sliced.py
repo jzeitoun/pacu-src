@@ -15,3 +15,5 @@ class SlicedTrace(BaseTrace):
     @classmethod
     def by_zip_slice(cls, array, starts, ends):
         return cls.by_slice_indices(array, zip(starts, ends))
+    def toDict(self):
+        return dict(array=self.array, start=int(self.start), end=int(self.end))

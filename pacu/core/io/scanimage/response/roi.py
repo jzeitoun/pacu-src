@@ -35,12 +35,13 @@ class ROIResponse(BaseResponse):
     @property
     def anova(self):
         try:
-            blank = self.blank.meantrace if self.blank else []
-            flicker = self.flicker.meantrace if self.flicker else []
             oris = [
                 [ont.array.mean() for ont in ori.ontimes]
                 for ori in self.orientations.responses]
-            f, p = stats.f_oneway(blank, flicker, *oris)
-            return dict(f=f, p=p)
+            if self.flicker and self.blank:
+                f_reps = [ont.array.mean() for ont in self.flicker.ontimes]
+                b_reps = [ont.array.mean() for ont in self.blank.ontimes]
+                f, p = stats.f_oneway(b_reps, f_reps, *oris)
+                return dict(f=f, p=p)
         except Exception as e:
             return {}

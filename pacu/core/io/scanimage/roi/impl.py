@@ -91,16 +91,16 @@ class ROI(object):
             [ont.array.mean() for ont in ori.ontimes]
             for sf, resp in self.sorted_responses
             for ori in resp.orientations.responses]
-        print 'number of alll oris', len(all_oris)
         # print 'number of alll oris', len(all_oris)
-        f, p = stats.f_oneway(blank, flicker, *all_oris)
         if self.flicker and self.blank:
             f_reps = [ont.array.mean() for ont in self.flicker.ontimes]
             b_reps = [ont.array.mean() for ont in self.blank.ontimes]
             matrix = np.array([b_reps, f_reps] + all_oris).T
+            f, p = stats.f_oneway(f_reps, b_reps, *all_oris)
+            return util.nan_for_json(dict(f=f, p=p, matrix=matrix))
         else:
             matrix = [[]]
-        return util.nan_for_json(dict(f=f, p=p, matrix=matrix))
+            return util.nan_for_json(dict(matrix=matrix))
     def updates_by_io(self, io):
         return io.update_responses(self.id)
     def trace_by_io(self, io):

@@ -189,9 +189,24 @@ class ScanimageIO(object):
 # from pacu.core.io.scanimage.response.orientation import Orientation
 # path = 'tmp/Dario/2015.12.02/x.151101.2/bV1_Contra_004'
 # path = 'tmp/Dario/2016.02.26/x.151114.1/DM3_RbV1_Contra_00002'
-# qwe = ScanimageIO(path)
-# roi = qwe.session.roi.one().val
 
+
+
+# 
+# from scipy import stats
+# path = 'tmp/Dario/2016.04.25/r.160130.7/DM20_RbV1_Contra_003'
+# qwe = ScanimageIO(path)
+# roi = qwe.session.roi.get('1461714627.819000')
+# r = roi.responses[0.5]
+# b_reps = [ont.array.mean() for ont in r.blank.ontimes]
+# f_reps = [ont.array.mean() for ont in r.flicker.ontimes]
+# oris = [
+#     [ont.array.mean() for ont in ori.ontimes]
+#     for ori in r.orientations.responses]
+# flat = b_reps + f_reps + [p for ori in oris for p in ori]
+# f, p = stats.f_oneway(b_reps, f_reps, *oris)
+# print 'f', f, 'p', p
+# 
 class ScanimageRecord(object):
     """
     For `compatible_path`,
