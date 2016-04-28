@@ -192,12 +192,28 @@ class ScanimageIO(object):
 
 
 
-# 
 # from scipy import stats
 # path = 'tmp/Dario/2016.04.25/r.160130.7/DM20_RbV1_Contra_003'
 # qwe = ScanimageIO(path)
 # roi = qwe.session.roi.get('1461714627.819000')
-# r = roi.responses[0.5]
+# r = roi.responses.get(0.05)
+# for sf, r in roi.sorted_responses:
+#     print
+#     print 'Spatial Frequency', sf
+#     print '\told anova:', r.anova
+#     print '\tnew anova:', r.anova2
+
+# print r.normalfit.measure
+# print r.orientations.windowed_ontimes.mean(1)
+# print r.orientations.windowed_ontimes.shape
+# print r.orientations.ons.mean(axis=(2))
+
+# asd = r.orientations.ons[ # aka meanresponses
+#     ...,
+#     int(1*6.1):int(2*6.1)
+# ] #.mean(axis=(1, 2))
+# print asd.mean(axis=(1, 2))
+
 # b_reps = [ont.array.mean() for ont in r.blank.ontimes]
 # f_reps = [ont.array.mean() for ont in r.flicker.ontimes]
 # oris = [

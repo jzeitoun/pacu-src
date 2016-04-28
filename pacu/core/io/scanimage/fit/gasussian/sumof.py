@@ -134,7 +134,7 @@ class SumOfGaussianFit(object):
     @memoized_property
     def preferred_orientation(self): # Niell and Stryker 2008
         if self.global_o_pref:
-            print 'using global OPref', self.global_o_pref
+            # print 'using global OPref', self.global_o_pref
             return self.global_o_pref
         x_rad = np.deg2rad(self.xoris)
         numerator = sum(self.ymeas*np.exp(2j*x_rad))

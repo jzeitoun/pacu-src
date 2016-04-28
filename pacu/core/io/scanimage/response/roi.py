@@ -36,12 +36,23 @@ class ROIResponse(BaseResponse):
     def anova(self):
         try:
             oris = [
-                [ont.array.mean() for ont in ori.ontimes]
+                [ont.array.mean() for ont in ori.ontimes] # for each trial
                 for ori in self.orientations.responses]
             if self.flicker and self.blank:
-                f_reps = [ont.array.mean() for ont in self.flicker.ontimes]
                 b_reps = [ont.array.mean() for ont in self.blank.ontimes]
+                f_reps = [ont.array.mean() for ont in self.flicker.ontimes]
                 f, p = stats.f_oneway(b_reps, f_reps, *oris)
+                return dict(f=f, p=p)
+        except Exception as e:
+            return {}
+    @property
+    def anova(self):
+        try:
+            oris = self.orientations.windowed_ontimes
+            if self.blank:
+                b_reps = self.blank.windowed_mean_for_ontimes
+                # f_reps = self.flicker.windowed_mean_for_ontimes
+                f, p = stats.f_oneway(b_reps, *oris)
                 return dict(f=f, p=p)
         except Exception as e:
             return {}

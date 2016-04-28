@@ -4,11 +4,13 @@ from pacu.util.prop.memoized import memoized_property
 from pacu.core.io.scanimage.response.orientation import Orientation
 
 class OrientationsResponse(object):
+    capture_frequency = 6.1 # default
     def toDict(self):
         return self.data
     @classmethod
     def from_adaptor(cls, response, adaptor):
         self = cls()
+        self.capture_frequency = adaptor.capture_frequency
         self.responses = [
             Orientation.from_adaptor(ori, response.trace, adaptor)
             for ori in adaptor.locator.orientations.loop()]
@@ -26,27 +28,6 @@ class OrientationsResponse(object):
         return np.array([np.vstack(
             trace.array for trace in ori.ontimes
         ) for ori in self.responses])
-    # @property
-    # def data(self): #TODO use Repetition class
-    #     bss_ons = np.array([self.bss, self.ons])
-    #     n_reps, n_frames = bss_ons.shape[2:]
-    #     bss_ons_interleaved = 1, 0, 2, 3
-    #     bss_ons_merged = -1, n_reps, n_frames
-    #     orientation_interleaved = 1, 0, 2
-    #     orientation_merged = n_reps, -1
-    #     traces = (bss_ons
-    #     ).transpose(
-    #         *bss_ons_interleaved
-    #     ).reshape(
-    #         bss_ons_merged
-    #     ).transpose(
-    #         *orientation_interleaved
-    #     ).reshape(
-    #         orientation_merged
-    #     )
-    #     return dict(traces=traces,
-    #         mean=traces.mean(axis=0),
-    #         indices=self.orientation_indices(n_frames))
     @property
     def data(self):
         bss_ons = np.concatenate([
@@ -60,6 +41,17 @@ class OrientationsResponse(object):
     def orientation_indices(self, n_frames):
         return {int((index*2 + 1.5)*n_frames): ori.value
             for index, ori in enumerate(self.responses)}
+    @property
+    def windowed_ontimes(self):
+        return np.array([
+            ori.windowed_mean_for_ontimes
+            for ori in self.responses])
+    @property
+    def regular_ontimes(self):
+        return np.array([
+            ori.regular_mean_for_ontimes
+            for ori in self.responses])
+
 
 # test
 # np.concatenate([np.array(range(-3*2*5,0)[::-1]).reshape((3,2,5)), np.array(range(1, 3*2*4+1)).reshape((3,2,4))], axis=2)

@@ -65,8 +65,11 @@ class ROI(object):
             cv2.drawContours(mask, [other.inner_contours(dx=dx, dy=dy)], 0, 0, -1)
         return mask
     def outer_contours(self, dx=0, dy=0):
-        return np.array(list(map(itemgetter('x', 'y'), self.neuropil))
-                ) + np.array([[dx, dy]])
+        if self.neuropil:
+            return np.array(list(map(itemgetter('x', 'y'), self.neuropil))
+                    ) + np.array([[dx, dy]])
+        else:
+            return np.array([])
     def inner_contours(self, dx=0, dy=0):
         return np.array(list(map(itemgetter('x', 'y'), self.polygon))
                 ) + np.array([[dx, dy]])
@@ -85,18 +88,17 @@ class ROI(object):
     @property
     def anova_all(self):
         blank = self.blank.meantrace if self.blank else []
-        flicker = self.flicker.meantrace if self.flicker else []
+        # flicker = self.flicker.meantrace if self.flicker else []
         all_oris = [
             # ori.meantrace
             [ont.array.mean() for ont in ori.ontimes]
             for sf, resp in self.sorted_responses
             for ori in resp.orientations.responses]
         # print 'number of alll oris', len(all_oris)
-        if self.flicker and self.blank:
-            f_reps = [ont.array.mean() for ont in self.flicker.ontimes]
+        if self.blank:
             b_reps = [ont.array.mean() for ont in self.blank.ontimes]
-            matrix = np.array([b_reps, f_reps] + all_oris).T
-            f, p = stats.f_oneway(f_reps, b_reps, *all_oris)
+            matrix = np.array([b_reps] + all_oris).T
+            f, p = stats.f_oneway(b_reps, *all_oris)
             return util.nan_for_json(dict(f=f, p=p, matrix=matrix))
         else:
             matrix = [[]]
@@ -122,7 +124,10 @@ class ROI(object):
     @property
     def sorted_responses(self):
         responses = self.responses or {}
-        return sorted((sf, resp) for sf, resp in responses.items())
+        sresps = sorted((sf, resp) for sf, resp in responses.items())
+        for s, _ in sresps:
+            print s, 'SORTED!'
+        return sresps
     def meanresponse_over_sf(self, adaptor):
         cfreq = adaptor.capture_frequency
         return np.array([

@@ -24,10 +24,12 @@ class NormalfitResponse(object):
         print 'using initial guess', response.sog_initial_guess
         self = cls(response.trace)
         self.names = response.orientations.names
-        self.measure = response.orientations.ons[ # aka meanresponses
-            ...,
-            int(1*adaptor.capture_frequency):int(2*adaptor.capture_frequency)
-        ].mean(axis=(1, 2))
+        # self.measure = response.orientations.ons[ # aka meanresponses
+        #     ...,
+        #     int(1*adaptor.capture_frequency):int(2*adaptor.capture_frequency)
+        # ].mean(axis=(1, 2))
+        self.measure = response.orientations.windowed_ontimes.mean(1)
+
         self.meanresponses_p   ,\
         self.residual          ,\
         self.meanresponses_fit ,\
@@ -41,3 +43,4 @@ class NormalfitResponse(object):
     @property
     def max_orientation_index(self):
         return np.argmax(self.measure)
+
