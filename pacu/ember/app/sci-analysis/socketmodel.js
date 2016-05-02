@@ -21,12 +21,12 @@ export default Ember.Object.extend({
     // window.cur = cur;
     return cur;
   },
-  @computed('sfrequencies', 'sfrequency_index') curSF(sfs, index) {
+  @computed('sfrequencies', 'sfrequencyIndex') curSF(sfs, index) {
     if (Ember.isNone(sfs)) { return; }
     return sfs[index];
   },
   @computed(
-    'main_response', 'curROI.responses', 'curROI.busy', 'sfrequency_index'
+    'mainResponse', 'curROI.responses', 'curROI.busy', 'sfrequencyIndex'
   ) response(main, cur, busy, sfreqIndex) {
     if (busy) { return; }
     if (Ember.isPresent(cur)) {

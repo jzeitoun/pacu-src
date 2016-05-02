@@ -47,7 +47,7 @@
     </div>
     <div class="green column">
       <p>SoG Default Initial Guess</p>
-      {{#with model.sog_initial_guess as |g|}}
+      {{#with model.sogInitialGuess as |g|}}
         <span class="ui mini label">{{get g "0"}}</span>
         <span class="ui mini label">{{get g "1"}}</span>
         <span class="ui mini label">{{get g "2"}}</span>
@@ -58,7 +58,7 @@
       <p>Spatial frequency</p>
       {{x-sui-value-select
         name="spatial-frequency"
-        value=model.sfrequency_index
+        value=model.sfrequencyIndex
         items=model.sfrequencies
         onValueChanged=(route-action "sfrequencyIndexChanged")
       }}

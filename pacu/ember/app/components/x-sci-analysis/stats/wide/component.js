@@ -10,7 +10,12 @@ export default Ember.Component.extend({
     if (Ember.isEmpty(rois)) {
       return [];
     } else {
-      return rois[0].get('sortedResponses.0.stats.ttest').mapBy('name');
+      const ttest = rois[0].get('sortedResponses.0.stats.ttest')
+      if (ttest) {
+        return ttest.mapBy('name');
+      } else {
+        return [];
+      }
     }
   }
 });
