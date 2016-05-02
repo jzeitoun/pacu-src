@@ -6,9 +6,9 @@ def deco(lib_dumps):
         if isinstance(o, unicode):
             return o.encode('utf-8')
         elif isinstance(o, dict):
-            return lib_dumps({key: fix_encoding(val) for key, val in o.items()})
+            return {key: fix_encoding(val) for key, val in o.items()}
         elif hasattr(o, '__iter__'):
-            return lib_dumps([fix_encoding(e) for e in o])
+            return [fix_encoding(e) for e in o]
         else:
             return o
     def object_dumps(o):
