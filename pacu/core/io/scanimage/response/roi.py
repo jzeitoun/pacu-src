@@ -20,6 +20,7 @@ class ROIResponse(BaseResponse):
             r_max = g.r_max,
             residual = g.residual,
             anova = self.anova,
+            ttest = self.ttest,
             cv = self.cv))
     @property
     def cv(self):
@@ -32,27 +33,47 @@ class ROIResponse(BaseResponse):
             sum((r_thetas * cos(two_thetas)))**2
         ) / sum(r_thetas)
 
+#     @property
+#     def anova(self):
+#         try:
+#             oris = [
+#                 [ont.array.mean() for ont in ori.ontimes] # for each trial
+#                 for ori in self.orientations.responses]
+#             if self.flicker and self.blank:
+#                 b_reps = [ont.array.mean() for ont in self.blank.ontimes]
+#                 f_reps = [ont.array.mean() for ont in self.flicker.ontimes]
+#                 f, p = stats.f_oneway(b_reps, f_reps, *oris)
+#                 return dict(f=f, p=p)
+#         except Exception as e:
+#             return {}
     @property
     def anova(self):
         try:
-            oris = [
-                [ont.array.mean() for ont in ori.ontimes] # for each trial
-                for ori in self.orientations.responses]
+            oris = self.orientations.windowed_ontimes
             if self.flicker and self.blank:
-                b_reps = [ont.array.mean() for ont in self.blank.ontimes]
-                f_reps = [ont.array.mean() for ont in self.flicker.ontimes]
+                b_reps = self.blank.windowed_mean_for_ontimes
+                f_reps = self.flicker.windowed_mean_for_ontimes
                 f, p = stats.f_oneway(b_reps, f_reps, *oris)
                 return dict(f=f, p=p)
         except Exception as e:
             return {}
     @property
-    def anova(self):
+    def ttest(self):
         try:
             oris = self.orientations.windowed_ontimes
-            if self.blank:
+            names = self.orientations.names
+
+            if self.flicker and self.blank:
                 b_reps = self.blank.windowed_mean_for_ontimes
-                # f_reps = self.flicker.windowed_mean_for_ontimes
-                f, p = stats.f_oneway(b_reps, *oris)
-                return dict(f=f, p=p)
+                f_reps = self.flicker.windowed_mean_for_ontimes
+                values = [
+                        dict(name=name, pvalue=stats.ttest_ind(b_reps, ori)[1])
+                    for name, ori in zip(names, oris)
+                ]
+                values.insert(0,
+                    dict(name='flicker', pvalue=stats.ttest_ind(b_reps, f_reps)[1])
+                )
+                return values
         except Exception as e:
-            return {}
+            print e
+            return []

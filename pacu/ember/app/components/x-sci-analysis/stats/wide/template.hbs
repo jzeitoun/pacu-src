@@ -15,6 +15,7 @@
     <th colspan="2">Anova Each</th>
     <th colspan="2">Bootstrap</th>
     <th colspan="2">Pixel</th>
+    <th colspan="13">T-Test Each P-Value</th>
   </tr>
   <tr>
     <th class="cell-mean-blank">Blank</th>
@@ -32,6 +33,9 @@
     <th class="cell-bootstrap">SD</th>
     <th class="cell-pixel">Value</th>
     <th class="cell-pixel">Blank</th>
+    {{#each ttestNames as |n|}}
+      <th class="cell-ttest-{{n}}">{{n}}</th>
+    {{/each}}
   </tr>
 </thead>
 <tbody class="center aligned">
@@ -73,6 +77,9 @@
     <td class="cell-bootstrap-sd"  >{{or-icon "red help" r.stats.bootstrap_sd}}</td>
     <td class="cell-pixel-value"   >{{or-icon "red help" r.stats.pixel_value}}</td>
     <td class="cell-pixel-blank"   >{{or-icon "red help" r.stats.pixel_blank}}</td>
+    {{#each r.stats.ttest as |val|}}
+      <td class="cell-ttest-{{val.name}}">{{or-icon "red help" val.pvalue}}</td>
+    {{/each}}
   </tr>
   {{/each}}
   {{/each}}

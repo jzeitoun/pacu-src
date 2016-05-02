@@ -193,8 +193,12 @@ class ScanimageIO(object):
 
 # from scipy import stats
 # path = 'tmp/Dario/2016.04.25/r.160130.7/DM20_RbV1_Contra_003'
-# qwe = ScanimageIO(path)
-# roi = qwe.session.roi.get('1461714627.819000')
+# qwe = ScanimageIO(path).set_session('ht')
+# roi = qwe.session.roi.one().val
+# resp = roi.responses[0.05]
+
+
+# 
 # r = roi.responses.get(0.05)
 # for sf, r in roi.sorted_responses:
 #     print
