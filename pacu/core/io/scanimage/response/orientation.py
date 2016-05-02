@@ -37,3 +37,5 @@ class Orientation(object):
     @property
     def regular_mean_for_ontimes(self):
         return [trial.array[:].mean() for trial in self.ontimes]
+    def toDict(self):
+        return vars(self)
