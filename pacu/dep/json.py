@@ -1,7 +1,7 @@
 from __future__ import print_function
 from __future__ import absolute_import
 
-def deco(lib_dumps):
+def deco_dumps(lib_dumps):
     def fix_encoding(o):
         if isinstance(o, unicode):
             return o.encode('utf-8')
@@ -18,5 +18,16 @@ def deco(lib_dumps):
             return lib_dumps(fix_encoding(o))
     return object_dumps
 
+def deco_loads(lib_loads):
+    def fix_encoding(o):
+        return o.encode('utf-8')
+    def object_loads(o):
+        try:
+            return lib_loads(o)
+        except OverflowError as e:
+            return lib_loads(fix_encoding(o))
+    return object_loads
+
 import ujson as best
-best.dumps = deco(best.dumps)
+best.dumps = deco_dumps(best.dumps)
+best.loads = deco_loads(best.loads)
