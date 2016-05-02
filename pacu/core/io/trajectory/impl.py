@@ -1,7 +1,6 @@
 from __future__ import division
 
 import shutil
-import ujson
 import tifffile
 import numpy as np
 

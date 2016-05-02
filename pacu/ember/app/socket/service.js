@@ -8,7 +8,7 @@ let sequence = 0;
 
 function mirrorTo(target, route) {
   return this.makeRequest('access', route).then((data) => {
-    target.set(route, data);
+    target.set(route.camelize(), data);
     return data;
   });
 }
@@ -100,7 +100,7 @@ class WebSocketEx {
   }
   _mirror(route) {
     return this.makeRequest('access', route).then((data) => {
-      this.context.set(route, data);
+      this.context.set(route.camelize(), data);
     });
   }
   mirror(...routes) {

@@ -1,9 +1,6 @@
-import ujson
 import math
 import numpy.core.memmap as memmap
 import matplotlib.pyplot as plt
-
-from ipdb import set_trace
 
 from pacu.util.path import Path
 from pacu.profile import manager
@@ -39,6 +36,7 @@ class I3DAnalysisService(object):
     """
     imgstack = None
     def debug(self):
+        from ipdb import set_trace
         set_trace()
     def __init__(self, files=None): # analysis_v1 id will come in
         self.db, self.ed = DB(), ED()

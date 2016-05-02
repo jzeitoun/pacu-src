@@ -17,8 +17,11 @@ function getCentroid(polygon) {
   return { x:parseInt(x), y:parseInt(y) };
 }
 export default Ember.Mixin.create({
-  @computed('polygon.@each.{x,y}') centroid(polygon) {
-    if (Ember.isNone(polygon)) { return; }
-    return getCentroid(polygon);
-  },
+  @computed('polygon.@each.{x,y}') centroid: {
+    get(polygon) {
+      if (Ember.isNone(polygon)) { return; }
+      return getCentroid(polygon);
+    },
+    set(value, polygon) {}
+  }
 });

@@ -1,8 +1,6 @@
 from datetime import datetime
 import shutil
 
-import ujson
-
 from pacu.util.path import Path
 from pacu.util.inspect import repr
 from pacu.util.prop.memoized import memoized_property

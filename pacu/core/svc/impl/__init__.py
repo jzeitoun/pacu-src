@@ -1,7 +1,8 @@
 import importlib
 from collections import OrderedDict
 
-import ujson
+from pacu.dep.json import best as json
+
 
 class spec(str):
     def __new__(cls, s, plural, components):
@@ -34,7 +35,7 @@ class specs(list):
     def format_component(self, spec, cmpname, clsname):
         return self.get_component(spec, cmpname, clsname)().as_ember_format
     def __format__(self, spec):
-        return ujson.dumps(self.as_ember_format) if spec == 'ember' else super(
+        return json.dumps(self.as_ember_format) if spec == 'ember' else super(
             specs, self).__format__(spec)
     @property
     def as_ember_format(self):

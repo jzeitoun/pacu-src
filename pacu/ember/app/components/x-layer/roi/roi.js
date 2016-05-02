@@ -7,6 +7,7 @@ import Trajectory from 'pacu/components/x-layer/roi/trajectory';
 const ROI = Ember.Object.extend(Em.Copyable, Centroid, Neuropil, Trajectory, {
   @computed() invalidated() { return true; },
   @computed() responses() { return {}; },
+  @computed() traces() { return []; },
   @computed('responses') responseCount(resp) {
     return Object.keys(resp).length;
   },

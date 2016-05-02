@@ -1,5 +1,3 @@
-import ujson
-
 from pacu.util.path import Path
 
 class ScanboxRecord(object):

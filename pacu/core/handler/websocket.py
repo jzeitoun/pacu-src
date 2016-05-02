@@ -2,9 +2,8 @@ import importlib
 import traceback
 import sys
 
-import ujson
-
-from ...ext.tornado import websocket
+from pacu.dep.json import best as json
+from pacu.ext.tornado import websocket
 
 
 def handle_exc(e):
@@ -27,7 +26,7 @@ class WebSocketHandler(websocket.WebSocketHandler):
     def on_message(self, message):
         # print 'ONMESSAGE', message
         try:
-            payload = ujson.loads(message)
+            payload = json.loads(message)
             # print payload, ' <-loaded'
         except ValueError as e:
             # print 'invalid json', e
@@ -71,6 +70,6 @@ class WebSocketHandler(websocket.WebSocketHandler):
         if self.handler:
             self.handler.on_close(self.close_code, self.close_reason)
     def write_as_fetch(self, name, **kwargs):
-        self.write_message(ujson.dumps([name, kwargs]))
+        self.write_message(json.dumps([name, kwargs]))
     def write_as_buffer(self, buffer):
         self.write_message(buffer, binary=True)

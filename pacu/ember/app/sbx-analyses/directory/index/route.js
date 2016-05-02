@@ -89,18 +89,16 @@ export default Ember.Route.extend({
         const path = meta.path;
         const session = inputValue;
         const prom = Ember.$.post('/api/json/scanbox/session', {path, session});
-        debugger
         prom.then(data => {
-          debugger
           const pkg = JSON.parse(data);
-          Ember.set(trial, 'package', pkg);
+          Ember.set(meta, 'sessions', pkg.sessions);
           swal.close();
         }).fail(err => {
           swal('Opps...', err.responseText, "error");
         });
       });
     },
-    removeSession(trial, session) {
+    removeSession(io, session) {
       swal({
         title: "Are you sure?",
         text: "You will not be able to undo this!",
@@ -111,26 +109,24 @@ export default Ember.Route.extend({
         confirmButtonText: "Yes, delete it!",
       }, () => {
         const prom = Ember.$.ajax({
-          url: '/api/json/trajectory/session',
+          url: '/api/json/scanbox/session',
           type: 'DELETE',
           data: {
-            session: session.path,
-            path: trial.package.path
+            session_id: session.id,
+            path: io.path
           }
         });
         prom.then(data => {
-          Ember.set(trial, 'package', JSON.parse(data));
+          Ember.set(io, 'sessions', JSON.parse(data).sessions);
           swal.close();
         }).fail(err => {
           swal('Opps...', err.responseText, "error");
         });
       });
     },
-    openSession(trial, session) {
-      this.transitionTo('trj-analysis',
-        this.currentModel.recording,
-        trial.name,
-        session.name
+    openSession(io, session) {
+      this.transitionTo('sbx-analysis',
+        ...io.hops.concat(session.id)
       );
     }
   },

@@ -32,6 +32,10 @@ export default Ember.Component.extend({
       });
     });
     Ember.$(document).one('mouseup.polygon', ({offsetX, offsetY}) => {
+      for (let point of polygon) {
+        delete point.originX;
+        delete point.originY;
+      }
       Ember.$(xLayer).off('mousemove.polygon');
       if (originX === offsetX && originY === offsetY) {
         if (altKey) {

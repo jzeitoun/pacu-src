@@ -38,6 +38,8 @@ Router.map(function() {
   this.route('sbx-analyses', function() {
     this.route('directory', { path: ':directory' }, function() {});
   });
+  this.route('sbx-analysis',
+    { path: '/sbx-analysis/:base/:io_name/:session_id' });
 });
 
 export default Router;

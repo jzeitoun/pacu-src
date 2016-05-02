@@ -1,16 +1,13 @@
 import sys
-
+import struct
 import importlib
+import contextlib
 import traceback
 
-import struct
 import numpy as np
-import ujson
 
-from ...ext.tornado import websocket
-
-import contextlib
-import sys
+from pacu.dep.json import best as json
+from pacu.ext.tornado import websocket
 
 @contextlib.contextmanager
 def print_captured(by): # should be `write` compatible
@@ -76,7 +73,7 @@ class WSHandler(websocket.WebSocketHandler):
     def on_message(self, message):
         rv, err = None, None
         try:
-            seq, ftype, route, payload = ujson.loads(message)
+            seq, ftype, route, payload = json.loads(message)
             as_binary = payload.pop('as_binary')
             func = getattr(self, ftype)
             with print_captured(self):
@@ -101,9 +98,9 @@ class WSHandler(websocket.WebSocketHandler):
             self.dump_message(seq, rv, err)
     def dump_message(self, seq, rv, err):
         try:
-            dumped = ujson.dumps([seq, rv, err])
+            dumped = json.dumps([seq, rv, err])
         except Exception as e: # coerce
             print 'Websocket coerces exception:'
             print_exc(e)
-            dumped = ujson.dumps([seq, str(rv), err])
+            dumped = json.dumps([seq, str(rv), err])
         self.write_message(dumped)

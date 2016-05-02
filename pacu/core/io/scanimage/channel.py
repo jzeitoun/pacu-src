@@ -1,6 +1,5 @@
 from __future__ import division
 
-import ujson
 
 import numpy as np
 import matplotlib.pyplot as plt
@@ -9,6 +8,7 @@ from matplotlib.colors import Normalize
 from matplotlib.cm import ScalarMappable
 from ipdb import set_trace
 
+from pacu.dep.json import best as json
 from pacu.util.path import Path
 from pacu.util.inspect import repr
 from pacu.util.prop.memoized import memoized_property
@@ -25,11 +25,11 @@ class ScanimageChannelMeta(object):
         self.x = x
     def save(self, path):
         with open(path, 'w') as f:
-            f.write(ujson.dumps(self.__dict__))
+            f.write(json.dumps(self.__dict__))
     @classmethod
     def load(cls, path):
         with open(path) as f:
-            payload = ujson.loads(f.read())
+            payload = json.loads(f.read())
         return cls(**payload)
 
 class ScanimageChannel(object):

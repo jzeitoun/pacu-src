@@ -30,22 +30,23 @@
           </div>
         </div>
         <div class="extra content">
-          {{!-- #each trial.package.sessions as |s|}}
+          {{#each m.sessions as |s|}}
           <h5 class="ui header">
             <i class="radio icon"></i>
             <div class="content">
               <span class="trj-analyses-open-session"
-                {{action "openSession" trial s}}>{{s.name}}</span>
+                {{action "openSession" m s}}>
+                  {{s.id}}: {{s.attributes.name}}</span>
               <div class="ui inline simple dropdown">
                 <i class="dropdown icon"></i>
                 <div class="menu">
-                  <div class="header">Actions for {{s.name}}</div>
-                  <div class="item" {{action "removeSession" trial s}}>Delete</div>
+                  <div class="header">Actions</div>
+                  <div class="item" {{action "removeSession" m s}}>Delete</div>
                 </div>
               </div>
             </div>
           </h5>
-          {{/each --}}
+          {{/each}}
         </div>
       {{else}}
         <div class="extra content">

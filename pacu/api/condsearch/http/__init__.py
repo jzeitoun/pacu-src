@@ -1,5 +1,4 @@
-import ujson
-
+from pacu.dep.json import best as json
 from pacu.profile import manager
 from pacu.core.model.ed.visstim2p import VisStim2P
 from pacu.core.model.experiment import ExperimentV1
@@ -19,7 +18,7 @@ def get(req, condtype):
             VisStim2P.total_time_S,
             VisStim2P.date
         ).order_by(VisStim2P.id.desc())[:LIMIT]
-        return ujson.dumps([m._asdict() for m in models])
+        return json.dumps([m._asdict() for m in models])
     else: # ScanBox with PACU VisStim
         db = DB()
         models = db.query(ExperimentV1
@@ -31,4 +30,4 @@ def get(req, condtype):
                 filename = m.payload['handler']['kwargs']['exp_note'],
                 spatial_frequencies = m.payload['stimulus']['kwargs'].get('sfrequencies')
             ))
-        return ujson.dumps(rv)
+        return json.dumps(rv)
