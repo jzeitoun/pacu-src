@@ -24,7 +24,7 @@ def deco_loads(lib_loads):
     def object_loads(o):
         try:
             return lib_loads(o)
-        except OverflowError as e:
+        except ValueError as e:
             return lib_loads(fix_encoding(o))
     return object_loads
 
