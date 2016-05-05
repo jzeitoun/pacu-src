@@ -35,7 +35,11 @@ def validate_guess_params(params):
 class ScanimageIO(object):
     session_name = 'main'
     def __init__(self, path):
-        self.path = Path(str(path) + '.imported')
+        # wself.path = Path(str(path) + '.imported')
+        if '.imported' in str(path):
+            self.path = Path(path)
+        else:
+            self.path = Path(str(path) + '.imported')
     @classmethod
     def get_record(cls, rec_path):
         return ScanimageRecord(rec_path)
