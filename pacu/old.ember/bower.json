@@ -1,0 +1,15 @@
+{
+  "name": "pacu",
+  "dependencies": {
+    "ember": "2.6.0-beta.3",
+    "ember-qunit-notifications": "0.1.0",
+    "toastr": "^2.1.2",
+    "semantic-ui": "^2.1.8",
+    "screenfull": "^3.0.0",
+    "mousetrap": "^1.5.3",
+    "sweetalert": "~1.1.0",
+    "Chart.js": "v2.0-dev",
+    "ember-cli-shims": "^0.1.1",
+    "ember-cli-test-loader": "^1.1.0"
+  }
+}

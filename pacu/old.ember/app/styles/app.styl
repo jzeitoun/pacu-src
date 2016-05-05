@@ -1,0 +1,250 @@
+@import 'pod-styles'
+@import "range"
+
+html
+  background-color black
+
+body
+  color ivory
+  background-color black
+  padding 2vh 2vw
+
+.header.app-info
+  line-height 2em
+
+.header.app-info
+  font-family Open Sans
+
+a.active > div.nav
+  background-color maroon !important
+
+#copyright
+  text-align center
+  font-size 0.8em
+  font-style italic
+  p
+    margin 0.5em
+    letter-spacing 0.1em
+
+[data-ember-action]
+  cursor pointer
+  &.action-coloring:hover
+    background-color rgba(0, 0, 200, 0.2)
+  &.action-coloring:active
+    background-color rgba(200, 0, 0, 0.2)
+
+.sci-analyses input
+  color black
+.sci-analyses-open-session:hover
+  color red
+.trj-analyses input
+  color black
+.trjci-analyses-open-session:hover
+  color red
+
+#route-sci-analysis
+  .grid.compact-margin
+    margin-bottom -5rem
+
+#route-trj-analysis
+  polygon
+    stroke-width 1.5px
+  circle
+    stroke-width 1.5px
+    r 5
+  circle.centroid
+    stroke-width 1.5px
+    r 5
+    &:hover
+      r 10
+
+#route-sbx-analysis
+  polygon
+    stroke-width 2px
+    // &.focused
+    //   stroke red
+    //   stroke-width 5px
+  circle, circle.centroid
+    r 4
+    fill rgba(50,50,50,0.75)
+
+  a.focus-responder:focus
+    outline-color red
+
+// .app-data-sbx.dropdown
+//   display table
+//   margin 0 auto
+
+// .app-data-viewport
+//   margin-top 3vh
+// 
+// 
+// .app-data-viewport canvas
+//   border 1px dotted red
+// 
+// .app-data-viewport canvas.active
+//   border 1px solid white
+// #app-layerbase
+//   position relative
+//   border 1px solid white
+//   margin-bottom 1vh
+// 
+// .app-data-viewport .mmw-control
+//   border 1px solid white
+// 
+// .mmw-control input[type="range"]
+//   margin 1%
+//   width 98%
+//   &:hover
+//     cursor move /* fallback if grab cursor is unsupported */
+//     cursor grab
+//     cursor -moz-grab
+//     cursor -webkit-grab
+//   &:active
+//     cursor grabbing
+//     cursor -moz-grabbing
+//     cursor -webkit-grabbing
+// 
+// canvas, svg
+//   background-color transparent
+// //   position absolute
+// svg.roi-canvas
+//   cursor crosshair
+
+input.visual.option
+  background-color #131518
+
+.roi-rect
+  fill transparent
+  stroke-width 1
+  stroke lime
+  cursor pointer
+  &.active
+    stroke-width 2
+    stroke yellow
+  &:active
+    fill RGBA(50, 50, 255, 0.5);
+.roi-rect-temp
+  stroke red
+  cursor crosshair
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+.ui.segment.input-checkbox-override
+  margin 0
+  border-top-left-radius 0
+  border-bottom-left-radius 0
+  border-left 0
+  padding 6px 12px 3px 12px
+
+
+
+
+
+.grid .tick {
+	stroke: lightgrey;
+	opacity: 0.7;
+	shape-rendering: crispEdges;
+}
+
+.grid path {
+	stroke-width: 0;
+}
+
+.axis path {
+	fill: none;
+	stroke: #bbb;
+	shape-rendering: crispEdges;
+}
+
+.axis text {
+	fill: #555;
+}
+
+.axis line {	
+	stroke: #e7e7e7;
+	shape-rendering: crispEdges;
+}
+
+.axis .axis-label {
+	font-size: 14px;
+}
+
+.line {
+	fill: none;
+	stroke-width: 1.5px;
+}
+
+.dot {
+	/* consider the stroke-with the mouse detect radius? */
+	stroke: transparent;
+	stroke-width: 10px;  
+	cursor: pointer;
+}
+
+// #trajectory
+//   border 1px solid white
+
+.dot:hover {
+	stroke: rgba(68, 127, 255, 0.3);
+}
+
+.noselect {
+  -webkit-touch-callout: none;
+    -webkit-user-select: none;
+     -khtml-user-select: none;
+       -moz-user-select: none;
+        -ms-user-select: none;
+            user-select: none;
+}
+
+svg {
+  font: 9px sans-serif;
+}
+
+.line {
+  fill: none;
+  clip-path: url(#clip);
+  stroke: #f00;
+  stroke-width: 1px !important;
+}
+
+.axis path,
+.axis line {
+  fill: none;
+  stroke: rgba(255,255,255,0.3);
+  stroke-width: 0.5px !important;
+  shape-rendering: crispEdges;
+}
+
+.brush .extent {
+  stroke: #fff;
+  fill-opacity: .125;
+  shape-rendering: crispEdges;
+}
+

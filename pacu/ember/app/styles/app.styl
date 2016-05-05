@@ -1,9 +1,7 @@
-@import 'pod-styles'
+@import "pod-styles"
 @import "range"
 
-html
-  background-color black
-
+// html
 body
   color ivory
   background-color black
@@ -11,8 +9,6 @@ body
 
 .header.app-info
   line-height 2em
-
-.header.app-info
   font-family Open Sans
 
 a.active > div.nav
@@ -61,50 +57,15 @@ a.active > div.nav
 #route-sbx-analysis
   polygon
     stroke-width 2px
+    // &.focused
+    //   stroke red
+    //   stroke-width 5px
   circle, circle.centroid
     r 4
     fill rgba(50,50,50,0.75)
 
-
-// .app-data-sbx.dropdown
-//   display table
-//   margin 0 auto
-
-// .app-data-viewport
-//   margin-top 3vh
-// 
-// 
-// .app-data-viewport canvas
-//   border 1px dotted red
-// 
-// .app-data-viewport canvas.active
-//   border 1px solid white
-// #app-layerbase
-//   position relative
-//   border 1px solid white
-//   margin-bottom 1vh
-// 
-// .app-data-viewport .mmw-control
-//   border 1px solid white
-// 
-// .mmw-control input[type="range"]
-//   margin 1%
-//   width 98%
-//   &:hover
-//     cursor move /* fallback if grab cursor is unsupported */
-//     cursor grab
-//     cursor -moz-grab
-//     cursor -webkit-grab
-//   &:active
-//     cursor grabbing
-//     cursor -moz-grabbing
-//     cursor -webkit-grabbing
-// 
-// canvas, svg
-//   background-color transparent
-// //   position absolute
-// svg.roi-canvas
-//   cursor crosshair
+  a.focus-responder:focus
+    outline-color red
 
 input.visual.option
   background-color #131518
@@ -123,43 +84,12 @@ input.visual.option
   stroke red
   cursor crosshair
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 .ui.segment.input-checkbox-override
   margin 0
   border-top-left-radius 0
   border-bottom-left-radius 0
   border-left 0
   padding 6px 12px 3px 12px
-
-
-
-
 
 .grid .tick {
 	stroke: lightgrey;

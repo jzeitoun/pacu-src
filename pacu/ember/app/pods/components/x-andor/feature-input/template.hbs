@@ -1,0 +1,26 @@
+{{#if (eq attrs.meta.type 'EnumMeta')}}
+  {{x-sui-model-select
+    name=attrs.meta.feature
+    value=attrs.meta.value
+    items=attrs.meta.range
+  }}
+{{else}}
+  {{input
+    type="text"
+    value=attrs.meta.value
+    disabled=attrs.meta.readonly
+  }}
+{{/if}}
+{{#unless attrs.meta.readonly}}
+<div class="ui inverted popup">
+  <p>{{attrs.meta.range}}</p>
+</div>
+<div class="ui buttons">
+  <button type="submit" class="ui teal right icon button">
+    <i class="{{if attrs.nosubmit 'ellipsis horizontal' 'upload'}} icon"></i>
+  </button>
+</div>
+{{#if attrs.meta.guide}}
+  <span class="ui label" style="white-space: inherit;">{{attrs.meta.guide}}</span>
+{{/if}}
+{{/unless}}

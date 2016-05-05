@@ -126,8 +126,6 @@ class ROI(object):
     def sorted_responses(self):
         responses = self.responses or {}
         sresps = sorted((sf, resp) for sf, resp in responses.items())
-        for s, _ in sresps:
-            print s, 'SORTED!'
         return sresps
     def meanresponse_over_sf(self, adaptor):
         cfreq = adaptor.capture_frequency

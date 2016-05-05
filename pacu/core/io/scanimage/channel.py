@@ -51,8 +51,7 @@ class ScanimageChannel(object):
     def update_colormap(self, name, xmid, ymid):
         x = float(xmid) / 100
         y = float(ymid) / 100
-        print 'UPDATE', name, "X", x, "Y", y
-        self.dcmap = DistortedColormap('jet', xmid=x, ymid=y)
+        self.dcmap = DistortedColormap(name, xmid=x, ymid=y)
     @memoized_property
     def mmap(self):
         shape = (self.meta.z, self.meta.y, self.meta.x)

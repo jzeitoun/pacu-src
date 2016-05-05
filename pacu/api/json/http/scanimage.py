@@ -5,7 +5,7 @@ opt = manager.instance('opt')
 
 def index_record(year, month, day):
     rec_paths = sorted(
-        path.stempath for path in opt.scanimage_root.ls(
+        path.str for path in opt.scanimage_root.ls(
             '{}.{:2}.{:2}/*/*.tif'.format(year, month, day)))
     records = map(ScanimageIO.get_record, rec_paths)
     return dict(year=year, month=month, day=day, records=records)

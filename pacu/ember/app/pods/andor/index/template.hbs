@@ -1,0 +1,13 @@
+<div class="ui center aligned inverted segment">
+  {{#if model.has_andor}}
+    <p>This computer has Andor devices.</p>
+    <p>How many cameras are currently available: {{model.number_of_cameras}}</p>
+    {{#each model.camera_indice as |index|}}
+      <p>{{#link-to "andor.device" index}}
+        Click to access this device...(#{{index}}){{/link-to}}</p>
+    {{/each}}
+  {{else}}
+    <p>This computer has no Andor devices.</p>
+  {{/if}}
+  <p class="ui teal label">Please restart PACU to refresh current status...</p>
+</div>

@@ -4,6 +4,7 @@ module.exports = function(environment) {
   var ENV = {
     modulePrefix: 'pacu',
     environment: environment,
+    podModulePrefix: 'pacu/pods',
     baseURL: '/',
     locationType: 'auto',
     EmberENV: {
@@ -17,11 +18,25 @@ module.exports = function(environment) {
       // Here you can pass flags/options to your application instance
       // when it is created
     },
+
     googleFonts: [
       'Oswald:300',
       'Lato:300,300italic',
       'Open+Sans:300italic,300',
     ],
+
+    // Set or update content security policies
+    contentSecurityPolicy: {
+      'font-src': "'self' fonts.gstatic.com",
+      'style-src': "'self' fonts.googleapis.com"
+    }
+  };
+  ENV['ember-toastr'] = {
+    toastrOptions: {
+      positionClass: 'toast-top-center',
+      preventDuplicates: false,
+      timeOut: '5000'
+    }
   };
 
   if (environment === 'development') {
@@ -46,14 +61,6 @@ module.exports = function(environment) {
 
   if (environment === 'production') {
 
-  }
-
-  ENV.contentSecurityPolicy = {
-    'connect-src': "'self' *",
-    'script-src': "'self' *",
-    'font-src': "'self' * 'unsafe-inline'",
-    'style-src': "'self' * 'unsafe-inline'",
-    'img-src': "'self' * 'unsafe-inline'"
   }
 
   return ENV;

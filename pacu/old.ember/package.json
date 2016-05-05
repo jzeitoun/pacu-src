@@ -1,0 +1,56 @@
+{
+  "name": "pacu",
+  "version": "0.0.0",
+  "description": "Small description for pacu goes here",
+  "private": true,
+  "directories": {
+    "doc": "doc",
+    "test": "tests"
+  },
+  "scripts": {
+    "build": "ember build",
+    "start": "ember server",
+    "test": "ember test"
+  },
+  "repository": "",
+  "engines": {
+    "node": ">= 0.10.0"
+  },
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "broccoli-asset-rev": "^2.2.0",
+    "ember-ajax": "0.7.1",
+    "ember-cli": "2.5.0",
+    "ember-cli-app-version": "^1.0.0",
+    "ember-cli-babel": "^5.1.6",
+    "ember-cli-d3": "1.1.4",
+    "ember-cli-dependency-checker": "^1.2.0",
+    "ember-cli-google-fonts": "1.13.0",
+    "ember-cli-htmlbars": "^1.0.3",
+    "ember-cli-htmlbars-inline-precompile": "^0.3.1",
+    "ember-cli-inject-live-reload": "^1.4.0",
+    "ember-cli-loading": "0.1.1",
+    "ember-cli-qunit": "^1.4.0",
+    "ember-cli-release": "0.2.8",
+    "ember-cli-sri": "^2.1.0",
+    "ember-cli-stylus": "1.0.5",
+    "ember-cli-sweet-alert": "0.0.1",
+    "ember-cli-uglify": "^1.2.0",
+    "ember-component-css": "0.1.6",
+    "ember-composable-helpers": "0.16.0",
+    "ember-computed-decorators": "0.2.2",
+    "ember-concurrency": "0.5.10",
+    "ember-data": "^2.3.0",
+    "ember-disable-proxy-controllers": "^1.0.1",
+    "ember-export-application-global": "^1.0.5",
+    "ember-fullscreen": "0.0.6",
+    "ember-load-initializers": "^0.5.1",
+    "ember-mousetrap": "0.3.1",
+    "ember-resolver": "^2.0.3",
+    "ember-route-action-helper": "0.3.0",
+    "ember-toastr": "1.4.0",
+    "loader.js": "^4.0.1",
+    "semantic-ui-ember": "0.9.3"
+  }
+}

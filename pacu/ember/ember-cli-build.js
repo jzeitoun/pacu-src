@@ -5,9 +5,8 @@ var EmberApp = require('ember-cli/lib/broccoli/ember-app');
 module.exports = function(defaults) {
   var app = new EmberApp(defaults, {
     babel: {
-      includePolyfill: true,
       optional: ['es7.decorators']
-    }   // Add options here
+    }
   });
 
   // Use `app.import` to add additional libraries to the generated
@@ -22,7 +21,7 @@ module.exports = function(defaults) {
   // modules that you would like to import into your application
   // please specify an object with the list of modules as keys
   // along with the exports of each module as its value.
-
+  //
   app.import('bower_components/Chart.js/dist/Chart.js');
 
   return app.toTree();

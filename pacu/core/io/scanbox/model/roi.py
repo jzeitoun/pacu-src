@@ -1,18 +1,14 @@
 import cv2
 import numpy as np
-from sqlalchemy import Column, Integer, ForeignKey, Boolean
-from sqlalchemy.orm import relationship
+from sqlalchemy import Column, Integer, Boolean
 from sqlalchemy.types import PickleType
 
 from pacu.core.io.scanbox.model.base import SQLite3Base
 
 class ROI(SQLite3Base):
-    session_id = Column(Integer, ForeignKey('session.id'))
-    # session = relationship('Session')
     polygon = Column(PickleType, default=[])
     centroid = Column(PickleType, default={})
     active = Column(Boolean, default=False)
-    traces = relationship('Trace', order_by='Trace.id', lazy='joined')
     @property
     def contours(self):
         return np.array([[p['x'], p['y']] for p in self.polygon])

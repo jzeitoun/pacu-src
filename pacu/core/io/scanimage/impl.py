@@ -35,7 +35,7 @@ def validate_guess_params(params):
 class ScanimageIO(object):
     session_name = 'main'
     def __init__(self, path):
-        self.path = Path(path).with_suffix('.imported')
+        self.path = Path(str(path) + '.imported')
     @classmethod
     def get_record(cls, rec_path):
         return ScanimageRecord(rec_path)
@@ -87,6 +87,10 @@ class ScanimageIO(object):
     def set_channel(self, channel):
         self.session.opt['channel'] = channel
         return self
+
+    colormap_index = 0
+    colormaps = ['jet', 'gray', 'gist_heat', 'afmhot', 'bone']
+
     @property
     def sfrequency(self):
         return self.db.locator.sfrequencies.current if self.db else ''
@@ -192,9 +196,12 @@ class ScanimageIO(object):
 
 
 # from scipy import stats
-# path = 'tmp/Dario/2016.04.25/r.160130.7/DM20_RbV1_Contra_003'
+path = 'tmp/Dario/2016.04.25/r.160130.7/DM20_RbV1_Contra_003'
 # qwe = ScanimageIO(path).set_session('main')
 # roi = qwe.session.roi.one().val
+
+# badpath = Path('tmp/Dario/2016.04.19/x.160103.1/DM15_RbV1_Contra_2.1')
+# qwe = ScanimageIO(badpath)
 # r = roi.responses.get(0.05)
 
 # 

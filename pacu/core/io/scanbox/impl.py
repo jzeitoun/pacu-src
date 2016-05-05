@@ -7,41 +7,83 @@ from pacu.core.io.scanbox.model import db
 
 opt = manager.instance('opt')
 
+class sessionBinder(type):
+    @classmethod
+    def bind(mcl, session, orm):
+        return mcl('SessionBound{}'.format(orm.__name__),
+            (object, ), dict(session=session, orm=orm))
+    def __call__(cls, *args, **kwargs):
+        return cls.orm(*args, **kwargs)
+    @property
+    def queried(cls):
+        return cls.session.query(cls.orm)
+    def get(cls, id):
+        return cls.queried.get(id)
+    def all(cls):
+        return cls.queried.all()
+    def one(cls, **kwargs):
+        return cls.queried.filter_by(**kwargs).one()
+    def one_or_none(cls, **kwargs):
+        return cls.queried.filter_by(**kwargs).one_or_none()
+    def first(cls):
+        return cls.queried.first()
+    # direct SQL command
+    def create(cls, payload):
+        with cls.session.begin() as t:
+            inst = cls(**payload)
+            cls.session.add(inst)
+            return inst
+    def delete(cls, payload):
+        return cls.queried.filter_by(**payload).delete()
+    def upsert(cls, payload):
+        with cls.session.begin() as t:
+            roi = t.session.merge(cls(**payload))
+            t.session.flush()
+            return {key: getattr(roi, key) for key in payload.keys()}
+    read = NotImplemented
+    def __dir__(self):
+        return ['queried', 'get', 'all', 'one',
+            'one_or_none', 'first', 'create',
+            'read', 'upsert', 'delete']
+
+class SessionBoundNamespace(object):
+    """
+    session = SessionBoundNamespace(session, db.Session, db.ROI)
+    """
+    def __init__(self, session, *orms):
+        self._session = session
+        self.__dict__.update({
+            orm.__name__: sessionBinder.bind(session, orm)
+            for orm in orms})
+    def __enter__(self):
+        return self._session.begin()
+    def __exit__(self, *args):
+        print 'SESSION BOUND NAMESPACE __EXIT__'
+        print args
+
 class ScanboxIO(object):
     session = None
     channel = None
     def __init__(self, path):
         self.path = Path(path).ensure_suffix('.io')
-        self.Session = db.get_sessionmaker(self.dbpath)
+        self.session = SessionBoundNamespace(
+            self.db_session_factory(),
+            db.Workspace, db.ROI, db.Trace)
     @property
     def is_there(self):
         return self.path.exists()
     @property
-    def dbpath(self):
+    def db_path(self):
         return self.path.joinpath('db.sqlite3').absolute()
     @property
-    def sessions(self):
-        try:
-            return self.read_session()
-        except:
-            return []
-    def set_session(self, id):
-        self.session = self.query_session(id=id).one()
+    def db_session_factory(self):
+        return db.get_sessionmaker(self.db_path)
+    def set_workspace(self, id):
+        self.workspace_id = id
         return self
-    def get_session(self, id):
-        return self.Session().query(db.Session).get(id)
-    def query_session(self, **filter_by):
-        return self.Session().query(db.Session).filter_by(**filter_by)
-    def create_session(self, **payload):
-        session = self.Session()
-        session.add(db.Session(**payload))
-        session.commit()
-    def delete_session(self, id):
-        session = self.Session()
-        session.query(db.Session).filter_by(id=id).delete()
-        session.commit()
-    def read_session(self, **fby):
-        return self.query_session(**fby).order_by(db.Session.id.desc()).all()
+    @property
+    def workspace(self):
+        return self.session.Workspace.one_or_none(id=self.workspace_id)
     @property
     def mat(self):
         return ScanboxMatView(self.path.with_suffix('.mat'))
@@ -49,14 +91,14 @@ class ScanboxIO(object):
     def sbx(self):
         return ScanboxSBXView(self.path.with_suffix('.sbx'))
     @property
-    def meta(self):
+    def attributes(self):
         return dict(
             hops = self.path.relative_to(opt.scanbox_root).parts,
             path = self.path.str,
-            exists = self.is_there,
+            is_there = self.is_there,
             mat = self.mat,
             sbx = self.sbx,
-            sessions = self.sessions if self.is_there else [])
+            workspaces = self.session.Workspace.all())
     def get_channel(self, number):
         return ScanboxChannel(self.path.joinpath('{}.chan'.format(number)))
     def set_channel(self, number):
@@ -64,112 +106,74 @@ class ScanboxIO(object):
         return self
     def remove_io(self):
         self.path.rmtree()
-        return self.meta
+        self.session = SessionBoundNamespace( # unnecessary implementation
+            self.db_session_factory(),
+            db.Workspace, db.ROI, db.Trace)
+        return self.attributes
     def import_raw(self):
-        self.path.mkdir()
-        db.SQLite3Base.metadata.create_all(self.Session.kw.get('bind'))
+        self.path.mkdir_if_none()
+        db.recreate(self.db_path)
         for chan in range(self.mat.channels):
             self.get_channel(chan).import_with_io(self)
-        return self.meta
-    def delete_roi(self, id):
-        s = self.Session()
-        s.delete(s.query(db.ROI).get(id))
-        s.commit()
-        s.close()
-    def upsert_roi(self, payload):
-        s = self.Session()
-        pl = {key: payload[key]
-            for key in db.ROI.__mapper__.c.keys()
-            if key in payload}
-        roi = db.ROI(session_id=self.session.id, **pl)
-        roi = s.merge(roi)
-        s.commit()
-        data = {key: getattr(roi, key) for key in ['id'] + payload.keys()}
-        s.close()
-        return data
-    def fetch_trace(self, roi_id, trace_id, category):
-        s = self.Session()
-        print 'ROI ID', roi_id
-        print 'TRACE ID', trace_id
-        roi = s.query(db.ROI).get(roi_id)
-        array = roi.get_trace(self.channel.mmap)
-        trace = db.Trace(id=trace_id, roi_id=roi_id, array=array, category=category)
-        trace = s.merge(trace)
-        s.commit()
-        data = dict(array=trace.array, id=trace.id,
-                category=trace.category,
-                roi_id=trace.roi_id, created_at=trace.created_at)
-        s.close()
-        return data
-
+        return self.attributes
+#     def fetch_trace(self, roi_id, trace_id, category):
+#         s = self.Session()
+#         with s.begin():
+#             print 'ROI ID', roi_id
+#             print 'TRACE ID', trace_id
+#             roi = s.query(db.ROI).get(roi_id)
+#             array = roi.get_trace(self.channel.mmap)
+#             trace = db.Trace(id=trace_id, roi_id=roi_id, array=array, category=category)
+#             trace = s.merge(trace)
+#             data = dict(array=trace.array, id=trace.id,
+#                     category=trace.category,
+#                     roi_id=trace.roi_id, created_at=trace.created_at)
+#         return data
 
 # from pacu.dep.json import best as json
 # from pacu.core.io.scanbox.model import session
 # import numpy as np
-# testpath = '/Volumes/Users/ht/dev/current/pacu/tmp/Jack/jc6/jc6_1_120_006.io'
-# io = ScanboxIO(testpath).set_session(1).set_channel(0)
+
+import ujson
+from sqlalchemy import inspect
+testpath = '/Volumes/Users/ht/dev/current/pacu/tmp/Jack/jc6/jc6_1_120_006.io'
+io = ScanboxIO(testpath).set_workspace(1).set_channel(0)
+
 # io = ScanboxIO(testpath)
-# noiopath = '/Volumes/Users/ht/dev/current/pacu/tmp/Jack/jc6/jc6_1_000_003.io'
-# nosess = '/Volumes/Users/ht/dev/current/pacu/tmp/Jack/jc6/jc6_1_020_002.io'
-# io = ScanboxIO(nosess)
+# no = '/Volumes/Users/ht/dev/current/pacu/tmp/Jack/jc6/jc6_1_000_003.io'
+# no = '/Volumes/Users/ht/dev/current/pacu/tmp/Jack/jc6/jc6_1_020_002.io'
+# io = ScanboxIO(no)
+
+# inst = inspect(io.db_session_factory.kw.get('bind'))
+# io.db_session_factory
 
 # CREATE one big detailed global `relationship.py` it will define all ordered import and relationship
 
 
-class sessionBinder(type):
-    @classmethod
-    def bind(mcl, session, orm):
-        return mcl('SessionBound{}'.format(orm.__name__),
-            (object, ), dict(db=session, orm=orm))
-    def __call__(cls, *args, **kwargs):
-        return cls.orm(*args, **kwargs)
-    def get(cls, id):
-        with cls.db.begin(): # as transaction
-            return cls.db.query(cls.orm).get(id)
-    create = NotImplemented
-    read = NotImplemented
-    update = NotImplemented
-    delete = NotImplemented
-    all = NotImplemented
-    one = NotImplemented
-    one_or_none = NotImplemented
-    first = NotImplemented
-    add = NotImplemented
-    add_all = NotImplemented
-    query = NotImplemented
-
-class SessionBoundNamespace(object):
-    def __init__(self, session, *orms):
-        self.__dict__.update({
-            orm.__name__: sessionBinder.bind(session, orm)
-            for orm in orms})
-# session = SessionBoundNamespace(io.Session(), db.Session, db.ROI)
-
-
 def fixture(io):
-    db.recreate(io.dbpath)
-    session = io.Session()
-    trace = db.Trace(category='df/f0')
-    roi = db.ROI(polygon=[
-        {'x':1,   'y':1},
-        {'x':111, 'y':1},
-        {'x':111, 'y':111},
-        {'x':1,   'y':111},
-    ], traces=[trace])
-    session.add_all([
-        db.Session(name=u"my first session", rois=[roi]),
-        db.Session(name=u"my awesome session"),
-    ])
-    session.commit()
-    session.close()
+    db.recreate(io.db_path)
+    with io.session as t:
+        roi1 = db.ROI(polygon=[
+            {'x':1,   'y':1},
+            {'x':111, 'y':1},
+            {'x':111, 'y':111},
+            {'x':1,   'y':111},
+        ], traces=[db.Trace(category='df/f0')])
+        roi2 = db.ROI(polygon=[
+            {'x':210, 'y':201},
+            {'x':321, 'y':201},
+            {'x':311, 'y':311},
+            {'x':210, 'y':311},
+        ], traces=[db.Trace(category='df/f0')])
+        t.session.add_all([
+            db.Workspace(name=u"main", rois=[roi1, roi2]),
+        ])
+        t.commit()
 
-def ScanboxIOFetcher(base, io_name, session_id):
+def ScanboxIOFetcher(base, io_name, workspace_id):
     root = manager.instance('opt').scanbox_root
     path = Path(root).joinpath(base, io_name)
-    return ScanboxIO(path).set_session(session_id).set_channel(0)
-
-# io = ScanboxIOFetcher('jc6', 'jc6_1_120_006.io', 1)
-
+    return ScanboxIO(path).set_workspace(workspace_id).set_channel(0)
 
 
 
