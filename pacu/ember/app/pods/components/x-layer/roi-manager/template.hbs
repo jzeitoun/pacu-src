@@ -1,0 +1,65 @@
+{{#each rois as |roi|}}
+
+  {{x-layer/roi-manager/polygon roi=roi class="grabber interact"
+    onPolygonUpdated=(route-action "saveModel" roi)
+    onPolygonDeleted=(route-action "deleteModel" roi)
+    onPolygonDoubled=(route-action "duplicateROI" roi)
+    onPolygonClicked=(route-action "locateFocus")
+  }}
+  {{#each roi.polygon as |point|}}
+    {{x-layer/roi-manager/circle roi=roi point=point class="grabber interact"
+      onCircleUpdated=(route-action "saveModel" roi)
+    }}
+  {{/each}}
+  {{x-layer/roi-manager/circle point=roi.centroid class="centroid"}}
+
+{{/each}}
+<style>
+#{{elementId}} circle.centroid {
+  r: 2;
+  stroke-width: 2px;
+}
+#{{elementId}} circle {
+  r: 6;
+  stroke-width: 3px;
+}
+#{{elementId}} polygon {
+  stroke-width: 3px;
+}
+</style>
+  {{!-- #x-layer/roi roi}}
+    {{#each roi.trajectories as |t|}}
+    <line class="vector trajectory"
+      stroke-dasharray="1, 1"
+      x1="{{t.x1}}" y1="{{t.y1}}" x2="{{t.x2}}" y2="{{t.y2}}"/>
+    {{/each}}
+    {{x-layer/roi/static-polygon roi.neuropil class="neuropil"}}
+    {{x-layer/roi/static-polygon roi.dPolygon class="drift"}}
+
+{{! #x-layer/roi/focus-responder}}
+<a class="ember-view focus-responder" xlink:href="#">
+    {{x-layer/roi/polygon roi.polygon class="primary"
+      active=roi.active
+      busy=roi.busy
+      error=roi.error
+      invalidated=roi.invalidated
+      centroid=roi.centroid
+      onStaticClick=(route-action "exclToggleROI" rois roi)
+      onRefresh=(route-action "updateROI" roi)
+      onDerive=(route-action "deriveROI" rois roi)
+      onRemove=(route-action "removeROI" rois roi)
+      onCancel=(route-action "removeROI" rois)
+    }}
+</a>
+{{! /x-layer/roi/focus-responder}}
+    {{#each roi.polygon as |pg|}}
+      {{x-layer/roi/circle pg
+        onClone=(route-action "insertPoint" roi)
+        onCancel=(route-action "cancelPoint" roi)
+        onRemove=(route-action "removePoint" roi)
+        onRefresh=(route-action "updateROI" roi)
+      }}
+    {{/each}}
+    {{x-layer/roi/static-circle roi.centroid class="centroid"
+      click=(route-action "openROIModal" rois roi)}}
+  {{/x-layer/roi --}}

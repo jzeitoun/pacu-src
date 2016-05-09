@@ -5,7 +5,7 @@ export default Ember.Component.extend({
   attributeBindings: ['style'],
   initialize: function() {
     // window.aaa = this;
-    // this.$().dropdown();
+    this.$().dropdown();
     // this.$('input.search').on('blur', () => {
     //   console.log('blurred');
     // });
@@ -20,13 +20,17 @@ export default Ember.Component.extend({
   }.on('didInsertElement'),
   dnitialize: function() {
   }.on('willDestroyElement'),
-  @computed('roi') display(roi) {
-    return roi ? 'inherit' : 'hidden';
+  @computed('centroid') display(c) {
+    return c ? 1 : 0;
+    // return 'inherit';
+    return c ? 'inherit' : 'hidden';
   },
+  x: Ember.computed.alias('centroid.x'),
+  y: Ember.computed.alias('centroid.y'),
   @computed('display', 'x', 'y') style(v, x=0, y=0) {
     console.log('compute style', v, x, y);
     return Ember.String.htmlSafe(
-      `left: ${x}px; top: ${y}px; width: 1px; height: 1px; visibility: ${v}`);
+      `left: ${x}px; top: ${y}px; width: 1px; height: 1px; opacity: ${v}`);
   },
-  classNames: 'ui selection dropdown', // took off "search" class.
+  classNames: 'ui search selection dropdown', // took off "search" class.
 });

@@ -5,7 +5,6 @@ function log(...msgs) { console.log(...msgs); }
 
 let sequence = 0;
 
-
 function mirrorTo(target, route) {
   return this.makeRequest('access', route).then((data) => {
     target.set(route.camelize(), data);

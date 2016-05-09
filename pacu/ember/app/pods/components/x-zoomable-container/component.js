@@ -34,9 +34,13 @@ export default Ember.Component.extend({ //TODO: Simplify
     const childWidth = this.get('child.width');
     const height = containerWidth * ratio;
     const scale = containerWidth/childWidth;
+    const heightPadded = height + parseInt(pTop) + parseInt(pBtm);
+    const parallelContainerStyle = Ember.String.htmlSafe(`
+      height: ${heightPadded}px; overflow-y: scroll
+    `);
     this.element.firstElementChild.style.transform = `scale(${scale})`;
     this.element.firstElementChild.style.transformOrigin = 'left top';
-    const d = { height, pTop, pBtm, scale };
+    const d = { height, pTop, pBtm, scale, heightPadded, parallelContainerStyle };
     this.set('dimension', d);
     const style = Ember.String.htmlSafe(
       `height: calc(${d.height}px + ${d.pTop} + ${d.pBtm});`

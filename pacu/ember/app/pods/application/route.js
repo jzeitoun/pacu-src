@@ -5,6 +5,12 @@ export default Ember.Route.extend({
     toggleFullscreen() {
       this.fullscreen.toggle();
     },
+    toastInfo(title, detail) {
+      this.toast.info(detail, title);
+    },
+    toastWarning(title, detail) {
+      this.toast.warning(detail, title);
+    }
   },
   model() {
     return Ember.Object.create({

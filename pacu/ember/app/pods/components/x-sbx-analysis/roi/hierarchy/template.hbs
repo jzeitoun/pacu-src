@@ -1,0 +1,14 @@
+<h5 class="ui teal header">ID: {{roi.id}}</h5>
+<ul class="ul list">
+  <li>{{roi.created_at}}</li>
+  <li>{{roi.centroid.x}}, {{roi.centroid.y}}</li>
+</ul>
+<h5 class="ui red header">Traces</h5>
+<ul class="ul list">
+  {{#each roi.traces as |t|}}
+    <li>{{t.category}}
+      <span class="ui basic blue button"
+        {{action (route-action "fetchTrace" t "df/f0")}}>Fetch</span>
+    </li>
+  {{/each}}
+</ul>

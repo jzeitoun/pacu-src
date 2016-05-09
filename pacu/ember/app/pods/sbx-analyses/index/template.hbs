@@ -1,0 +1,17 @@
+<div class="ui inverted segment">
+  <h2>Directories</h2>
+  <div class="ui inverted list">
+  {{#each model.directories as |d|}}
+    <div class="item">
+      <i class="large teal folder open middle aligned icon"></i>
+      <div class="content">
+        {{link-to d "sbx-analyses.directory" d class="header"}}
+        <div class="description">more information...</div>
+      </div>
+    </div>
+  {{else}}
+    <div class="item">no directories here...</div>
+  {{/each}}
+  </div>
+</div>
+{{outlet}}

@@ -1,4 +1,5 @@
 from ..ext.tornado.web import Application
+from ..core.handler.jsonapi import JSONAPIHandler
 from ..core.handler.api import APIHandler
 from ..core.handler.msg import MSGHandler
 from ..core.handler.websocket import WebSocketHandler
@@ -16,7 +17,7 @@ def default(profile):
         'facebook_secret'
     ]}
     app = Application.backend(
-        [APIHandler, MSGHandler,
+        [JSONAPIHandler, APIHandler, MSGHandler,
            #  MMWStreamHandler,
         WSHandler, WebSocketHandler],
         debug = profile.debug.bool,

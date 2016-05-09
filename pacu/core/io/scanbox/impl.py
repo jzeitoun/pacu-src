@@ -56,7 +56,7 @@ class SessionBoundNamespace(object):
             orm.__name__: sessionBinder.bind(session, orm)
             for orm in orms})
     def __enter__(self):
-        return self._session.begin()
+        return self._session, self._session.begin()
     def __exit__(self, *args):
         print 'SESSION BOUND NAMESPACE __EXIT__'
         print args
@@ -116,19 +116,14 @@ class ScanboxIO(object):
         for chan in range(self.mat.channels):
             self.get_channel(chan).import_with_io(self)
         return self.attributes
-#     def fetch_trace(self, roi_id, trace_id, category):
-#         s = self.Session()
-#         with s.begin():
-#             print 'ROI ID', roi_id
-#             print 'TRACE ID', trace_id
-#             roi = s.query(db.ROI).get(roi_id)
-#             array = roi.get_trace(self.channel.mmap)
-#             trace = db.Trace(id=trace_id, roi_id=roi_id, array=array, category=category)
-#             trace = s.merge(trace)
-#             data = dict(array=trace.array, id=trace.id,
-#                     category=trace.category,
-#                     roi_id=trace.roi_id, created_at=trace.created_at)
-#         return data
+    def fetch_trace(self, id):
+        with self.session as (s, t):
+            trace = s.query(db.Trace).get(id)
+            roi = trace.roi
+            array = roi.get_trace(self.channel.mmap)
+            trace.array = array
+            s.commit()
+        return {}
 
 # from pacu.dep.json import best as json
 # from pacu.core.io.scanbox.model import session
@@ -138,6 +133,10 @@ import ujson
 from sqlalchemy import inspect
 testpath = '/Volumes/Users/ht/dev/current/pacu/tmp/Jack/jc6/jc6_1_120_006.io'
 io = ScanboxIO(testpath).set_workspace(1).set_channel(0)
+
+t = io.session.Trace.all()[4]
+rels = inspect(type(t)).relationships
+roirel = rels['roi']
 
 # io = ScanboxIO(testpath)
 # no = '/Volumes/Users/ht/dev/current/pacu/tmp/Jack/jc6/jc6_1_000_003.io'

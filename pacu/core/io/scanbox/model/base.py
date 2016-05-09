@@ -31,11 +31,17 @@ class Base(object):
             (c.key, getattr(self, c.key))
         for c in inspect(type(self)).columns])
     @property
+    def identity(self):
+        return dict(id=self.id, type=self.__tablename__)
+    @property
     def relationships(self):
         rels = inspect(type(self)).relationships
+        import ipdb;ipdb.set_trace()
         return OrderedDict([
-            (rel.key, obj if rel.uselist else obj.attributes
-            ) for rel, obj in parallelize(rels, lambda r: getattr(self, r.key))
+            (rel.key, dict(data=(
+                    [o.identity for o in obj] if rel.uselist else obj.identity
+                ))
+            ) for rel, obj in parallelize(rels, lambda rel: getattr(self, rel.key))
         ])
     @classmethod
     def init_and_update(cls, **kwargs):

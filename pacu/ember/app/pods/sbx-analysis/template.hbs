@@ -1,0 +1,42 @@
+<div id="route-sbx-analysis" class="ui inverted segment">
+
+  {{! MultiTrace Plot }}
+  <div class="ui inverted segment">
+    {{x-sbx-analysis/plot/multi-trace traces=model.socket.traces}}
+  </div>
+
+  <section class="ui clearing divider"></section>
+  <div class="ui padded grid">
+
+    {{! Main Canvas }}
+    {{#x-zoomable-container class="twelve wide column"
+      dimension=(mut model.socket.mainCanvasDimension) as |dim|}}
+      {{#x-layer
+        width=model.socket.img.width
+        height=model.socket.img.height
+        dimension=dim do=(route-action "do") as |layer|}}
+        {{layer.canvas-2d buffer=model.socket.img.buffer}}
+        {{layer.roi-manager rois=model.workspace.rois}}
+        {{!layer.context-menu centroid=model.focused.roi.centroid}}
+      {{/x-layer}}
+    {{/x-zoomable-container}}
+
+    {{! ROI Control }}
+    <div class="four wide column roi-list-container"
+      style={{model.socket.mainCanvasDimension.parallelContainerStyle}}>
+      {{#each model.workspace.rois as |roi|}}
+        {{x-sbx-analysis/roi/hierarchy roi=roi}}
+        <section class="ui clearing divider"></section>
+      {{/each}}
+    </div>
+  </div>
+
+  {{! Main Canvas Slider }}
+  <section class="ui clearing divider"></section>
+  <div class="ui">
+    {{input type="range" min="0" step="1"
+      max=model.socket.img.maxIndex value=model.socket.img.curIndex}}
+  </div>
+
+  {{! <p>focusedID: {model.focused.elementId}</p>}}
+</div>

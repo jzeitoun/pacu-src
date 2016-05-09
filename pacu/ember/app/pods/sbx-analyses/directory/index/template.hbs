@@ -1,0 +1,62 @@
+<div id="import-progress" class="ui basic modal">
+  <div class="ui loader"></div>
+  <div class="ui icon header">
+    <i class="archive icon"></i> Import data...
+  </div>
+  <div class="content"
+    style="height: 480px; overflow-y: scroll; border: 1px solid red;">
+    {{x-console-stream messages=messages class="ui"}}
+  </div>
+</div>
+
+<div class="ui inverted segment">
+  <h2>Directory {{model.directory}}</h2>
+  <div class="ui stackable three column page grid">
+  {{#each model.io_attrs_set as |io|}}
+    <div class="column">
+      {{#x-anlz-session-card
+        title=io.sbx.name
+        user=io.sbx.user
+        timeAgo=io.sbx.time
+        desc=io.sbx.desc
+        host=io.sbx.host
+        src=io.sbx.mouse
+      }}
+      {{#if io.is_there}}
+        <div class="extra content">
+          <div class="ui vertical fluid buttons">
+            <div class="ui blue basic button" {{action "newWorkspace" io}}>New Workspace</div>
+            <div class="ui red basic button" {{action "removeImported" io}}>Remove Imported</div>
+          </div>
+        </div>
+        <div class="extra content">
+          {{#each io.workspaces as |ws|}}
+          <h5 class="ui header">
+            <i class="radio icon"></i>
+            <div class="content">
+              <span class="trj-analyses-open-session"
+                {{action "openWorkspace" io ws}}>
+                  {{ws.id}}: {{ws.attributes.name}}</span>
+              <div class="ui inline simple dropdown">
+                <i class="dropdown icon"></i>
+                <div class="menu">
+                  <div class="header">Actions</div>
+                  <div class="item" {{action "removeWorkspace" io ws}}>Delete</div>
+                </div>
+              </div>
+            </div>
+          </h5>
+          {{/each}}
+        </div>
+      {{else}}
+        <div class="extra content">
+          <div class="ui basic fluid red button" {{action "importRaw" io}}>Import Raw Data</div>
+        </div>
+      {{/if}}
+      {{/x-anlz-session-card}}
+    </div>
+  {{/each}}
+  </div>
+</div>
+
+{{outlet}}

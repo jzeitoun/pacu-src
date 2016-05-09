@@ -1,0 +1,23 @@
+<section>
+{{#each model as |w|}}
+  <p>workspace id: {{w.id}}</p>
+  <p>name: {{w.name}}</p>
+  <div class="ui inverted segment">
+    <h4 class="ui teal header">ROIS</h4>
+    {{#each w.rois as |r|}}
+      <p>roi id: {{r.id}}</p>
+      <p>active: {{r.active}}</p>
+      <p>wname: {{r.post.name}}</p>
+      <p>centroid-x: {{r.centroid.x}}</p>
+      <p>centroid-y: {{r.centroid.y}}</p>
+      <div class="ui inverted segment">
+        <h5 class="ui red header">traces</h5>
+        {{#each r.traces as |t|}}
+          <p>trace id: {{t.id}}</p>
+          <p>category: {{t.category}}</p>
+        {{/each}}
+      </div>
+    {{/each}}
+  </div>
+{{/each}}
+</section>

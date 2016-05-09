@@ -6,8 +6,9 @@ from sqlalchemy.types import PickleType
 from pacu.core.io.scanbox.model.base import SQLite3Base
 
 class ROI(SQLite3Base):
+    __tablename__ = 'rois'
     polygon = Column(PickleType, default=[])
-    centroid = Column(PickleType, default={})
+    centroid = Column(PickleType, default={'x': -1, 'y': -1})
     active = Column(Boolean, default=False)
     @property
     def contours(self):

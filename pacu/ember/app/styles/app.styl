@@ -1,5 +1,6 @@
 @import "pod-styles"
 @import "range"
+@import "grab"
 
 // html
 body
@@ -42,30 +43,21 @@ a.active > div.nav
   .grid.compact-margin
     margin-bottom -5rem
 
-#route-trj-analysis
-  polygon
-    stroke-width 1.5px
-  circle
-    stroke-width 1.5px
-    r 5
-  circle.centroid
-    stroke-width 1.5px
-    r 5
-    &:hover
-      r 10
+// #route-trj-analysis
+//   polygon
+//     stroke-width 1.5px
+//   circle
+//     stroke-width 1.5px
+//     r 5
+//   circle.centroid
+//     stroke-width 1.5px
+//     r 5
+//     &:hover
+//       r 10
 
 #route-sbx-analysis
-  polygon
-    stroke-width 2px
-    // &.focused
-    //   stroke red
-    //   stroke-width 5px
-  circle, circle.centroid
-    r 4
-    fill rgba(50,50,50,0.75)
-
-  a.focus-responder:focus
-    outline-color red
+  .roi-list-container
+    font-size 1.5vw
 
 input.visual.option
   background-color #131518

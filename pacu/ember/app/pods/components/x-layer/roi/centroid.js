@@ -2,7 +2,7 @@ import Ember from 'ember';
 import computed from 'ember-computed-decorators';
 import mat from 'pacu/utils/matrix';
 
-function getCentroid(polygon) {
+export function getCentroid(polygon) {
   const closed = polygon.concat(polygon.get('firstObject'));
   const pointXs = closed.getEach('x');
   const pointYs = closed.getEach('y');
