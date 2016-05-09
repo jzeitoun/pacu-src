@@ -11,8 +11,8 @@ def deco_dumps(lib_dumps):
             return {key: fix_todict(val) for key, val in o.items()}
         elif hasattr(o, '__iter__'):
             return [fix_todict(e) for e in o]
-        elif isinstance(o, np.inf.__class__):
-            return 'inf'
+#         elif isinstance(o, np.inf.__class__):
+#             return 'inf'
         else:
             return o
     def object_dumps(o):

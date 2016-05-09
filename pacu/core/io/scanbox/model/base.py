@@ -36,12 +36,12 @@ class Base(object):
     @property
     def relationships(self):
         rels = inspect(type(self)).relationships
-        import ipdb;ipdb.set_trace()
         return OrderedDict([
             (rel.key, dict(data=(
                     [o.identity for o in obj] if rel.uselist else obj.identity
                 ))
-            ) for rel, obj in parallelize(rels, lambda rel: getattr(self, rel.key))
+            ) for rel, obj
+              in parallelize(rels, lambda rel: getattr(self, rel.key))
         ])
     @classmethod
     def init_and_update(cls, **kwargs):
