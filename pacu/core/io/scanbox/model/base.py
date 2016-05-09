@@ -41,7 +41,8 @@ class Base(object):
                     [o.identity for o in obj] if rel.uselist else obj.identity
                 ))
             ) for rel, obj
-              in parallelize(rels, lambda rel: getattr(self, rel.key))
+              in parallelize(rels, lambda rel: getattr(self, rel.key)
+            ) if obj
         ])
     @classmethod
     def init_and_update(cls, **kwargs):

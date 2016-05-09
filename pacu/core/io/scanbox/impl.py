@@ -134,9 +134,9 @@ from sqlalchemy import inspect
 testpath = '/Volumes/Users/ht/dev/current/pacu/tmp/Jack/jc6/jc6_1_120_006.io'
 io = ScanboxIO(testpath).set_workspace(1).set_channel(0)
 
-t = io.session.Trace.all()[4]
-rels = inspect(type(t)).relationships
-roirel = rels['roi']
+# t = io.session.Trace.all()[4]
+# rels = inspect(type(t)).relationships
+# roirel = rels['roi']
 
 # io = ScanboxIO(testpath)
 # no = '/Volumes/Users/ht/dev/current/pacu/tmp/Jack/jc6/jc6_1_000_003.io'

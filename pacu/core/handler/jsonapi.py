@@ -60,6 +60,8 @@ class JSONAPIHandler(RequestHandler):
     def prepare(self):
         self.locator = ResourceLocator.from_headers(self.request.headers)
     def get(self, tablename, id):
+        view = self.get_argument('view', None)
+        import ipdb;ipdb.set_trace()
         query = self.session.query(self.locator.orms.get(tablename))
         data = query.get(id) if id else [entity.as_jsonapi for entity in query]
         dumped = ujson.dumps(dict(data=data))

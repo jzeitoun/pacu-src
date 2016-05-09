@@ -19,7 +19,7 @@ export default Ember.Component.extend({
     chart.data.labels = manager.get('labels');
     chart.data.datasets = manager.get('datasets');
     chart.update();
-  }.observes('manager').on('didInsertElement'),
+  }, //.observes('manager').on('didInsertElement'),
   initialize: function() {
   }.on('didInsertElement'),
   dnitialize: function() {

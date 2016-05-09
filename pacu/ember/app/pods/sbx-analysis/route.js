@@ -17,6 +17,9 @@ export default Ember.Route.extend({
       sessionArgs: [param.base, param.io_name]
     });
     const workspace = this.store.findRecord('workspace', param.workspace_id);
+    const traces = this.store.query('trace', {
+      view: { workspace_id: param.workspace_id }
+    });
     const socket = new Promise((resolve, reject) => {
       return this.get('socket').create(
         this, modname, clsname, param
@@ -29,7 +32,7 @@ export default Ember.Route.extend({
         resolve(SocketModel.create({ wsx }));
       });
     });
-    return Ember.RSVP.hash({ workspace, socket });
+    return Ember.RSVP.hash({ workspace, socket, traces });
   },
   afterModel(model, transition) {
     model.socket.initialize(this, model.workspace);

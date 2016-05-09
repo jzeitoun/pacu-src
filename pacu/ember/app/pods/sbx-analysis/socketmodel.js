@@ -61,9 +61,9 @@ export default Ember.Object.extend({
 //       ).notifyPropertyChange('polygon'); // for recomputing roi
 //     });
 //   },
-  @computed() traces() {
-    return this.get('store').peekAll('trace').mapBy('array');
-  },
+  // @computed() traces() {
+  //   return this.get('store').peekAll('trace').mapBy('array');
+  // },
   initialize(route, workspace) {
     window.qwe = route.store
     this.set('store', route.store);
