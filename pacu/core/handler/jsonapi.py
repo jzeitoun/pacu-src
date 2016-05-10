@@ -70,6 +70,8 @@ class JSONAPIHandler(RequestHandler):
         attrs = payload['data']['attributes']
         rels = payload['data']['relationships']
         s = self.session
+        print attrs
+        print rels
         with s.begin():
             entity = self.locator.orms.get(tablename)(**attrs)
             for key, val in rels.items():

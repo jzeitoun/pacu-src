@@ -1,28 +1,24 @@
 import Ember from 'ember';
-import computed from 'ember-computed-decorators';
+import computed, { on, observes } from 'ember-computed-decorators';
 import Manager from 'pacu/pods/components/x-sbx-analysis/plot/multi-trace/chart';
 
 export default Ember.Component.extend({
   tagName: 'canvas',
   width: 500,
-  height: 200,
+  height: 128,
   attributeBindings: ['width', 'height'],
   @computed() ctx() { return this.element.getContext('2d'); },
-  @computed('traces') manager(traces) {
-    console.log('getting tace', traces);
-    return Manager.create({traces: traces});
-  },
   @computed('ctx') chart(ctx) { return new Chart(ctx, Manager.config); },
-  draw: function() {
-    const manager = this.get('manager');
+  @observes('traces.@each.array') draw() {
+    const traces = this.get('traces');
+    const manager = Manager.create({traces: traces.map(t => t.toJSON())});
     const chart = this.get('chart');
     chart.data.labels = manager.get('labels');
     chart.data.datasets = manager.get('datasets');
     chart.update();
-  }, //.observes('manager').on('didInsertElement'),
-  initialize: function() {
-  }.on('didInsertElement'),
-  dnitialize: function() {
+  },
+  @on('didInsertElement') initialize() { },
+  @on('willDestroyElement') dnitialize() {
     this.get('chart').destroy();
-  }.on('willDestroyElement')
+  }
 });

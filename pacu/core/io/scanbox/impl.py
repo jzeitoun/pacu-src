@@ -131,8 +131,8 @@ class ScanboxIO(object):
 
 import ujson
 from sqlalchemy import inspect
-testpath = '/Volumes/Users/ht/dev/current/pacu/tmp/Jack/jc6/jc6_1_120_006.io'
-io = ScanboxIO(testpath).set_workspace(1).set_channel(0)
+testpath = '/Volumes/Users/ht/dev/current/pacu/tmp/Jack/jzg1/day1/day1_000_007.io/'
+# io = ScanboxIO(testpath).set_workspace(1).set_channel(0)
 
 # t = io.session.Trace.all()[4]
 # rels = inspect(type(t)).relationships
@@ -151,7 +151,7 @@ io = ScanboxIO(testpath).set_workspace(1).set_channel(0)
 
 def fixture(io):
     db.recreate(io.db_path)
-    with io.session as t:
+    with io.session as (s, t):
         roi1 = db.ROI(polygon=[
             {'x':1,   'y':1},
             {'x':111, 'y':1},
@@ -169,9 +169,9 @@ def fixture(io):
         ])
         t.commit()
 
-def ScanboxIOFetcher(base, io_name, workspace_id):
+def ScanboxIOFetcher(mouse, day, io_name, workspace_id):
     root = manager.instance('opt').scanbox_root
-    path = Path(root).joinpath(base, io_name)
+    path = Path(root).joinpath(mouse, day, io_name)
     return ScanboxIO(path).set_workspace(workspace_id).set_channel(0)
 
 

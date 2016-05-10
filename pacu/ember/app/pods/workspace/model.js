@@ -7,38 +7,21 @@ export default Model.extend({
   created_at: attr('epoch'),
   name: attr('string'),
   rois: hasMany('roi'),
-  ts: function() {
+  traces: function() {
     const entry = [];
+    const interim = [];
     this.get('rois').then(rs => {
-      rs.forEach(roi => {
-        console.log('roi id', roi.get('id'));
+      const proms = rs.map(roi => {
+        return roi.get('traces').then(ts => {
+          ts.forEach(t => {
+            interim.pushObject(t);
+          });
+        });
       });
-      // rs.getEach('traces').forEach(t => {
-      //   t.then(trace => {
-      //     console.log(trace);
-      //     entry.pushObject(trace);
-      //   });
-      // });
+      Ember.RSVP.all(proms).then(() => {
+        entry.pushObjects(interim);
+      });
     });
     return entry;
-//     console.log('getting ts');
-//     return this.get('rois').then(rs => {
-//       return Ember.RSVP.all(rs.map((roi) => {
-//         const ts = roi.get('traces');
-//         console.log(ts);
-//         return ts;
-//       }), 'rsmap').then(traces => {
-//         return traces;
-//       });
-//     });
-// //     this.get('rois').then(rs => {
-//       const prom = Ember.RSVP.all(rs.map((roi) => {
-//         const ts = roi.get('traces');
-//         console.log(ts);
-//         return ts;
-//       }), 'rsmap');
-//       this.set('fetchedRS', prom);
-//       // console.log('total prom', prom);
-//     });
-  }.property('rois.@each.traces')
+  }.property('rois')
 });

@@ -65,11 +65,10 @@ export default Ember.Object.extend({
   //   return this.get('store').peekAll('trace').mapBy('array');
   // },
   initialize(route, workspace) {
-    window.qwe = route.store
     this.set('store', route.store);
     this.mirror('channel.dimension');
     if (Ember.isEmpty(workspace.get('rois'))) {
-      route.toast.info(`Hey buddy, you have no ROIs in this session. 
+      route.toast.info(`Hey buddy, you have no ROIs in this workspace. 
         How about drawing some?`);
     }
   },

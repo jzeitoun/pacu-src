@@ -5,6 +5,7 @@ import { belongsTo, hasMany } from 'ember-data/relationships';
 export default Model.extend({
   created_at: attr('epoch'),
   array: attr(),
+  color: attr('string'),
   category: attr('string'),
   roi: belongsTo('roi'),
 });

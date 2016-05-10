@@ -18,12 +18,11 @@ export default Model.extend({
     const incomingNaN = isNaN(nue.x) || isNaN(nue.y);
     if (!incomingNaN && !isSame) { this.set('centroid', nue); }
   },
-  @on('ready') normalizeTraces() {
+  @on('didCreate') normalizeTraces() {
     if (Ember.isEmpty(this.get('traces'))) {
       const trace = this.store.createRecord('trace', {
-        category: 'df/f0', array: []
+        category: 'df/f0', array: [], roi: this
       });
-      this.get('traces').pushObject(trace);
       trace.save();
     }
   }

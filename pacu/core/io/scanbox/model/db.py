@@ -22,7 +22,7 @@ def get_sessionmaker(dbpath):
         echo=True) if path.is_file() else recreate('')
     return sessionmaker(engine, autocommit=True)
 
-def Session(dirname, ioname):
+def Session(mouse, day, ioname):
     """
     dirname = "jc6"
     ioname = "jc6_1_120_006.io"
@@ -32,6 +32,6 @@ def Session(dirname, ioname):
     """
     from sqlalchemy import create_engine
     from sqlalchemy.orm import sessionmaker
-    dbpath = opt.scanbox_root.joinpath(dirname, ioname, 'db.sqlite3')
+    dbpath = opt.scanbox_root.joinpath(mouse, day, ioname, 'db.sqlite3')
     engine = create_engine('sqlite:///{}'.format(dbpath), echo=True)
     return sessionmaker(engine, autocommit=True)

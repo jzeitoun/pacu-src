@@ -36,10 +36,13 @@ Router.map(function() {
   this.route('sci-analysis',
     { path: '/sci-analysis/:year/:month/:day/:mouse/:image/:session' });
   this.route('sbx-analyses', function() {
-    this.route('directory', { path: ':directory' }, function() {});
+    this.route('mouse', { path: ':mouse' }, function() {
+      this.route('day', { path: ':day' }, function() {
+      });
+    });
   });
   this.route('sbx-analysis',
-    { path: '/sbx-analysis/:base/:io_name/:workspace_id' });
+    { path: '/sbx-analysis/:mouse/:day/:io_name/:workspace_id' });
 });
 
 export default Router;

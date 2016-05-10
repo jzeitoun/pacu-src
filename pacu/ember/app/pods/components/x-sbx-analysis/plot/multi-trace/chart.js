@@ -1,5 +1,6 @@
 import Ember from 'ember';
 import computed from 'ember-computed-decorators';
+import color from 'pacu/utils/color';
 
 const yAxes = {
   type: 'linear',
@@ -59,14 +60,14 @@ const options = {
 
 export default Ember.Object.extend({
   @computed('traces') labels(traces) {
-    return Ember.isEmpty(traces) ? [] : traces[0].map((e,i) => i);
+    return Ember.isEmpty(traces) ? [] : traces[0].array.map((e,i) => i);
   },
   @computed('traces') datasets(traces) {
-    return traces.map(trace => {
+    return traces.map((trace, index) => {
       return {
-        borderColor: 'rgba(255, 0, 0, 1)',
+        borderColor: trace.color || color.google20[index],
         borderWidth: 0.5,
-        data: trace,
+        data: trace.array,
       }
     });
   }

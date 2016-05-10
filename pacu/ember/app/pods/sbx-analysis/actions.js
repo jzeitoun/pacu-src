@@ -175,6 +175,7 @@ export default {
       this.currentModel, 'roiFetching'
     ).then(data => {
       t.reload();
+      this.currentModel.workspace.notifyPropertyChange('traces');
     }).catch(err => {
       this.toast.error(err.title, err.detail);
     }).finally(() => {
