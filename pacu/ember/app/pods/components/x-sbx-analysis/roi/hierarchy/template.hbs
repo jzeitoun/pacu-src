@@ -7,7 +7,8 @@
   </div>
 </div>
 {{#each roi.traces as |t|}}
-<span class="fluid ui basic teal button inherit-font-size"
+<span class="fluid ui basic teal button inherit-font-size
+  {{if t.isLoading "loading disabled" ""}}"
   {{action (route-action "fetchTrace" t t.category)}}>Update {{t.category}}</span>
 {{/each}}
 

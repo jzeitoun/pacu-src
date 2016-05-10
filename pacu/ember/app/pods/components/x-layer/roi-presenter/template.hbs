@@ -9,7 +9,6 @@
     {{x-layer/roi/static-polygon roi.dPolygon class="drift"}}
 
 {{! #x-layer/roi/focus-responder}}
-<a class="ember-view focus-responder" xlink:href="#">
     {{x-layer/roi/polygon roi.polygon class="primary"
       active=roi.active
       busy=roi.busy
@@ -22,7 +21,6 @@
       onRemove=(route-action "removeROI" rois roi)
       onCancel=(route-action "removeROI" rois)
     }}
-</a>
 {{! /x-layer/roi/focus-responder}}
     {{#each roi.polygon as |pg|}}
       {{x-layer/roi/circle pg

@@ -172,10 +172,9 @@ export default {
   },
   fetchTrace(t) {
     return this.get('wsx').invoke('fetch_trace', t.get('id')).gateTo(
-      this.currentModel, 'roiFetching'
+      t, 'isBusy'
     ).then(data => {
       t.reload();
-      this.currentModel.workspace.notifyPropertyChange('traces');
     }).catch(err => {
       this.toast.error(err.title, err.detail);
     }).finally(() => {

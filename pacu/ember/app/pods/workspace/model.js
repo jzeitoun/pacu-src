@@ -7,21 +7,13 @@ export default Model.extend({
   created_at: attr('epoch'),
   name: attr('string'),
   rois: hasMany('roi'),
-  traces: function() {
-    const entry = [];
-    const interim = [];
-    this.get('rois').then(rs => {
-      const proms = rs.map(roi => {
-        return roi.get('traces').then(ts => {
-          ts.forEach(t => {
-            interim.pushObject(t);
-          });
-        });
-      });
-      Ember.RSVP.all(proms).then(() => {
-        entry.pushObjects(interim);
+  @computed('rois') traces(rois, entry=[]) {
+    rois.then(rs => {
+      const ps = rs.map(roi => roi.get('traces').then(ts => ts.map(t => t)));
+      Ember.RSVP.all(ps).then(nested => {
+        entry.pushObjects([].concat(...nested));
       });
     });
     return entry;
-  }.property('rois')
+  }
 });
