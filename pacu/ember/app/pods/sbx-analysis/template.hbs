@@ -2,7 +2,8 @@
 
   {{! MultiTrace Plot }}
   <div class="ui inverted segment">
-    {{x-sbx-analysis/plot/multi-trace traces=model.workspace.traces}}
+    {{x-sbx-analysis/plot/multi-trace
+      index=model.socket.img.curIndex traces=model.workspace.traces}}
   </div>
 
   {{! Main Canvas Slider }}

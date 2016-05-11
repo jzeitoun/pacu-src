@@ -20,7 +20,7 @@ const xAxes = {
   position: 'bottom',
   scaleLabel: {
     display: false,
-    labelString: 'Orientation of Stimulus'
+    // labelString: 'Orientation of Stimulus'
   },
   gridLines: {
     display: false,
@@ -28,9 +28,12 @@ const xAxes = {
     // drawOnChartArea: false,
     // drawTicks: true
   },
+  ticks: {
+    maxTicksLimit: 32
+  }
 }
 
-const type = 'line';
+const type = 'lineEx';
 const data = { labels:[], datasets:[] }; // dummy
 const options = {
   title: {
@@ -38,23 +41,34 @@ const options = {
     text: 'ROI Traces',
     fontStyle: 'normal'
   },
-  legend: {display: false},
-  tooltips: {enabled: false},
+  legend: {
+    display: true,
+    labels: {
+      fontSize: 10
+    }
+  },
+  tooltips: {enabled: true},
   scales: {
     yAxes: [yAxes],
     xAxes: [xAxes],
   },
+  hover: {
+    animationDuration: null
+  },
   elements: {
-    line: {
-      borderWidth: 1,
-      fill: false,
-      tension: 0
-    },
+    // line: {
+    //   borderWidth: 1,
+    //   fill: false,
+    //   tension: 0
+    // },
     point: {
       radius: 0,
-      hoverRadius: 0,
-      hitRadius: 0
+      hoverRadius: 8,
+      hitRadius: 8,
     }
+  },
+  animation: {
+    duration: null
   }
 };
 
@@ -68,6 +82,7 @@ export default Ember.Object.extend({
         borderColor: trace.color || color.google20[index],
         borderWidth: 0.5,
         data: trace.array,
+        label: `ROI# ${trace.roi}`,
       }
     });
   }

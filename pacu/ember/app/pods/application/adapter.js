@@ -11,5 +11,14 @@ export default JSONAPIAdapter.extend({
       PACU_JSONAPI_SESSION_ARGUMENTS: s,
       PACU_JSONAPI_BASE_NAME: b
     };
+  },
+  ajax(url, type, hash) {
+    this.set('store.isfetching', true);
+    return this._super(url, type, hash).finally(() => {
+      this.set('store.isFetching', false);
+    });
   }
 });
+//   _ajaxRequest(options) {
+//     Ember.$.ajax(options);
+//   },

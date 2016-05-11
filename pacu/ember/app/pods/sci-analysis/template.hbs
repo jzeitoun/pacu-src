@@ -75,7 +75,8 @@
   <section class="ui clearing divider"></section>
   <div class="ui inverted segment">
     <div class="ui {{model.socketStatusClass}} text loader">Fetching...</div>
-    {{x-sci-analysis/response/overview src=model.response.overview}}
+    {{x-sci-analysis/response/overview
+      src=model.response.overview index=model.img.curIndex}}
   </div>
   <section class="ui clearing divider"></section>
   <div class="ui">

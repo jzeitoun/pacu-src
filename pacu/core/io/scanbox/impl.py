@@ -117,6 +117,10 @@ class ScanboxIO(object):
             self.get_channel(chan).import_with_io(self)
         return self.attributes
     def fetch_trace(self, id):
+        import time
+        print 'sleeping'
+        time.sleep(3)
+        print 'slept'
         with self.session as (s, t):
             trace = s.query(db.Trace).get(id)
             roi = trace.roi
@@ -129,9 +133,9 @@ class ScanboxIO(object):
 # from pacu.core.io.scanbox.model import session
 # import numpy as np
 
-# import ujson
-# from sqlalchemy import inspect
-# testpath = '/Volumes/Users/ht/dev/current/pacu/tmp/Jack/jzg1/day1/day1_000_007.io/'
+import ujson
+from sqlalchemy import inspect
+testpath = '/Volumes/Users/ht/dev/current/pacu/tmp/Jack/jzg1/day1/day1_000_007.io/'
 # io = ScanboxIO(testpath).set_workspace(1).set_channel(0)
 
 # t = io.session.Trace.all()[4]

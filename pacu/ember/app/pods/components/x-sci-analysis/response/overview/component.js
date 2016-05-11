@@ -1,5 +1,5 @@
 import Ember from 'ember';
-import computed from 'ember-computed-decorators';
+import computed, { observes } from 'ember-computed-decorators';
 
 const yAxes = {
   type: 'linear',
@@ -27,9 +27,12 @@ const xAxes = {
     // drawOnChartArea: false,
     // drawTicks: true
   },
+  ticks: {
+    maxTicksLimit: 32
+  }
 }
 
-const type = 'line';
+const type = 'lineEx';
 const data = { labels:[], datasets:[] }; // dummy
 const options = {
   title: {
@@ -38,22 +41,28 @@ const options = {
     // fontStyle: 'normal'
   },
   legend: {display: false},
-  tooltips: {enabled: false},
+  tooltips: {enabled: true},
   scales: {
     yAxes: [yAxes],
     xAxes: [xAxes],
   },
+  hover: {
+    animationDuration: null
+  },
   elements: {
-    line: {
-      borderWidth: 1,
-      fill: false,
-      tension: 0
-    },
+    // line: {
+    //   borderWidth: 1,
+    //   fill: false,
+    //   tension: 0
+    // },
     point: {
       radius: 0,
-      hoverRadius: 0,
-      hitRadius: 0
+      hoverRadius: 8,
+      hitRadius: 8
     }
+  },
+  animation: {
+    duration: null
   }
 };
 const Data = Ember.Object.extend({
@@ -79,9 +88,7 @@ export default Ember.Component.extend({
   @computed('src') data(src={}) { return Data.create(src); },
   labels: Ember.computed.alias('data.labels'),
   datasets: Ember.computed.alias('data.datasets'),
-  @computed('ctx', 'config') chart(ctx, cfg) {
-    return new Chart(ctx, cfg);
-  },
+  @computed('ctx', 'config') chart(ctx, cfg) { return new Chart(ctx, cfg); },
   draw: function() {
     const {chart, labels, datasets
     } = this.getProperties('chart', 'labels', 'datasets');
@@ -89,7 +96,13 @@ export default Ember.Component.extend({
     chart.data.datasets = datasets;
     chart.update();
   }.observes('src'),
-  dinitialize: function() {
+  @observes('index') drawIndex() {
+    const index = parseInt(this.get('index'));
+    this.get('chart').anon.controller.setIndex(index);
+  },
+  initialize: function() {
+  }.on('didInsertElement'),
+  dnitialize: function() {
     this.get('chart').destroy();
   }.on('willDestroyElement')
 });

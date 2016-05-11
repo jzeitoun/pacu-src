@@ -4,6 +4,7 @@ import Manager from 'pacu/pods/components/x-sbx-analysis/plot/multi-trace/chart'
 
 export default Ember.Component.extend({
   tagName: 'canvas',
+  classNames: 'noselect',
   width: 500,
   height: 128,
   attributeBindings: ['width', 'height'],
@@ -16,6 +17,10 @@ export default Ember.Component.extend({
     chart.data.labels = manager.get('labels');
     chart.data.datasets = manager.get('datasets');
     chart.update();
+  },
+  @observes('index') drawIndex() {
+    const index = parseInt(this.get('index'));
+    this.get('chart').anon.controller.setIndex(index);
   },
   @on('didInsertElement') initialize() { },
   @on('willDestroyElement') dnitialize() {
