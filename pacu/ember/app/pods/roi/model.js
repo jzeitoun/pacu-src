@@ -26,9 +26,4 @@ export default Model.extend({
       trace.save();
     }
   },
-  actions: {
-    foo(t) {
-      debugger
-    }
-  }
 });

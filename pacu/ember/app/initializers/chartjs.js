@@ -6,17 +6,15 @@ export function initialize(/* application */) {
   const LC = Chart.controllers.line;
   Chart.controllers.lineEx = LC.extend({
     initialize(chart, datasetIndex) {
-      console.log('init', datasetIndex);
       LC.prototype.initialize.apply(this, arguments);
-      if (datasetIndex === 0) {
-        const main = this.chart.chart.canvas;
-        this.chart.anon = document.createElement('canvas');
-        this.chart.anon.classList.add('chart-js-anon', 'chart-js-anon-index');
-        this.chart.anon.controller = this;
-        main.style.position = 'absolute';
-        main.classList.add('chart-js-main');
-        main.parentNode.insertBefore(this.chart.anon, main.nextSibling);
-      }
+      if (this.chart.anon) { return; }
+      const main = this.chart.chart.canvas;
+      this.chart.anon = document.createElement('canvas');
+      this.chart.anon.classList.add('chart-js-anon', 'chart-js-anon-index');
+      this.chart.anon.controller = this;
+      main.style.position = 'absolute';
+      main.classList.add('chart-js-main');
+      main.parentNode.insertBefore(this.chart.anon, main.nextSibling);
     },
     update() {
       LC.prototype.update.apply(this, arguments);

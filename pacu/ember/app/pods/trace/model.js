@@ -9,4 +9,27 @@ export default Model.extend({
   color: attr('string'),
   category: attr('string'),
   roi: belongsTo('roi'),
+  action(name, ...args) {
+    // willAct
+    this.actions[name].apply(this, args);
+    // didAct
+  },
+  actions: {
+    fetch() {
+      window.qwe = this;
+      console.log('reload');
+      // this.reload();
+      console.log('reloaded');
+      return true;
+
+      //  return this.get('wsx').invoke('fetch_trace', t.get('id')).gateTo(
+      //    t, 'isBusy'
+      //  ).then(data => {
+      //    t.reload();
+      //  }).catch(err => {
+      //    this.toast.error(err.title, err.detail);
+      //  }).finally(() => {
+      //  });
+    }
+  }
 });
