@@ -140,12 +140,12 @@ class ScanboxIO(object):
 # from pacu.core.io.scanbox.model import session
 # import numpy as np
 
-import ujson
-from sqlalchemy import inspect
-testpath = '/Volumes/Users/ht/dev/current/pacu/tmp/Jack/jzg1/day1/day1_000_007.io'
-io = ScanboxIO(testpath).set_workspace(1).set_channel(0)
-w = io.workspace
-t = io.workspace.rois[0].traces[0]
+# import ujson
+# from sqlalchemy import inspect
+# testpath = '/Volumes/Users/ht/dev/current/pacu/tmp/Jack/jzg1/day1/day1_000_007.io'
+# io = ScanboxIO(testpath).set_workspace(1).set_channel(0)
+# w = io.workspace
+# t = io.workspace.rois[0].traces[0]
 
 # t = io.session.Trace.all()[4]
 # rels = inspect(type(t)).relationships
