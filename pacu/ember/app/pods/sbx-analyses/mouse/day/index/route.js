@@ -82,7 +82,10 @@ export default Ember.Route.extend({
         }
         this.get('socket').create(
           this, modname, clsname, {path: io.path}).then(wsx => {
-          wsx.invoke('session.Workspace.create', {name: inputValue}).then(workspace => {
+          wsx.invoke('session.Workspace.create', {
+            name: inputValue,
+            iopath: io.path,
+          }).then(workspace => {
             io.workspaces.pushObject(workspace);
             swal.close();
           }).catch(cat).finally(() => { wsx.dnit(); });

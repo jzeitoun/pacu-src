@@ -5,6 +5,7 @@ import traceback
 import ujson
 
 from sqlalchemy.orm import load_only
+from pacu.core.io.scanbox.model import db
 from pacu.ext.tornado.web import RequestHandler
 
 def print_exc():
@@ -52,13 +53,16 @@ class ResourceLocator(object):
     def Session(self):
         return self.module.Session(*self.session_args)
 
+from sqlalchemy import event
+
 class JSONAPIHandler(RequestHandler):
     url = r'/jsonapi/(?P<tablename>[\w-]+)/?(?P<id>\d*)'
-    @property
-    def session(self):
-        return self.locator.Session()
     def prepare(self):
         self.locator = ResourceLocator.from_headers(self.request.headers)
+        self.session = self.locator.Session()
+        event.listen(self.session, 'before_attach', db.before_attach)
+    def on_finish(self):
+        event.remove(self.session, 'before_attach', db.before_attach)
     def get(self, tablename, id):
         view = self.get_argument('view', None)
         query = self.session.query(self.locator.orms.get(tablename))
@@ -67,11 +71,9 @@ class JSONAPIHandler(RequestHandler):
         self.finish(dumped)
     def post(self, tablename, id):
         payload = ujson.loads(self.request.body)
-        attrs = payload['data']['attributes']
-        rels = payload['data']['relationships']
+        attrs = payload['data'].get('attributes') or {}
+        rels = payload['data'].get('relationships') or {}
         s = self.session
-        print attrs
-        print rels
         with s.begin():
             entity = self.locator.orms.get(tablename)(**attrs)
             for key, val in rels.items():

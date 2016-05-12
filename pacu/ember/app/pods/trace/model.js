@@ -10,26 +10,21 @@ export default Model.extend({
   category: attr('string'),
   roi: belongsTo('roi'),
   action(name, ...args) {
-    // willAct
-    this.actions[name].apply(this, args);
-    // didAct
+    if (this.get('inAction')) { return; }
+    this.set('inAction', true);
+    const prom = this.actions[name].apply(this, args).finally(() => {
+      this.set('inAction', false);
+    });
   },
   actions: {
     fetch() {
-      window.qwe = this;
-      console.log('reload');
-      // this.reload();
-      console.log('reloaded');
-      return true;
-
-      //  return this.get('wsx').invoke('fetch_trace', t.get('id')).gateTo(
-      //    t, 'isBusy'
-      //  ).then(data => {
-      //    t.reload();
-      //  }).catch(err => {
-      //    this.toast.error(err.title, err.detail);
-      //  }).finally(() => {
-      //  });
+      return this.store.createRecord('action', {
+        model_name: 'Trace',
+        model_id: this.id,
+        action_name: 'refresh',
+      }).save().then((data) => {
+        this.reload();
+      });
     }
   }
 });

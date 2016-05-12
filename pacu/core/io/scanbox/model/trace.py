@@ -8,4 +8,5 @@ class Trace(SQLite3Base):
     array = Column(PickleType, default=[])
     color = Column(Unicode(24))
     category = Column(Unicode(64))
-
+    def refresh(self):
+        self.array = self.roi.get_trace()

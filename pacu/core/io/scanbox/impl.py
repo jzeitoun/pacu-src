@@ -61,6 +61,8 @@ class SessionBoundNamespace(object):
         print 'SESSION BOUND NAMESPACE __EXIT__'
         print args
 
+from sqlalchemy import event
+
 class ScanboxIO(object):
     session = None
     channel = None
@@ -77,7 +79,12 @@ class ScanboxIO(object):
         return self.path.joinpath('db.sqlite3').absolute()
     @property
     def db_session_factory(self):
-        return db.get_sessionmaker(self.db_path)
+        maker = db.get_sessionmaker(self.db_path)
+        # sessionmaker can configure without bind(engine)
+        # so setup event first. it's doable.
+        event.listen(maker, 'before_attach', db.before_attach)
+        # event.remove(maker, 'before_attach', db.SQLite3Base.before_attach)
+        return maker
     def set_workspace(self, id):
         self.workspace_id = id
         return self
@@ -116,18 +123,18 @@ class ScanboxIO(object):
         for chan in range(self.mat.channels):
             self.get_channel(chan).import_with_io(self)
         return self.attributes
-    def fetch_trace(self, id):
-        import time
-        print 'sleeping'
-        time.sleep(3)
-        print 'slept'
-        with self.session as (s, t):
-            trace = s.query(db.Trace).get(id)
-            roi = trace.roi
-            array = roi.get_trace(self.channel.mmap)
-            trace.array = array
-            s.commit()
-        return {}
+#     def fetch_trace(self, id):
+#         import time
+#         print 'sleeping'
+#         time.sleep(3)
+#         print 'slept'
+#         with self.session as (s, t):
+#             trace = s.query(db.Trace).get(id)
+#             roi = trace.roi
+#             array = roi.get_trace(self.channel.mmap)
+#             trace.array = array
+#             s.commit()
+#         return {}
 
 # from pacu.dep.json import best as json
 # from pacu.core.io.scanbox.model import session
@@ -135,8 +142,10 @@ class ScanboxIO(object):
 
 import ujson
 from sqlalchemy import inspect
-testpath = '/Volumes/Users/ht/dev/current/pacu/tmp/Jack/jzg1/day1/day1_000_007.io/'
-# io = ScanboxIO(testpath).set_workspace(1).set_channel(0)
+testpath = '/Volumes/Users/ht/dev/current/pacu/tmp/Jack/jzg1/day1/day1_000_007.io'
+io = ScanboxIO(testpath).set_workspace(1).set_channel(0)
+w = io.workspace
+t = io.workspace.rois[0].traces[0]
 
 # t = io.session.Trace.all()[4]
 # rels = inspect(type(t)).relationships
@@ -152,6 +161,13 @@ testpath = '/Volumes/Users/ht/dev/current/pacu/tmp/Jack/jzg1/day1/day1_000_007.i
 
 # CREATE one big detailed global `relationship.py` it will define all ordered import and relationship
 
+    # def db_session_factory(self):
+    #     maker = db.get_sessionmaker(self.db_path)
+    #     # sessionmaker can configure without bind(engine)
+    #     # so setup event first. it's doable.
+    #     event.listen(maker, 'before_attach', db.before_attach)
+    #     # event.remove(maker, 'before_attach', db.SQLite3Base.before_attach)
+    #     return maker
 
 def fixture(io):
     db.recreate(io.db_path)
@@ -162,16 +178,26 @@ def fixture(io):
             {'x':111, 'y':111},
             {'x':1,   'y':111},
         ], traces=[db.Trace(category='df/f0')])
-        roi2 = db.ROI(polygon=[
-            {'x':210, 'y':201},
-            {'x':321, 'y':201},
-            {'x':311, 'y':311},
-            {'x':210, 'y':311},
-        ], traces=[db.Trace(category='df/f0')])
+        # roi2 = db.ROI(polygon=[
+        #     {'x':210, 'y':201},
+        #     {'x':321, 'y':201},
+        #     {'x':311, 'y':311},
+        #     {'x':210, 'y':311},
+        # ], traces=[db.Trace(category='df/f0')])
         t.session.add_all([
-            db.Workspace(name=u"main", rois=[roi1, roi2]),
+            db.Workspace(
+                name=u"main",
+                iopath=testpath,
+                rois=[roi1]),
         ])
-        t.commit()
+        s.commit()
+    with io.session as (s, t):
+        s.add(db.Action(
+            model_name = u'Trace',
+            model_id = 1,
+            action_name = u'refresh',
+        ))
+        s.commit()
 
 def ScanboxIOFetcher(mouse, day, io_name, workspace_id):
     root = manager.instance('opt').scanbox_root

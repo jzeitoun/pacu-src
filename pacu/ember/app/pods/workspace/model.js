@@ -6,6 +6,7 @@ import computed  from 'ember-computed-decorators';
 export default Model.extend({
   created_at: attr('epoch'),
   name: attr('string'),
+  iopath: attr('string'),
   rois: hasMany('roi'),
   @computed('rois') traces(rois, entry=[]) {
     rois.then(rs => {

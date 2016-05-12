@@ -35,3 +35,11 @@ def Session(mouse, day, ioname):
     dbpath = opt.scanbox_root.joinpath(mouse, day, ioname, 'db.sqlite3')
     engine = create_engine('sqlite:///{}'.format(dbpath), echo=True)
     return sessionmaker(engine, autocommit=True)
+
+def before_attach(session, instance):
+    if hasattr(instance, 'before_attach'):
+        instance.before_attach(session)
+
+def find_orm(tablename):
+    return {c.__tablename__: c
+            for c in SQLite3Base.__subclasses__()}.get(tablename)
