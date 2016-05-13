@@ -19,12 +19,12 @@ export default {
     this.wsx.dnit();
     this.wsx = null;
   },
-  fetchROI(roi) {
+  fetchROI(roi, heavy=false) {
     if (roi.get('busy')) { return; }
     const msg = `Fetching ROI ${roi.get('id')}`
     this.get('currentModel.logs').pushObject(Ember.Object.create({body: msg}));
     roi.set('busy', true);
-    return this.get('wsx').invoke('update_responses', roi.get('id')).gateTo(
+    return this.get('wsx').invoke('update_responses', roi.get('id'), heavy).gateTo(
       this.currentModel, 'roiFetching'
     ).then(data => {
       roi.setProperties(data);
@@ -50,7 +50,7 @@ export default {
   },
   fetchAllROIs(rois) {
     for (let roi of rois) {
-      this.send('fetchROI', roi);
+      this.send('fetchROI', roi, true);
     }
   },
   removeROI(rois, roi) {

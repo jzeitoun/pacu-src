@@ -138,7 +138,7 @@ class ScanimageIO(object):
             roi.flicker = None
             roi.responses = {}
         self.session.roi.save()
-    def update_responses(self, id):
+    def update_responses(self, id, heavy=False):
         roi = self.session.roi[id]
         trace = self.make_trace(roi)
         if self.session.ed:
@@ -156,7 +156,7 @@ class ScanimageIO(object):
                 roi.update_with_adaptor(self.db)
                 for sf, resp in roi.sorted_responses:
                     gp = roi.guess_params.get(sf)
-                    resp.update_fit_and_decay(roi, self.db, gp)
+                    resp.update_fit_and_decay(roi, self.db, gp, heavy)
                 roi.invalidated = False
                 return self.session.roi.upsert(roi)
         else:
