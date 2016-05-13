@@ -25,6 +25,8 @@ def nan_for_json(dt):
             new[key] = nan_for_json(val)
         elif hasattr(val, '__iter__'):
             new[key] = val
+        elif val is None:
+            new[key] = ''
         elif np.isnan(val):
             new[key] = 'nan'
         else:

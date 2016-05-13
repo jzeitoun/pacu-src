@@ -6,7 +6,10 @@ import interaction from 'pacu/utils/interaction';
 export default Ember.Component.extend({
   tagName: 'polygon',
   classNames: ['focus-responder'],
-  attributeBindings: ['points'],
+  attributeBindings: ['points', 'style'],
+  @computed('color') style(c) {
+    return Ember.String.htmlSafe(`fill: ${c}; fill-opacity: 0.5;`);
+  },
   @computed('roi.polygon.@each.{x,y}') points(pg=[]) {
     return pg.map(p => `${p.x},${p.y}`).join(' ');
   },

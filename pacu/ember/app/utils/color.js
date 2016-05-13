@@ -4,3 +4,7 @@ export const google20 = [
   "#b82e2e", "#316395", "#994499", "#22aa99",
   "#aaaa11", "#6633cc", "#e67300", "#8b0707",
   "#651067", "#329262", "#5574a6", "#3b3eac"]
+
+export function getGoogle20(index) {
+  return google20[index%20];
+};

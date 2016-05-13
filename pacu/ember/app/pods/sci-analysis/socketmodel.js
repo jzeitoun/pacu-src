@@ -18,6 +18,7 @@ export default Ember.Object.extend({
   access(...fields) { return this.get('wsx').access(...fields); },
   mirror(...fields) { return this.get('wsx').mirrorTo(this, ...fields); },
   invoke(func, ...args) { return this.get('wsx').invoke(func, ...args); },
+  @computed() logs() { return []; },
   @computed() rois() { return []; },
   @computed('rois.@each.active') curROI(rois) {
     const cur = rois.findBy('active');
@@ -56,9 +57,8 @@ export default Ember.Object.extend({
       this.requestFrame(0);
     }).then(() => {
       this.invoke('session.roi.values').then(rois => {
-        const news = this.get('rois').setObjects(
-          rois.map(roi => ROI.create(roi).notifyPropertyChange('polygon'))
-        );
+        const roiObjects = rois.map(roi => ROI.create(roi).notifyPropertyChange('polygon'));
+        const news = this.get('rois').setObjects(roiObjects);
         // news[0].set('active', true);
         // this.set('sfrequency_index', 1);
         if (Ember.isEmpty(rois)) {

@@ -21,6 +21,8 @@ export default {
   },
   fetchROI(roi) {
     if (roi.get('busy')) { return; }
+    const msg = `Fetching ROI ${roi.get('id')}`
+    this.get('currentModel.logs').pushObject(Ember.Object.create({body: msg}));
     roi.set('busy', true);
     return this.get('wsx').invoke('update_responses', roi.get('id')).gateTo(
       this.currentModel, 'roiFetching'
@@ -45,6 +47,11 @@ export default {
     this.send('updateROI', roi);
     this.send('fetchROI', roi);
     roi.toggleProperty('active');
+  },
+  fetchAllROIs(rois) {
+    for (let roi of rois) {
+      this.send('fetchROI', roi);
+    }
   },
   removeROI(rois, roi) {
     rois.removeObject(roi);

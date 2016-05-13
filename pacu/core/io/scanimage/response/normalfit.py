@@ -20,8 +20,8 @@ class NormalfitResponse(object):
         )
     @classmethod
     def from_adaptor(cls, response, adaptor, best_o_pref):
-        print 'make normalfit respo', best_o_pref
-        print 'using initial guess', response.sog_initial_guess
+        #print 'make normalfit respo', best_o_pref
+        #print 'using initial guess', response.sog_initial_guess
         self = cls(response.trace)
         self.names = response.orientations.names
         # self.measure = response.orientations.ons[ # aka meanresponses

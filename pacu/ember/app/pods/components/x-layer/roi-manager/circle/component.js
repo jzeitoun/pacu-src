@@ -1,12 +1,16 @@
 import Ember from 'ember';
 import Routed from 'pacu/mixins/routed';
+import computed from 'ember-computed-decorators';
 import interaction from 'pacu/utils/interaction';
 
 export default Ember.Component.extend(Routed, {
   tagName: 'circle',
-  attributeBindings: ['cx', 'cy'],
+  attributeBindings: ['cx', 'cy', 'style'],
   cx: Ember.computed.alias('point.x'),
   cy: Ember.computed.alias('point.y'),
+  @computed('color') style(c) {
+    return Ember.String.htmlSafe(`fill: ${c};`);
+  },
   mouseDown(e) {
     if (!this.onCircleUpdated) { return true; }
     const $target = this.parentView.$();

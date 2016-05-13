@@ -1,6 +1,7 @@
 import Ember from 'ember';
-import { on } from 'ember-computed-decorators';
+import computed, { on } from 'ember-computed-decorators';
 import interaction from 'pacu/utils/interaction';
+import color from 'pacu/utils/color';
 
 export default Ember.Component.extend({
   tagName: 'svg',
@@ -35,5 +36,10 @@ export default Ember.Component.extend({
   @on('willDestroyElement') dinitialize() {
     Ember.$(document).off('keydown.roi-manager');
     Ember.$(document).off('keyup.roi-manager');
+  },
+  @computed('rois.[]') coloredROIs(rois) {
+    return rois.map((r, i) => {
+      return {roi: r, color: color.getGoogle20(i)};
+    });
   }
 });

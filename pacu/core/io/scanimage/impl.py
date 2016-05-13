@@ -174,7 +174,7 @@ class ScanimageIO(object):
         return main_trace - neur_trace*0.7
     def make_trace(self, roi, old=False): # checked same function
         if old:
-            print 'no centroid yet...perform old'
+            # print 'no centroid yet...perform old'
             extras = self.session.roi.values()
             extras.remove(roi)
             main_trace, main_mask = roi.trace(self.channel.mmap)
@@ -185,7 +185,7 @@ class ScanimageIO(object):
             #     roi = roi_mask.tolist())
             return main_trace - neur_trace*1 #0.7
         else:
-            print 'has centroid...perform new'
+            # print 'has centroid...perform new'
             vecs = roi.split_by_vectors(len(self.channel.mmap))
             traces = np.split(self.channel.mmap, vecs.index[1:])
             return np.concatenate([

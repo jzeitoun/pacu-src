@@ -30,7 +30,7 @@
     <th class="cell-anova-each-f">F</th>
     <th class="cell-anova-each-p">P</th>
     <th class="cell-bootstrap">MEAN</th>
-    <th class="cell-bootstrap">SD</th>
+    <th class="cell-bootstrap">STD</th>
     <th class="cell-pixel">Value</th>
     <th class="cell-pixel">Blank</th>
     {{#each ttestNames as |n|}}
@@ -73,8 +73,8 @@
     <td class="cell-residual"      >{{or-icon "red help" r.stats.residual}}</td>
     <td class="cell-anova-each-f"  >{{or-icon "red help" r.stats.anova.f}}</td>
     <td class="cell-anova-each-p"  >{{or-icon "red help" r.stats.anova.p}}</td>
-    <td class="cell-bootstrap-mean">{{or-icon "red help" r.stats.bootstrap_mean}}</td>
-    <td class="cell-bootstrap-sd"  >{{or-icon "red help" r.stats.bootstrap_sd}}</td>
+    <td class="cell-bootstrap-mean">{{or-icon "red help" r.bootstrap.mean}}</td>
+    <td class="cell-bootstrap-std" >{{or-icon "red help" r.bootstrap.std}}</td>
     <td class="cell-pixel-value"   >{{or-icon "red help" r.stats.pixel_value}}</td>
     <td class="cell-pixel-blank"   >{{or-icon "red help" r.stats.pixel_blank}}</td>
     {{#each r.stats.ttest as |val|}}

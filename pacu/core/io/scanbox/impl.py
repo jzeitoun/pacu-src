@@ -123,27 +123,29 @@ class ScanboxIO(object):
         for chan in range(self.mat.channels):
             self.get_channel(chan).import_with_io(self)
         return self.attributes
-#     def fetch_trace(self, id):
-#         import time
-#         print 'sleeping'
-#         time.sleep(3)
-#         print 'slept'
-#         with self.session as (s, t):
-#             trace = s.query(db.Trace).get(id)
-#             roi = trace.roi
-#             array = roi.get_trace(self.channel.mmap)
-#             trace.array = array
-#             s.commit()
-#         return {}
 
+def find_nth_rising(array, occur=4):
+    for index, e in enumerate(array):
+        occur -= e == 1
+        if occur == 0:
+            return index
+    else:
+        raise
+
+import numpy as np
+# w = np.load(w)
+# w = '/Volumes/Users/ht/dev/current/pacu/tmp/Jack/jzg1/day1/waves007.txt'
+# g = np.genfromtxt(w, delimiter=' ', names=['TTL', 'ON'], dtype='b')
+# firstf = find_nth_rising(g['TTL'])
+# data = g # [firstf:]
 # from pacu.dep.json import best as json
 # from pacu.core.io.scanbox.model import session
 # import numpy as np
 
 # import ujson
 # from sqlalchemy import inspect
-# testpath = '/Volumes/Users/ht/dev/current/pacu/tmp/Jack/jzg1/day1/day1_000_007.io'
-# io = ScanboxIO(testpath).set_workspace(1).set_channel(0)
+testpath = '/Volumes/Users/ht/dev/current/pacu/tmp/Jack/jzg1/day1/day1_000_007.io'
+io = ScanboxIO(testpath).set_workspace(1).set_channel(0)
 # w = io.workspace
 # t = io.workspace.rois[0].traces[0]
 

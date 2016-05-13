@@ -22,9 +22,17 @@ export default Ember.Route.extend({
       });
     });
   },
-  afterModel(model, transition) { model.initialize(this); },
+  afterModel(model, transition) {
+    model.initialize(this);
+    model.get('logs').pushObject(Ember.Object.create({body: 'Log ready.'}));
+  },
   on_sse_print(msg, err) {
     if (10 == msg.charCodeAt() || 32 == msg.charCodeAt()) { return; }
-    console.log(`Backend: ${msg}`);
+    const lastMsg = this.get('currentModel.logs.lastObject') || {};
+    if (lastMsg.body === msg) {
+      lastMsg.incrementProperty('count');
+    } else {
+      this.get('currentModel.logs').pushObject(Ember.Object.create({body: msg}));
+    }
   }
 });

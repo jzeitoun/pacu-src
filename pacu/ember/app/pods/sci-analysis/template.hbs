@@ -37,6 +37,9 @@
           <div class="item"
             {{action "exportAllAnova" model.curROI}}>
             <i class="line chart icon"></i> Export All Anova</div>
+          <div class="item"
+            {{action "fetchAllROIs" model.rois}}>
+            <i class="download icon"></i> Fetch All Anova</div>
         </div>
       </button>
     </div>
@@ -142,4 +145,6 @@
     {{x-sci-analysis/stats/wide rois=model.rois curSF=model.curSF}}
   </div>
 
+  <section class="ui clearing divider"></section>
+  {{x-console-stream messages=model.logs class="ui"}}
 </div>

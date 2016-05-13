@@ -13,6 +13,7 @@ class ROIResponse(BaseResponse):
         g = self.normalfit.gaussian
         return util.nan_for_json(dict(
             tau = self.decay.tau,
+            # bootstrap = self.bootstrap,
             osi = g.osi,
             dsi = g.dsi,
             sigma = g.sigma,
@@ -32,20 +33,6 @@ class ROIResponse(BaseResponse):
             sum((r_thetas * sin(two_thetas)))**2 +
             sum((r_thetas * cos(two_thetas)))**2
         ) / sum(r_thetas)
-
-#     @property
-#     def anova(self):
-#         try:
-#             oris = [
-#                 [ont.array.mean() for ont in ori.ontimes] # for each trial
-#                 for ori in self.orientations.responses]
-#             if self.flicker and self.blank:
-#                 b_reps = [ont.array.mean() for ont in self.blank.ontimes]
-#                 f_reps = [ont.array.mean() for ont in self.flicker.ontimes]
-#                 f, p = stats.f_oneway(b_reps, f_reps, *oris)
-#                 return dict(f=f, p=p)
-#         except Exception as e:
-#             return {}
     @property
     def anova(self):
         try:
@@ -77,3 +64,7 @@ class ROIResponse(BaseResponse):
         except Exception as e:
             print e
             return []
+#     @classmethod
+#     def from_adaptor(cls, roi, trace, adaptor):
+#         self = super(ROIResponse, cls).from_adaptor(roi, trace, adaptor)
+#         return self
