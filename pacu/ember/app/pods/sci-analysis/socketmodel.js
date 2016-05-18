@@ -57,7 +57,11 @@ export default Ember.Object.extend({
       this.requestFrame(0);
     }).then(() => {
       this.invoke('session.roi.values').then(rois => {
-        const roiObjects = rois.map(roi => ROI.create(roi).notifyPropertyChange('polygon'));
+        const roiObjects = rois.map(roi => {
+          const newroi = ROI.create(roi);
+          newroi.set('guessParams', newroi.guess_params);
+          return newroi.notifyPropertyChange('polygon');
+        });
         const news = this.get('rois').setObjects(roiObjects);
         // news[0].set('active', true);
         // this.set('sfrequency_index', 1);

@@ -16,7 +16,7 @@ export default Ember.Component.extend({
   classNames: 'ui inverted segment',
   sfResponse: function() {
     const sr = this.get('roi.sortedResponses');
-    const index = this.get('model.sfrequency_index');
+    const index = this.get('model.sfrequencyIndex');
     if (Ember.isPresent(sr) && Ember.isPresent(index)) {
       return sr[index];
     }

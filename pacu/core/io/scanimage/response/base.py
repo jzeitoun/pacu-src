@@ -47,7 +47,8 @@ class BaseResponse(object):
         except Exception as e:
             return dict(error=str(e))
     def update_fit_and_decay(self, roi, adaptor, initial_guess=None, heavy=False):
-        self.sog_initial_guess = initial_guess
+        if initial_guess:
+            self.sog_initial_guess = initial_guess
         self.normalfit = NormalfitResponse.from_adaptor(
             self, adaptor, roi.best_o_pref)
         self.decay = DecayResponse.from_adaptor(self, adaptor)

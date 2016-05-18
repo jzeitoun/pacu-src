@@ -1,8 +1,7 @@
 import Ember from 'ember';
 
 function upsertROI(roi) {
-  const data = roi.getProperties('guessParams',
-    'centroid',
+  const data = roi.getProperties('guessParams', 'centroid',
     'vectors', 'polygon', 'neuropil', 'id', 'invalidated', 'npEnabled');
   return this.get('wsx').invoke('upsert_roi', data).then(data => {
     roi.setProperties(data);
@@ -126,13 +125,13 @@ export default {
     this.send('updateColormap', name, xmid, ymid);
   },
   updateSoGInitialGuessForThisSF(roi, params, sfreq) {
-    const guessParams = {};
+    const guessParams = roi.getWithDefault('guess_params', {});
     guessParams[sfreq] = params;
     roi.set('guessParams', guessParams);
     this.send('updateAndFetchROI', roi);
   },
   updateSoGInitialGuessForAllSF(roi, params) {
-    const guessParams = {};
+    const guessParams = roi.getWithDefault('guess_params', {});
     for (let resp of roi.get('sortedResponses')) {
       guessParams[resp.sfreq] = params;
     }

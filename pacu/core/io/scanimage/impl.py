@@ -155,7 +155,8 @@ class ScanimageIO(object):
                     roi.responses[self.sfrequency] = response
                 roi.update_with_adaptor(self.db)
                 for sf, resp in roi.sorted_responses:
-                    gp = roi.guess_params.get(sf)
+                    gp = roi.guess_params.get(sf) or resp.sog_initial_guess
+                    print 'SoG custom guess for {}: {}'.format(sf, gp)
                     resp.update_fit_and_decay(roi, self.db, gp, heavy)
                 roi.invalidated = False
                 return self.session.roi.upsert(roi)
@@ -200,7 +201,7 @@ class ScanimageIO(object):
 
 
 # from scipy import stats
-path = 'tmp/Dario/2016.04.25/r.160130.7/DM20_RbV1_Contra_003'
+# path = 'tmp/Dario/2016.04.25/r.160130.7/DM20_RbV1_Contra_003'
 # qwe = ScanimageIO(path).set_session('main')
 # roi = qwe.session.roi.one().val
 
