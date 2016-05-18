@@ -18,7 +18,7 @@ export default Ember.Component.extend({
     const polygon = this.get('roi.polygon');
     return interaction.bindOnce.call(this, $target, e, polygon);
   },
-  leaving() { this.get('onPolygonDoubled')(); },
+  leaving() { return this.get('onPolygonDoubled')(); },
   moving(origin, offset, polygon) {
     const dest = polygon.map(p => { return {
       x: p.x - (origin.x - offset.x),
@@ -26,6 +26,12 @@ export default Ember.Component.extend({
     };});
     this.set('roi.polygon', dest);
   },
+//  movingWithout() {
+//    console.log('move polygon with', ...arguments);
+//  },
+//  movingWith() {
+//    console.log('move polygon with', ...arguments);
+//  },
   moved() { this.get('onPolygonUpdated')(); },
   shot() { this.get('onPolygonDeleted')(); },
   poked() { this.get('onPolygonClicked')(this); },

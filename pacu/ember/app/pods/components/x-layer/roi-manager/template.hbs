@@ -2,7 +2,7 @@
 
   {{x-layer/roi-manager/polygon roi=cr.roi class="grabber interact"
     color=cr.color
-    onPolygonUpdated=(route-action "saveModel" cr.roi)
+    onPolygonUpdated=(route-action "saveROI" cr.roi)
     onPolygonDeleted=(route-action "deleteModel" cr.roi)
     onPolygonDoubled=(route-action "duplicateROI" cr.roi)
     onPolygonClicked=(route-action "locateFocus")
@@ -10,7 +10,7 @@
   {{#each cr.roi.polygon as |point|}}
     {{x-layer/roi-manager/circle roi=cr.roi point=point class="grabber interact"
       color=cr.color
-      onCircleUpdated=(route-action "saveModel" cr.roi)
+      onCircleUpdated=(route-action "saveROI" cr.roi)
     }}
   {{/each}}
   {{x-layer/roi-manager/circle point=cr.roi.centroid class="centroid"}}

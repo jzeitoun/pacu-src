@@ -16,7 +16,7 @@ class Action(SQLite3Base):
     status_code = Column(Integer, default=503)
     status_text = Column(UnicodeText, default=u'') # assign automatically
     # status_text = Column(UnicodeText, default=u'Service Unavailable')
-    def before_attach(self, session): # before attached to session
+    def before_flush_new(self, session, context): # before attached to session
         print 'An action running through!', self.__dict__
         Model = self._decl_class_registry.get(self.model_name)
         model = session.query(Model).get(self.model_id)

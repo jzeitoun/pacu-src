@@ -55,14 +55,26 @@ class ResourceLocator(object):
 
 from sqlalchemy import event
 
+# Servers MUST send all JSON API data in response documents with
+# the header Content-Type: application/vnd.api+json without
+# any media type parameters.
+
+# Servers MUST respond with a 415 Unsupported Media Type status code if
+# a request specifies the header Content-Type: application/vnd.api+json with
+# any media type parameters.
+
+# Servers MUST respond with a 406 Not Acceptable status code if
+# a request's Accept header contains the JSON API media type and
+# all instances of that media type are modified with media type parameters.
+
 class JSONAPIHandler(RequestHandler):
     url = r'/jsonapi/(?P<tablename>[\w-]+)/?(?P<id>\d*)'
     def prepare(self):
         self.locator = ResourceLocator.from_headers(self.request.headers)
         self.session = self.locator.Session()
-        event.listen(self.session, 'before_attach', db.before_attach)
+        event.listen(self.session, 'before_flush', db.before_flush)
     def on_finish(self):
-        event.remove(self.session, 'before_attach', db.before_attach)
+        event.remove(self.session, 'before_flush', db.before_flush)
     def get(self, tablename, id):
         view = self.get_argument('view', None)
         query = self.session.query(self.locator.orms.get(tablename))
@@ -93,7 +105,12 @@ class JSONAPIHandler(RequestHandler):
             entity = s.query(self.locator.orms.get(tablename)).get(id)
             for key, val in attrs.items():
                 setattr(entity, key, val)
-        dumped = ujson.dumps(dict(data=entity.as_jsonapi))
+        ja = entity.as_jsonapi
+        # import ipdb;ipdb.set_trace()
+        # nd = dict(ja['relationships']['traces']['data'][0],attributes=dict(array=[]))
+        # dumped = ujson.dumps(dict(data=ja, included=[nd]))
+        dumped = ujson.dumps(dict(data=ja))
+
         self.finish(dumped)
     def delete(self, tablename, id):
         s = self.session

@@ -15,6 +15,7 @@ class ScanboxMatView(ZeroDimensionArrayView):
         self.path = Path(path).ensure_suffix('.mat')
         array = io.loadmat(path.str, squeeze_me=True).get('info')
         super(ScanboxMatView, self).__init__(array)
+    channels = 1 # hardcoding!
     @property
     def sbxsize(self):
         return self.path.with_suffix('.sbx').size
@@ -26,7 +27,8 @@ class ScanboxMatView(ZeroDimensionArrayView):
         return Dimension(*self.sz)
     @property
     def nframes(self):
-        return int(self.sbxsize/self.recordsPerBuffer/self.dimension.width/4)
+        return int(self.sbxsize/self.recordsPerBuffer/
+                self.dimension.width/2/self.channels)
     @property
     def framerate(self):
         return self.resfreq / self.recordsPerBuffer
@@ -39,3 +41,8 @@ class ScanboxMatView(ZeroDimensionArrayView):
 #             'path nchan factor framerate recordsPerBuffer sz'.split()
     def toDict(self):
         return self.items()
+    @property
+    def duration(self):
+        return self.nframes / self.framerate
+        # return '{s.nframes} frames at {s.framerate} fps is 00:01:14:01'.format(s=self)
+        #  duration = frame_count / frame_rate

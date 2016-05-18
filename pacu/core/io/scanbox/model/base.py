@@ -19,7 +19,7 @@ class Base(object):
     def toDict(self):
         return self.as_jsonapi
     @property
-    def as_jsonapi(self):
+    def as_jsonapi(self): # resource object
         return dict(
             type = self.__tablename__,
             id = self.id,

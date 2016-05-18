@@ -1,6 +1,7 @@
 import Ember from 'ember';
 
 /* global Chart */
+
 export function initialize(/* application */) {
   // application.inject('route', 'foo', 'service:foo');
   const LC = Chart.controllers.line;

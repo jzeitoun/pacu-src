@@ -11,6 +11,8 @@ import interaction from 'pacu/utils/interaction';
   },
   leaving() { console.log('leaving'); },
   moving() { console.log('moving'); },
+  movingWith
+  movingWithout
   left() { console.log('left'); },
   moved() { console.log('moved'); },
   shot() { console.log('shot'); },

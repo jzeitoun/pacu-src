@@ -4,7 +4,7 @@ import computed from 'ember-computed-decorators';
 export default JSONAPIAdapter.extend({
   namespace: 'jsonapi',
   session: Ember.inject.service('session'),
-  @computed('session.jsonapi.{moduleName,sessionArgs,baseName'
+  @computed('session.jsonapi.{moduleName,sessionArgs,baseName}'
   ) headers(m, s, b) {
     return {
       PACU_JSONAPI_MODULE_NAME: m,

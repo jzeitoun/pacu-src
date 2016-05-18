@@ -154,6 +154,12 @@ export default {
 //     }, 1000/7.5);
 //   },
 //   // drawInterval: 1000
+  saveROI(roi) {
+    return roi.save();
+    // return roi.save().then(roi => {
+    //   roi.get('traces').then(ts => ts.forEach(t => t.reload()));
+    // });
+  },
   saveModel(model) {
     return model.save();
   },
@@ -204,6 +210,18 @@ export default {
     if (v) {
       v.$().trigger('focusHit');
     }
+  },
+  reimportEphys() {
+    if (this.get('ephysBusy')) {
+      return this.toast.warning('Backend is busy.');
+    }
+    return this.get('wsx').invoke('ephys.reimport').gateTo(
+        this, 'ephysBusy'
+    ).then(data => {
+      Ember.set(this.currentModel, 'socket.ephys', data);
+    }).catch(err => {
+      this.toast.error(err.title, err.detail);
+    });
   },
   noop() { console.log('noop', ...arguments); },
 }

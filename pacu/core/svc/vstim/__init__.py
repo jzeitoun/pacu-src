@@ -70,6 +70,7 @@ __all__ = specs([
     ]),
     spec('stimulus', 'stimuli', [
         ('gratings', 'GratingsStimulus'),
+        ('gratings', 'RevContModGratingsStimulus'),
         ('sweeping_noise', 'SweepingNoiseStimulus'),
     ]),
     spec('projection', 'projections', [

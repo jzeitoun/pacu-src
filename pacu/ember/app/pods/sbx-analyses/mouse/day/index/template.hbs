@@ -39,8 +39,9 @@
                   {{ws.id}}: {{ws.attributes.name}}</span>
               <div class="ui inline simple dropdown">
                 <i class="dropdown icon"></i>
-                <div class="menu">
+                <div class="menu" style="margin: -1em;">
                   <div class="header">Actions</div>
+                  <div class="item" {{action "openWorkspace" io ws}}>Open</div>
                   <div class="item" {{action "removeWorkspace" io ws}}>Delete</div>
                 </div>
               </div>

@@ -33,6 +33,7 @@ class ScanboxChannel(object):
         self.metapath = self.path.join_suffixes('.meta.json')
     def import_with_io(self, io):
         print 'Import channel {}.'.format(self.channel)
+        import ipdb;ipdb.set_trace()
         raw = np.memmap(io.sbx.path.str, shape=io.mat.shape,
             dtype='uint16', mode='r', order='F'
         ).transpose(3, 1, 0, 2)[..., self.channel]

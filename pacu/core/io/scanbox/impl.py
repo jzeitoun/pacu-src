@@ -1,7 +1,12 @@
+from __future__ import division
+
+import numpy as np
+
 from pacu.util.path import Path
 from pacu.profile import manager
 from pacu.core.io.scanbox.view.sbx import ScanboxSBXView
 from pacu.core.io.scanbox.view.mat import ScanboxMatView
+from pacu.core.io.scanbox.view.ephys import ScanboxEphysView
 from pacu.core.io.scanbox.channel import ScanboxChannel
 from pacu.core.io.scanbox.model import db
 
@@ -82,8 +87,10 @@ class ScanboxIO(object):
         maker = db.get_sessionmaker(self.db_path)
         # sessionmaker can configure without bind(engine)
         # so setup event first. it's doable.
-        event.listen(maker, 'before_attach', db.before_attach)
         # event.remove(maker, 'before_attach', db.SQLite3Base.before_attach)
+        event.listen(maker, 'before_flush', db.before_flush)
+        event.listen(maker, 'after_commit', db.after_commit)
+
         return maker
     def set_workspace(self, id):
         self.workspace_id = id
@@ -97,6 +104,9 @@ class ScanboxIO(object):
     @property
     def sbx(self):
         return ScanboxSBXView(self.path.with_suffix('.sbx'))
+    @property
+    def ephys(self):
+        return ScanboxEphysView(self, self.path.with_suffix('.txt'))
     @property
     def attributes(self):
         return dict(
@@ -123,31 +133,37 @@ class ScanboxIO(object):
         for chan in range(self.mat.channels):
             self.get_channel(chan).import_with_io(self)
         return self.attributes
+        # return data['ON'][:50000].tostring()
+        # # return data['ON'].tolist()[:100000]
 
-def find_nth_rising(array, occur=4):
-    for index, e in enumerate(array):
-        occur -= e == 1
-        if occur == 0:
-            return index
-    else:
-        raise
+# testpath = '/Volumes/Users/ht/dev/current/pacu/tmp/Jack/jzg1/day1/day1_000_007.io'
+# io = ScanboxIO(testpath).set_workspace(1).set_channel(0)
 
-import numpy as np
-# w = np.load(w)
-# w = '/Volumes/Users/ht/dev/current/pacu/tmp/Jack/jzg1/day1/waves007.txt'
-# g = np.genfromtxt(w, delimiter=' ', names=['TTL', 'ON'], dtype='b')
-# firstf = find_nth_rising(g['TTL'])
-# data = g # [firstf:]
+# io = ScanboxIO(testpath).set_workspace(1).set_channel(0)
+# r = io.workspace.rois[0]
+# w = io.workspace
+# t = io.workspace.rois[0].traces[0]
+
+
+
+# risings = risings[:len(io.channel.mmap)]
+# np.save(wavenpy, risings)
+
+# first_frame = find_nth_rising(raw['TTL'])
+# last_frame = int(np.ceil(io.mat.duration * 20000))
+# data = raw[first_frame:first_frame+last_frame]
+# ds = data[::len(data)//len(io.channel.mmap)]
+# resampled = signal.resample(data['ON'], len(io.channel.mmap))
+# np.save(wavenpy, resampled)
+# data = np.load(wavenpy)
+# iomean = io.channel.stat['MEAN']
+
 # from pacu.dep.json import best as json
 # from pacu.core.io.scanbox.model import session
 # import numpy as np
 
 # import ujson
 # from sqlalchemy import inspect
-testpath = '/Volumes/Users/ht/dev/current/pacu/tmp/Jack/jzg1/day1/day1_000_007.io'
-io = ScanboxIO(testpath).set_workspace(1).set_channel(0)
-# w = io.workspace
-# t = io.workspace.rois[0].traces[0]
 
 # t = io.session.Trace.all()[4]
 # rels = inspect(type(t)).relationships
@@ -158,18 +174,33 @@ io = ScanboxIO(testpath).set_workspace(1).set_channel(0)
 # no = '/Volumes/Users/ht/dev/current/pacu/tmp/Jack/jc6/jc6_1_020_002.io'
 # io = ScanboxIO(no)
 
-# inst = inspect(io.db_session_factory.kw.get('bind'))
-# io.db_session_factory
 
-# CREATE one big detailed global `relationship.py` it will define all ordered import and relationship
-
-    # def db_session_factory(self):
-    #     maker = db.get_sessionmaker(self.db_path)
-    #     # sessionmaker can configure without bind(engine)
-    #     # so setup event first. it's doable.
-    #     event.listen(maker, 'before_attach', db.before_attach)
-    #     # event.remove(maker, 'before_attach', db.SQLite3Base.before_attach)
-    #     return maker
+# from sqlalchemy import inspect
+# Session = db.get_sessionmaker('')
+# event.listen(Session, 'after_begin', db.after_begin)
+# event.listen(Session, 'before_flush', db.before_flush)
+# event.listen(Session, 'after_flush', db.after_flush)
+# event.listen(Session, 'after_commit', db.after_commit)
+# event.listen(Session, 'after_rollback', db.after_rollback)
+# s = Session()
+# s.bind.engine.echo = False
+# s.begin()
+# trace = db.Trace(category=u'df/f0', array=[1,2,3])
+# roi = db.ROI(polygon=[
+#     {'x':1,   'y':1},
+#     {'x':111, 'y':1},
+#     {'x':111, 'y':111},
+#     {'x':1,   'y':111},
+# ], traces=[trace])
+# # ri = inspect(roi)
+# s.add(roi)
+# s.commit()
+# s.begin()
+# roi.polygon = roi.polygon[1:]
+# roi.active = True
+# s.commit()
+# print 'ROI', roi.__committed_attrs__
+# print 'TRACE', roi.traces[0].__committed_attrs__
 
 def fixture(io):
     db.recreate(io.db_path)

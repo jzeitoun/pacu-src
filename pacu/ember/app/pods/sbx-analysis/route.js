@@ -37,6 +37,9 @@ export default Ember.Route.extend({
   },
   on_sse_print(msg, err) {
     if (10 == msg.charCodeAt() || 32 == msg.charCodeAt()) { return; }
-    console.log(`Backend: ${msg}`);
+    if(err) {
+      return this.toast.error(err);
+    }
+    this.toast.info(msg);
   }
 });

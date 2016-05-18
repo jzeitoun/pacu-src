@@ -17,9 +17,10 @@ from pacu.core.svc.vstim.stimulus.sfrequencies import SFrequencies
 from pacu.core.svc.vstim.stimulus.tfrequencies import TFrequencies
 from pacu.core.svc.vstim.stimulus.duration import OnDuration
 from pacu.core.svc.vstim.stimulus.duration import OffDuration
-from pacu.core.svc.vstim.stimulus.gratings.condition import Condition
+from pacu.core.svc.vstim.stimulus.gratings.condition import RevContModCondition
 from pacu.core.svc.vstim.stimulus.gratings.trial import Trial
-from pacu.core.svc.vstim.stimulus.gratings.revcontmod import RevContModGratingsStimulus
+
+# Reverse Contrast Modulating Stim
 
 class StimulusResource(Resource):
     should_stop = False
@@ -39,12 +40,10 @@ class StimulusResource(Resource):
     @memoized_property
     def trials(self):
         from psychopy.data import TrialHandler # eats some time
-        # blank if blank
-        # flicker if flicker
-        conditions = [Condition(ori, sf, tf) for ori, sf, tf in product(
-            self.component.orientations,
-            self.component.sfrequencies,
-            self.component.tfrequencies,
+        conditions = [RevContModCondition(
+            self.component.orientation,
+            self.component.sfrequency,
+            self.component.tfrequency
         )]
         ts = [Trial(self, cond, self.component.on_duration, self.interval)
             for cond in conditions]
@@ -69,10 +68,12 @@ class StimulusResource(Resource):
                 logging.msg('UserAbortException raised!')
                 raise UserAbortException()
     def update_trial(self, trial):
-        for key, val in vars(trial.condition).items():
-            setattr(self.instance, key, val)
+        self.instance.ori = trial.condition.ori
+        self.instance.sf = trial.condition.sf
+        self.instance.tf = trial.condition.tf
     def update_phase(self, trial):
-        self.instance.phase = trial.frameCount * 0.01 * trial.condition.tf
+        print trial.frameCount
+        self.instance.phase = trial.frameCount * trial.condition.tf
         self.instance.draw()
         self.window.flip()
     def flip_text(self, text):
@@ -84,13 +85,13 @@ class StimulusResource(Resource):
         self.instance.draw()
         self.window.flip()
 
-class GratingsStimulus(Component):
+class RevContModGratingsStimulus(Component):
     sui_icon = 'align justify'
     package = __package__
-    repetition = Repetition(2)
-    orientations = Orientations([0, 120, 240])
-    sfrequencies = SFrequencies([0.01, 0.05, 0.1])
-    tfrequencies = TFrequencies([1.0])
-    on_duration = OnDuration(0.1)
-    off_duration = OffDuration(0)
+    repetition = 2
+    orientation = 270
+    sfrequency = 0.1
+    tfrequency = 0.1
+    on_duration = 1
+    off_duration = 1
     __call__ = StimulusResource.bind('window', 'clock', 'projection')
