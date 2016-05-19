@@ -58,7 +58,16 @@ a.active > div.nav
 #route-sbx-analysis
   .roi-list-container
     font-size 1.5vw
-    border-left 1px solid grey
+    border 1px solid rgba(255,255,255,0.1)
+    border-left 0px
+  .imagestack-container
+    border 1px solid rgba(255,255,255,0.1)
+
+.sbx
+  .ui.sticky
+    transition -webkit-filter 1s linear
+    &.top.fixed
+      -webkit-filter: brightness(2);
 
 .ui.inherit-font-size
   font-size inherit

@@ -6,7 +6,7 @@ from pacu.util.path import Path
 from pacu.util.prop.memoized import memoized_property
 from matplotlib.colors import Normalize
 from matplotlib.cm import ScalarMappable
-from pacu.core.io.util.colormap.distorted import DistortedColormap
+from pacu.core.io.util.colormap.distorted2 import DistortedColormap2
 
 class ScanboxChannelMeta(object):
     __repr__ = repr.auto_strict
@@ -66,13 +66,15 @@ class ScanboxChannel(object):
             vmin=self.stat.MIN.min()/256, vmax=self.stat.MAX.max()/256)
     @memoized_property
     def dcmap(self):
-        return DistortedColormap('jet', xmid=0.35, ymid=0.65)
-    # @cmap8bit.invalidator
-    # def update_colormap(self, name, xmid, ymid):
-    #     x = float(xmid) / 100
-    #     y = float(ymid) / 100
-    #     print 'UPDATE', name, "X", x, "Y", y
-    #     self.dcmap = DistortedColormap('jet', xmid=x, ymid=y)
+        return DistortedColormap2('jet', xmid1=0.35, ymid1=0.65)
+    @cmap8bit.invalidator
+    def update_colormap(self, name, xmid1, ymid1, xmid2, ymid2):
+        x1 = float(xmid1) / 100
+        y1 = float(ymid1) / 100
+        x2 = float(xmid2) / 100
+        y2 = float(ymid2) / 100
+        self.dcmap = DistortedColormap2(name,
+            xmid1=x1, ymid1=y1, xmid2=x2, ymid2=y2)
     @memoized_property
     def stat(self):
         stat = np.load(self.statpath.str)

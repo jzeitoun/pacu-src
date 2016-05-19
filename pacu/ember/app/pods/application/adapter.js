@@ -4,14 +4,24 @@ import computed from 'ember-computed-decorators';
 export default JSONAPIAdapter.extend({
   namespace: 'jsonapi',
   session: Ember.inject.service('session'),
-  @computed('session.jsonapi.{moduleName,sessionArgs,baseName}'
-  ) headers(m, s, b) {
+  // @computed('session.jsonapi.{moduleName,sessionArgs,baseName}'
+  // ) headers(m, s, b) {
+  //   return {
+  //     PACU_JSONAPI_MODULE_NAME: m,
+  //     PACU_JSONAPI_SESSION_ARGUMENTS: s,
+  //     PACU_JSONAPI_BASE_NAME: b
+  //   };
+  // },
+  headers: function() {
+    const m = this.get('session.jsonapi.moduleName');
+    const s = this.get('session.jsonapi.sessionArgs');
+    const b = this.get('session.jsonapi.baseName');
     return {
       PACU_JSONAPI_MODULE_NAME: m,
       PACU_JSONAPI_SESSION_ARGUMENTS: s,
       PACU_JSONAPI_BASE_NAME: b
     };
-  },
+  }.property('session.jsonapi.{moduleName,sessionArgs,baseName}').volatile(),
   ajax(url, type, hash) {
     this.set('store.isfetching', true);
     return this._super(url, type, hash).finally(() => {
@@ -22,3 +32,5 @@ export default JSONAPIAdapter.extend({
 //   _ajaxRequest(options) {
 //     Ember.$.ajax(options);
 //   },
+//
+//

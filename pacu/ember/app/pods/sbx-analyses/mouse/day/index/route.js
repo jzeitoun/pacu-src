@@ -64,6 +64,14 @@ export default Ember.Route.extend({
         removeImported.call(this, modname, clsname, io);
       });
     },
+    upgradeDBSchema(io) {
+      this.get('socket').create(
+        this, modname, clsname, {path: io.path}).then(wsx => {
+        wsx.invoke('upgrade_db_schema').then(newIO => {
+          Ember.setProperties(io, newIO);
+        }).catch(cat).finally(() => { wsx.dnit(); });
+      });
+    },
     newWorkspace(io) {
       swal({
         title: "New session...",

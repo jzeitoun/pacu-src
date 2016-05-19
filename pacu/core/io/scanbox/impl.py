@@ -109,13 +109,23 @@ class ScanboxIO(object):
         return ScanboxEphysView(self, self.path.with_suffix('.txt'))
     @property
     def attributes(self):
+        error = None
+        try:
+            workspaces = self.session.Workspace.all()
+        except Exception as e:
+            notable = 'no such table' in str(e)
+            nocolumn = 'no such column' in str(e)
+            workspaces = []
+            error = dict(notable=notable, nocolumn=nocolumn,
+                    detail=str(e), type=type(e).__name__)
         return dict(
             hops = self.path.relative_to(opt.scanbox_root).parts,
             path = self.path.str,
             is_there = self.is_there,
             mat = self.mat,
             sbx = self.sbx,
-            workspaces = self.session.Workspace.all())
+            error = error,
+            workspaces = workspaces)
     def get_channel(self, number):
         return ScanboxChannel(self.path.joinpath('{}.chan'.format(number)))
     def set_channel(self, number):
@@ -133,11 +143,30 @@ class ScanboxIO(object):
         for chan in range(self.mat.channels):
             self.get_channel(chan).import_with_io(self)
         return self.attributes
-        # return data['ON'][:50000].tostring()
-        # # return data['ON'].tolist()[:100000]
+    def upgrade_db_schema(self):
+        db.upgrade(db.SQLite3Base.metadata,
+            self.db_session_factory.kw.get('bind'))
+        return self.attributes
+
+
 
 # testpath = '/Volumes/Users/ht/dev/current/pacu/tmp/Jack/jzg1/day1/day1_000_007.io'
 # io = ScanboxIO(testpath).set_workspace(1).set_channel(0)
+# from sqlalchemy import inspect
+# from sqlalchemy.orm import load_only
+# meta = db.SQLite3Base.metadata
+# bind = io.db_session_factory.kw.get('bind')
+# ref = inspect(bind)
+# for table in meta.sorted_tables:
+#     orm_cols = set(col.name for col in table.c)
+#     ref_cols = set(col['name'] for col in ref.get_columns(table.name))
+#     if orm_cols - ref_cols:
+#         print table.name, 'has diff'
+#     if table.name == 'colormaps':
+#         break
+# s = io.db_session_factory()
+# entities = s.query(db.find_orm(table.name)).options(load_only(*ref_cols)).all()
+
 
 # io = ScanboxIO(testpath).set_workspace(1).set_channel(0)
 # r = io.workspace.rois[0]
@@ -221,6 +250,7 @@ def fixture(io):
             db.Workspace(
                 name=u"main",
                 iopath=testpath,
+                colormaps=[db.Colormap(), db.Colormap()],
                 rois=[roi1]),
         ])
         s.commit()

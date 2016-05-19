@@ -184,7 +184,7 @@ class ScanimageIO(object):
             # roi.masks = dict(
             #     neuripil = neuropil_mask.tolist(),
             #     roi = roi_mask.tolist())
-            return main_trace - neur_trace*1 #0.7
+            return main_trace - neur_trace*0.7
         else:
             # print 'has centroid...perform new'
             vecs = roi.split_by_vectors(len(self.channel.mmap))

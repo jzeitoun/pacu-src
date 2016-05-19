@@ -29,7 +29,7 @@ const xAxes = {
     // drawTicks: true
   },
   ticks: {
-    maxTicksLimit: 32
+    maxTicksLimit: 24
   }
 }
 

@@ -1,0 +1,63 @@
+<div class="ui card" style="background-color: black;">
+  <div class="content">
+    <div class="right floated meta" style="color: red;">
+      {{if model.id model.id "Not saved yet"}}</div>
+    <div class="ui dropdown">
+      {{input type="hidden" name="basename" value=model.basename}}
+      <i class="dropdown icon"></i>
+      <div class="default text">{{model.basename}}</div>
+      <div class="menu">
+        <div class="item" data-value="jet">jet</div>
+        <div class="item" data-value="hot">hot</div>
+        <div class="item" data-value="gray">gray</div>
+        <div class="item" data-value="hsv">hsv</div>
+      </div>
+    </div>
+  </div>
+  <section class="ui clearing divider"></section>
+  <div class="image" style="margin: 0 auto;">
+    <svg width="100px" height="100px">
+      <line x1="0" y1="0" x2="{{model.xmid1}}" y2="{{model.ymid1}}" />
+      <line x1="{{model.xmid1}}" y1="{{model.ymid1}}" x2="{{model.xmid2}}" y2="{{model.ymid2}}" />
+      {{x-draggable/circle class="handle" cx=(mut model.xmid1) cy=(mut model.ymid1)
+        onCircleMoving=(action "updateMidPoint")
+      }}
+      <line x1="{{model.xmid2}}" y1="{{model.ymid2}}" x2="100" y2="100" />
+      {{x-draggable/circle class="handle" cx=(mut model.xmid2) cy=(mut model.ymid2)
+        onCircleMoving=(action "updateMidPoint")
+      }}
+    </svg>
+  </div>
+  <section class="ui clearing divider"></section>
+  <div class="content">
+    <div class="fluid ui buttons">
+      <button class="ui green basic button"
+      {{action (route-action "linkColormap" model)}}>Link</button>
+      <button class="ui blue basic button"
+      {{action (route-action "saveModel" model)}}>Save</button>
+      <button class="ui red basic button"
+      {{action (route-action "deleteModel" model)}}>Delete</button>
+    </div>
+  </div>
+</div>
+
+
+{{!--
+<hr>
+<p>ID: {{if model.id model.id "not saved yet"}}</p>
+<p>basenamne: {{model.basename}}</p>
+<p>WS: {{model.workspace.name}}</p>
+<p>dirty type: {{model.dirtyType}}</p>
+<hr>
+<p>is valid: {{model.isValid}}</p>
+<p>has dirty: {{model.hasDirtyAttributes}}</p>
+<p>is deleted: {{model.isDeleted}}</p>
+<p>is empty: {{model.isEmpty}}</p>
+<p>is error: {{model.isError}}</p>
+<p>is loaded: {{model.isLoaded}}</p>
+<p>is loading: {{model.isLoading}}</p>
+<p>is new: {{model.isNew}}</p>
+<p>is reloading: {{model.isReloading}}</p>
+<p>is saving: {{model.isSaving}}</p>
+<hr>
+--}}

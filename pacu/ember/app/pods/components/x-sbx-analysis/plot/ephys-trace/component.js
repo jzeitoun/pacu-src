@@ -7,10 +7,22 @@ export default Ember.Component.extend({
   classNames: 'noselect',
   // classNameBindings: ['augKeyOn'],
   width: 500,
-  height: 64,
+  height: 48,
   attributeBindings: ['width', 'height'],
   @computed() ctx() { return this.element.getContext('2d'); },
-  @computed('ctx') chart(ctx) { return new Chart(ctx, Manager.config); },
+  @computed('ctx') chart(ctx) {
+    const chart = new Chart(ctx, Manager.config);
+    const originalFit = chart.scales["y-axis-0"].fit;
+    const self = this;
+    chart.scales["y-axis-0"].fit = function() {
+      originalFit.apply(this, arguments);
+      this.width = self.get('dimension.width');
+    }
+    return chart;
+  },
+  @observes('dimension.width') dimensionChanged() {
+    this.get('chart').update();
+  },
   @observes('trace') draw() {
     const trace = this.get('trace');
     const manager = Manager.create({trace});

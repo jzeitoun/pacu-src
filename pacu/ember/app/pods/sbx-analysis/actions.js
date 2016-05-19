@@ -154,6 +154,9 @@ export default {
 //     }, 1000/7.5);
 //   },
 //   // drawInterval: 1000
+  linkColormap(cmap) {
+    Ember.set(this.currentModel, 'socket.colorMap', cmap);
+  },
   saveROI(roi) {
     return roi.save();
     // return roi.save().then(roi => {
@@ -175,6 +178,10 @@ export default {
   appendROI(payload={}) {
     payload['workspace'] = this.currentModel.workspace;
     return this.store.createRecord('roi', payload);
+  },
+  appendColormap(payload={}) {
+    payload['workspace'] = this.currentModel.workspace;
+    return this.store.createRecord('colormap', payload);
   },
   do(action, ...args) {
     return this.actions[action].apply(this, args);

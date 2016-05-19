@@ -25,7 +25,16 @@
       {{#if io.is_there}}
         <div class="extra content">
           <div class="ui vertical fluid buttons">
+            {{#if io.error}}
+              {{#if io.error.notable}}
+                <div class="ui blue basic button" {{action "upgradeDBSchema" io}}>Upgrade DB Schema</div>
+              {{/if}}
+              {{#if io.error.nocolumn}}
+                <div class="ui blue basic button" {{action "upgradeDBSchema" io}}>Upgrade DB Schema</div>
+              {{/if}}
+            {{else}}
             <div class="ui blue basic button" {{action "newWorkspace" io}}>New Workspace</div>
+            {{/if}}
             <div class="ui red basic button" {{action "removeImported" io}}>Remove Imported</div>
           </div>
         </div>

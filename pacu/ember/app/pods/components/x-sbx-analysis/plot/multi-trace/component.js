@@ -18,6 +18,7 @@ export default Ember.Component.extend({
     chart.data.labels = manager.get('labels');
     chart.data.datasets = manager.get('datasets');
     chart.update();
+    this.set('dimension.width', chart.scales['y-axis-0'].width);
   },
   @observes('index') drawIndex() {
     const index = parseInt(this.get('index'));

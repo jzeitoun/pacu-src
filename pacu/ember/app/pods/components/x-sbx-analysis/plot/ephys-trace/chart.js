@@ -28,7 +28,7 @@ const xAxes = {
     // drawTicks: true
   },
   ticks: {
-    maxTicksLimit: 32
+    maxTicksLimit: 24
   }
 }
 
@@ -41,7 +41,7 @@ const options = {
     // fontStyle: 'normal'
   },
   legend: {
-    display: true,
+    display: false,
     labels: {
       fontSize: 10
     }

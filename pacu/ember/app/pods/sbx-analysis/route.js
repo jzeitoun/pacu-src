@@ -16,7 +16,6 @@ export default Ember.Route.extend({
     this.get('session.jsonapi').setProperties({moduleName, baseName,
       sessionArgs: [param.mouse, param.day, param.io_name]
     });
-    const actions = this.store.findAll('action');
     const workspace = this.store.findRecord('workspace', param.workspace_id);
     const socket = new Promise((resolve, reject) => {
       return this.get('socket').create(
@@ -30,7 +29,7 @@ export default Ember.Route.extend({
         resolve(SocketModel.create({ wsx }));
       });
     });
-    return Ember.RSVP.hash({ workspace, socket, actions });
+    return Ember.RSVP.hash({ workspace, socket });
   },
   afterModel(model, transition) {
     model.socket.initialize(this, model.workspace);

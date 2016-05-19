@@ -6,6 +6,9 @@ from sqlalchemy import inspect
 
 opt = manager.instance('opt')
 
+def upgrade(metadata, bind):
+    metadata.create_all(bind)
+
 def recreate(dbpath=''):
     from sqlalchemy import create_engine
     engine = create_engine('sqlite://{}'.format(

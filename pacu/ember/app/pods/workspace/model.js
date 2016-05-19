@@ -8,6 +8,7 @@ export default Model.extend({
   name: attr('string'),
   iopath: attr('string'),
   rois: hasMany('roi'),
+  colormaps: hasMany('colormap'),
   @computed('rois') traces(rois, entry=[]) {
     rois.then(rs => {
       const ps = rs.map(roi => roi.get('traces').then(ts => ts.map(t => t)));
