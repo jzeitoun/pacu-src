@@ -175,13 +175,9 @@ export default {
       polygon: roi.get('polygon')
     }).save();
   },
-  appendROI(payload={}) {
+  appendModel(name, payload={}) {
     payload['workspace'] = this.currentModel.workspace;
-    return this.store.createRecord('roi', payload);
-  },
-  appendColormap(payload={}) {
-    payload['workspace'] = this.currentModel.workspace;
-    return this.store.createRecord('colormap', payload);
+    return this.store.createRecord(name, payload);
   },
   do(action, ...args) {
     return this.actions[action].apply(this, args);

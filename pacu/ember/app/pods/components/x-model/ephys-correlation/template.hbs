@@ -1,0 +1,32 @@
+<div class="ui padded grid">
+  <div class="eight wide column">
+    <div class="fluid ui inverted left labeled input">
+      <div class="ui label">
+        Window Length
+      </div>
+      {{input type="number" value=model.window}}
+    </div>
+    <select name="roi_ids" multiple="" class="ui fluid dropdown">
+      <option value="">ROIs</option>
+      {{#each rois as |roi|}}
+        <option value={{roi.id}}>{{roi.id}}</option>
+      {{/each}}
+    </select>
+    <div class="fluid ui buttons">
+      <button class="ui blue basic button"
+      {{action (route-action "saveModel" model)}}>Save</button>
+      <button class="ui yellow basic button {{if model.inAction "loading"}}"
+      {{action model.action "fetch" target=model}}>Fetch</button>
+      <button class="ui red basic button"
+      {{action (route-action "deleteModel" model)}}>Delete</button>
+    </div>
+    {{x-sbx-analysis/plot/ephys-correlation
+      meantrace=model.meantrace}}
+  </div>
+  {{! plot }}
+  <div class="eight wide column">
+    {{x-sbx-analysis/plot/ephys-correlation-traces
+      traces=model.traces}}
+  </div>
+</div>
+

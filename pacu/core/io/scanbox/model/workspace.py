@@ -1,3 +1,5 @@
+import operator
+
 from sqlalchemy import Column, UnicodeText
 
 from pacu.core.io.scanbox.model.base import SQLite3Base

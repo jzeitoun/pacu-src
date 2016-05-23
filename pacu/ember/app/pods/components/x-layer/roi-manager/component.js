@@ -11,7 +11,7 @@ export default Ember.Component.extend({
     return interaction.bindOnce.call(this, $target, e);
   },
   leaving(origin, offset, offsetY) {
-    return this.get('layer.do')('appendROI', {polygon: [
+    return this.get('layer.do')('appendModel', 'roi', {polygon: [
       {x: origin.x, y: origin.y},
       {x: offset.x, y: origin.y},
       {x: offset.x, y: offset.y},

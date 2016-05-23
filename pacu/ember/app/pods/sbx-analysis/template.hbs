@@ -8,13 +8,8 @@
   </a>
 </div>
 {{/x-sui-sticky}}
-<h3 class="ui blue header">
-  Colormaps (Linked with: {{model.socket.colorMap.id}}) 
-  <button class="ui red basic button" {{action "appendColormap"}}>+</button></h3>
-{{#each model.workspace.colormaps as |cm|}}
-  {{x-model/colormap cm}}
-{{/each}}
 <div id="route-sbx-analysis" class="ui inverted segment">
+
   {{! MultiTrace Plot }}
   {{#with (hash width=0) as |masterDimension|}}
   {{x-sbx-analysis/plot/multi-trace
@@ -59,6 +54,25 @@
         <section class="ui clearing divider"></section>
       {{/each}}
     </div>
+  </div>
+
+  <div class="ui inverted segment">
+    <h3 class="ui blue header">
+      Ephys Correlations
+      <button class="ui red basic button"
+        {{action "appendModel" "ephys-correlation"}}>+</button></h3>
+    {{#each model.workspace.ecorrs as |ec|}}
+      {{x-model/ephys-correlation ec rois=model.workspace.rois}}
+    {{/each}}
+  </div>
+
+  <div class="ui inverted segment">
+    <h3 class="ui blue header">
+      Colormaps (Linked with: {{model.socket.colorMap.id}}) 
+      <button class="ui red basic button" {{action "appendModel" "colormap"}}>+</button></h3>
+    {{#each model.workspace.colormaps as |cm|}}
+      {{x-model/colormap cm}}
+    {{/each}}
   </div>
 
 </div>

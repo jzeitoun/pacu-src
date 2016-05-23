@@ -27,6 +27,9 @@ export default JSONAPIAdapter.extend({
     return this._super(url, type, hash).finally(() => {
       this.set('store.isFetching', false);
     });
+  },
+  pathForType(type) {
+    return Ember.String.underscore(this._super(type));
   }
 });
 //   _ajaxRequest(options) {
