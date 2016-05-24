@@ -6,8 +6,12 @@ from sqlalchemy import inspect
 
 opt = manager.instance('opt')
 
+def fix_incremental():
+    pass
+
 def upgrade(metadata, bind):
     metadata.create_all(bind)
+    fix_incremental()
 
 def recreate(dbpath=''):
     from sqlalchemy import create_engine

@@ -8,6 +8,7 @@ class EphysCorrelation(SQLite3Base):
     __tablename__ = 'ephys_correlations'
     traces = Column(PickleType, default=[])
     meantrace = Column(PickleType, default=[])
+    rmeantrace = Column(PickleType, default=[])
     roi_ids = Column(PickleType, default=[])
     window = Column(Integer, default=100)
     def refresh(self):
@@ -19,6 +20,8 @@ class EphysCorrelation(SQLite3Base):
         slices = [slice(s, e) for s, e in zip(peaks-window, peaks+window)
             if 0 <= s]
         traces = [array[sl] for array in arrays for sl in slices]
+        if not traces:
+            raise Exception('There is no ephys trace bound.')
         maxlen = max(map(len, traces))
         traces = np.array([t for t in traces if len(t) == maxlen])
         bases = traces.mean(1)
@@ -34,5 +37,6 @@ class EphysCorrelation(SQLite3Base):
         rbases = rtraces.mean(1)
         rtraces = np.array([(t-b)/b for t, b in zip(rtraces, rbases)])
         rmeantrace = rtraces.mean(0)
+        self.rmeantrace = rmeantrace
         self.meantrace = meantrace
         self.traces = traces

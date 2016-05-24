@@ -152,8 +152,8 @@ class ScanboxIO(object):
 # from matplotlib.pyplot import *
 # get_ipython().magic(u'pylab')
 # 
-testpath = '/Volumes/Users/ht/dev/current/pacu/tmp/Jack/jzg1/day1/day1_000_008.io'
-# io = ScanboxIO(testpath).set_workspace(1).set_channel(0)
+testpath = '/Volumes/Users/ht/dev/current/pacu/tmp/Jack/jzg1/day1/day1_000_007.io'
+io = ScanboxIO(testpath).set_workspace(1).set_channel(0)
 # w = io.workspace
 # asd = w.correlate_ephys_with_rois(100, 1, 3)
 
@@ -208,6 +208,11 @@ def plot_all(arrays, peaks, name=None):
     plot(np.vstack(ts[:-2]).mean(axis=0))
 
 
+
+
+# def add_column_by_alter():
+#     pass
+# 
 # from sqlalchemy import inspect
 # from sqlalchemy.orm import load_only
 # meta = db.SQLite3Base.metadata
@@ -216,10 +221,10 @@ def plot_all(arrays, peaks, name=None):
 # for table in meta.sorted_tables:
 #     orm_cols = set(col.name for col in table.c)
 #     ref_cols = set(col['name'] for col in ref.get_columns(table.name))
-#     if orm_cols - ref_cols:
-#         print table.name, 'has diff'
-#     if table.name == 'colormaps':
-#         break
+#     col_diff = orm_cols - ref_cols
+#     if col_diff:
+#         print table.name, 'has diff', col_diff
+
 # s = io.db_session_factory()
 # entities = s.query(db.find_orm(table.name)).options(load_only(*ref_cols)).all()
 
