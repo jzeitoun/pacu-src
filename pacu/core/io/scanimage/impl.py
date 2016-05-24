@@ -16,6 +16,7 @@ from pacu.core.io.scanimage.response.impl import Response
 from pacu.core.io.scanimage.response.main import MainResponse
 from pacu.core.io.scanimage.response.roi import ROIResponse
 from pacu.core.io.scanimage.response.orientation import Orientation
+from pacu.core.io.scanimage.response.bootstrap import BootstrapResponse
 
 def validate_guess_params(params):
     validated = {}
@@ -34,6 +35,7 @@ def validate_guess_params(params):
     return validated
 class ScanimageIO(object):
     session_name = 'main'
+    r_value = 0.7
     def __init__(self, path):
         # wself.path = Path(str(path) + '.imported')
         if '.imported' in str(path):
@@ -158,6 +160,13 @@ class ScanimageIO(object):
                     gp = roi.guess_params.get(sf) or resp.sog_initial_guess
                     print 'SoG custom guess for {}: {}'.format(sf, gp)
                     resp.update_fit_and_decay(roi, self.db, gp, heavy)
+
+                if heavy:
+                    peaksf = roi.sfreqfit.peak_sfreq.x
+                    peak_resp = roi.responses[peaksf]
+                    print 'Determine peak spatial frequency: {}'.format(peaksf)
+                    peak_resp.bootstrap = BootstrapResponse.from_adaptor(peak_resp, self.db)
+
                 roi.invalidated = False
                 return self.session.roi.upsert(roi)
         else:
@@ -172,7 +181,7 @@ class ScanimageIO(object):
         extras.remove(roi)
         main_trace, main_mask = roi.trace(trace, dx, dy)
         neur_trace, neur_mask = roi.neuropil_trace(trace, extras, dx, dy)
-        return main_trace - neur_trace*0.7
+        return main_trace - neur_trace*self.r_value
     def make_trace(self, roi, old=False): # checked same function
         if old:
             # print 'no centroid yet...perform old'
@@ -184,7 +193,7 @@ class ScanimageIO(object):
             # roi.masks = dict(
             #     neuripil = neuropil_mask.tolist(),
             #     roi = roi_mask.tolist())
-            return main_trace - neur_trace*0.7
+            return main_trace - neur_trace*self.r_value
         else:
             # print 'has centroid...perform new'
             vecs = roi.split_by_vectors(len(self.channel.mmap))

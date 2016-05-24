@@ -16,10 +16,11 @@ def fix_incremental(meta, bind):
         col_diff = orm_cols - ref_cols
         if col_diff:
             print table.name, 'has diff', col_diff
-        for col in (col for col in table.c if col.name in col_diff):
-            column_sql = CreateColumn(col).compile(bind).string
-            sql = 'ALTER TABLE {} ADD COLUMN {}'.format(table.name, column_sql)
-            bind.execute(sql)
+        with bind.begin() as conn:
+            for col in (col for col in table.c if col.name in col_diff):
+                column_sql = CreateColumn(col).compile(bind).string
+                sql = 'ALTER TABLE {} ADD COLUMN {}'.format(table.name, column_sql)
+                conn.execute(sql)
 
 def upgrade(metadata, bind):
     metadata.create_all(bind)

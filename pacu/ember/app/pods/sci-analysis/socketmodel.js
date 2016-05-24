@@ -52,6 +52,7 @@ export default Ember.Object.extend({
       'main_response', 'channel',
       'colormaps', 'colormap_index',
       'sfrequencies', 'sfrequency_index',
+      'r_value',
       'sog_initial_guess'
     ).then((x) => {
       this.requestFrame(0);

@@ -52,5 +52,3 @@ class BaseResponse(object):
         self.normalfit = NormalfitResponse.from_adaptor(
             self, adaptor, roi.best_o_pref)
         self.decay = DecayResponse.from_adaptor(self, adaptor)
-        if heavy:
-            self.bootstrap = BootstrapResponse.from_adaptor(self, adaptor)
