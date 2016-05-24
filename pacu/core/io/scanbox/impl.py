@@ -152,79 +152,13 @@ class ScanboxIO(object):
 # from matplotlib.pyplot import *
 # get_ipython().magic(u'pylab')
 # 
-testpath = '/Volumes/Users/ht/dev/current/pacu/tmp/Jack/jzg1/day1/day1_000_007.io'
-io = ScanboxIO(testpath).set_workspace(1).set_channel(0)
+# testpath = '/Volumes/Users/ht/dev/current/pacu/tmp/Jack/jzg1/day1/day1_000_007.io'
+# io = ScanboxIO(testpath).set_workspace(1).set_channel(0)
 # w = io.workspace
 # asd = w.correlate_ephys_with_rois(100, 1, 3)
 
 
-
-# window = 100
-# peaks = np.flatnonzero(np.array(io.ephys.trace))
-# 
-# ar0 = io.workspace.rois[0].traces[0].array
-# ar1 = io.workspace.rois[1].traces[0].array
-# ar2 = io.workspace.rois[2].traces[0].array
-# ar3 = io.workspace.rois[3].traces[0].array
-
-# title('76 dF/F traces for a ROI with ephys signal, -10:+10 windowing')
-
-def plot_all(arrays, peaks, name=None):
-    ss = peaks-window
-    es = peaks+window
-    sls = [slice(s, e) for s, e in zip(ss,es)]
-    ts = []
-    figure(name)
-
-    for ar in arrays:
-        for sl in sls:
-            part = ar[sl]
-            base = part.mean()
-            # plot(part)
-            plot((part-base)/base)
-            # ts.append(part)
-            ts.append((part-base)/base)
-    maxlen = max(map(len, ts))
-    ts = np.array([tr for tr in ts if len(tr) == maxlen])
-    figure('mean')
-    # figure((name + '_mean') if name else name)
-    # if name:
-    #     cla()
-    plot(np.vstack(ts[:-2]).mean(axis=0))
-    title('{} traces of {} have survived in a window of {}'.format(
-        len(ts), len(sls), len(ts[0])))
-
-    rands = np.random.randint(0, len(ar), len(peaks))
-    ss = rands-window
-    es = rands+window
-    sls = [slice(s, e) for s, e in zip(ss,es)]
-    ts = []
-    for ar in arrays:
-        for sl in sls:
-            part = ar[sl]
-            base = part.mean()
-            ts.append((part-base)/base)
-    ts = np.array([tr for tr in ts if len(tr) == maxlen])
-    plot(np.vstack(ts[:-2]).mean(axis=0))
-
-
-
-
-# def add_column_by_alter():
-#     pass
-# 
-# from sqlalchemy import inspect
 # from sqlalchemy.orm import load_only
-# meta = db.SQLite3Base.metadata
-# bind = io.db_session_factory.kw.get('bind')
-# ref = inspect(bind)
-# for table in meta.sorted_tables:
-#     orm_cols = set(col.name for col in table.c)
-#     ref_cols = set(col['name'] for col in ref.get_columns(table.name))
-#     col_diff = orm_cols - ref_cols
-#     if col_diff:
-#         print table.name, 'has diff', col_diff
-
 # s = io.db_session_factory()
 # entities = s.query(db.find_orm(table.name)).options(load_only(*ref_cols)).all()
 

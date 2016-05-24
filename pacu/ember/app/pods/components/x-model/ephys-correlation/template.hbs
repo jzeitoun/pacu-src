@@ -21,6 +21,7 @@
       {{action (route-action "deleteModel" model)}}>Delete</button>
     </div>
     {{x-sbx-analysis/plot/ephys-correlation
+      rmeantrace=model.rmeantrace
       meantrace=model.meantrace}}
   </div>
   {{! plot }}

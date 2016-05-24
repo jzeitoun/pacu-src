@@ -1,5 +1,5 @@
 import numpy as np
-from sqlalchemy import Column, Unicode, Integer
+from sqlalchemy import Column, UnicodeText, Integer
 from sqlalchemy.types import PickleType
 
 from pacu.core.io.scanbox.model.base import SQLite3Base
@@ -11,6 +11,7 @@ class EphysCorrelation(SQLite3Base):
     rmeantrace = Column(PickleType, default=[])
     roi_ids = Column(PickleType, default=[])
     window = Column(Integer, default=100)
+    note = Column(UnicodeText)
     def refresh(self):
         ws = self.workspace
         window = self.window

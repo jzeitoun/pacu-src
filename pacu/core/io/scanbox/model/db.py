@@ -1,17 +1,29 @@
+from sqlalchemy import inspect
+from sqlalchemy.schema import CreateColumn
+
 from pacu.util.path import Path
 from pacu.profile import manager
 from pacu.core.io.scanbox.model.relationship import *
 from pacu.core.io.scanbox.model.base import SQLite3Base
-from sqlalchemy import inspect
 
 opt = manager.instance('opt')
 
-def fix_incremental():
-    pass
+def fix_incremental(meta, bind):
+    ref = inspect(bind)
+    for table in meta.sorted_tables:
+        orm_cols = set(col.name for col in table.c)
+        ref_cols = set(col['name'] for col in ref.get_columns(table.name))
+        col_diff = orm_cols - ref_cols
+        if col_diff:
+            print table.name, 'has diff', col_diff
+        for col in (col for col in table.c if col.name in col_diff):
+            column_sql = CreateColumn(col).compile(bind).string
+            sql = 'ALTER TABLE {} ADD COLUMN {}'.format(table.name, column_sql)
+            bind.execute(sql)
 
 def upgrade(metadata, bind):
     metadata.create_all(bind)
-    fix_incremental()
+    fix_incremental(metadata, bind)
 
 def recreate(dbpath=''):
     from sqlalchemy import create_engine

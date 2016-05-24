@@ -5,8 +5,10 @@ import { belongsTo, hasMany } from 'ember-data/relationships';
 export default Model.extend({
   traces: attr({defaultValue: () => [[]]}),
   meantrace: attr({defaultValue: () => []}),
+  rmeantrace: attr({defaultValue: () => []}),
   roi_ids: attr({defaultValue: () => []}),
   window: attr('number', {defaultValue: 100}),
+  note: attr('string'),
   workspace: belongsTo('workspace'),
   action(name, ...args) {
     if (this.get('inAction')) { return; }

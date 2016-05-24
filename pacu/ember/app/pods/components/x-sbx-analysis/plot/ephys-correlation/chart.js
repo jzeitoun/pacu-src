@@ -41,7 +41,7 @@ const options = {
     fontStyle: 'normal'
   },
   legend: {
-    display: false,
+    display: true,
     labels: {
       fontSize: 10
     }
@@ -72,32 +72,21 @@ const options = {
 };
 
 export default Ember.Object.extend({
-  @computed('meantrace') labels(meantrace=[]) {
+  @computed('meantrace', 'rmeantrace') labels(meantrace=[], rmeantrace=[]) {
     return meantrace.map((e, i) => i);
   },
-  @computed('meantrace') datasets(meantrace=[]) {
+  @computed('meantrace', 'rmeantrace') datasets(meantrace=[], rmeantrace=[]) {
     return [{
       borderColor: 'red',
       borderWidth: 1,
       data: meantrace,
-      // label: 'ephys',
+      label: 'measure',
       // label: `ROI #${trace.roi}`,
+    }, {
+      borderColor: 'silver',
+      borderWidth: 1,
+      data: rmeantrace,
+      label: 'random',
     }];
-    // const ts = traces.map(t => {
-    //   return {
-    //     borderColor: 'silver',
-    //     borderWidth: 0.1,
-    //     data: t,
-    //   }
-    // });
-    // const mt = {
-    //   borderColor: 'red',
-    //   borderWidth: 1,
-    //   data: meantrace,
-    //   // label: 'ephys',
-    //   // label: `ROI #${trace.roi}`,
-    // };
-    // ts.insertAt(0, mt);
-    // return ts;
   }
 }).reopenClass({config: { type, data, options }});

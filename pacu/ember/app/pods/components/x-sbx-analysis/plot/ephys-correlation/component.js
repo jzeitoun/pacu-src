@@ -12,7 +12,8 @@ export default Ember.Component.extend({
   @computed('ctx') chart(ctx) { return new Chart(ctx, Manager.config); },
   @observes('meantrace') draw() {
     const meantrace = this.get('meantrace');
-    const manager = Manager.create({meantrace});
+    const rmeantrace = this.get('rmeantrace');
+    const manager = Manager.create({meantrace, rmeantrace});
     const chart = this.get('chart');
     chart.data.labels = manager.get('labels');
     chart.data.datasets = manager.get('datasets');
