@@ -154,10 +154,7 @@ class ScanboxIO(object):
 # 
 # testpath = '/Volumes/Users/ht/dev/current/pacu/tmp/Jack/jzg1/day1/day1_000_007.io'
 # io = ScanboxIO(testpath).set_workspace(1).set_channel(0)
-# w = io.workspace
-# asd = w.correlate_ephys_with_rois(100, 1, 3)
-
-
+# ep = io.workspace.ecorrs.first
 # from sqlalchemy.orm import load_only
 # s = io.db_session_factory()
 # entities = s.query(db.find_orm(table.name)).options(load_only(*ref_cols)).all()

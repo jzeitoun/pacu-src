@@ -164,7 +164,9 @@ export default {
     // });
   },
   saveModel(model) {
-    return model.save();
+    return model.save().then(() => {
+      return this.toast.info('Model updated successfully.');
+    });
   },
   deleteModel(model) {
     return model.destroyRecord();

@@ -20,11 +20,14 @@ class Base(object):
         return self.as_jsonapi
     @property
     def as_jsonapi(self): # resource object
-        return dict(
+        resobj = dict(
             type = self.__tablename__,
             id = self.id,
             attributes = self.attributes,
             relationships = self.relationships)
+        if hasattr(self, 'meta'):
+            resobj['attributes']['meta'] = self.meta
+        return resobj
     @property
     def attributes(self):
         return OrderedDict([

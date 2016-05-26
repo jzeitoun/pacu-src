@@ -23,3 +23,5 @@ class Action(SQLite3Base):
         result = getattr(model, self.action_name)(
             *self.action_args or [], **self.action_kwargs or {})
         self.status_code = 200
+        if result:
+            self.meta = result

@@ -90,7 +90,6 @@ class ROI(object):
         blank = self.blank.meantrace if self.blank else []
         flicker = self.flicker.meantrace if self.flicker else []
         all_oris = [
-            # ori.meantrace
             [ont.array.mean() for ont in ori.ontimes]
             for sf, resp in self.sorted_responses
             for ori in resp.orientations.responses]

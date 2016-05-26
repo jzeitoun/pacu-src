@@ -8,17 +8,38 @@ from pacu.core.io.scanbox.model.ephys_correlation import EphysCorrelation
 from pacu.core.io.scanbox.model.colormap import Colormap
 from pacu.core.io.scanbox.model.action import Action
 
+class flist(list):
+    @property
+    def first(self):
+        return self[0]
+    @property
+    def last(self):
+        return self[-1]
+
 EphysCorrelation.workspace_id = Column(Integer, ForeignKey(Workspace.id))
-EphysCorrelation.workspace = relationship(Workspace)
 Colormap.workspace_id = Column(Integer, ForeignKey(Workspace.id))
-Colormap.workspace = relationship(Workspace)
 ROI.workspace_id = Column(Integer, ForeignKey(Workspace.id))
-ROI.workspace = relationship(Workspace)
-ROI.traces = relationship(Trace, order_by=Trace.id, lazy='joined')
 Trace.roi_id = Column(Integer, ForeignKey(ROI.id))
-Trace.roi = relationship(ROI)
-Workspace.colormaps = relationship(Colormap, order_by=Colormap.id, lazy='joined')
-Workspace.rois = relationship(ROI, order_by=ROI.id, lazy='joined')
-Workspace.ecorrs = relationship(EphysCorrelation, order_by=EphysCorrelation.id, lazy='joined')
+
+ROI.traces = relationship(Trace, order_by=Trace.id,
+    collection_class=flist,
+    cascade='all, delete-orphan',
+    backref='roi',
+    lazy='joined')
+Workspace.colormaps = relationship(Colormap, order_by=Colormap.id,
+    collection_class=flist,
+    cascade='all, delete-orphan',
+    backref='workspace',
+    lazy='joined')
+Workspace.rois = relationship(ROI, order_by=ROI.id,
+    collection_class=flist,
+    cascade='all, delete-orphan',
+    backref='workspace',
+    lazy='joined')
+Workspace.ecorrs = relationship(EphysCorrelation, order_by=EphysCorrelation.id,
+    collection_class=flist,
+    cascade='all, delete-orphan',
+    backref='workspace',
+    lazy='joined')
 
 __all__ = 'Workspace ROI Colormap Trace EphysCorrelation Action'.split()

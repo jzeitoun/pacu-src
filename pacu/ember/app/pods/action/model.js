@@ -11,4 +11,5 @@ export default Model.extend({
   action_kwargs: attr(),
   status_code: attr(),
   status_text: attr(),
+  meta: attr(),
 });

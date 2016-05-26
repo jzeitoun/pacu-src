@@ -1,22 +1,37 @@
 <div class="ui padded grid">
   <div class="eight wide column">
+
     <div class="fluid ui inverted left labeled input">
       <div class="ui label">
         Window Length
-      </div>
-      {{input type="number" value=model.window}}
+      </div> {{input type="number" value=model.window}}
     </div>
+
+    <div class="fluid ui inverted left labeled input">
+      <div class="ui label">
+        Random Count
+      </div> {{input type="number" value=model.random_count}}
+    </div>
+
+    <div class="fluid ui inverted left labeled input">
+      <div class="ui label">
+        Note
+      </div> {{input type="text" value=model.note}}
+    </div>
+
     <select name="roi_ids" multiple="" class="ui fluid dropdown">
       <option value="">ROIs</option>
       {{#each rois as |roi|}}
         <option value={{roi.id}}>{{roi.id}}</option>
       {{/each}}
     </select>
-    <div class="fluid ui buttons">
+    <div class="fluid ui small buttons">
       <button class="ui blue basic button"
-      {{action (route-action "saveModel" model)}}>Save</button>
+      {{action model.action "save" target=model}}>Save</button>
       <button class="ui yellow basic button {{if model.inAction "loading"}}"
-      {{action model.action "fetch" target=model}}>Fetch</button>
+      {{action model.action "compute" target=model}}>Compute</button>
+      <button class="ui green basic button {{if model.inAction "loading"}}"
+      {{action model.action "export" target=model}}>Export</button>
       <button class="ui red basic button"
       {{action (route-action "deleteModel" model)}}>Delete</button>
     </div>
