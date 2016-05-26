@@ -33,6 +33,7 @@ class EphysCorrelation(SQLite3Base):
         peaks = np.flatnonzero(np.array(ws.io.ephys.trace))
         slices = [slice(s, e) for s, e in zip(peaks-window, peaks+window)
             if 0 <= s]
+        print slices
         traces = [array[sl] for array in arrays for sl in slices]
         if not traces:
             raise Exception('There is no ephys trace bound.')
@@ -92,11 +93,12 @@ class EphysCorrelation(SQLite3Base):
         np.savetxt(io, arr, fmt='%s', delimiter=',')
         return io.getvalue()
     def to_png(self):
+        x = np.arange(self.window*2) - self.window
         raster = StringIO()
         fig = pyplot.figure()
         plt = fig.add_subplot(111)
-        plt.plot(self.meantrace, label='measure')
-        plt.errorbar(np.arange(len(self.rmeantrace)), self.rmeantrace,
+        plt.plot(x, self.meantrace, label='measure')
+        plt.errorbar(x, self.rmeantrace,
             label='random({})'.format(self.random_count),
             yerr=self.rstdtrace,
             elinewidth=0.25,
@@ -105,11 +107,12 @@ class EphysCorrelation(SQLite3Base):
         fig.savefig(raster, format='png', dpi=300, bbox_inches='tight')
         return raster.getvalue()
     def to_pdf(self):
+        x = np.arange(self.window*2) - self.window
         vector = StringIO()
         fig = pyplot.figure()
         plt = fig.add_subplot(111)
-        plt.plot(self.meantrace, label='measure')
-        plt.errorbar(np.arange(len(self.rmeantrace)), self.rmeantrace,
+        plt.plot(x, self.meantrace, label='measure')
+        plt.errorbar(x, self.rmeantrace,
             label='random({})'.format(self.random_count),
             yerr=self.rstdtrace,
             elinewidth=0.25,
