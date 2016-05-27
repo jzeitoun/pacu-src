@@ -35,14 +35,14 @@
       <button class="ui red basic button"
       {{action (route-action "deleteModel" model)}}>Delete</button>
     </div>
-    {{x-sbx-analysis/plot/ephys-correlation
-      rmeantrace=model.rmeantrace
-      meantrace=model.meantrace}}
   </div>
   {{! plot }}
   <div class="eight wide column">
-    {{x-sbx-analysis/plot/ephys-correlation-traces
+    {{!x-sbx-analysis/plot/ephys-correlation-traces
       traces=model.traces}}
+    {{x-sbx-analysis/plot/ephys-correlation
+      rmeantrace=model.rmeantrace
+      meantrace=model.meantrace}}
   </div>
 </div>
 

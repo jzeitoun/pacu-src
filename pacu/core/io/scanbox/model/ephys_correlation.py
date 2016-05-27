@@ -28,19 +28,20 @@ class EphysCorrelation(SQLite3Base):
         self.random_count = self.random_count or 100
         ws = self.workspace
         window = self.window
+        before = 100
         rois = [roi for roi in ws.rois if roi.id in self.roi_ids]
         arrays = [r.traces[0].array for r in rois]
         peaks = np.flatnonzero(np.array(ws.io.ephys.trace))
         slices = [slice(s, e) for s, e in zip(peaks-window, peaks+window)
             if 0 <= s]
-        print slices
         traces = [array[sl] for array in arrays for sl in slices]
         if not traces:
             raise Exception('There is no ephys trace bound.')
         maxlen = max(map(len, traces))
         traces = np.array([t for t in traces if len(t) == maxlen])
-        bases = traces.mean(1)
-        traces = np.array([(trace-base)/base for trace, base in zip(traces, bases)])
+        bases = traces[:, window-before:window].mean(1)
+        traces = np.array([(trace-base)/base
+            for trace, base in zip(traces, bases)])
         meantrace = traces.mean(0)
 
         def randomize(iteration=0):
@@ -51,8 +52,9 @@ class EphysCorrelation(SQLite3Base):
             rtraces = [array[sl] for array in arrays for sl in rslices]
             rmaxlen = max(map(len, rtraces))
             rtraces = np.array([t for t in rtraces if len(t) == rmaxlen])
-            rbases = rtraces.mean(1)
-            rtraces = np.array([(t-b)/b for t, b in zip(rtraces, rbases)])
+            rbases = rtraces[:, window-before:window].mean(1)
+            rtraces = np.array([(t-b)/b
+                for t, b in zip(rtraces, rbases)])
             rmeantrace = rtraces.mean(0)
             return rmeantrace
 
@@ -93,7 +95,7 @@ class EphysCorrelation(SQLite3Base):
         np.savetxt(io, arr, fmt='%s', delimiter=',')
         return io.getvalue()
     def to_png(self):
-        x = np.arange(self.window*2) - self.window
+        x = (np.arange(self.window*2) - self.window) / 30.0
         raster = StringIO()
         fig = pyplot.figure()
         plt = fig.add_subplot(111)
@@ -107,7 +109,7 @@ class EphysCorrelation(SQLite3Base):
         fig.savefig(raster, format='png', dpi=300, bbox_inches='tight')
         return raster.getvalue()
     def to_pdf(self):
-        x = np.arange(self.window*2) - self.window
+        x = (np.arange(self.window*2) - self.window) / 30.0
         vector = StringIO()
         fig = pyplot.figure()
         plt = fig.add_subplot(111)

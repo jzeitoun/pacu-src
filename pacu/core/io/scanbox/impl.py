@@ -153,7 +153,19 @@ class ScanboxIO(object):
 # get_ipython().magic(u'pylab')
 # 
 # testpath = '/Volumes/Users/ht/dev/current/pacu/tmp/Jack/jzg1/day1/day1_000_007.io'
-# io = ScanboxIO(testpath).set_workspace(1).set_channel(0)
+# io = ScanboxIO(testpath).set_workspace(3).set_channel(0)
+# w = io.workspace
+# r1 = w.rois[0]
+# r2 = w.rois[1]
+# 
+# import matplotlib
+# matplotlib.use('svg')
+# from matplotlib import pyplot
+# fig = pyplot.figure(figsize=(20, 4))
+# plt = fig.add_subplot(111)
+# plt.plot(io.ephys.trace, linewidth=0.5)
+# fig.savefig('ephys.pdf', bbox_inches='tight')
+
 # ep = io.workspace.ecorrs.first
 # from sqlalchemy.orm import load_only
 # s = io.db_session_factory()

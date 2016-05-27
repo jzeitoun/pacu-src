@@ -9,7 +9,6 @@ from pacu.core.model.ed.visstim2p import VisStim2P
 from pacu.core.model.analysis import AnalysisV1
 from pacu.core.io.scanimage.nmspc import HybridNamespace
 
-ED = manager.get('db').section('ed')()
 # print 'dev overide: pacu.core.io.scanimage.session'
 class ScanimageSession(object):
     roi = None
@@ -23,7 +22,8 @@ class ScanimageSession(object):
     def toDict(self):
         return dict(name=self.path.stem, path=self.path.str)
     def query_experiment_db(self):
-        return ED().query(VisStim2P).filter_by(
+        Session = manager.get('db').section('ed')()
+        return Session().query(VisStim2P).filter_by(
             date=self.datetime.date(),
             filename=self.package.rstrip('.imported'))
     @property

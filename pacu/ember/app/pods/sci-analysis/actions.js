@@ -2,6 +2,7 @@ import Ember from 'ember';
 
 function upsertROI(roi) {
   const data = roi.getProperties('guessParams', 'centroid',
+    'bootstrap_sf',
     'vectors', 'polygon', 'neuropil', 'id', 'invalidated', 'npEnabled');
   return this.get('wsx').invoke('upsert_roi', data).then(data => {
     roi.setProperties(data);

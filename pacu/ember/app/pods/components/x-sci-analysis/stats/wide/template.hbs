@@ -3,6 +3,7 @@
     <th rowspan="2">Cell ID</th>
     <th colspan="2">Mean</th>
     <th colspan="2">Anova All</th>
+    <th colspan="2">Bootstrap SF</th>
     <th colspan="5">SF</th>
     <th rowspan="2">OSI</th>
     <th rowspan="2">CV</th>
@@ -22,6 +23,8 @@
     <th class="cell-mean-flicker">Flicker</th>
     <th class="cell-anova-all-f">F</th>
     <th class="cell-anova-all-p">P</th>
+    <th class="cell-bootstrap-all-mean">MEAN</th>
+    <th class="cell-bootstrap-all-std">STD</th>
     <th class="cell-sf-peak">Peak</th>
     <th class="cell-sf-pref">Pref</th>
     <th class="cell-sf-bandwidth">Bandwidth</th>
@@ -51,6 +54,10 @@
         rowspan="{{roi.responseCountPlusOne}}">{{roi.anova_all.f}}</td>
     <td class="cell-anova-all-p"
         rowspan="{{roi.responseCountPlusOne}}">{{roi.anova_all.p}}</td>
+    <td class="cell-bootstrap-all-mean"
+        rowspan="{{roi.responseCountPlusOne}}">{{roi.bootstrap_sf.mean}}</td>
+    <td class="cell-bootstrap-all-std"
+        rowspan="{{roi.responseCountPlusOne}}">{{roi.bootstrap_sf.std}}</td>
     <td class="cell-sf-peak"
         rowspan="{{roi.responseCountPlusOne}}">{{roi.sfreqfit.peak}}</td>
     <td class="cell-sf-pref"

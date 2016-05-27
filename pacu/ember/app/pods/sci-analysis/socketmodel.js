@@ -63,6 +63,7 @@ export default Ember.Object.extend({
           newroi.set('guessParams', newroi.guess_params);
           return newroi.notifyPropertyChange('polygon');
         });
+        window.rs = roiObjects;
         const news = this.get('rois').setObjects(roiObjects);
         // news[0].set('active', true);
         // this.set('sfrequency_index', 1);

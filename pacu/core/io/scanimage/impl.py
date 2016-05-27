@@ -162,10 +162,15 @@ class ScanimageIO(object):
                     resp.update_fit_and_decay(roi, self.db, gp, heavy)
 
                 if heavy:
+                    print ('Computing bootstrap for preferred SF')
+                    #     '{} conditions...').format(
+                    #     len(self.db.orientations) * len(self.db.sfrequencies))
+                    roi.update_bootstrap_for_sf(self.db)
                     peaksf = roi.sfreqfit.peak_sfreq.x
                     peak_resp = roi.responses[peaksf]
                     print 'Determine peak spatial frequency: {}'.format(peaksf)
-                    peak_resp.bootstrap = BootstrapResponse.from_adaptor(peak_resp, self.db)
+                    peak_resp.bootstrap = BootstrapResponse.from_adaptor(
+                            peak_resp, self.db)
 
                 roi.invalidated = False
                 return self.session.roi.upsert(roi)
@@ -206,6 +211,8 @@ class ScanimageIO(object):
 # from pacu.core.io.scanimage.response.orientation import Orientation
 # path = 'tmp/Dario/2015.12.02/x.151101.2/bV1_Contra_004'
 # path = 'tmp/Dario/2016.02.26/x.151114.1/DM3_RbV1_Contra_00002'
+
+# path = 'tmp/Dario/2016.05.02/r.160125.1/DM23_RbV1_Contra_002'
 
 
 

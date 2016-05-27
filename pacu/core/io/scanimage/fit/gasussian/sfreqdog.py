@@ -52,7 +52,7 @@ class SpatialFrequencyDogFit(object):
         gauss2 = amp2 * np.exp(self.nvfs/(TWOPI*sig2))
         return gauss1 - gauss2
     def fit_dog(self, initial_guess=None):
-        print 'try to fit dog parameter...'
+        # print 'try to fit dog parameter...'
         params_brute, _, _, _ = optimize.brute(
             self.ballpark_residuals_dog,
             initial_guess or self.ballpark_dog,

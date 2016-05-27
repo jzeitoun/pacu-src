@@ -18,7 +18,11 @@ const ROI = Ember.Object.extend(Em.Copyable, Centroid, Neuropil, Trajectory, {
     return Object.keys(resp).sort().map(k => resp[k]);
   },
   invalidate: function() {
-    return this.setProperties({invalidated: true, active: false});
+    return this.setProperties({
+      invalidated: true,
+      active: false,
+      bootstrap_sf: null,
+    });
   },
   initialExpand(x, y) {
     this.set('polygon.1.x', x);

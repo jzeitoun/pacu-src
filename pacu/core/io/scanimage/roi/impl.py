@@ -10,6 +10,7 @@ from pacu.util.inspect import repr
 from pacu.core.io.scanimage.fit.gasussian.sumof import SumOfGaussianFit
 from pacu.core.io.scanimage.fit.gasussian.sfreqdog import SpatialFrequencyDogFit
 from pacu.core.io.scanimage import util
+from pacu.core.io.scanimage.response.bootstrap import BootstrapResponse
 
 def make_centroid(polygon):
     closed = np.array(list(polygon) + [polygon[0]])
@@ -37,6 +38,7 @@ class ROI(object):
     best_o_pref = None
     guess_params = None
     centroid = None
+    bootstrap_sf = dict()
     __repr__ = repr.auto_strict
     def __init__(self, id=None, **kwargs):
         self.id = id or '{:6f}'.format(time.time())
@@ -48,11 +50,14 @@ class ROI(object):
     def toDict(self):
         v = vars(self)
         v.pop('centroid', None)
-        return dict(v, 
+        return dict(v,
             sfreqfit = self.sfreqfit,
             best_o_pref = self.best_o_pref,
             best_sf_responses = self.best_sf_responses,
-            anova_all = self.anova_all)
+            anova_all = self.anova_all,
+            # pickle safe against version bump
+            bootstrap_sf = getattr(self, 'bootstrap_sf', None),
+        )
     def mask(self, shape, dx=0, dy=0):
         mask = np.zeros(shape, dtype='uint8')
         cv2.drawContours(mask, [self.inner_contours(dx=dx, dy=dy)], 0, 255, -1)
@@ -115,9 +120,8 @@ class ROI(object):
             rmax = list(sorted(
                 (sfreq, resp.stats['r_max'])
                 for sfreq, resp in self.responses.items()))
-            # rmax = self.best_sf_responses
             flicker = self.flicker.mean if self.flicker else None
-            blank = self.blank.mean if self.flicker else None
+            blank = self.blank.mean if self.blank else None
             return SpatialFrequencyDogFit(rmax, flicker, blank)
         except:
             return {}
@@ -146,3 +150,6 @@ class ROI(object):
         df = pd.DataFrame(self.all_vectors).set_index('index'
                 ).reindex(range(length)).interpolate().astype(int).drop_duplicates()
         return df - df.ix[0]
+    def update_bootstrap_for_sf(self, adaptor):
+        self.bootstrap_sf = BootstrapResponse.from_adaptor_for_sf(
+            self.sorted_responses, self.flicker, self.blank)
