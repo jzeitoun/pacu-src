@@ -162,7 +162,7 @@ class ScanimageIO(object):
                     resp.update_fit_and_decay(roi, self.db, gp, heavy)
                 p_value = roi.anova_all.get('p')
                 if heavy:
-                    if p_value > 0.01:
+                    if p_value < 0.01:
                         print ('Computing bootstrap for preferred SF')
                         #     '{} conditions...').format(
                         #     len(self.db.orientations) * len(self.db.sfrequencies))
@@ -173,7 +173,7 @@ class ScanimageIO(object):
                         peak_resp.bootstrap = BootstrapResponse.from_adaptor(
                                 peak_resp, self.db)
                     else:
-                        print ('P value is less than 0.01. ({}) '
+                        print ('P value is not less than 0.01. ({}) '
                                'Skip bootstrap.').format(p_value)
 
                 roi.invalidated = False
