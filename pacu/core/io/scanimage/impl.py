@@ -160,19 +160,26 @@ class ScanimageIO(object):
                     gp = roi.guess_params.get(sf) or resp.sog_initial_guess
                     print 'SoG custom guess for {}: {}'.format(sf, gp)
                     resp.update_fit_and_decay(roi, self.db, gp, heavy)
-
+                p_value = roi.anova_all.get('p')
                 if heavy:
-                    print ('Computing bootstrap for preferred SF')
-                    #     '{} conditions...').format(
-                    #     len(self.db.orientations) * len(self.db.sfrequencies))
-                    roi.update_bootstrap_for_sf(self.db)
-                    peaksf = roi.sfreqfit.peak_sfreq.x
-                    peak_resp = roi.responses[peaksf]
-                    print 'Determine peak spatial frequency: {}'.format(peaksf)
-                    peak_resp.bootstrap = BootstrapResponse.from_adaptor(
-                            peak_resp, self.db)
+                    if p_value > 0.01:
+                        print ('Computing bootstrap for preferred SF')
+                        #     '{} conditions...').format(
+                        #     len(self.db.orientations) * len(self.db.sfrequencies))
+                        roi.update_bootstrap_for_sf(self.db)
+                        peaksf = roi.sfreqfit.peak_sfreq.x
+                        peak_resp = roi.responses[peaksf]
+                        print 'Determine peak spatial frequency: {}'.format(peaksf)
+                        peak_resp.bootstrap = BootstrapResponse.from_adaptor(
+                                peak_resp, self.db)
+                    else:
+                        print ('P value is less than 0.01. ({}) '
+                               'Skip bootstrap.').format(p_value)
 
                 roi.invalidated = False
+                print 'Done updating response for ROI ' + str(roi.id)
+                print ' '
+                print ' '
                 return self.session.roi.upsert(roi)
         else:
             response = ROIResponse.from_scanbox(roi, trace)
