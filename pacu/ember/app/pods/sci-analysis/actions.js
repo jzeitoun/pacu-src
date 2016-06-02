@@ -1,4 +1,5 @@
 import Ember from 'ember';
+import download from 'pacu/utils/download';
 
 function upsertROI(roi) {
   const data = roi.getProperties('guessParams', 'centroid',
@@ -162,6 +163,18 @@ export default {
       text: `<textarea>${joined}</textarea>`,
       html: true
     });
-
+  },
+  exportPlots(roi) {
+    if (Ember.isNone(roi)) { this.toast.error('Please pick up a ROI.'); }
+    return this.get('wsx').invoke('export_plots', roi.get('id')).gateTo(
+      this.currentModel, 'roiFetching'
+    ).then(meta => {
+      download.fromBase64(meta.data, meta.filename, meta.mimetype);
+    }).catch(err => {
+      this.toast.error(err.title, err.detail);
+      roi.set('error', err);
+    }).finally(() => {
+      roi.set('busy', false);
+    });
   }
 }

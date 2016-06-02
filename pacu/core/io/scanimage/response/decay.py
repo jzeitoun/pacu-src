@@ -1,6 +1,8 @@
 from __future__ import division
 
 import numpy as np
+from cStringIO import StringIO
+from matplotlib import pyplot as plt
 
 from pacu.util.prop.memoized import memoized_property
 from pacu.core.io.scanimage.fit import tau
@@ -40,3 +42,19 @@ class DecayResponse(object):
     @memoized_property
     def mean(self):
         return np.array(self.traces).mean(axis=0)
+    def plot(self):
+        io = StringIO()
+        fig = plt.figure()
+        ax = fig.add_subplot(111)
+        ax.set_title('Decay at {}'.format(self.orientation.value))
+        data = self.toDict()
+        ax.plot(data.get('mean'), linewidth=1, color='red', label='mean')
+        ax.plot(data.get('y_fit'), linewidth=1, color='blue', label='fit')
+        for t in data.get('traces'):
+            ax.plot(t, linewidth=0.5, color='silver')
+        ax.axis('tight')
+        ax.legend()
+        fig.savefig(io, format='pdf', bbox_inches='tight')
+        fig.clf()
+        plt.close(fig)
+        return io.getvalue()

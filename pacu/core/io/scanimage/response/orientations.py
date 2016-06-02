@@ -1,4 +1,6 @@
 import numpy as np
+from matplotlib import pyplot as plt
+from cStringIO import StringIO
 
 from pacu.util.prop.memoized import memoized_property
 from pacu.core.io.scanimage.response.orientation import Orientation
@@ -51,13 +53,18 @@ class OrientationsResponse(object):
         return np.array([
             ori.regular_mean_for_ontimes
             for ori in self.responses])
-
-
-# test
-# np.concatenate([np.array(range(-3*2*5,0)[::-1]).reshape((3,2,5)), np.array(range(1, 3*2*4+1)).reshape((3,2,4))], axis=2)
-
-# traces = np.concatenate([
-#     np.array(range(-3*2*5,0)[::-1]).reshape((3,2,5)),
-#     np.array(range(1, 3*2*4+1)).reshape((3,2,4))
-# ], axis=2).transpose(1, 0, 2).reshape((2, 27))
-
+    def plot(self):
+        io = StringIO()
+        fig = plt.figure(figsize=(16, 9))
+        ax = fig.add_subplot(111)
+        ax.set_title('Orientation of Stimulus')
+        data = self.data
+        for t in data.get('traces'):
+            ax.plot(t, linewidth=0.5, color='silver')
+        ax.plot(data.get('mean'), linewidth=1, color='red', label='mean')
+        ax.axis('tight')
+        ax.legend()
+        fig.savefig(io, format='pdf', bbox_inches='tight')
+        fig.clf()
+        plt.close(fig)
+        return io.getvalue()

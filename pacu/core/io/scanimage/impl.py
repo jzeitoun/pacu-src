@@ -213,6 +213,9 @@ class ScanimageIO(object):
             return np.concatenate([
                 self.make_delta_trace(roi, trace, dx, dy)
                 for dx, dy, trace in zip(vecs.x, vecs.y, traces)])
+    def export_plots(self, id):
+        roi = self.session.roi[id]
+        return roi.export_plots_as_zip_for_download()
 
 # import pandas as pd
 # from pacu.core.io.scanimage.response.orientation import Orientation
@@ -224,9 +227,25 @@ class ScanimageIO(object):
 
 
 # from scipy import stats
-# path = 'tmp/Dario/2016.04.25/r.160130.7/DM20_RbV1_Contra_003'
+
+# import matplotlib
+# import matplotlib.pyplot as plt
+# plt.ioff()
+# path = 'tmp/Dario/2016.05.02/r.160125.1/DM23_RbV1_Contra_002'
 # qwe = ScanimageIO(path).set_session('main')
 # roi = qwe.session.roi.one().val
+
+# r.orientations.plot()
+# r.normalfit.plot()
+# r.decay.plot()
+
+# import matplotlib
+# matplotlib.use('svg')
+
+# if __name__ == '__main__':
+#     get_ipython().magic('pylab')
+
+
 
 # badpath = Path('tmp/Dario/2016.04.19/x.160103.1/DM15_RbV1_Contra_2.1')
 # qwe = ScanimageIO(badpath)

@@ -1,4 +1,6 @@
 from scipy import stats
+from matplotlib import pyplot as plt
+from cStringIO import StringIO
 
 from pacu.core.io.scanimage import util
 from pacu.core.io.scanimage.response.overview import OverviewResponse
@@ -52,3 +54,14 @@ class BaseResponse(object):
         self.normalfit = NormalfitResponse.from_adaptor(
             self, adaptor, roi.best_o_pref)
         self.decay = DecayResponse.from_adaptor(self, adaptor)
+    def plot(self):
+        io = StringIO()
+        fig = plt.figure(figsize=(16, 9))
+        ax = fig.add_subplot(111)
+        ax.plot(self.trace, linewidth=0.5)
+        ax.set_title('Response')
+        ax.axis('tight')
+        fig.savefig(io, format='pdf', bbox_inches='tight')
+        fig.clf()
+        plt.close(fig)
+        return io.getvalue()

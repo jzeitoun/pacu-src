@@ -1,6 +1,12 @@
 import time
+import base64
 import pandas as pd
 from operator import itemgetter
+from cStringIO import StringIO
+from zipfile import ZipFile, ZIP_DEFLATED
+
+import matplotlib
+matplotlib.use('svg')
 
 from scipy import stats
 import cv2
@@ -153,3 +159,31 @@ class ROI(object):
     def update_bootstrap_for_sf(self, adaptor):
         self.bootstrap_sf = BootstrapResponse.from_adaptor_for_sf(
             self.sorted_responses, self.flicker, self.blank)
+    def export_plots(self):
+        plots = {
+            'sf-tuning-curve': self.sfreqfit.plot(),
+            'response': self.sorted_responses[0][1].plot()
+        }
+        for sf, r in self.sorted_responses:
+            plots['{}-orientations'.format(sf)] = r.orientations.plot()
+            p1, p2 = r.normalfit.plot()
+            plots['{}-orientations-fit'.format(sf)] = p1
+            plots['{}-orientations-fit-polar'.format(sf)] = p2
+            plots['{}-decay'.format(sf)] = r.decay.plot()
+        return plots
+    def export_plots_as_zip(self):
+        io = StringIO()
+        with ZipFile(io, 'w', compression=ZIP_DEFLATED) as z:
+            for k, v in self.export_plots().items():
+                z.writestr('{}.pdf'.format(k), v)
+        return io.getvalue()
+    def export_plots_as_zip_to_local(self, filename='temp.zip'):
+        with open(filename, 'wb') as f:
+            f.write(self.export_plots_as_zip())
+    def export_plots_as_zip_for_download(self):
+        return dict(
+            filename='{}-plots-roi-{}.zip'.format(time.time(), self.id),
+            mimetype='application/zip',
+            encoded='base64',
+            data=base64.b64encode(self.export_plots_as_zip()),
+        )

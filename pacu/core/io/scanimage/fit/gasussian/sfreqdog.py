@@ -1,6 +1,8 @@
 from collections import namedtuple
 from scipy import optimize
 from scipy import interpolate
+from matplotlib import pyplot as plt
+from cStringIO import StringIO
 import numpy as np
 
 from pacu.core.io.scanimage import util
@@ -134,6 +136,19 @@ class SpatialFrequencyDogFit(object):
             sfx = self.xfreq,
             sfy = self.ymeas
         ))
+    def plot(self):
+        io = StringIO()
+        fig = plt.figure()
+        ax = fig.add_subplot(111)
+        ax.set_title('SF Tuning Curve')
+        ax.plot(self.xfreq, self.ymeas, label='measure', marker='o')
+        ax.plot(self.dog_x, self.dog_y, label='fit', color='red')
+        ax.legend()
+        fig.savefig(io, format='pdf', bbox_inches='tight')
+        fig.clf()
+        plt.close(fig)
+        return io.getvalue()
+
 # from matplotlib.pyplot import *
 #     def plot_psf(self): # preferred spatial frequency
 #         px, py = self.preferred_sfreq
