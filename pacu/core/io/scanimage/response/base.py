@@ -61,7 +61,7 @@ class BaseResponse(object):
         ax.plot(self.trace, linewidth=0.5)
         ax.set_title('Response')
         ax.axis('tight')
-        fig.savefig(io, format='pdf', bbox_inches='tight')
+        fig.savefig(io, format='svg', bbox_inches='tight')
         fig.clf()
         plt.close(fig)
         return io.getvalue()

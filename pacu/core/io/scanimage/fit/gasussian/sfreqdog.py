@@ -144,7 +144,7 @@ class SpatialFrequencyDogFit(object):
         ax.plot(self.xfreq, self.ymeas, label='measure', marker='o')
         ax.plot(self.dog_x, self.dog_y, label='fit', color='red')
         ax.legend()
-        fig.savefig(io, format='pdf', bbox_inches='tight')
+        fig.savefig(io, format='svg', bbox_inches='tight')
         fig.clf()
         plt.close(fig)
         return io.getvalue()

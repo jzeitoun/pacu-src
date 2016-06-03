@@ -64,7 +64,7 @@ class OrientationsResponse(object):
         ax.plot(data.get('mean'), linewidth=1, color='red', label='mean')
         ax.axis('tight')
         ax.legend()
-        fig.savefig(io, format='pdf', bbox_inches='tight')
+        fig.savefig(io, format='svg', bbox_inches='tight')
         fig.clf()
         plt.close(fig)
         return io.getvalue()

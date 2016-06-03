@@ -55,7 +55,7 @@ class NormalfitResponse(object):
         ax.plot(self.fit.y, linewidth=1, color='red', label='fit')
         ax.axis('tight')
         ax.legend()
-        fig.savefig(io1, format='pdf', bbox_inches='tight')
+        fig.savefig(io1, format='svg', bbox_inches='tight')
         fig.clf()
 
         ax = plt.subplot(111, projection='polar')
@@ -65,7 +65,7 @@ class NormalfitResponse(object):
         ax.plot(theta, self.measure, label='measure')
         ax.plot(theta2, self.fit.y, label='fit', color='red')
         ax.legend()
-        fig.savefig(io2, format='pdf', bbox_inches='tight')
+        fig.savefig(io2, format='svg', bbox_inches='tight')
         fig.clf()
         plt.close(fig)
 

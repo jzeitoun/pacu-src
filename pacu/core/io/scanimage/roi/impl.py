@@ -175,7 +175,7 @@ class ROI(object):
         io = StringIO()
         with ZipFile(io, 'w', compression=ZIP_DEFLATED) as z:
             for k, v in self.export_plots().items():
-                z.writestr('{}.pdf'.format(k), v)
+                z.writestr('{}.svg'.format(k), v)
         return io.getvalue()
     def export_plots_as_zip_to_local(self, filename='temp.zip'):
         with open(filename, 'wb') as f:

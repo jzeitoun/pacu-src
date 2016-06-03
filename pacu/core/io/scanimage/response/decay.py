@@ -54,7 +54,7 @@ class DecayResponse(object):
             ax.plot(t, linewidth=0.5, color='silver')
         ax.axis('tight')
         ax.legend()
-        fig.savefig(io, format='pdf', bbox_inches='tight')
+        fig.savefig(io, format='svg', bbox_inches='tight')
         fig.clf()
         plt.close(fig)
         return io.getvalue()
