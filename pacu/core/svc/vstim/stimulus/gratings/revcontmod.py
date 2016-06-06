@@ -1,5 +1,9 @@
+from __future__ import division
+
 from itertools import product
 
+import numpy as np
+from scipy import signal
 from psychopy import core
 from psychopy import misc
 from psychopy.core import MonotonicClock
@@ -11,12 +15,11 @@ from pacu.core.svc.impl.exc import ServiceRuntimeException
 from pacu.core.svc.impl.resource import Resource
 from pacu.core.svc.impl.component import Component
 from pacu.core.svc.vstim.stimulus.base import StimulusBase
-from pacu.core.svc.vstim.stimulus.repetition import Repetition
-from pacu.core.svc.vstim.stimulus.orientations import Orientations
-from pacu.core.svc.vstim.stimulus.sfrequencies import SFrequencies
-from pacu.core.svc.vstim.stimulus.tfrequencies import TFrequencies
+from pacu.core.svc.vstim.stimulus.orientation import Orientation
+from pacu.core.svc.vstim.stimulus.sfrequency import SFrequency
 from pacu.core.svc.vstim.stimulus.duration import OnDuration
-from pacu.core.svc.vstim.stimulus.duration import OffDuration
+from pacu.core.svc.vstim.stimulus.opacity_cycle import OpacityCycle
+from pacu.core.svc.vstim.stimulus.phase_cycle import PhaseCycle
 from pacu.core.svc.vstim.stimulus.gratings.condition import RevContModCondition
 from pacu.core.svc.vstim.stimulus.gratings.trial import Trial
 
@@ -43,12 +46,11 @@ class StimulusResource(Resource):
         conditions = [RevContModCondition(
             self.component.orientation,
             self.component.sfrequency,
-            self.component.tfrequency
         )]
         ts = [Trial(self, cond, self.component.on_duration, self.interval)
             for cond in conditions]
         return TrialHandler(ts,
-            nReps=self.component.repetition, method='random')
+            nReps=1, method='random')
     @property
     def synced(self):
         self.clock.synchronize(self)
@@ -62,7 +64,7 @@ class StimulusResource(Resource):
             yield trial.start()
             self.trials.addData('off_time', self.clock.getTime())
             self.flip_blank()
-            core.wait(self.component.off_duration)
+            # core.wait(self.component.off_duration)
             self.instance.opacity = 1.0
             if self.should_stop:
                 logging.msg('UserAbortException raised!')
@@ -70,10 +72,16 @@ class StimulusResource(Resource):
     def update_trial(self, trial):
         self.instance.ori = trial.condition.ori
         self.instance.sf = trial.condition.sf
-        self.instance.tf = trial.condition.tf
+        # self.instance.tf = trial.condition.tf
     def update_phase(self, trial):
-        print trial.frameCount
-        self.instance.phase = trial.frameCount * trial.condition.tf
+        opstate = (
+            1 + np.cos(trial.frameCount/self.component.op_cycle)
+        ) / 2
+        phstate = (
+            signal.square(trial.frameCount/self.component.ph_cycle) / 4
+        ) + 0.25
+        self.instance.opacity = opstate
+        self.instance.phase = phstate
         self.instance.draw()
         self.window.flip()
     def flip_text(self, text):
@@ -88,10 +96,9 @@ class StimulusResource(Resource):
 class RevContModGratingsStimulus(Component):
     sui_icon = 'align justify'
     package = __package__
-    repetition = 2
-    orientation = 270
-    sfrequency = 0.1
-    tfrequency = 0.1
-    on_duration = 1
-    off_duration = 1
+    orientation = Orientation(270)
+    sfrequency = SFrequency(0.1)
+    on_duration = OnDuration(30)
+    op_cycle = OpacityCycle(15)
+    ph_cycle = PhaseCycle(6)
     __call__ = StimulusResource.bind('window', 'clock', 'projection')
