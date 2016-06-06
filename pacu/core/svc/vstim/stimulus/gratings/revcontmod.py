@@ -17,6 +17,7 @@ from pacu.core.svc.impl.component import Component
 from pacu.core.svc.vstim.stimulus.base import StimulusBase
 from pacu.core.svc.vstim.stimulus.orientation import Orientation
 from pacu.core.svc.vstim.stimulus.sfrequency import SFrequency
+from pacu.core.svc.vstim.stimulus.width import Width
 from pacu.core.svc.vstim.stimulus.duration import OnDuration
 from pacu.core.svc.vstim.stimulus.opacity_cycle import OpacityCycle
 from pacu.core.svc.vstim.stimulus.phase_cycle import PhaseCycle
@@ -32,8 +33,20 @@ class StimulusResource(Resource):
         from psychopy.visual import TextStim
         win = self.window.instance
         self.textstim = TextStim(win, text='')
-        self.instance = GratingStim(win=win, units='deg', tex='sin',
-            size = misc.pix2deg(win.size, win.monitor)*2)
+        # for some reason x, y were swapped..
+        #
+        width, height = misc.pix2deg(win.size, win.monitor)
+        if self.component.width:
+            width = self.component.width
+        self.instance = GratingStim(win=win, tex='sin',
+            units='deg',
+            size = (height, width)
+            # size = misc.pix2deg(win.size, win.monitor)
+        )
+        print 'win size', win.size
+        print 'mon size', win.monitor.getSizePix()
+        print 'size as deg', misc.pix2deg(win.size, win.monitor)
+        print 'size as deg * 2', misc.pix2deg(win.size, win.monitor) * 2
         try:
             self.interval = self.window.get_isi()
         except Exception as e:
@@ -101,4 +114,5 @@ class RevContModGratingsStimulus(Component):
     on_duration = OnDuration(30)
     op_cycle = OpacityCycle(15)
     ph_cycle = PhaseCycle(6)
+    width = Width(0)
     __call__ = StimulusResource.bind('window', 'clock', 'projection')
