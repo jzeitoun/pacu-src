@@ -6,6 +6,7 @@ import numpy as np
 from scipy import signal
 from psychopy import core
 from psychopy import misc
+from psychopy import event
 from psychopy.core import MonotonicClock
 
 from pacu.ext.psychopy import logging
@@ -19,7 +20,7 @@ from pacu.core.svc.vstim.stimulus.orientation import Orientation
 from pacu.core.svc.vstim.stimulus.sfrequency import SFrequency
 from pacu.core.svc.vstim.stimulus.width import Width
 from pacu.core.svc.vstim.stimulus.duration import OnDuration
-from pacu.core.svc.vstim.stimulus.opacity_cycle import OpacityCycle
+from pacu.core.svc.vstim.stimulus.contrast_cycle import ContrastCycle
 from pacu.core.svc.vstim.stimulus.phase_cycle import PhaseCycle
 from pacu.core.svc.vstim.stimulus.gratings.condition import RevContModCondition
 from pacu.core.svc.vstim.stimulus.gratings.trial import Trial
@@ -79,21 +80,20 @@ class StimulusResource(Resource):
             self.flip_blank()
             # core.wait(self.component.off_duration)
             self.instance.opacity = 1.0
-            if self.should_stop:
-                logging.msg('UserAbortException raised!')
-                raise UserAbortException()
     def update_trial(self, trial):
         self.instance.ori = trial.condition.ori
         self.instance.sf = trial.condition.sf
-        # self.instance.tf = trial.condition.tf
     def update_phase(self, trial):
-        opstate = (
-            1 + np.cos(trial.frameCount/self.component.op_cycle)
+        if self.should_stop:
+            logging.msg('UserAbortException raised!')
+            raise UserAbortException()
+        ctstate = (
+            1 + np.cos(trial.frameCount/self.component.ct_cycle)
         ) / 2
         phstate = (
             signal.square(trial.frameCount/self.component.ph_cycle) / 4
         ) + 0.25
-        self.instance.opacity = opstate
+        self.instance.contrast = ctstate
         self.instance.phase = phstate
         self.instance.draw()
         self.window.flip()
@@ -112,7 +112,7 @@ class RevContModGratingsStimulus(Component):
     orientation = Orientation(270)
     sfrequency = SFrequency(0.1)
     on_duration = OnDuration(30)
-    op_cycle = OpacityCycle(15)
+    ct_cycle = ContrastCycle(15)
     ph_cycle = PhaseCycle(6)
     width = Width(0)
     __call__ = StimulusResource.bind('window', 'clock', 'projection')
