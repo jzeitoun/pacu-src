@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 from matplotlib.colors import Normalize
 from matplotlib.cm import ScalarMappable
 
-from pacu.dep.json import best as json
+import ujson as json
 from pacu.util.path import Path
 from pacu.util.inspect import repr
 from pacu.util.prop.memoized import memoized_property

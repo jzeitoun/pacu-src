@@ -6,7 +6,8 @@ from datetime import datetime
 import numpy as np
 from scipy import io
 
-from pacu.dep.json import best as json
+import ujson as json
+
 from pacu.profile import manager
 from pacu.ext.tornado.httputil.request import Request
 from pacu.util.path import Path

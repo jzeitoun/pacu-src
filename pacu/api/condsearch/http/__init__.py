@@ -1,4 +1,4 @@
-from pacu.dep.json import best as json
+import ujson as json
 from pacu.profile import manager
 from pacu.core.model.ed.visstim2p import VisStim2P
 from pacu.core.model.experiment import ExperimentV1

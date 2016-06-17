@@ -3,7 +3,7 @@ For make PACU backend compliant with JSONAPI. Ember will use it.
 """
 
 from pacu import profile
-from pacu.dep.json import best as json
+import ujson as json
 from pacu.core.model import Base
 from pacu.ext.sqlalchemy.orm import session
 from pacu.core.model.analysis import AnalysisV1

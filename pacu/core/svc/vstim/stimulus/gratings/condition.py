@@ -8,7 +8,8 @@ class Condition(object):
     __repr__ = repr.auto_strict
 
 class RevContModCondition(object):
-    def __init__(self, ori=270, sf=0):
+    def __init__(self, ori=270, sf=0, tf=1):
         self.ori = ori
         self.sf = sf
+        self.tf = tf
     __repr__ = repr.auto_strict

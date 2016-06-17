@@ -1,7 +1,7 @@
 import importlib
 from collections import OrderedDict
 
-from pacu.dep.json import best as json
+import ujson as json
 
 
 class spec(str):

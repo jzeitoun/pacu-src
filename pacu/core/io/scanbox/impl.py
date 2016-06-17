@@ -191,7 +191,6 @@ class ScanboxIO(object):
 # data = np.load(wavenpy)
 # iomean = io.channel.stat['MEAN']
 
-# from pacu.dep.json import best as json
 # from pacu.core.io.scanbox.model import session
 # import numpy as np
 

@@ -18,6 +18,7 @@ from pacu.core.svc.impl.component import Component
 from pacu.core.svc.vstim.stimulus.base import StimulusBase
 from pacu.core.svc.vstim.stimulus.orientation import Orientation
 from pacu.core.svc.vstim.stimulus.sfrequency import SFrequency
+from pacu.core.svc.vstim.stimulus.tfrequency import TFrequency
 from pacu.core.svc.vstim.stimulus.width import Width
 from pacu.core.svc.vstim.stimulus.duration import OnDuration
 from pacu.core.svc.vstim.stimulus.contrast_cycle import ContrastCycle
@@ -60,6 +61,7 @@ class StimulusResource(Resource):
         conditions = [RevContModCondition(
             self.component.orientation,
             self.component.sfrequency,
+            self.component.tfrequency,
         )]
         ts = [Trial(self, cond, self.component.on_duration, self.interval)
             for cond in conditions]
@@ -83,6 +85,7 @@ class StimulusResource(Resource):
     def update_trial(self, trial):
         self.instance.ori = trial.condition.ori
         self.instance.sf = trial.condition.sf
+        self.instance.tf = trial.condition.tf
     def update_phase(self, trial):
         if self.should_stop:
             logging.msg('UserAbortException raised!')
@@ -109,8 +112,9 @@ class StimulusResource(Resource):
 class RevContModGratingsStimulus(Component):
     sui_icon = 'align justify'
     package = __package__
-    orientation = Orientation(270)
-    sfrequency = SFrequency(0.1)
+    orientation = 270 # Orientation(270)
+    sfrequency = SFrequency(0.5)
+    tfrequency = TFrequency(1)
     on_duration = OnDuration(30)
     ct_cycle = ContrastCycle(15)
     ph_cycle = PhaseCycle(6)

@@ -1,4 +1,4 @@
-from pacu.dep.json import best as json
+import ujson as json
 
 from .. import __main__ as cmd # could reuse default api
 

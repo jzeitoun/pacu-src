@@ -6,7 +6,7 @@ import traceback
 
 import numpy as np
 
-from pacu.dep.json import best as json
+import ujson as json
 from pacu.ext.tornado import websocket
 
 @contextlib.contextmanager

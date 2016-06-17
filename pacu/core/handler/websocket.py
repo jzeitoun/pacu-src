@@ -2,7 +2,7 @@ import importlib
 import traceback
 import sys
 
-from pacu.dep.json import best as json
+import ujson as json
 from pacu.ext.tornado import websocket
 
 

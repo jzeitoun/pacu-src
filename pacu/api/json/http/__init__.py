@@ -1,6 +1,6 @@
 import importlib
 
-from pacu.dep.json import best as json
+import ujson as json
 
 def get(req, modname, fncname, *args, **kwargs):
     module = importlib.import_module('pacu.api.json.http.{}'.format(modname))
