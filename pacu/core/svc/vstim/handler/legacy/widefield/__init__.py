@@ -6,7 +6,7 @@ from datetime import datetime
 import numpy as np
 from scipy import io
 
-import ujson as json
+import ujson
 
 from pacu.profile import manager
 from pacu.ext.tornado.httputil.request import Request
@@ -23,7 +23,7 @@ def get(req, protocol):
     url = 'msg/svc.andor.on_external/'
     print url + protocol
     try:
-        json = json.loads(req.get(url + protocol, timeout=30).body or '{}')
+        json = ujson.loads(req.get(url + protocol, timeout=30).body or '{}')
         print json
     except ValueError as e:
         raise Exception('Communication error: invalid JSON format returned: ' + str(e))
