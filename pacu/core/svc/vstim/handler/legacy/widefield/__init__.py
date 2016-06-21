@@ -66,9 +66,10 @@ def make_params(monitor, clock, stimulus, window, handler, projection):
     handler = handler['kwargs']
     projection = projection['kwargs']
     # {'eyepoint_x': 0.5, 'eyepoint_y': 0.5}
+    duration = stimulus.get('snp_duration') or stimulus.get('on_duration')
     params = dict(
-        Duration = np.array([[stimulus['snp_duration']]], dtype='double'),
-        WaitInterval = np.array([[clock['wait_time']]], dtype='double'),
+        Duration = np.array([[duration]], dtype='double'),
+        WaitInterval = np.array([[clock.get('wait_time', 0)]], dtype='double'),
         snp_rotate = np.array([[0]], dtype='double')
     )
     # print 'PARAMS', params
