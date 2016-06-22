@@ -233,7 +233,7 @@ export default Ember.Component.extend({
   @computed('features.AOITop') aoitopmin(feat) {
     return feat ? feat.range[0] : 0;
   },
-  @computed('features.AOITop') aoitoptmax(feat) {
+  @computed('features.AOITop') aoitopmax(feat) {
     return feat ? feat.range[1] : 0;
   },
   on_sse_print: function(msg) {
