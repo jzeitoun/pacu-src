@@ -21,8 +21,8 @@ from pacu.core.svc.vstim.stimulus.sfrequency import SFrequency
 from pacu.core.svc.vstim.stimulus.tfrequency import TFrequency
 from pacu.core.svc.vstim.stimulus.width import Width
 from pacu.core.svc.vstim.stimulus.duration import OnDuration
-from pacu.core.svc.vstim.stimulus.contrast_cycle import ContrastCycle
-from pacu.core.svc.vstim.stimulus.phase_cycle import PhaseCycle
+from pacu.core.svc.vstim.stimulus.contrast_period import ContrastPeriod
+from pacu.core.svc.vstim.stimulus.opacity_period import OpacityPeriod
 from pacu.core.svc.vstim.stimulus.gratings.condition import RevContModCondition
 from pacu.core.svc.vstim.stimulus.gratings.trial import Trial
 
@@ -36,7 +36,7 @@ class StimulusResource(Resource):
         win = self.window.instance
         self.textstim = TextStim(win, text='')
         # for some reason x, y were swapped..
-        #
+        # this may happen if monitor setup was portrait mode instead of landscape.
         width, height = misc.pix2deg(win.size, win.monitor)
         if self.component.width:
             width = self.component.width
@@ -45,10 +45,9 @@ class StimulusResource(Resource):
             size = (height, width)
             # size = misc.pix2deg(win.size, win.monitor)
         )
-        print 'win size', win.size
-        print 'mon size', win.monitor.getSizePix()
-        print 'size as deg', misc.pix2deg(win.size, win.monitor)
-        print 'size as deg * 2', misc.pix2deg(win.size, win.monitor) * 2
+        tf = self.component.tfrequency
+        self.contrast_factor = tf*np.pi*(2/self.component.ct_period)
+        self.opacity_factor = tf*np.pi*(2/self.component.op_period)
         try:
             self.interval = self.window.get_isi()
         except Exception as e:
@@ -90,14 +89,15 @@ class StimulusResource(Resource):
         if self.should_stop:
             logging.msg('UserAbortException raised!')
             raise UserAbortException()
-        ctstate = (
-            1 + np.cos(trial.frameCount/self.component.ct_cycle)
-        ) / 2
-        phstate = (
-            signal.square(trial.frameCount/self.component.ph_cycle) / 4
-        ) + 0.25
-        self.instance.contrast = ctstate
-        self.instance.phase = phstate
+
+        now = trial.tick()
+        cont = np.sin(now*self.contrast_factor)
+        opa = np.cos(now*self.opacity_factor)
+
+        self.instance.contrast = signal.square(cont)
+        self.instance.opacity = (opa + 1) / 2
+
+
         self.instance.draw()
         self.window.flip()
     def flip_text(self, text):
@@ -116,7 +116,7 @@ class RevContModGratingsStimulus(Component):
     sfrequency = SFrequency(0.5)
     tfrequency = TFrequency(1)
     on_duration = OnDuration(30)
-    ct_cycle = ContrastCycle(15)
-    ph_cycle = PhaseCycle(6)
+    ct_period = ContrastPeriod(1)
+    op_period = OpacityPeriod(1)
     width = Width(0)
     __call__ = StimulusResource.bind('window', 'clock', 'projection')

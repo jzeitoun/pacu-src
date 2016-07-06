@@ -8,6 +8,8 @@ class Trial(object):
         self.condition = condition
         self.interval = interval
         self.duration = duration
+    def tick(self):
+        return self.duration - self.getTime()
     def start(self):
         self.getTime = CountdownTimer(self.duration).getTime
         return self
