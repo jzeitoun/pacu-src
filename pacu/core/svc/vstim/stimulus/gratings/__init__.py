@@ -72,7 +72,8 @@ class StimulusResource(Resource):
         for key, val in vars(trial.condition).items():
             setattr(self.instance, key, val)
     def update_phase(self, trial):
-        self.instance.phase = trial.frameCount * 0.01 * trial.condition.tf
+        now = trial.tick()
+        self.instance.phase = now * trial.condition.tf
         self.instance.draw()
         self.window.flip()
     def flip_text(self, text):

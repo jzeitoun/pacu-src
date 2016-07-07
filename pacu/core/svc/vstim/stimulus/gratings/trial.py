@@ -3,7 +3,6 @@ from psychopy.core import CountdownTimer
 
 class Trial(object):
     def __init__(self, stimulus, condition, duration, interval):
-        self.frameCount = 0
         self.stimulus = stimulus
         self.condition = condition
         self.interval = interval
@@ -22,4 +21,3 @@ class Trial(object):
         self.stimulus.update_phase(self)
     def __exit__(self, *args):
         self.interval.complete()
-        self.frameCount += 1
