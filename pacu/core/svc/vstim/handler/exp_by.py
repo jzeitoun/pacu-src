@@ -8,7 +8,8 @@ people = [
     EnumItem('dario', name='Dario', sui_icon='user'),
     EnumItem('melissa', name='Melissa', sui_icon='user'),
     EnumItem('kirstie', name='Kirstie', sui_icon='user'),
-    EnumItem('jack', name='Jack', sui_icon='user')
+    EnumItem('jack', name='Jack', sui_icon='user'),
+    EnumItem('xiao', name='Xiao', sui_icon='user')
 ]
 
 class ExpBy(EnumSpec, PacuAttr):

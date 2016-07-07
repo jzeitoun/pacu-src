@@ -24,12 +24,5 @@ class ExpV1HandlerResource(HandlerResource):
 class ExpV1Handler(HandlerBase):
     sui_icon = 'database'
     package = __package__
-#     experiment_subject = StringSpec('', desc='Type to search mice...',
-#         input_component='x-input-search',
-#         input_option=dict(
-#             query = 'mice',
-#             fields = 'id sex name DOB'.split(),
-#             path = 'name'
-#         )
-#     )
+    description = 'Scanbox users must provide correct information to take sbx recordings to analysis session.'
     __call__ = ExpV1HandlerResource.bind('stimulus', 'result')
