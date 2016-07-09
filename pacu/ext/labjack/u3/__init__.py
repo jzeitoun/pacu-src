@@ -22,14 +22,23 @@ class U3Resource(object):
         self.low = low
     def get_monotonic(self):
         high, low = self.instance.getFeedback(self.timer1, self.timer0)
-        tick = '{:b}{:032b}'.format(high-self.high, low-self.low)
-        return int(tick, 2) * 2.5e-07
+        b_high = '{:b}00000000000000000000000000000000'.format(high - self.high)
+        b_low = '{:032b}'.format(low - self.low)
+        tick = int(b_high, 2) + int(b_low, 2)
+        return tick * 2.5e-07
+        # tick = '{:b}{:032b}'.format(high-self.high, low-self.low)
+        # return int(tick, 2) * 2.5e-07
     def get_time(self):
         return self.get_monotonic() - self._reset_offset
     def get_origin(self):
         high, low = self.instance.getFeedback(self.timer1, self.timer0)
-        tick = '{:b}{:032b}'.format(high-self.horigin, low-self.lorigin)
-        return int(tick, 2) * 2.5e-07
+        b_high = '{:b}00000000000000000000000000000000'.format(high - self.high)
+        b_low = '{:032b}'.format(low - self.low)
+        tick = int(b_high, 2) + int(b_low, 2)
+        return tick * 2.5e-07
+        # high, low = self.instance.getFeedback(self.timer1, self.timer0)
+        # tick = '{:b}{:032b}'.format(high-self.horigin, low-self.lorigin)
+        # return int(tick, 2) * 2.5e-07
     def get_counter(self):
         return self.instance.getFeedback(self.counter)[0]
     def reset_counter(self):
@@ -58,6 +67,20 @@ class U3Proxy(object):
         return U3Resource(self.instance, self.horigin, self.lorigin, high, low)
     def __exit__(self, type, value, tb):
         self.instance.close()
+
+def test():
+    with U3Proxy() as u3:
+        print 'monotonic', u3.get_monotonic()
+        print 'origin', u3.get_origin()
+        print 'time', u3.get_time()
+        import time
+        time.sleep(0.5)
+        print '0.5 passed'
+        u3.reset_timer()
+        print 'timer reset'
+        print 'monotonic', u3.get_monotonic()
+        print 'origin', u3.get_origin()
+        print 'time', u3.get_time()
 
 class U3Trigger(object):
     def __init__(self):
