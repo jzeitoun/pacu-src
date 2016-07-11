@@ -100,6 +100,7 @@ class StimulusResource(Resource):
 
         self.instance.draw()
         self.window.flip()
+        self.clock.flipped()
     def flip_text(self, text):
         self.textstim.setText(text)
         self.textstim.draw()
