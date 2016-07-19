@@ -32,6 +32,10 @@ class ScanboxMatView(ZeroDimensionArrayView):
     @property
     def framerate(self):
         return self.resfreq / self.recordsPerBuffer
+    @property
+    def nchannels(self):
+        return 2 if self.channels == 1 else 1
+
 #     @property
 #     def recordsPerBuffer(self):
 #         rpb = self._namedtuple.recordsPerBuffer
@@ -39,7 +43,10 @@ class ScanboxMatView(ZeroDimensionArrayView):
 #     def __dir__(self): # quick and dirty: need to use descriptor set
 #         return super(ScanboxInfoView, self).__dir__() + \
 #             'path nchan factor framerate recordsPerBuffer sz'.split()
+
     def toDict(self):
+#         import ipdb
+#         ipdb.set_trace()
         return self.items()
     @property
     def duration(self):
@@ -47,10 +54,4 @@ class ScanboxMatView(ZeroDimensionArrayView):
         # return '{s.nframes} frames at {s.framerate} fps is 00:01:14:01'.format(s=self)
         #  duration = frame_count / frame_rate
 
-# for scanmode
-# uni-direction is 1
-# bi-direction is 0
-u0 = ScanboxMatView('/Volumes/Users/ht/Desktop/sbx/uni-Day0_000_007.mat')
-b0 = ScanboxMatView('/Volumes/Users/ht/Desktop/sbx/bi-Day7_010_007.mat')
-b1 = ScanboxMatView('/Volumes/Users/ht/Desktop/sbx/bi-day1_100_003.mat')
-
+# u0 = ScanboxMatView('/Volumes/Users/ht/Desktop/sbx/Day0_000_007.mat')

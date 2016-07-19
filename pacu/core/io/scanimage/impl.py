@@ -6,6 +6,7 @@ import numpy as np
 
 from pacu.profile import manager
 from pacu.util.path import Path
+from pacu.util.misc.unit.size import SizeUnit
 from pacu.util.prop.memoized import memoized_property
 from pacu.core.io.scanimage.channel import ScanimageChannel
 from pacu.core.io.scanimage.session import ScanimageSession
@@ -306,7 +307,8 @@ class ScanimageRecord(object):
     @property
     def desc(self):
         return '{}'.format(
-            tifffile.format_size(self.tiff_path.stat().st_size)
+            SizeUnit(self.tiff_path.stat().st_size)
+            # tifffile.format_size(self.tiff_path.stat().st_size)
         )
 
 def testdump():

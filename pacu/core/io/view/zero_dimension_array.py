@@ -61,8 +61,8 @@ class ZeroDimensionArrayView(object):
 #             (key, list(val) if isinstance(val, ZeroDimensionArrayView) else str(val))
 #             for key, val in self._namedtuple._asdict().items()
 #         )
-#     def items(self):
-#         return {
-#             key: (val.items() if isinstance(val, ZeroDimensionArrayView) else str(val))
-#             for key, val in self._namedtuple._asdict().items()
-#         }
+    def items(self):
+        return {
+            key: (val.items() if isinstance(val, ZeroDimensionArrayView) else str(val))
+            for key, val in list(self)
+        }
