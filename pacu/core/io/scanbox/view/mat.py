@@ -13,7 +13,7 @@ Dimension = namedtuple('Dimension', 'height, width')
 class ScanboxMatView(ZeroDimensionArrayView):
     def __init__(self, path):
         self.path = Path(path).ensure_suffix('.mat')
-        array = io.loadmat(path.str, squeeze_me=True).get('info')
+        array = io.loadmat(self.path.str, squeeze_me=True).get('info')
         super(ScanboxMatView, self).__init__(array)
     channels = 1 # hardcoding!
     @property
@@ -46,3 +46,11 @@ class ScanboxMatView(ZeroDimensionArrayView):
         return self.nframes / self.framerate
         # return '{s.nframes} frames at {s.framerate} fps is 00:01:14:01'.format(s=self)
         #  duration = frame_count / frame_rate
+
+# for scanmode
+# uni-direction is 1
+# bi-direction is 0
+u0 = ScanboxMatView('/Volumes/Users/ht/Desktop/sbx/uni-Day0_000_007.mat')
+b0 = ScanboxMatView('/Volumes/Users/ht/Desktop/sbx/bi-Day7_010_007.mat')
+b1 = ScanboxMatView('/Volumes/Users/ht/Desktop/sbx/bi-day1_100_003.mat')
+

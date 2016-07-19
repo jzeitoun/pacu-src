@@ -1,5 +1,6 @@
 from itertools import product
 
+import numpy as np
 from psychopy import core
 from psychopy import misc
 from psychopy.core import MonotonicClock
@@ -17,7 +18,11 @@ from pacu.core.svc.vstim.stimulus.sfrequencies import SFrequencies
 from pacu.core.svc.vstim.stimulus.tfrequencies import TFrequencies
 from pacu.core.svc.vstim.stimulus.duration import OnDuration
 from pacu.core.svc.vstim.stimulus.duration import OffDuration
+from pacu.core.svc.vstim.stimulus.blank import Blank
+from pacu.core.svc.vstim.stimulus.flicker import Flicker
 from pacu.core.svc.vstim.stimulus.gratings.condition import Condition
+from pacu.core.svc.vstim.stimulus.gratings.condition import BlankCondition
+from pacu.core.svc.vstim.stimulus.gratings.condition import FlickerCondition
 from pacu.core.svc.vstim.stimulus.gratings.trial import Trial
 from pacu.core.svc.vstim.stimulus.gratings.revcontmod import RevContModGratingsStimulus
 
@@ -39,13 +44,19 @@ class StimulusResource(Resource):
     @memoized_property
     def trials(self):
         from psychopy.data import TrialHandler # eats some time
-        # blank if blank
-        # flicker if flicker
+        # blank comes first
+        # flicker comes later
         conditions = [Condition(ori, sf, tf) for ori, sf, tf in product(
             self.component.orientations,
             self.component.sfrequencies,
             self.component.tfrequencies,
         )]
+        if self.component.blank:
+            logging.msg('has blank condition...')
+            conditions.append(BlankCondition())
+        if self.component.flicker:
+            logging.msg('has flicker condition...')
+            conditions.append(FlickerCondition())
         ts = [Trial(self, cond, self.component.on_duration, self.interval)
             for cond in conditions]
         return TrialHandler(ts,
@@ -73,8 +84,8 @@ class StimulusResource(Resource):
             setattr(self.instance, key, val)
     def update_phase(self, trial):
         now = trial.tick()
-        self.instance.phase = now * trial.condition.tf
-        self.instance.draw()
+        self.instance.phase = np.mod(now * trial.condition.tf, 1)
+        # self.instance.draw()
         self.window.flip()
     def flip_text(self, text):
         self.textstim.setText(text)
@@ -92,6 +103,8 @@ class GratingsStimulus(Component):
     orientations = Orientations([0, 120, 240])
     sfrequencies = SFrequencies([0.01, 0.05, 0.1])
     tfrequencies = TFrequencies([1.0])
+    blank = Blank(True)
+    flicker = Flicker(True)
     on_duration = OnDuration(0.1)
     off_duration = OffDuration(0)
     __call__ = StimulusResource.bind('window', 'clock', 'projection')
