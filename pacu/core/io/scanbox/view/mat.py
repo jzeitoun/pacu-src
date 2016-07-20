@@ -15,7 +15,6 @@ class ScanboxMatView(ZeroDimensionArrayView):
         self.path = Path(path).ensure_suffix('.mat')
         array = io.loadmat(self.path.str, squeeze_me=True).get('info')
         super(ScanboxMatView, self).__init__(array)
-    channels = 1 # hardcoding!
     @property
     def sbxsize(self):
         return self.path.with_suffix('.sbx').size

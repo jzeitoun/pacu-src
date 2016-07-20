@@ -52,6 +52,12 @@ class Scanbox3IO(object):
 # print repr(q.sbxpath.size)
 # print 'framerate', (q.mat.resfreq / q.mat.recordsPerBuffer) * (1 if q.mat.scanmode else 2)
 # q.mat.show()
+# 
+# q = Scanbox3IO('tmp/Jack/jzg1/day1/day3_022_000') # bi actually
+# print q.path
+# print repr(q.sbxpath.size)
+# print 'framerate', (q.mat.resfreq / q.mat.recordsPerBuffer) * (1 if q.mat.scanmode else 2)
+# q.mat.show()
 
 # if q.mat.channels == 1:
 #     nchan = 2;      # both PMT0 & 1
@@ -77,24 +83,41 @@ class Scanbox3IO(object):
 #     dtype='uint16', mode='r', order='F'
 # ).transpose(0, 3, 2, 1) # [0, ...]
 
-# p from matplotlib.pyplot import *
+# from matplotlib.pyplot import *
 # get_ipython().magic('pylab')
 # # USE BELOW SNIPPET
-# width = q.mat.sz[1]
-# height = q.mat.sz[0] / 2
-# raw = np.memmap(q.sbxpath.str, dtype='uint16', mode='r', order='F')
-# c0 = raw[0::2].reshape(-1, height, width*2)
-# c1 = raw[1::2].reshape(-1, height, width*2)
-
-# f = ~(c0[0])
-# shift = int((f[0] == 65535).sum()/2)
-# left = f[:, :width]
-# right = np.roll(f[:, width:], -shift+2)
-# print left.shape
-# print right.shape
-# imsave('f0.png', f)
-# imsave('f00.png', left)
-# imsave('f01.png', right)
+# if q.mat.channels == 1: #pmt 0 and 1
+#     width = q.mat.sz[1]
+#     height = int(q.mat.sz[0] / 2)
+#     raw = np.memmap(q.sbxpath.str, dtype='uint16', mode='r', order='F')
+#     c0 = raw[0::2].reshape(-1, height, width*2)
+#     c1 = raw[1::2].reshape(-1, height, width*2)
+# 
+#     f = ~(c0[0])
+#     shift = int((f[0] == 65535).sum()/2)
+#     left = f[:, :width]
+#     right = np.roll(f[:, width:], -shift+2)
+#     print left.shape
+#     print right.shape
+#     imsave('f0.png', f)
+#     imsave('f00.png', left)
+#     imsave('f01.png', right)
+# 
+# if q.mat.channels == 2: #pmt 0 only
+#     width = q.mat.sz[1]
+#     height = int(q.mat.sz[0] / 2)
+#     raw = np.memmap(q.sbxpath.str, dtype='uint16', mode='r', order='F')
+#     chan = raw.reshape(-1, height, width*2)
+# 
+#     f = ~(chan[0])
+#     shift = int((f[0] == 65535).sum()/2)
+#     left = f[:, :width]
+#     right = np.roll(f[:, width:], -shift+2)
+#     print left.shape
+#     print right.shape
+#     imsave('f0.png', f)
+#     imsave('f00.png', left)
+#     imsave('f01.png', right)
 
 # from tifffile import TiffWriter
 # with TiffWriter('ffff.tiff', bigtiff=True) as tif:

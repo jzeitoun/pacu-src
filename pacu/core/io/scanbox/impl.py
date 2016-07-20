@@ -154,12 +154,12 @@ class ScanboxIO(object):
 # get_ipython().magic(u'pylab')
 # 
 # testpath = '/Volumes/Users/ht/dev/current/pacu/tmp/Jack/jzg1/day1/day1_000_007.io'
-testpath = '/Volumes/Users/ht/dev/current/pacu/tmp/Jack/jzg1/day1/Day0_000_007.io'
+# testpath = '/Volumes/Users/ht/dev/current/pacu/tmp/Jack/jzg1/day1/day3_022_000.io'
 # io = ScanboxIO(testpath).set_workspace(3).set_channel(0)
 # w = io.workspace
 # r1 = w.rois[0]
 # r2 = w.rois[1]
-io = ScanboxIO(testpath)
+# io = ScanboxIO(testpath)
 
 # import matplotlib
 # matplotlib.use('svg')

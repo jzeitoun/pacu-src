@@ -61,7 +61,7 @@ class ScanboxChannel(object):
         width = io.mat.sz[1]
         height = io.mat.sz[0] / 2
         raw = np.memmap(io.sbx.path.str, dtype='uint16', mode='r', order='F')
-        chan = raw[self.channel::2].reshape(-1, height, width*2)
+        chan = raw[self.channel::io.mat.nchannels].reshape(-1, height, width*2)
         depth = chan.shape[0] * 2
         max = np.zeros(depth, dtype='uint16')
         min = np.zeros(depth, dtype='uint16')
@@ -72,10 +72,11 @@ class ScanboxChannel(object):
                 if (i % 100) == 0:
                     print 'Working 100 frames at {}'.format(i*2)
                 f = ~frame
-                shift = int((f[0] == 65535).sum()/2)
+                # shift = int((f[0] == 65535).sum()/2)
                 f[f == 65535] = 0
                 left = f[:, :width]
-                right = np.roll(f[:, width:], -shift+2)
+                right = f[:, width:]
+                # right = np.roll(f[:, width:], -shift+2)
                 npy.write(left.tostring())
                 npy.write(right.tostring())
                 first = i*2
