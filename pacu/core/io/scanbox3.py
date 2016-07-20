@@ -59,6 +59,14 @@ class Scanbox3IO(object):
 # print 'framerate', (q.mat.resfreq / q.mat.recordsPerBuffer) * (1 if q.mat.scanmode else 2)
 # q.mat.show()
 
+# q = Scanbox3IO('/Volumes/Gandhi Lab - HT/sbx/my4r_1_3_000_011.mat') # dont know
+# print q.path
+# print repr(q.sbxpath.size)
+# print 'framerate', (q.mat.resfreq / q.mat.recordsPerBuffer) * (1 if q.mat.scanmode else 2)
+# q.mat.show()
+
+
+
 # if q.mat.channels == 1:
 #     nchan = 2;      # both PMT0 & 1
 #     factor = 1;

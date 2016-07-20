@@ -73,11 +73,9 @@ class ScanboxChannel(object):
                 if (i % 100) == 0:
                     print 'Processing frames at #{} index...'.format(i)
                 f = ~frame
-                # shift = int((f[0] == 65535).sum()/2)
                 f[f == 65535] = 0
                 left = f[:, :width]
                 right = f[:, width:]
-                # right = np.roll(f[:, width:], -shift+2)
                 npy.write(left.tostring())
                 npy.write(right.tostring())
                 first = i*2
