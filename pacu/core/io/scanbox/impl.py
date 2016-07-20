@@ -125,6 +125,7 @@ class ScanboxIO(object):
             mat = self.mat,
             sbx = self.sbx,
             error = error,
+            mode = 'uni' if self.mat.scanmode else 'bi',
             workspaces = workspaces)
     def get_channel(self, number):
         return ScanboxChannel(self.path.joinpath('{}.chan'.format(number)))
@@ -153,12 +154,12 @@ class ScanboxIO(object):
 # get_ipython().magic(u'pylab')
 # 
 # testpath = '/Volumes/Users/ht/dev/current/pacu/tmp/Jack/jzg1/day1/day1_000_007.io'
-# testpath = '/Volumes/Users/ht/dev/current/pacu/tmp/Jack/jzg1/day1/Day0_000_007.io'
+testpath = '/Volumes/Users/ht/dev/current/pacu/tmp/Jack/jzg1/day1/Day0_000_007.io'
 # io = ScanboxIO(testpath).set_workspace(3).set_channel(0)
 # w = io.workspace
 # r1 = w.rois[0]
 # r2 = w.rois[1]
-# io = ScanboxIO(testpath).set_workspace(0).set_channel(0)
+io = ScanboxIO(testpath)
 
 # import matplotlib
 # matplotlib.use('svg')
