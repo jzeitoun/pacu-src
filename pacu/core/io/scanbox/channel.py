@@ -62,7 +62,7 @@ class ScanboxChannel(object):
         height = io.mat.sz[0] / 2
         raw = np.memmap(io.sbx.path.str, dtype='uint16', mode='r', order='F')
         chan = raw[self.channel::io.mat.nchannels].reshape(-1, height, width*2)
-        depth = chan.shape[0] * io.mat.nchannels
+        depth = chan.shape[0] * 2
         max = np.zeros(depth, dtype='uint16')
         min = np.zeros(depth, dtype='uint16')
         mean = np.zeros(depth, dtype='float64')
