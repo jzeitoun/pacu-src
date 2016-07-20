@@ -66,11 +66,12 @@ class ScanboxChannel(object):
         max = np.zeros(depth, dtype='uint16')
         min = np.zeros(depth, dtype='uint16')
         mean = np.zeros(depth, dtype='float64')
-        print 'Aligning {} frames'.format(depth)
+        print 'Iterating over {} frames...'.format(chan.shape[0])
+        print 'Aligning {} frames in total.'.format(depth)
         with open(self.mmappath.str, 'w') as npy:
             for i, frame in enumerate(chan):
                 if (i % 100) == 0:
-                    print 'Working 100 frames at {}'.format(i*io.mat.nchannels)
+                    print 'Processing frames at #{} index...'.format(i)
                 f = ~frame
                 # shift = int((f[0] == 65535).sum()/2)
                 f[f == 65535] = 0
