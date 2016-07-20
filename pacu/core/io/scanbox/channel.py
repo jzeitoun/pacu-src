@@ -70,7 +70,7 @@ class ScanboxChannel(object):
         with open(self.mmappath.str, 'w') as npy:
             for i, frame in enumerate(chan):
                 if (i % 100) == 0:
-                    print 'Working 100 frames at {}'.format(i*io.mat.nchannels])
+                    print 'Working 100 frames at {}'.format(i*io.mat.nchannels)
                 f = ~frame
                 # shift = int((f[0] == 65535).sum()/2)
                 f[f == 65535] = 0
