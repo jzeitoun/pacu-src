@@ -160,8 +160,11 @@ class ScanboxIO(object):
         if entity:
             print 'There is matching condition data in ED for {!r}'.format(
                 self.path.stem)
-            condition_payload = db.Condition.payload_from_expv1(entity)
-            self.session.Condition.create(condition_payload)
+            try:
+                condition_payload = db.Condition.payload_from_expv1(entity)
+                self.session.Condition.create(condition_payload)
+            except Exception as e:
+                print 'Condition import failed with reason below,', str(e)
         else:
             print 'There is no matching condition data in ED for {!r}'.format(
                 self.path.stem)
