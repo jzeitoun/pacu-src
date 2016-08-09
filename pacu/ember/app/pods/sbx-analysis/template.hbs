@@ -10,6 +10,13 @@
 {{/x-sui-sticky}}
 <div id="route-sbx-analysis" class="ui inverted segment">
 
+  {{! Condition ?}}
+  {{#with model.workspace.condition as |c|}}
+    sequence: {{c.sequence}}
+    on_time: {{c.on_time}}
+    off_time: {{c.off_time}}
+  {{/with}}
+
   {{! MultiTrace Plot }}
   {{#with (hash width=0) as |masterDimension|}}
   {{x-sbx-analysis/plot/multi-trace

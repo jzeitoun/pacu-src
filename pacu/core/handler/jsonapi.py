@@ -71,6 +71,7 @@ class JSONAPIHandler(RequestHandler):
     url = r'/jsonapi/(?P<tablename>[\w-]+)/?(?P<id>\d*)'
     def prepare(self):
         self.locator = ResourceLocator.from_headers(self.request.headers)
+        print self.locator
         self.session = self.locator.Session()
         event.listen(self.session, 'before_flush', db.before_flush)
     def on_finish(self):
@@ -97,14 +98,23 @@ class JSONAPIHandler(RequestHandler):
         self.finish(dumped)
     def patch(self, tablename, id):
         payload = ujson.loads(self.request.body)
-        attrs = payload['data'].get('attributes')
-        if not attrs:
+        attrs = payload['data'].get('attributes') or {}
+        rels = payload['data'].get('relationships') or {}
+        if not attrs and not rels:
             return self.set_status(204) # No Content
         s = self.session
         with s.begin():
             entity = s.query(self.locator.orms.get(tablename)).get(id)
             for key, val in attrs.items():
                 setattr(entity, key, val)
+            for key, val in rels.items():
+                orm = self.locator.orms.get(val['data']['type'])
+                rel = s.query(orm).options(load_only('id')).get(val['data']['id'])
+                setattr(entity, key, rel)
+        # with s.begin():
+        #     entity = s.query(self.locator.orms.get(tablename)).get(id)
+        #     for key, val in attrs.items():
+        #         setattr(entity, key, val)
         ja = entity.as_jsonapi
         # import ipdb;ipdb.set_trace()
         # nd = dict(ja['relationships']['traces']['data'][0],attributes=dict(array=[]))

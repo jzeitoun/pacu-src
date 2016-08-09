@@ -73,24 +73,24 @@ def before_flush(session, flush_context, instances):
         if hasattr(deleted, 'before_flush_deleted'):
             deleted.before_flush_deleted(session, flush_context)
 def after_flush(session, flush_context):
-    print 'AFTER FLUSH'
+    # print 'AFTER FLUSH'
     for dirty in session.dirty:
         keys = [attr.key for attr in inspect(dirty).attrs
             if attr.history.has_changes()]
         dirty.__flushed_attrs__ = tuple(keys)
         dirty.__committed_attrs__.extend(keys)
 def after_begin(session, transaction, connection):
-    print 'AFTER BEGIN'
+    # print 'AFTER BEGIN'
     for model in session.identity_map.values():
         model.__flushed_attrs__ = ()
         model.__committed_attrs__ = []
 def after_commit(session):
-    print 'AFTER COMMIT'
+    # print 'AFTER COMMIT'
     for model in session.identity_map.values():
         model.__flushed_attrs__ = ()
         model.__committed_attrs__ = tuple(model.__committed_attrs__)
 def after_rollback(session):
-    print 'AFTER ROLLBACK'
+    # print 'AFTER ROLLBACK'
     for model in session.identity_map.values():
         model.__flushed_attrs__ = ()
         model.__committed_attrs__ = []

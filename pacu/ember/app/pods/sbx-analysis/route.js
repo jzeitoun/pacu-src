@@ -16,7 +16,9 @@ export default Ember.Route.extend({
     this.get('session.jsonapi').setProperties({moduleName, baseName,
       sessionArgs: [param.mouse, param.day, param.io_name]
     });
+    this.store.unloadAll(); // important!
     const workspace = this.store.findRecord('workspace', param.workspace_id, { include: 'rois' });
+    const conditions = this.store.findAll('condition');
     const socket = new Ember.RSVP.Promise((resolve /*, reject */) => {
       return this.get('socket').create(
         this, modname, clsname, param
@@ -29,9 +31,15 @@ export default Ember.Route.extend({
         resolve(SocketModel.create({ wsx }));
       });
     });
-    return Ember.RSVP.hash({ workspace, socket });
+    return Ember.RSVP.hash({ workspace, socket, conditions });
   },
   afterModel(model /*, transition */) {
+    model.workspace.get('condition').then(c => {
+      if (Ember.isNone(c) && model.conditions.get('length')) {
+        model.workspace.set('condition', model.conditions.get('firstObject'));
+        model.workspace.save();
+      }
+    });
     model.socket.initialize(this, model.workspace);
   },
   on_sse_print(msg, err) {

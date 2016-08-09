@@ -9,6 +9,7 @@ export default Model.extend({
   iopath: attr('string'),
   rois: hasMany('roi'),
   colormaps: hasMany('colormap'),
+  condition: belongsTo('condition'),
   ecorrs: hasMany('ephys-correlation'),
   @computed('rois') traces(rois, entry=[]) {
     rois.then(rs => {

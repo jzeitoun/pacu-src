@@ -9,8 +9,10 @@ from pacu.core.io.scanbox.view.mat import ScanboxMatView
 from pacu.core.io.scanbox.view.ephys import ScanboxEphysView
 from pacu.core.io.scanbox.channel import ScanboxChannel
 from pacu.core.io.scanbox.model import db
+from pacu.core.model.experiment import ExperimentV1
 
 opt = manager.instance('opt')
+glab = manager.get('db').section('glab')
 
 class sessionBinder(type):
     @classmethod
@@ -34,16 +36,20 @@ class sessionBinder(type):
         return cls.queried.first()
     # direct SQL command
     def create(cls, payload):
-        with cls.session.begin() as t:
+        with cls.session.begin():
             inst = cls(**payload)
             cls.session.add(inst)
             return inst
     def delete(cls, payload):
         return cls.queried.filter_by(**payload).delete()
     def upsert(cls, payload):
-        with cls.session.begin() as t:
-            roi = t.session.merge(cls(**payload))
-            t.session.flush()
+        # with cls.session.begin() as t:
+        #     roi = t.session.merge(cls(**payload))
+        #     t.session.flush()
+        #     return {key: getattr(roi, key) for key in payload.keys()}
+        with cls.session.begin():
+            roi = cls.session.merge(cls(**payload))
+            cls.session.flush()
             return {key: getattr(roi, key) for key in payload.keys()}
     read = NotImplemented
     def __dir__(self):
@@ -75,7 +81,7 @@ class ScanboxIO(object):
         self.path = Path(path).ensure_suffix('.io')
         self.session = SessionBoundNamespace(
             self.db_session_factory(),
-            db.Workspace, db.ROI, db.Trace)
+            db.Workspace, db.ROI, db.Trace, db.Condition)
     @property
     def is_there(self):
         return self.path.exists()
@@ -136,33 +142,47 @@ class ScanboxIO(object):
         self.path.rmtree()
         self.session = SessionBoundNamespace( # unnecessary implementation
             self.db_session_factory(),
-            db.Workspace, db.ROI, db.Trace)
+            db.Workspace, db.ROI, db.Trace, db.Condition)
         return self.attributes
     def import_raw(self):
         self.path.mkdir_if_none()
         db.recreate(self.db_path)
+        self.session = SessionBoundNamespace(
+            self.db_session_factory(),
+            db.Workspace, db.ROI, db.Trace, db.Condition)
+        self.import_exp_as_condition()
         for chan in range(self.mat.nchannels):
             self.get_channel(chan).import_with_io(self)
         return self.attributes
+    def import_exp_as_condition(self):
+        s = glab()
+        entity = s.query(ExperimentV1).filter_by(keyword=self.path.stem).one_or_none()
+        if entity:
+            print 'There is matching condition data in ED for {!r}'.format(
+                self.path.stem)
+            condition_payload = db.Condition.payload_from_expv1(entity)
+            self.session.Condition.create(condition_payload)
+        else:
+            print 'There is no matching condition data in ED for {!r}'.format(
+                self.path.stem)
     def upgrade_db_schema(self):
         db.upgrade(db.SQLite3Base.metadata,
             self.db_session_factory.kw.get('bind'))
         return self.attributes
 
 
-
 # from pacu.profile import manager
 # from pacu.core.model.experiment import ExperimentV1
-# db = manager.instance('db')
-# s = manager.get('db').section('glab')()
-
 # from matplotlib.pyplot import *
 # get_ipython().magic(u'pylab')
-# 
+
 # testpath = '/Volumes/Users/ht/dev/current/pacu/tmp/Jack/jzg1/day_ht/my4r_1_3_000_007.io'
 # io = ScanboxIO(testpath)
+# s = glab()
+# entity = s.query(ExperimentV1).filter_by(keyword=io.path.stem).one_or_none()
 
-# testpath = '/Volumes/Users/ht/dev/current/pacu/tmp/Jack/jzg1/day1/day3_022_000.io'
+# testpath = '/Volumes/Users/ht/dev/current/pacu/tmp/Jack/jzg1/day_ht/day3_022_002.io'
+# io = ScanboxIO(testpath)
 
 # io = ScanboxIO(testpath).set_workspace(3).set_channel(0)
 # w = io.workspace

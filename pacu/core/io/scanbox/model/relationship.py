@@ -7,6 +7,7 @@ from pacu.core.io.scanbox.model.trace import Trace
 from pacu.core.io.scanbox.model.ephys_correlation import EphysCorrelation
 from pacu.core.io.scanbox.model.colormap import Colormap
 from pacu.core.io.scanbox.model.action import Action
+from pacu.core.io.scanbox.model.condition import Condition
 
 class flist(list):
     @property
@@ -20,6 +21,7 @@ EphysCorrelation.workspace_id = Column(Integer, ForeignKey(Workspace.id))
 Colormap.workspace_id = Column(Integer, ForeignKey(Workspace.id))
 ROI.workspace_id = Column(Integer, ForeignKey(Workspace.id))
 Trace.roi_id = Column(Integer, ForeignKey(ROI.id))
+Workspace.condition_id = Column(Integer, ForeignKey(Condition.id))
 
 ROI.traces = relationship(Trace, order_by=Trace.id,
     collection_class=flist,
@@ -41,5 +43,10 @@ Workspace.ecorrs = relationship(EphysCorrelation, order_by=EphysCorrelation.id,
     cascade='all, delete-orphan',
     backref='workspace',
     lazy='joined')
+Condition.workspaces = relationship(Workspace, order_by=Workspace.id,
+    collection_class=flist,
+    cascade='all, delete-orphan',
+    backref='condition',
+    lazy='joined')
 
-__all__ = 'Workspace ROI Colormap Trace EphysCorrelation Action'.split()
+__all__ = 'Workspace ROI Colormap Trace EphysCorrelation Action Condition'.split()
