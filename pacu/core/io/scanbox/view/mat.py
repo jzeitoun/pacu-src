@@ -34,11 +34,17 @@ class ScanboxMatView(ZeroDimensionArrayView):
     @property
     def nchannels(self):
         return 2 if self.channels == 1 else 1
-
-#     @property
-#     def recordsPerBuffer(self):
-#         rpb = self._namedtuple.recordsPerBuffer
-#         return rpb * 2 if self.scanmode is 0 else rpb
+    @property
+    def factor(self):
+        return 1 if self.channels == 1 else 2
+    def get_max_idx(self, size):
+        return int(size/self.recordsPerBuffer/self.sz[1]*self.factor/4 - 1)
+    def get_shape(self, size):
+        return self.get_max_idx(size) + 1, self.recordsPerBuffer, self.sz[1]
+    @property
+    def recordsPerBuffer(self):
+        rpb = self._dict.get('recordsPerBuffer')
+        return rpb * 2 if self.scanmode is 0 else rpb
 #     def __dir__(self): # quick and dirty: need to use descriptor set
 #         return super(ScanboxInfoView, self).__dir__() + \
 #             'path nchan factor framerate recordsPerBuffer sz'.split()

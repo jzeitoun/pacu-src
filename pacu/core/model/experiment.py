@@ -14,8 +14,9 @@ class ExperimentV1(Base):
     __tablename__ = 'experiment_v1'
     id = Column(Integer, primary_key=True)
     created_at = Column(DateTime, default=datetime.utcnow)
-    clsname = Column(Unicode(265))
-    pkgname = Column(Unicode(265))
+    clsname = Column(Unicode(256))
+    pkgname = Column(Unicode(256))
+    keyword = Column(Unicode(256))
     message = Column(UnicodeText)
     on_time = Column(PickleType, default={})
     sequence = Column(PickleType, default={})

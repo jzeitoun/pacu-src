@@ -150,11 +150,20 @@ class ScanboxIO(object):
         return self.attributes
 
 
+
+# from pacu.profile import manager
+# from pacu.core.model.experiment import ExperimentV1
+# db = manager.instance('db')
+# s = manager.get('db').section('glab')()
+
 # from matplotlib.pyplot import *
 # get_ipython().magic(u'pylab')
 # 
-# testpath = '/Volumes/Users/ht/dev/current/pacu/tmp/Jack/jzg1/day1/day1_000_007.io'
+# testpath = '/Volumes/Users/ht/dev/current/pacu/tmp/Jack/jzg1/day_ht/my4r_1_3_000_007.io'
+# io = ScanboxIO(testpath)
+
 # testpath = '/Volumes/Users/ht/dev/current/pacu/tmp/Jack/jzg1/day1/day3_022_000.io'
+
 # io = ScanboxIO(testpath).set_workspace(3).set_channel(0)
 # w = io.workspace
 # r1 = w.rois[0]

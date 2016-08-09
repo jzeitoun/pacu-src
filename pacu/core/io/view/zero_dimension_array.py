@@ -22,6 +22,7 @@ class ZeroDimensionArrayView(object):
     def __init__(self, array):
         self._keys = array.dtype.names
         self._vals = array.item()
+        self._dict = dict(zip(self._keys, self._vals))
         if reserved & set(self._keys):
             raise reserved_attr_error
         # self._namedtuple = namedtuple('Contents', self._names)._make(
