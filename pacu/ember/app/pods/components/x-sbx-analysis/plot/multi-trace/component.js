@@ -11,9 +11,12 @@ export default Ember.Component.extend({
   attributeBindings: ['width', 'height'],
   @computed() ctx() { return this.element.getContext('2d'); },
   @computed('ctx') chart(ctx) { return new Chart(ctx, Manager.config); },
-  @observes('traces.@each.array') draw() {
-    const traces = this.get('traces');
-    const manager = Manager.create({traces: traces.map(t => t.toJSON())});
+  @observes('datatags.@each.value') draw() {
+    const datatags = this.get('datatags').map(t => t.toJSON());
+    for (let dt of datatags) {
+      if (Ember.isNone(dt.value)) dt.value = [];
+    }
+    const manager = Manager.create({traces: datatags});
     const chart = this.get('chart');
     chart.data.labels = manager.get('labels');
     chart.data.datasets = manager.get('datasets');
@@ -34,6 +37,7 @@ export default Ember.Component.extend({
     Ember.$(document).on('keyup.multi-trace', () => {
       this.set('augKeyOn', false);
     });
+    this.draw();
   },
   @on('willDestroyElement') dnitialize() {
     this.get('chart').destroy();

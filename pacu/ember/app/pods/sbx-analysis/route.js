@@ -13,12 +13,16 @@ export default Ember.Route.extend({
   session: Ember.inject.service(),
   actions: actions,
   model(param /*, transition */) {
+    window.S = this.store;
+    window.R = this;
     this.get('session.jsonapi').setProperties({moduleName, baseName,
       sessionArgs: [param.mouse, param.day, param.io_name]
     });
     this.store.unloadAll(); // important!
     const workspace = this.store.findRecord('workspace', param.workspace_id, { include: 'rois' });
     const conditions = this.store.findAll('condition');
+    const trials = this.store.findAll('trial');
+    const dtOverallMean = this.store.findAll('datatag');
     const socket = new Ember.RSVP.Promise((resolve /*, reject */) => {
       return this.get('socket').create(
         this, modname, clsname, param
@@ -31,12 +35,15 @@ export default Ember.Route.extend({
         resolve(SocketModel.create({ wsx }));
       });
     });
-    return Ember.RSVP.hash({ workspace, socket, conditions });
+    return Ember.RSVP.hash({ workspace, socket, conditions, trials, dtOverallMean });
   },
   afterModel(model /*, transition */) {
     model.workspace.get('condition').then(c => {
       if (Ember.isNone(c) && model.conditions.get('length')) {
-        model.workspace.set('condition', model.conditions.get('firstObject'));
+        const condition = model.conditions.get('firstObject');
+        const defaultSF = condition.get('sfrequencies.0');
+        model.workspace.set('condition', condition);
+        model.workspace.set('cur_sfreq', defaultSF);
         model.workspace.save();
       }
     });

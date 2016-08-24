@@ -5,10 +5,14 @@ import { belongsTo, hasMany } from 'ember-data/relationships';
 
 export default Model.extend({
   created_at: attr('epoch'),
-  array: attr(),
-  color: attr('string'),
+  value: attr(),
   category: attr('string'),
+  method: attr('string'),
+  ori: attr(),
+  sf: attr(),
+  tf: attr(),
   roi: belongsTo('roi'),
+  roi_id: attr(),
   action(name, ...args) {
     if (this.get('inAction')) { return; }
     this.set('inAction', true);
@@ -19,7 +23,7 @@ export default Model.extend({
   actions: {
     fetch() {
       return this.store.createRecord('action', {
-        model_name: 'Trace',
+        model_name: 'Datatag',
         model_id: this.id,
         action_name: 'refresh',
       }).save().then((data) => {

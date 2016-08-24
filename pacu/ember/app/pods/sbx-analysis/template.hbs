@@ -6,25 +6,23 @@
   <a class="item" {{action "noop"}}>
     <i class="green file image outline icon"></i>
   </a>
+  <a class="item" {{action "noop"}}>
+    Current SF: {{model.workspace.cur_sfreq}}
+  </a>
 </div>
 {{/x-sui-sticky}}
 <div id="route-sbx-analysis" class="ui inverted segment">
-
-  {{! Condition ?}}
-  {{#with model.workspace.condition as |c|}}
-    sequence: {{c.sequence}}
-    on_time: {{c.on_time}}
-    off_time: {{c.off_time}}
-  {{/with}}
 
   {{! MultiTrace Plot }}
   {{#with (hash width=0) as |masterDimension|}}
   {{x-sbx-analysis/plot/multi-trace
     dimension=masterDimension
-    index=model.socket.img.curIndex traces=model.workspace.traces}}
-  {{x-sbx-analysis/plot/ephys-trace
+    index=model.socket.img.curIndex datatags=model.dtOverallMean}}
+  {{! x-sbx-analysis/plot/ephys-trace
     dimension=masterDimension
     index=model.socket.img.curIndex trace=model.socket.ephys.trace}}
+  {{! x-sbx-analysis/plot/orientations
+    dimension=masterDimension src=model.workspace.oriTraces}}
   {{/with}}
 
   {{! Main Canvas Slider }}

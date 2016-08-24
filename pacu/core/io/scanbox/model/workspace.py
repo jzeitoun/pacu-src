@@ -1,6 +1,6 @@
 import operator
 
-from sqlalchemy import Column, UnicodeText
+from sqlalchemy import Column, UnicodeText, Float
 
 from pacu.core.io.scanbox.model.base import SQLite3Base
 
@@ -9,6 +9,7 @@ class Workspace(SQLite3Base):
     name = Column(UnicodeText)
     iopath = Column(UnicodeText) # should be relative because db.sqlite3 can move
                                  # around any locations.
+    cur_sfreq = Column(Float)
     @property
     def io(self): # experimental
         from pacu.core.io.scanbox.impl import ScanboxIO

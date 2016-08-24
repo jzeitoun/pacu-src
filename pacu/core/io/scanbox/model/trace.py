@@ -11,4 +11,4 @@ class Trace(SQLite3Base):
     def invalidate(self):
         self.array = []
     def refresh(self):
-        self.array = self.roi.get_trace()
+        self.array = self.roi.compute(self.category)

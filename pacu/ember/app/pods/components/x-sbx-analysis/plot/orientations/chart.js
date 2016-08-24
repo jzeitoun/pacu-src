@@ -1,6 +1,5 @@
 import Ember from 'ember';
 import computed from 'ember-computed-decorators';
-import color from 'pacu/utils/color';
 
 const yAxes = {
   type: 'linear',
@@ -38,11 +37,11 @@ const data = { labels:[], datasets:[] }; // dummy
 const options = {
   title: {
     display: true,
-    text: 'ROI Traces',
+    text: 'Orientation of Stimulus',
     fontStyle: 'normal'
   },
   legend: {
-    display: true,
+    display: false,
     labels: {
       fontSize: 10
     }
@@ -63,8 +62,8 @@ const options = {
     // },
     point: {
       radius: 0,
-      hoverRadius: 8,
-      hitRadius: 8,
+      hoverRadius: 0,
+      hitRadius: 0,
     }
   },
   animation: {
@@ -73,19 +72,17 @@ const options = {
 };
 
 export default Ember.Object.extend({
-  @computed('traces') labels(traces) {
-    const lens = traces.map(t => t.value.length);
-    if (Ember.isEmpty(lens)) { return []; }
-    return Array.from(Array(Math.max(...lens)).keys()); // range the JS way.
+  @computed('trace') labels(trace=[]) {
+    return trace.map((e, i) => i);
   },
-  @computed('traces') datasets(traces) {
-    return traces.map((trace, index) => {
-      return {
-        borderColor: trace.color || color.google20[index],
-        borderWidth: 0.5,
-        data: trace.value,
-        label: `ROI #${trace.roi}`,
-      }
-    });
+  @computed('trace') datasets(trace) {
+    return [{
+      //borderColor: trace.color || color.google20[index],
+      borderColor: 'red',
+      borderWidth: 0.5,
+      data: trace,
+      label: 'ephys',
+      // label: `ROI #${trace.roi}`,
+    }];
   }
 }).reopenClass({config: { type, data, options }});

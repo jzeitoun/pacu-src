@@ -30,7 +30,8 @@ class ScanboxMatView(ZeroDimensionArrayView):
                 self.dimension.width/2/self.channels)
     @property
     def framerate(self):
-        return self.resfreq / self.recordsPerBuffer
+        rate = self.resfreq / self.recordsPerBuffer
+        return rate if self.scanmode else rate * 2
     @property
     def nchannels(self):
         return 2 if self.channels == 1 else 1

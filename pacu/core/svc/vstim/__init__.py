@@ -67,6 +67,7 @@ __all__ = specs([
     spec('window', 'windows', [
         ('windowed', 'Window'),
         ('fullscreen', 'Fullscreen'),
+        ('kirscreen', 'Kirscreen'),
     ]),
     spec('stimulus', 'stimuli', [
         ('gratings', 'GratingsStimulus'),

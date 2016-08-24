@@ -81,7 +81,7 @@ class ScanboxIO(object):
         self.path = Path(path).ensure_suffix('.io')
         self.session = SessionBoundNamespace(
             self.db_session_factory(),
-            db.Workspace, db.ROI, db.Trace, db.Condition)
+            db.Workspace, db.ROI, db.Datatag, db.Condition, db.Trial)
     @property
     def is_there(self):
         return self.path.exists()
@@ -142,14 +142,14 @@ class ScanboxIO(object):
         self.path.rmtree()
         self.session = SessionBoundNamespace( # unnecessary implementation
             self.db_session_factory(),
-            db.Workspace, db.ROI, db.Trace, db.Condition)
+            db.Workspace, db.ROI, db.Datatag, db.Condition, db.Trial)
         return self.attributes
     def import_raw(self):
         self.path.mkdir_if_none()
         db.recreate(self.db_path)
         self.session = SessionBoundNamespace(
             self.db_session_factory(),
-            db.Workspace, db.ROI, db.Trace, db.Condition)
+            db.Workspace, db.ROI, db.Datatag, db.Condition, db.Trial)
         self.import_exp_as_condition()
         for chan in range(self.mat.nchannels):
             self.get_channel(chan).import_with_io(self)
@@ -161,8 +161,11 @@ class ScanboxIO(object):
             print 'There is matching condition data in ED for {!r}'.format(
                 self.path.stem)
             try:
-                condition_payload = db.Condition.payload_from_expv1(entity)
-                self.session.Condition.create(condition_payload)
+                session = self.session._session
+                with session.begin():
+                    condition = db.Condition.from_expv1(entity)
+                    condition.trials.extend([db.Trial(**trial) for trial in entity])
+                    session.add(condition)
             except Exception as e:
                 print 'Condition import failed with reason below,', str(e)
         else:
@@ -181,11 +184,16 @@ class ScanboxIO(object):
 
 # testpath = '/Volumes/Users/ht/dev/current/pacu/tmp/Jack/jzg1/day_ht/my4r_1_3_000_007.io'
 # io = ScanboxIO(testpath)
+# frames = io.session.Workspace.one().io.channel.mmap
+
+# [t.ori for t in w.condition.trials if t.sf == w.cur_sfreq and t.ori == 0.0]
 # s = glab()
 # entity = s.query(ExperimentV1).filter_by(keyword=io.path.stem).one_or_none()
 
 # testpath = '/Volumes/Users/ht/dev/current/pacu/tmp/Jack/jzg1/day_ht/day3_022_002.io'
 # io = ScanboxIO(testpath)
+# s = glab()
+# entity = s.query(ExperimentV1).filter_by(keyword=io.path.stem).one_or_none()
 
 # io = ScanboxIO(testpath).set_workspace(3).set_channel(0)
 # w = io.workspace
@@ -269,36 +277,36 @@ class ScanboxIO(object):
 # print 'ROI', roi.__committed_attrs__
 # print 'TRACE', roi.traces[0].__committed_attrs__
 
-def fixture(io):
-    db.recreate(io.db_path)
-    with io.session as (s, t):
-        roi1 = db.ROI(polygon=[
-            {'x':1,   'y':1},
-            {'x':111, 'y':1},
-            {'x':111, 'y':111},
-            {'x':1,   'y':111},
-        ], traces=[db.Trace(category='df/f0')])
-        # roi2 = db.ROI(polygon=[
-        #     {'x':210, 'y':201},
-        #     {'x':321, 'y':201},
-        #     {'x':311, 'y':311},
-        #     {'x':210, 'y':311},
-        # ], traces=[db.Trace(category='df/f0')])
-        t.session.add_all([
-            db.Workspace(
-                name=u"main",
-                iopath=testpath,
-                colormaps=[db.Colormap(), db.Colormap()],
-                rois=[roi1]),
-        ])
-        s.commit()
-    with io.session as (s, t):
-        s.add(db.Action(
-            model_name = u'Trace',
-            model_id = 1,
-            action_name = u'refresh',
-        ))
-        s.commit()
+# def fixture(io):
+#     db.recreate(io.db_path)
+#     with io.session as (s, t):
+#         roi1 = db.ROI(polygon=[
+#             {'x':1,   'y':1},
+#             {'x':111, 'y':1},
+#             {'x':111, 'y':111},
+#             {'x':1,   'y':111},
+#         ], traces=[db.Trace(category='df/f0')])
+#         # roi2 = db.ROI(polygon=[
+#         #     {'x':210, 'y':201},
+#         #     {'x':321, 'y':201},
+#         #     {'x':311, 'y':311},
+#         #     {'x':210, 'y':311},
+#         # ], traces=[db.Trace(category='df/f0')])
+#         t.session.add_all([
+#             db.Workspace(
+#                 name=u"main",
+#                 iopath=testpath,
+#                 colormaps=[db.Colormap(), db.Colormap()],
+#                 rois=[roi1]),
+#         ])
+#         s.commit()
+#     with io.session as (s, t):
+#         s.add(db.Action(
+#             model_name = u'Trace',
+#             model_id = 1,
+#             action_name = u'refresh',
+#         ))
+#         s.commit()
 
 def ScanboxIOFetcher(mouse, day, io_name, workspace_id):
     root = manager.instance('opt').scanbox_root

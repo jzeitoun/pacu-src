@@ -6,10 +6,16 @@
     <div class="content">({{roi.centroid.x}}, {{roi.centroid.y}})</div>
   </div>
 </div>
-{{#each roi.traces as |t|}}
+<div>
+  <span class="fluid ui basic teal button inherit-font-size {{if roi.inAction "loading"}}"
+    {{action roi.refreshAll target=roi}}>
+    Refresh All
+  </span>
+</div>
+{{!-- #each roi.traces as |t|}}
 <span class="fluid ui basic teal button inherit-font-size
   {{if t.inAction "loading"}}"
   {{action t.action "fetch" target=t}}>
   Update {{t.category}}
 </span>
-{{/each}}
+{{/each --}}
