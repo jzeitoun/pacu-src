@@ -232,8 +232,14 @@ class ScanimageIO(object):
 # import matplotlib
 # import matplotlib.pyplot as plt
 # plt.ioff()
-# path = 'tmp/Dario/2016.05.02/r.160125.1/DM23_RbV1_Contra_002'
+# path = 'tmp/Dario/2016.01.27/r.151117.3/DM9_RbV1_Contra004004'
 # qwe = ScanimageIO(path).set_session('main')
+# for key, roi in qwe.session.roi.items():
+#     roi.sfreqfit.plot_local('{}.pdf'.format(key))
+# asd = qwe.session.roi.one().val
+# asd.sfreqfit.plot_io()
+
+
 # roi = qwe.session.roi.one().val
 
 # r.orientations.plot()

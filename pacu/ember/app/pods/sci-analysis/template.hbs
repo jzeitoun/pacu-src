@@ -139,6 +139,12 @@
           }}
       </div>
 
+      <div class="ui inverted tab segment">
+        {{#if model.curROI}}
+          <img width="100%" alt="SF Tuning Curve" src="data:image/png;base64,{{model.curROI.sfreqfit.plot}}" />
+        {{/if}}
+      </div>
+
       {{/x-keynum-tabs}}
 
     </div>

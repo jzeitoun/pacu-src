@@ -14,4 +14,5 @@ export default Model.extend({
   ran: attr(),
   flicker: attr(),
   blank: attr(),
+  datatags: hasMany('datatag'),
 });

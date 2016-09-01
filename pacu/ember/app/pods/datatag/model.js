@@ -8,11 +8,15 @@ export default Model.extend({
   value: attr(),
   category: attr('string'),
   method: attr('string'),
-  ori: attr(),
-  sf: attr(),
-  tf: attr(),
+  etext: attr('string'),
+  etype: attr('string'),
+  // ori: attr(),
+  // sf: attr(),
+  // tf: attr(),
   roi: belongsTo('roi'),
   roi_id: attr(),
+  trial: belongsTo('trial'),
+  trial_id: attr(),
   action(name, ...args) {
     if (this.get('inAction')) { return; }
     this.set('inAction', true);

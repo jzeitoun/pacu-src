@@ -22,14 +22,25 @@ EphysCorrelation.workspace_id = Column(Integer, ForeignKey(Workspace.id))
 Colormap.workspace_id = Column(Integer, ForeignKey(Workspace.id))
 ROI.workspace_id = Column(Integer, ForeignKey(Workspace.id))
 Datatag.roi_id = Column(Integer, ForeignKey(ROI.id))
+Datatag.trial_id = Column(Integer, ForeignKey(Trial.id))
 Workspace.condition_id = Column(Integer, ForeignKey(Condition.id))
 Trial.condition_id = Column(Integer, ForeignKey(Condition.id))
 
+ROI.overall_mean = relationship(Datatag,
+    primaryjoin=(ROI.id == Datatag.roi_id) & (Datatag.category == 'overall') & (Datatag.method == 'mean'),
+    uselist=False,
+    cascade='all, delete-orphan',
+    lazy='joined')
 ROI.datatags = relationship(Datatag, order_by=Datatag.id,
     collection_class=flist,
     cascade='all, delete-orphan',
     backref='roi',
     lazy='joined')
+Trial.datatags = relationship(Datatag, order_by=Datatag.id,
+    collection_class=flist,
+    # cascade='all, delete-orphan',
+    backref='trial',
+    lazy='select') # select as a default
 Workspace.colormaps = relationship(Colormap, order_by=Colormap.id,
     collection_class=flist,
     cascade='all, delete-orphan',

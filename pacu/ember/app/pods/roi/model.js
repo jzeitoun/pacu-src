@@ -1,7 +1,7 @@
 import Model from 'ember-data/model';
 import attr from 'ember-data/attr';
 import { belongsTo, hasMany } from 'ember-data/relationships';
-import { on, observes } from 'ember-computed-decorators';
+import computed, { on, observes } from 'ember-computed-decorators';
 import { getCentroid } from 'pacu/pods/components/x-layer/roi/centroid';
 
 export default Model.extend({
@@ -26,24 +26,26 @@ export default Model.extend({
       model_id: this.id,
       action_name: 'refresh_all'
     }).save().then((action) => {
-      this.get('datatags').map(dt => dt.reload());
+      const filter = { roi_id: this.id };
+      this.store.query('datatag', { filter });
     }).finally(() => {
       this.set('inAction', false);
     });
   },
   @on('didCreate') populateDatatags() {
+    const roi = this;
     this.store.createRecord('datatag', {
-      category: 'overall', method: 'mean', roi: this
+      roi, category: 'overall', method: 'mean'
     }).save();
-    // debugger
-    // if (Ember.isEmpty(this.get('traces'))) {
-    //   this.store.createRecord('trace', {
-    //     category: 'mean', array: [], roi: this
-    //   }).save();
-    //   this.store.createRecord('trace', {
-    //     category: 'orientations', array: [], roi: this
-    //   }).save();
-    // }
+    const cond = this.store.peekRecord('condition', 1);
+    if (cond) {
+      const trials = this.store.peekAll('trial');
+      for (let trial of trials.toArray()) {
+        this.store.createRecord('datatag', {
+          trial, roi, category: 'orientations', method: 'mean'
+        }).save();
+      }
+    }
   },
   @on('didDelete') unpopulateDatatags() {
     const id = this.get('id');
@@ -53,4 +55,8 @@ export default Model.extend({
       }
     });
   },
+  @computed('workspace.cur_sfreq') orientationsBySF(sfreq) {
+    const dts = this.get('datatags');
+    return dts.filterBy('trial.sf', sfreq).sortBy('trial.ori');
+  }
 });

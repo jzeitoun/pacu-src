@@ -10,6 +10,7 @@ class Workspace(SQLite3Base):
     iopath = Column(UnicodeText) # should be relative because db.sqlite3 can move
                                  # around any locations.
     cur_sfreq = Column(Float)
+    baseline_duration = Column(Float, default=0.5)
     @property
     def io(self): # experimental
         from pacu.core.io.scanbox.impl import ScanboxIO

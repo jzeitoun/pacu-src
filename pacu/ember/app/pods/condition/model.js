@@ -19,5 +19,5 @@ export default Model.extend({
   repetition: attr(),
   projection: attr(),
   keyword: attr(),
-  trial_list: attr()
+  trial_list: attr(),
 });

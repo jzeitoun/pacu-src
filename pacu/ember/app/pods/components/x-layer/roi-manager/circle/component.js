@@ -5,7 +5,8 @@ import interaction from 'pacu/utils/interaction';
 
 export default Ember.Component.extend(Routed, {
   tagName: 'circle',
-  attributeBindings: ['cx', 'cy', 'style'],
+  attributeBindings: ['cx', 'cy', 'style', 'r'],
+  classNameBindings: ['roi.active'],
   cx: Ember.computed.alias('point.x'),
   cy: Ember.computed.alias('point.y'),
   @computed('color') style(c) {

@@ -1,3 +1,4 @@
+import base64
 from collections import namedtuple
 from scipy import optimize
 from scipy import interpolate
@@ -124,7 +125,31 @@ class SpatialFrequencyDogFit(object):
         except Exception as e:
             print 'exception in bandwidth_ratio:', type(e), str(e)
             return np.nan
+    @property
+    def floor_y(self):
+        return 0.1 * (self.preferred_sfreq.y - self.flicker)
+    @property
+    def floor_xy(self):
+        floor = self.floor_y
+        factor = 0.0001
+        guess = self.preferred_sfreq.x
+        trial = 0
+        while True:
+            if trial > 10000:
+                return
+            trial += 1
+            # print 'trial', trial, 'check with', guess
+            compare = self.dog_function(guess)
+            diff = compare - floor
+            if 0 <= diff <= factor:
+                print 'found answer', diff
+                return Point(guess, floor)
+            else:
+                # print 'fail', diff
+                guess = guess + factor
+
     def toDict(self):
+        # dog_param = self.dog_param
         return util.nan_for_json(dict(
             pref = self.preferred_sfreq.x,
             peak = self.peak_sfreq.x,
@@ -134,22 +159,65 @@ class SpatialFrequencyDogFit(object):
             blank = self.blank,
             flicker = self.flicker,
             sfx = self.xfreq,
-            sfy = self.ymeas
+            sfy = self.ymeas,
+            param = self.dog_param,
+            floor = self.floor_xy,
+            plot = self.plot_io(),
         ))
-    def plot(self):
+    def plot_local(self, filename='fig.pdf'):
+        fig = plt.figure()
+        ax = fig.add_subplot(111)
+        ax.set_title('SF Tuning Curve')
+        ax.plot(self.xfreq, self.ymeas, label='original')
+        x, y = self.dog_xy
+        ax.plot(x, y, label='fit')
+        px, py = self.preferred_sfreq
+        ax.plot(px, py, 'o', label='pref-sf')
+        px, py = self.peak_sfreq
+        ax.plot(px, py, 'o', label='peak-sf')
+        if self.floor_xy:
+            x, y = self.floor_xy
+            ax.scatter(x, y, label='SF Cutoff', color='black')
+        howmany = len(self.stretched.x)
+        ax.plot(self.stretched.x, [self.preferred_sfreq.y]*howmany, linewidth=0.25, color='grey')
+        ax.plot(self.stretched.x, [self.preferred_sfreq.y/2]*howmany, linewidth=0.25, color='grey')
+        band_left, band_right = self.solve_bandwidth()
+        ax.plot(*band_left, marker='o', label='l')
+        ax.plot(*band_right, marker='o',  label='r')
+        ax.legend()
+        fig.savefig(filename, bbox_inches='tight')
+        fig.clf()
+        plt.close(fig)
+
+    def plot_io(self):
         io = StringIO()
         fig = plt.figure()
         ax = fig.add_subplot(111)
         ax.set_title('SF Tuning Curve')
-        ax.plot(self.xfreq, self.ymeas, label='measure', marker='o')
-        ax.plot(self.dog_x, self.dog_y, label='fit', color='red')
+        ax.plot(self.xfreq, self.ymeas, label='original')
+        x, y = self.dog_xy
+        ax.plot(x, y, label='fit')
+        px, py = self.preferred_sfreq
+        ax.plot(px, py, 'o', label='pref-sf')
+        px, py = self.peak_sfreq
+        ax.plot(px, py, 'o', label='peak-sf')
+        if self.floor_xy:
+            x, y = self.floor_xy
+            ax.scatter(x, y, label='SF cutoff', color='black')
+        howmany = len(self.stretched.x)
+        ax.plot(self.stretched.x, [self.preferred_sfreq.y]*howmany, linewidth=0.25, color='grey')
+        ax.plot(self.stretched.x, [self.preferred_sfreq.y/2]*howmany, linewidth=0.25, color='grey')
+        band_left, band_right = self.solve_bandwidth()
+        ax.plot(*band_left, marker='o', label='l')
+        ax.plot(*band_right, marker='o',  label='r')
         ax.legend()
-        fig.savefig(io, format='svg', bbox_inches='tight')
+        fig.savefig(io, format='png', bbox_inches='tight')
         fig.clf()
         plt.close(fig)
-        return io.getvalue()
 
-# from matplotlib.pyplot import *
+        return base64.b64encode(io.getvalue())
+        #     return io.getvalue()
+
 #     def plot_psf(self): # preferred spatial frequency
 #         px, py = self.preferred_sfreq
 #         plot(px, py, 'o', label='pref-sf')
@@ -162,14 +230,20 @@ class SpatialFrequencyDogFit(object):
 #         x, y = self.dog_xy
 #         plot(x, y, label='fit')
 #         legend()
-#     def plot(self):
+#     def plot_floor(self):
+#         if self.floor_xy:
+#             x, y = self.floor_xy
+#             scatter(x, y, label='floor', color='black')
+#             legend()
+#     def plot_original(self):
 #         plot(self.xfreq, self.ymeas, label='original')
 #         legend()
 #     def plot_all(self):
-#         self.plot()
+#         self.plot_original()
 #         self.plot_dog()
 #         self.plot_psf()
 #         self.plot_Psf()
+#         self.plot_floor()
 #         howmany = len(self.stretched.x)
 #         plot(self.stretched.x, [self.preferred_sfreq.y]*howmany, linewidth=0.25, color='grey')
 #         plot(self.stretched.x, [self.preferred_sfreq.y/2]*howmany, linewidth=0.25, color='grey')
@@ -177,3 +251,5 @@ class SpatialFrequencyDogFit(object):
 #         plot(*band_left, marker='o', label='l')
 #         plot(*band_right, marker='o',  label='r')
 #         legend()
+
+# from matplotlib.pyplot import *

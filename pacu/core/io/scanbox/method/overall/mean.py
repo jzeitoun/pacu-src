@@ -1,4 +1,4 @@
-__package__ = '' # cv2 unicode package name error
+__package__ = '' # unicode package name error
 
 import cv2
 import numpy as np

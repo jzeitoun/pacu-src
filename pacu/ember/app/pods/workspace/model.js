@@ -8,37 +8,28 @@ export default Model.extend({
   name: attr('string'),
   iopath: attr('string'),
   cur_sfreq: attr(),
+  baseline_duration: attr(),
   rois: hasMany('roi'),
   colormaps: hasMany('colormap'),
   condition: belongsTo('condition'),
   ecorrs: hasMany('ephys-correlation'),
-  // @computed('rois') traces(rois, entry=[]) {
-  //   rois.then(rs => {
-  //     const ps = rs.map(roi => roi.get('traces').then(ts => ts.map(t => t)));
-  //     Ember.RSVP.all(ps).then(nested => {
-  //       entry.pushObjects([].concat(...nested));
-  //     });
-  //   });
-  //   return entry;
+  activeROIs: Ember.computed.filterBy('rois', 'active', true),
+  activeROIBinding: 'activeROIs.firstObject',
+  savingROIs: Ember.computed.filterBy('rois', 'isSaving', true),
+  loadingROIs: Ember.computed.filterBy('rois', 'isLoading', true),
+  busyROIs: Ember.computed.uniq('savingROIs', 'loadingROIs'),
+  roisIdle: Ember.computed.empty('busyROIs'),
+  roisBusy: Ember.computed.not('roisIdle'),
+  // @computed() datatags() {
+  //   return this.store.findAll('datatag');
   // },
-  // @computed('rois') meanTraces(rois, entry=[]) {
-  //   rois.then(rs => {
-  //     const ps = rs.map(roi => roi.get('traces')
-  //       .then(ts => ts.filterBy('category', 'mean')));
-  //     Ember.RSVP.all(ps).then(nested => {
-  //       entry.pushObjects([].concat(...nested));
-  //     });
-  //   });
-  //   return entry;
-  // },
-  // @computed('rois') oriTraces(rois, entry=[]) {
-  //   rois.then(rs => {
-  //     const ps = rs.map(roi => roi.get('traces')
-  //       .then(ts => ts.filterBy('category', 'orientation')));
-  //     Ember.RSVP.all(ps).then(nested => {
-  //       entry.pushObjects([].concat(...nested));
-  //     });
-  //   });
-  //   return entry;
-  // }
+  @computed('rois') dtOverallMean() {
+    // have to peek?
+    const ovmFilter = { category: 'overall', method: 'mean' };
+    return this.store.query('datatag', { filter: ovmFilter });
+  },
+  appendROI(payload) {
+    payload.workspace = this;
+    return this.store.createRecord('roi', payload);
+  }
 });

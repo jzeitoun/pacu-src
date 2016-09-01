@@ -77,8 +77,13 @@ class JSONAPIHandler(RequestHandler):
     def on_finish(self):
         event.remove(self.session, 'before_flush', db.before_flush)
     def get(self, tablename, id):
-        view = self.get_argument('view', None)
+        filter_by = {
+            fkey[7:-1]: fval[0]
+            for fkey, fval in self.request.arguments.items()
+            if fkey.startswith('filter[')}
         query = self.session.query(self.locator.orms.get(tablename))
+        if filter_by:
+            query = query.filter_by(**filter_by)
         data = query.get(id) if id else [entity.as_jsonapi for entity in query]
         dumped = ujson.dumps(dict(data=data))
         self.finish(dumped)
@@ -90,6 +95,8 @@ class JSONAPIHandler(RequestHandler):
         with s.begin():
             entity = self.locator.orms.get(tablename)(**attrs)
             for key, val in rels.items():
+                if not val['data']:
+                    continue
                 orm = self.locator.orms.get(val['data']['type'])
                 rel = s.query(orm).options(load_only('id')).get(val['data']['id'])
                 setattr(entity, key, rel)

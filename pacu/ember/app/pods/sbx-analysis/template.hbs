@@ -9,20 +9,29 @@
   <a class="item" {{action "noop"}}>
     Current SF: {{model.workspace.cur_sfreq}}
   </a>
+  <a class="item" {{action "noop"}}>
+    Baseline Duration: {{model.workspace.baseline_duration}}
+  </a>
 </div>
 {{/x-sui-sticky}}
 <div id="route-sbx-analysis" class="ui inverted segment">
-
+  {{!-- each model.workspace.activeROI.orientationsBySF as |dt|}}
+    {{dt.trial.ori}}
+    {{dt.value}}
+    <br>
+  {{/each --}}
   {{! MultiTrace Plot }}
   {{#with (hash width=0) as |masterDimension|}}
-  {{x-sbx-analysis/plot/multi-trace
-    dimension=masterDimension
-    index=model.socket.img.curIndex datatags=model.dtOverallMean}}
-  {{! x-sbx-analysis/plot/ephys-trace
-    dimension=masterDimension
-    index=model.socket.img.curIndex trace=model.socket.ephys.trace}}
-  {{! x-sbx-analysis/plot/orientations
-    dimension=masterDimension src=model.workspace.oriTraces}}
+    {{x-sbx-analysis/plot/multi-trace
+      dimension=masterDimension
+      index=model.socket.img.curIndex datatags=model.workspace.dtOverallMean}}
+    {{! x-sbx-analysis/plot/ephys-trace
+      dimension=masterDimension
+      index=model.socket.img.curIndex trace=model.socket.ephys.trace}}
+    {{x-sbx-analysis/plot/orientations
+      dimension=masterDimension
+      roiID=model.workspace.activeROI.id
+      datatags=model.workspace.activeROI.orientationsBySF}}
   {{/with}}
 
   {{! Main Canvas Slider }}
@@ -42,8 +51,11 @@
         width=model.socket.img.width
         height=model.socket.img.height
         dimension=dim do=(route-action "do") as |layer|}}
+        <div class="ui {{if model.workspace.roisBusy "active"}} dimmer">
+          <div class="ui loader"></div>
+        </div>
         {{layer.canvas-2d buffer=model.socket.img.buffer}}
-        {{layer.roi-manager rois=model.workspace.rois}}
+        {{layer.roi-manager workspace=model.workspace}}
         {{!layer.context-menu centroid=model.focused.roi.centroid}}
       {{/x-layer}}
     {{/x-zoomable-container}}

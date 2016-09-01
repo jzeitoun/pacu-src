@@ -184,6 +184,7 @@ class ScanboxIO(object):
 
 # testpath = '/Volumes/Users/ht/dev/current/pacu/tmp/Jack/jzg1/day_ht/my4r_1_3_000_007.io'
 # io = ScanboxIO(testpath)
+
 # frames = io.session.Workspace.one().io.channel.mmap
 
 # [t.ori for t in w.condition.trials if t.sf == w.cur_sfreq and t.ori == 0.0]
