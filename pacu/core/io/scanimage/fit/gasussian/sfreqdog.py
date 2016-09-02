@@ -130,23 +130,31 @@ class SpatialFrequencyDogFit(object):
         return 0.1 * (self.preferred_sfreq.y - self.flicker)
     @property
     def floor_xy(self):
+        # actually, can't we solve it by using it fsolve?
+        if hasattr(self, '_floor_xy'):
+            return self._floor_xy
         floor = self.floor_y
         factor = 0.0001
+        step_factor = 0.00001
+        check_factor = 0.0001
         guess = self.preferred_sfreq.x
         trial = 0
         while True:
             if trial > 10000:
-                return
+                self._floor_xy = None
+                break
             trial += 1
             # print 'trial', trial, 'check with', guess
             compare = self.dog_function(guess)
             diff = compare - floor
-            if 0 <= diff <= factor:
+            if 0 <= diff <= check_factor:
                 print 'found answer', diff
-                return Point(guess, floor)
+                self._floor_xy = Point(guess, floor)
+                break
             else:
                 # print 'fail', diff
                 guess = guess + factor
+        return self._floor_xy
 
     def toDict(self):
         # dog_param = self.dog_param

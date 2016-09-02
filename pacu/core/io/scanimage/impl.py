@@ -235,7 +235,7 @@ class ScanimageIO(object):
 # path = 'tmp/Dario/2016.01.27/r.151117.3/DM9_RbV1_Contra004004'
 # qwe = ScanimageIO(path).set_session('main')
 # for key, roi in qwe.session.roi.items():
-#     roi.sfreqfit.plot_local('{}.pdf'.format(key))
+#     print roi.sfreqfit.plot_io()[0]
 # asd = qwe.session.roi.one().val
 # asd.sfreqfit.plot_io()
 
