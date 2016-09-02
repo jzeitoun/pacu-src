@@ -140,7 +140,7 @@ class SpatialFrequencyDogFit(object):
         guess = self.preferred_sfreq.x
         trial = 0
         while True:
-            if trial > 10000:
+            if trial > 100000:
                 self._floor_xy = None
                 break
             trial += 1
