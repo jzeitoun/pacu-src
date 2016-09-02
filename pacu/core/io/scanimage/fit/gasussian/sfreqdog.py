@@ -125,36 +125,92 @@ class SpatialFrequencyDogFit(object):
         except Exception as e:
             print 'exception in bandwidth_ratio:', type(e), str(e)
             return np.nan
-    @property
-    def floor_y(self):
-        return 0.1 * (self.preferred_sfreq.y - self.flicker)
-    @property
-    def floor_xy(self):
-        # actually, can't we solve it by using it fsolve?
-        if hasattr(self, '_floor_xy'):
-            return self._floor_xy
-        floor = self.floor_y
-        factor = 0.0001
-        step_factor = 0.00001
-        check_factor = 0.0001
-        guess = self.preferred_sfreq.x
-        trial = 0
-        while True:
-            if trial > 100000:
-                self._floor_xy = None
-                break
-            trial += 1
-            # print 'trial', trial, 'check with', guess
-            compare = self.dog_function(guess)
-            diff = compare - floor
-            if 0 <= diff <= check_factor:
-                print 'found answer', diff
-                self._floor_xy = Point(guess, floor)
-                break
-            else:
-                # print 'fail', diff
-                guess = guess + factor
-        return self._floor_xy
+    def make_cutoff(self, name, floor):
+        _name = '_{}'.format(name)
+        if not hasattr(self, _name):
+            factor = 0.0001
+            step_factor = 0.00001
+            check_factor = 0.0001
+            guess = self.preferred_sfreq.x
+            trial = 0
+            while True:
+                if trial > 100000:
+                    setattr(self, _name, None)
+                    break
+                trial += 1
+                # print 'trial', trial, 'check with', guess
+                compare = self.dog_function(guess)
+                diff = compare - floor
+                if 0 <= diff <= check_factor:
+                    print 'found answer', diff, name, floor
+                    setattr(self, _name, Point(guess, floor))
+                    break
+                else:
+                    # print 'fail', diff
+                    guess = guess + factor
+        return getattr(self, _name)
+
+
+# relative_cutoff10 = 0.1 *(preferred_SF - flicker)
+# relative_cutoff20 = 0.2 * (preferred_SF - flicker)
+# cutoff10 = 0.1 * (preferred_SF)
+# cutoff20 = 0.2 *(preferred_SF)
+
+#     @property
+#     def cutoff10(self):
+#         # actually, can't we solve it by using it fsolve?
+#         if hasattr(self, '_cutoff10'):
+#             return self._cutoff10
+#         floor = 0.1 * (self.preferred_sfreq.y - self.flicker)
+#         factor = 0.0001
+#         step_factor = 0.00001
+#         check_factor = 0.0001
+#         guess = self.preferred_sfreq.x
+#         trial = 0
+#         while True:
+#             if trial > 100000:
+#                 self._cutoff10 = None
+#                 break
+#             trial += 1
+#             # print 'trial', trial, 'check with', guess
+#             compare = self.dog_function(guess)
+#             diff = compare - floor
+#             if 0 <= diff <= check_factor:
+#                 print 'found answer', diff
+#                 self._cutoff10 = Point(guess, floor)
+#                 break
+#             else:
+#                 # print 'fail', diff
+#                 guess = guess + factor
+#         return self._cutoff10
+#     @property
+#     def cutoff20(self):
+#         # actually, can't we solve it by using it fsolve?
+#         if hasattr(self, '_cutoff20'):
+#             return self._cutoff20
+#         floor = 0.2 * (self.preferred_sfreq.y - self.flicker)
+#         factor = 0.0001
+#         step_factor = 0.00001
+#         check_factor = 0.0001
+#         guess = self.preferred_sfreq.x
+#         trial = 0
+#         while True:
+#             if trial > 100000:
+#                 self._cutoff20 = None
+#                 print 'fail'
+#                 break
+#             trial += 1
+#             # print 'trial', trial, 'check with', guess
+#             compare = self.dog_function(guess)
+#             diff = compare - floor
+#             if 0 <= diff <= check_factor:
+#                 print 'found answer', diff
+#                 self._cutoff20 = Point(guess, floor)
+#                 break
+#             else:
+#                 # print 'fail', diff
+#                 guess = guess + factor
+#         return self._cutoff20
 
     def toDict(self):
         # dog_param = self.dog_param
@@ -169,7 +225,8 @@ class SpatialFrequencyDogFit(object):
             sfx = self.xfreq,
             sfy = self.ymeas,
             param = self.dog_param,
-            floor = self.floor_xy,
+            # cutoff10 = self.cutoff10,
+            # cutoff20 = self.cutoff20,
             plot = self.plot_io(),
         ))
     def plot_local(self, filename='fig.pdf'):
@@ -183,16 +240,41 @@ class SpatialFrequencyDogFit(object):
         ax.plot(px, py, 'o', label='pref-sf')
         px, py = self.peak_sfreq
         ax.plot(px, py, 'o', label='peak-sf')
-        if self.floor_xy:
-            x, y = self.floor_xy
-            ax.scatter(x, y, label='SF Cutoff', color='black')
+
+
+        pSF = self.preferred_sfreq.y
+        rel_cutoff10 = 0.1 * (pSF - self.flicker)
+        rel_cutoff20 = 0.2 * (pSF - self.flicker)
+        cutoff10 = 0.1 * pSF
+        cutoff20 = 0.2 * pSF
+
+        rel_cutoff10 = self.make_cutoff('rel_cutoff10', rel_cutoff10)
+        rel_cutoff20 = self.make_cutoff('rel_cutoff20', rel_cutoff20)
+        cutoff10 = self.make_cutoff('cutoff10', cutoff10)
+        cutoff20 = self.make_cutoff('cutoff20', cutoff20)
+
+        if rel_cutoff10:
+            x, y = rel_cutoff10
+            ax.scatter(x, y, label='SF Rel Cutoff 10', color='black', marker='x')
+        if rel_cutoff20:
+            x, y = rel_cutoff20
+            ax.scatter(x, y, label='SF Rel Cutoff 20', color='black', marker='*')
+        if cutoff10:
+            x, y = cutoff10
+            ax.scatter(x, y, label='SF Cutoff 10', color='black', marker='v')
+        if cutoff20:
+            x, y = cutoff20
+            ax.scatter(x, y, label='SF Cutoff 20', color='black', marker='^')
+
+
         howmany = len(self.stretched.x)
         ax.plot(self.stretched.x, [self.preferred_sfreq.y]*howmany, linewidth=0.25, color='grey')
         ax.plot(self.stretched.x, [self.preferred_sfreq.y/2]*howmany, linewidth=0.25, color='grey')
         band_left, band_right = self.solve_bandwidth()
+        ax.legend()
+
         ax.plot(*band_left, marker='o', label='l')
         ax.plot(*band_right, marker='o',  label='r')
-        ax.legend()
         fig.savefig(filename, bbox_inches='tight')
         fig.clf()
         plt.close(fig)
@@ -209,16 +291,41 @@ class SpatialFrequencyDogFit(object):
         ax.plot(px, py, 'o', label='pref-sf')
         px, py = self.peak_sfreq
         ax.plot(px, py, 'o', label='peak-sf')
-        if self.floor_xy:
-            x, y = self.floor_xy
-            ax.scatter(x, y, label='SF cutoff', color='black')
+
+
+        pSF = self.preferred_sfreq.y
+        rel_cutoff10 = 0.1 * (pSF - self.flicker)
+        rel_cutoff20 = 0.2 * (pSF - self.flicker)
+        cutoff10 = 0.1 * pSF
+        cutoff20 = 0.2 * pSF
+
+        rel_cutoff10 = self.make_cutoff('rel_cutoff10', rel_cutoff10)
+        rel_cutoff20 = self.make_cutoff('rel_cutoff20', rel_cutoff20)
+        cutoff10 = self.make_cutoff('rel_cutoff10', cutoff10)
+        cutoff20 = self.make_cutoff('rel_cutoff20', cutoff20)
+
+        if rel_cutoff10:
+            x, y = rel_cutoff10
+            ax.scatter(x, y, label='SF Rel Cutoff 10', color='black', marker='x')
+        if rel_cutoff20:
+            x, y = rel_cutoff20
+            ax.scatter(x, y, label='SF Rel Cutoff 20', color='black', marker='*')
+        if cutoff10:
+            x, y = cutoff10
+            ax.scatter(x, y, label='SF Cutoff 10', color='black', marker='v')
+        if cutoff20:
+            x, y = cutoff20
+            ax.scatter(x, y, label='SF Cutoff 20', color='black', marker='^')
+
+
         howmany = len(self.stretched.x)
         ax.plot(self.stretched.x, [self.preferred_sfreq.y]*howmany, linewidth=0.25, color='grey')
         ax.plot(self.stretched.x, [self.preferred_sfreq.y/2]*howmany, linewidth=0.25, color='grey')
         band_left, band_right = self.solve_bandwidth()
+        ax.legend()
         ax.plot(*band_left, marker='o', label='l')
         ax.plot(*band_right, marker='o',  label='r')
-        ax.legend()
+
         fig.savefig(io, format='png', bbox_inches='tight')
         fig.clf()
         plt.close(fig)
