@@ -229,7 +229,7 @@ class SpatialFrequencyDogFit(object):
             # cutoff20 = self.cutoff20,
             plot = self.plot_io(),
         ))
-    def plot_local(self, filename='fig.pdf'):
+    def _plot(self):
         fig = plt.figure()
         ax = fig.add_subplot(111)
         ax.set_title('SF Tuning Curve')
@@ -275,68 +275,29 @@ class SpatialFrequencyDogFit(object):
 
         ax.plot(*band_left, marker='o', label='l')
         ax.plot(*band_right, marker='o',  label='r')
+        return plt, fig
+
+    def plot_local(self, filename='fig.pdf'):
+        print 'prepare local plot'
+        plt, fig = self._plot()
         fig.savefig(filename, bbox_inches='tight')
         fig.clf()
         plt.close(fig)
 
     def plot_io(self, b64encode=True):
+        print 'prepare io plot'
+        plt, fig = self._plot()
         io = StringIO()
-        fig = plt.figure()
-        ax = fig.add_subplot(111)
-        ax.set_title('SF Tuning Curve')
-        ax.plot(self.xfreq, self.ymeas, label='original')
-        x, y = self.dog_xy
-        ax.plot(x, y, label='fit')
-        px, py = self.preferred_sfreq
-        ax.plot(px, py, 'o', label='pref-sf')
-        px, py = self.peak_sfreq
-        ax.plot(px, py, 'o', label='peak-sf')
-
-
-        pSF = self.preferred_sfreq.y
-        rel_cutoff10 = 0.1 * (pSF - self.flicker)
-        rel_cutoff20 = 0.2 * (pSF - self.flicker)
-        cutoff10 = 0.1 * pSF
-        cutoff20 = 0.2 * pSF
-
-        rel_cutoff10 = self.make_cutoff('rel_cutoff10', rel_cutoff10)
-        rel_cutoff20 = self.make_cutoff('rel_cutoff20', rel_cutoff20)
-        cutoff10 = self.make_cutoff('rel_cutoff10', cutoff10)
-        cutoff20 = self.make_cutoff('rel_cutoff20', cutoff20)
-
-        if rel_cutoff10:
-            x, y = rel_cutoff10
-            ax.scatter(x, y, label='SF Rel Cutoff 10', color='black', marker='x')
-        if rel_cutoff20:
-            x, y = rel_cutoff20
-            ax.scatter(x, y, label='SF Rel Cutoff 20', color='black', marker='*')
-        if cutoff10:
-            x, y = cutoff10
-            ax.scatter(x, y, label='SF Cutoff 10', color='black', marker='v')
-        if cutoff20:
-            x, y = cutoff20
-            ax.scatter(x, y, label='SF Cutoff 20', color='black', marker='^')
-
-
-        howmany = len(self.stretched.x)
-        ax.plot(self.stretched.x, [self.preferred_sfreq.y]*howmany, linewidth=0.25, color='grey')
-        ax.plot(self.stretched.x, [self.preferred_sfreq.y/2]*howmany, linewidth=0.25, color='grey')
-        band_left, band_right = self.solve_bandwidth()
-        ax.legend()
-        ax.plot(*band_left, marker='o', label='l')
-        ax.plot(*band_right, marker='o',  label='r')
 
         if b64encode:
             fig.savefig(io, format='png', bbox_inches='tight')
-            fig.clf()
-            plt.close(fig)
-            value = io.getvalue()
-            return base64.b64encode(value)
+            data = base64.b64encode(io.getvalue())
         else:
             fig.savefig(io, format='svg', bbox_inches='tight')
-            fig.clf()
-            plt.close(fig)
-            return io.getvalue()
+            data = io.getvalue()
+        fig.clf()
+        plt.close(fig)
+        return data
 
     def plot(self):
         return self.plot_io(b64encode=False)
