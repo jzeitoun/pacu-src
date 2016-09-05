@@ -279,7 +279,7 @@ class SpatialFrequencyDogFit(object):
         fig.clf()
         plt.close(fig)
 
-    def plot_io(self):
+    def plot_io(self, b64encode=True):
         io = StringIO()
         fig = plt.figure()
         ax = fig.add_subplot(111)
@@ -326,12 +326,31 @@ class SpatialFrequencyDogFit(object):
         ax.plot(*band_left, marker='o', label='l')
         ax.plot(*band_right, marker='o',  label='r')
 
-        fig.savefig(io, format='png', bbox_inches='tight')
-        fig.clf()
-        plt.close(fig)
+        if b64encode:
+            fig.savefig(io, format='png', bbox_inches='tight')
+            fig.clf()
+            plt.close(fig)
+            value = io.getvalue()
+            return base64.b64encode(value)
+        else:
+            fig.savefig(io, format='svg', bbox_inches='tight')
+            fig.clf()
+            plt.close(fig)
+            return io.getvalue()
 
-        return base64.b64encode(io.getvalue())
-        #     return io.getvalue()
+    def plot(self):
+        return self.plot_io(b64encode=False)
+        # io = StringIO()
+        # fig = plt.figure()
+        # ax = fig.add_subplot(111)
+        # ax.set_title('SF Tuning Curve')
+        # ax.plot(self.xfreq, self.ymeas, label='measure', marker='o')
+        # ax.plot(self.dog_x, self.dog_y, label='fit', color='red')
+        # ax.legend()
+        # fig.savefig(io, format='svg', bbox_inches='tight')
+        # fig.clf()
+        # plt.close(fig)
+        # return io.getvalue()
 
 #     def plot_psf(self): # preferred spatial frequency
 #         px, py = self.preferred_sfreq
