@@ -238,11 +238,8 @@ class ScanimageIO(object):
 # path = 'tmp/Dario/2016.04.11/x.160103.3/DM21_RbV1_Ipsi_002'
 # qwe = ScanimageIO(path).set_session('mainv2')
 # asd = qwe.session.roi.values()
-# asd.sfreqfit.bandwidth_ratio
-
-# asd = qwe.session.roi.values()
-# errs = []
 # for index, roi in enumerate(asd):
+#     roi.sfreqfit.plot_local('{}.pdf'.format(index))
 #     try:
 #         d = ujson.dumps(roi)
 #         ujson.loads(d)

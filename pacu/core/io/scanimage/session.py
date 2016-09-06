@@ -52,14 +52,13 @@ class ScanimageSession(object):
     def remove(self):
         print 'remove session, rmtree', self.path
         shutil.rmtree(self.path.str)
-    def load_rois(self):
-        rois = self.roi.values()
-        total = len(rois)
-        dumps = []
-        for index, roi in enumerate(rois):
-            print  'Loading {}/{} ROI...'.format(index, total)
-            dumped = ujson.dumps(roi)
-            dumps.append(dumped)
-        return dumps
+#     def load_rois(self):
+#         rois = self.roi.values()
+#         total = len(rois)
+#         dumps = []
+#         for index, roi in enumerate(rois):
+#             print  'Loading {}/{} ROI...'.format(index, total)
+#             dumps.append(roi)
+#         return ujson.dumps(dumps)
 # testpath = 'tmp/Dario/2015.12.02/x.151101.2/bV1_Contra_004.imported/main.session'
 # qwe = ScanimageSession(testpath)

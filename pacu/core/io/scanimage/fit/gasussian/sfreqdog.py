@@ -128,22 +128,22 @@ class SpatialFrequencyDogFit(object):
     def make_cutoff(self, name, floor):
         _name = '_{}'.format(name)
         if not hasattr(self, _name):
-            factor = 0.0001
-            step_factor = 0.00001
-            check_factor = 0.0001
+            step_factor = 0.0001
+            check_factor = 0.001
             guess = self.preferred_sfreq.x
             trial = 0
             secondpass = False
             while True:
-                if trial > 100000:
+                if trial > 10000:
                     if secondpass:
                         setattr(self, _name, None)
+                        print 'failed on second pass'
                         break
                     else:
-                        print 'go to second pass'
+                        print 'trying second pass'
                         secondpass = True
                         trial = 0
-                        check_factor = 0.001
+                        check_factor = 0.01
                         continue
                 trial += 1
                 compare = self.dog_function(guess)
@@ -153,7 +153,7 @@ class SpatialFrequencyDogFit(object):
                     setattr(self, _name, Point(guess, floor))
                     break
                 else:
-                    guess = guess + factor
+                    guess = guess + step_factor
         return getattr(self, _name)
 
 
