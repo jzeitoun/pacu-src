@@ -4,7 +4,8 @@
     <th colspan="2">Mean</th>
     <th colspan="2">Anova All</th>
     <th colspan="2">Bootstrap SF</th>
-    <th colspan="6">SF</th>
+    <th colspan="4">SF Cutoff</th>
+    <th colspan="5">SF</th>
     <th rowspan="2">OSI</th>
     <th rowspan="2">CV</th>
     <th rowspan="2">DSI</th>
@@ -16,7 +17,7 @@
     <th colspan="2">Anova Each</th>
     <th colspan="2">Bootstrap</th>
     <th colspan="2">Pixel</th>
-    <th colspan="13">T-Test Each P-Value</th>
+    {{!<th colspan="13">T-Test Each P-Value</th>}}
   </tr>
   <tr>
     <th class="cell-mean-blank">Blank</th>
@@ -25,11 +26,14 @@
     <th class="cell-anova-all-p">P</th>
     <th class="cell-bootstrap-all-mean">MEAN</th>
     <th class="cell-bootstrap-all-std">STD</th>
+    <th class="cell-sf-cutoff-rc10">Rel10</th>
+    <th class="cell-sf-cutoff-rc20">Rel20</th>
+    <th class="cell-sf-cutoff-10">10</th>
+    <th class="cell-sf-cutoff-20">20</th>
     <th class="cell-sf-peak">Peak</th>
     <th class="cell-sf-pref">Pref</th>
     <th class="cell-sf-bandwidth">Bandwidth</th>
     <th class="cell-sf-global-o-pref">Global OPref</th>
-    <th class="cell-sf-floor-xy">Floor XY</th>
     <th class="cell-sf-at">@</th>
     <th class="cell-anova-each-f">F</th>
     <th class="cell-anova-each-p">P</th>
@@ -37,9 +41,9 @@
     <th class="cell-bootstrap">STD</th>
     <th class="cell-pixel">Value</th>
     <th class="cell-pixel">Blank</th>
-    {{#each ttestNames as |n|}}
+    {{!-- #each ttestNames as |n|}}
       <th class="cell-ttest-{{n}}">{{n}}</th>
-    {{/each}}
+    {{/each --}}
   </tr>
 </thead>
 <tbody class="center aligned">
@@ -59,6 +63,20 @@
         rowspan="{{roi.responseCountPlusOne}}">{{roi.bootstrap_sf.mean}}</td>
     <td class="cell-bootstrap-all-std"
         rowspan="{{roi.responseCountPlusOne}}">{{roi.bootstrap_sf.std}}</td>
+
+    <td class="cell-sf-cutoff-rc10"
+        rowspan="{{roi.responseCountPlusOne}}">
+      X:{{roi.sfreqfit.rc10.firstObject}}<br>Y:{{roi.sfreqfit.rc10.lastObject}}</td>
+    <td class="cell-sf-cutoff-rc20"
+        rowspan="{{roi.responseCountPlusOne}}">
+      X:{{roi.sfreqfit.rc20.firstObject}}<br>Y:{{roi.sfreqfit.rc20.lastObject}}</td>
+    <td class="cell-sf-cutoff-10"
+        rowspan="{{roi.responseCountPlusOne}}">
+      X:{{roi.sfreqfit.c10.firstObject}}<br>Y:{{roi.sfreqfit.c10.lastObject}}</td>
+    <td class="cell-sf-cutoff-20"
+        rowspan="{{roi.responseCountPlusOne}}">
+      X:{{roi.sfreqfit.c20.firstObject}}<br>Y:{{roi.sfreqfit.c20.lastObject}}</td>
+
     <td class="cell-sf-peak"
         rowspan="{{roi.responseCountPlusOne}}">{{roi.sfreqfit.peak}}</td>
     <td class="cell-sf-pref"
@@ -67,9 +85,6 @@
         rowspan="{{roi.responseCountPlusOne}}">{{roi.sfreqfit.ratio}}</td>
     <td class="cell-sf-global-o-pref"
         rowspan="{{roi.responseCountPlusOne}}">{{roi.best_o_pref}}</td>
-    <td class="cell-sf-floor-xy"
-        rowspan="{{roi.responseCountPlusOne}}">
-      X:{{roi.sfreqfit.floor.firstObject}}<br>Y:{{roi.sfreqfit.floor.lastObject}}</td>
   </tr>
   {{#each roi.sortedResponses as |r|}}
   <tr class="{{if-eq-then-class attrs.curSF r.sfreq "positive"}}">
@@ -88,9 +103,9 @@
     <td class="cell-bootstrap-std" >{{or-icon "red help" r.bootstrap.std}}</td>
     <td class="cell-pixel-value"   >{{or-icon "red help" r.stats.pixel_value}}</td>
     <td class="cell-pixel-blank"   >{{or-icon "red help" r.stats.pixel_blank}}</td>
-    {{#each r.stats.ttest as |val|}}
+    {{!-- #each r.stats.ttest as |val|}}
       <td class="cell-ttest-{{val.name}}">{{or-icon "red help" val.pvalue}}</td>
-    {{/each}}
+    {{/each --}}
   </tr>
   {{/each}}
   {{/each}}

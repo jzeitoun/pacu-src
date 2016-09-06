@@ -242,6 +242,10 @@ class SpatialFrequencyDogFit(object):
             sfy = sfy,
             param = param,
             plot = plot,
+            rc10 = self._rel_cutoff10,
+            rc20 = self._rel_cutoff20,
+            c10 = self._cutoff10,
+            c20 = self._cutoff20
         ))
     def _plot(self):
         print 'Prepare plotting...'
