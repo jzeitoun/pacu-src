@@ -57,7 +57,8 @@ export default Ember.Object.extend({
     ).then((x) => {
       this.requestFrame(0);
     }).then(() => {
-      this.invoke('session.roi.values').then(rois => {
+      // this.invoke('session.roi.values').then(rois => {
+      this.invoke('session.load_rois').then(rois => {
         const roiObjects = rois.map(roi => {
           const newroi = ROI.create(roi);
           newroi.set('guessParams', newroi.guess_params);

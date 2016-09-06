@@ -233,11 +233,30 @@ class ScanimageIO(object):
 # import matplotlib.pyplot as plt
 # plt.ioff()
 # path = 'tmp/Dario/2016.01.27/r.151117.3/DM9_RbV1_Contra004004'
-# qwe = ScanimageIO(path).set_session('main')
-# # for key, roi in qwe.session.roi.items():
-# #     roi.sfreqfit.plot_local()
+
+# import ujson
+# 
+# path = 'tmp/Dario/2016.04.11/x.160103.3/DM21_RbV1_Ipsi_002'
+# qwe = ScanimageIO(path).set_session('mainv2')
+# # asd = qwe.session.roi.values()[0]
+# # asd.sfreqfit.bandwidth_ratio
+# 
+# asd = qwe.session.roi.values()
+# errs = []
+# for index, roi in enumerate(asd):
+#     try:
+#         d = ujson.dumps(roi)
+#         ujson.loads(d)
+#     except Exception as e:
+#         print e, index
+#         errs.append(roi)
+
+# for r in asd:
+#     a =r.toDict()
+# for key, roi in qwe.session.roi.items():
+#     roi.sfreqfit.plot_local()
 # asd = qwe.session.roi.one().val
-# asd.sfreqfit.plot_local()
+# asd.sfreqfit.plot_local('sf4p.png')
 # svgdata = asd.sfreqfit.plot_io(False)
 # with open('fig.svg', 'w') as f:
 #    f.write(svgdata)

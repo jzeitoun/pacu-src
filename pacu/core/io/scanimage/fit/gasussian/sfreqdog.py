@@ -213,23 +213,32 @@ class SpatialFrequencyDogFit(object):
 #         return self._cutoff20
 
     def toDict(self):
-        # dog_param = self.dog_param
+        pref = self.preferred_sfreq.x
+        peak = self.peak_sfreq.x
+        ratio = self.bandwidth_ratio
+        dog_x = self.dog_x
+        dog_y = self.dog_y
+        blank = self.blank
+        flicker = self.flicker
+        sfx = self.xfreq
+        sfy = self.ymeas
+        param = self.dog_param
+        plot = self.plot_io()
         return util.nan_for_json(dict(
-            pref = self.preferred_sfreq.x,
-            peak = self.peak_sfreq.x,
-            ratio = self.bandwidth_ratio,
-            dog_x = self.dog_x,
-            dog_y = self.dog_y,
-            blank = self.blank,
-            flicker = self.flicker,
-            sfx = self.xfreq,
-            sfy = self.ymeas,
-            param = self.dog_param,
-            # cutoff10 = self.cutoff10,
-            # cutoff20 = self.cutoff20,
-            plot = self.plot_io(),
+            pref = pref,
+            peak = peak,
+            ratio = ratio,
+            dog_x = dog_x,
+            dog_y = dog_y,
+            blank = blank,
+            flicker = flicker,
+            sfx = sfx,
+            sfy = sfy,
+            param = param,
+            plot = plot,
         ))
     def _plot(self):
+        print 'Prepare plotting...'
         fig = plt.figure()
         ax = fig.add_subplot(111)
         ax.set_title('SF Tuning Curve')
@@ -267,14 +276,17 @@ class SpatialFrequencyDogFit(object):
             ax.scatter(x, y, label='SF Cutoff 20', color='black', marker='^')
 
 
-        howmany = len(self.stretched.x)
-        ax.plot(self.stretched.x, [self.preferred_sfreq.y]*howmany, linewidth=0.25, color='grey')
-        ax.plot(self.stretched.x, [self.preferred_sfreq.y/2]*howmany, linewidth=0.25, color='grey')
-        band_left, band_right = self.solve_bandwidth()
-        ax.legend()
+        if not np.isnan(self.bandwidth_ratio):
+            howmany = len(self.stretched.x)
+            ax.plot(self.stretched.x, [self.preferred_sfreq.y]*howmany, linewidth=0.25, color='grey')
+            ax.plot(self.stretched.x, [self.preferred_sfreq.y/2]*howmany, linewidth=0.25, color='grey')
+            band_left, band_right = self.solve_bandwidth()
+            ax.plot(*band_left, marker='o', label='l')
+            ax.plot(*band_right, marker='o',  label='r')
+        else:
+            print 'unable to plot bandwidth'
 
-        ax.plot(*band_left, marker='o', label='l')
-        ax.plot(*band_right, marker='o',  label='r')
+        ax.legend()
         return plt, fig
 
     def plot_local(self, filename='fig.pdf'):
@@ -285,7 +297,6 @@ class SpatialFrequencyDogFit(object):
         plt.close(fig)
 
     def plot_io(self, b64encode=True):
-        print 'prepare io plot'
         plt, fig = self._plot()
         io = StringIO()
 
