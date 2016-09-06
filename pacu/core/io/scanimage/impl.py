@@ -235,12 +235,11 @@ class ScanimageIO(object):
 # path = 'tmp/Dario/2016.01.27/r.151117.3/DM9_RbV1_Contra004004'
 
 # import ujson
-# 
 # path = 'tmp/Dario/2016.04.11/x.160103.3/DM21_RbV1_Ipsi_002'
 # qwe = ScanimageIO(path).set_session('mainv2')
-# # asd = qwe.session.roi.values()[0]
-# # asd.sfreqfit.bandwidth_ratio
-# 
+# asd = qwe.session.roi.values()
+# asd.sfreqfit.bandwidth_ratio
+
 # asd = qwe.session.roi.values()
 # errs = []
 # for index, roi in enumerate(asd):

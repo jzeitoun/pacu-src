@@ -133,20 +133,26 @@ class SpatialFrequencyDogFit(object):
             check_factor = 0.0001
             guess = self.preferred_sfreq.x
             trial = 0
+            secondpass = False
             while True:
                 if trial > 100000:
-                    setattr(self, _name, None)
-                    break
+                    if secondpass:
+                        setattr(self, _name, None)
+                        break
+                    else:
+                        print 'go to second pass'
+                        secondpass = True
+                        trial = 0
+                        check_factor = 0.001
+                        continue
                 trial += 1
-                # print 'trial', trial, 'check with', guess
                 compare = self.dog_function(guess)
                 diff = compare - floor
-                if 0 <= diff <= check_factor:
+                if np.abs(diff) <= check_factor:
                     print 'found answer', diff, name, floor
                     setattr(self, _name, Point(guess, floor))
                     break
                 else:
-                    # print 'fail', diff
                     guess = guess + factor
         return getattr(self, _name)
 
