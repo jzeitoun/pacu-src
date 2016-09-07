@@ -29,6 +29,16 @@ export default Ember.Object.extend({
     if (Ember.isNone(sfs)) { return; }
     return sfs[index];
   },
+  // For each cell, if the ANOVA each p value is
+  // less than 0.01 at the cell's peak SF it is responsive.
+  // If it is greater than 0.01 at the cell's peak SF then
+  // it is NOT responsive.
+  @computed('rois.[]') responsiveROIs(rois) {
+    return rois.filter(r => r.responses[r.sfreqfit.peak].stats.anova.p < 0.01 );
+  },
+  @computed('rois.[]') irresponsiveROIs(rois) {
+    return rois.filter(r => r.responses[r.sfreqfit.peak].stats.anova.p >= 0.01 );
+  },
   @computed(
     'mainResponse', 'curROI.responses', 'curROI.busy', 'sfrequencyIndex'
   ) response(main, cur, busy, sfreqIndex) {

@@ -151,9 +151,16 @@
   </div>
 
   <section class="ui clearing divider"></section>
-  <div style="overflow-x: scroll;">
-    {{x-sci-analysis/stats/wide rois=model.rois curSF=model.curSF}}
-  </div>
+  {{#x-alphatabs seq="qw"}}
+    <div class="ui inverted active tab segment" style="overflow-x: scroll;">
+      <p>Responsive ROIS</p>
+      {{x-sci-analysis/stats/wide rois=model.responsiveROIs curSF=model.curSF}}
+    </div>
+    <div class="ui inverted tab segment" style="overflow-x: scroll;">
+      <p>Irresponsive ROIS</p>
+      {{x-sci-analysis/stats/wide rois=model.irresponsiveROIs curSF=model.curSF}}
+    </div>
+  {{/x-alphatabs}}
 
   <section class="ui clearing divider"></section>
   {{x-console-stream messages=model.logs class="ui"}}
