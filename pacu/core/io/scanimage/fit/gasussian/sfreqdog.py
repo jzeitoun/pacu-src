@@ -183,7 +183,7 @@ class SpatialFrequencyDogFit(object):
             plot = plot,
             rc10 = self._rel_cutoff10,
             rc20 = self._rel_cutoff20,
-            c10 = self._cutoff10,
+            c15 = self._cutoff15,
             c20 = self._cutoff20
         ))
     def _plot(self):
@@ -203,12 +203,12 @@ class SpatialFrequencyDogFit(object):
         pSF = self.preferred_sfreq.y
         rel_cutoff10 = 0.1 * (pSF - self.flicker)
         rel_cutoff20 = 0.2 * (pSF - self.flicker)
-        cutoff10 = 0.15 # * pSF
+        cutoff15 = 0.15 # * pSF
         cutoff20 = 0.2 # * pSF
 
         rel_cutoff10 = self.make_cutoff('rel_cutoff10', rel_cutoff10)
         rel_cutoff20 = self.make_cutoff('rel_cutoff20', rel_cutoff20)
-        cutoff10 = self.make_cutoff('cutoff10', cutoff10)
+        cutoff15 = self.make_cutoff('cutoff15', cutoff15)
         cutoff20 = self.make_cutoff('cutoff20', cutoff20)
 
         if rel_cutoff10:
@@ -217,9 +217,9 @@ class SpatialFrequencyDogFit(object):
         if rel_cutoff20:
             x, y = rel_cutoff20
             ax.scatter(x, y, label='SF Rel Cutoff 20', color='black', marker='*')
-        if cutoff10:
-            x, y = cutoff10
-            ax.scatter(x, y, label='SF Cutoff 10', color='black', marker='v')
+        if cutoff15:
+            x, y = cutoff15
+            ax.scatter(x, y, label='SF Cutoff 15', color='black', marker='v')
         if cutoff20:
             x, y = cutoff20
             ax.scatter(x, y, label='SF Cutoff 20', color='black', marker='^')
@@ -230,8 +230,8 @@ class SpatialFrequencyDogFit(object):
             ax.plot(self.stretched.x, [self.preferred_sfreq.y]*howmany, linewidth=0.25, color='grey')
             ax.plot(self.stretched.x, [self.preferred_sfreq.y/2]*howmany, linewidth=0.25, color='grey')
             band_left, band_right = self.solve_bandwidth()
-            ax.plot(*band_left, marker='o', label='l')
-            ax.plot(*band_right, marker='o',  label='r')
+            ax.plot(*band_left, marker='o') #, label='l')
+            ax.plot(*band_right, marker='o') #,  label='r')
         else:
             print 'unable to plot bandwidth'
 
