@@ -35,14 +35,24 @@ export default Ember.Object.extend({
   // it is NOT responsive.
   @computed('rois.[]') responsiveROIs(rois) {
     return rois.filter(r => {
-      if ($.isEmptyObject(r.responses)) { return false; }
-      return r.responses[r.sfreqfit.peak].stats.anova.p < 0.01;
+      // if ($.isEmptyObject(r.responses)) { return false; }
+      try {
+        return r.responses[r.sfreqfit.peak].stats.anova.p < 0.01;
+      } catch (err) {
+        console.log('exception at filtering responsive ROI', err);
+        return false;
+      }
     });
   },
   @computed('rois.[]') irresponsiveROIs(rois) {
     return rois.filter(r => {
-      if ($.isEmptyObject(r.responses)) { return false; }
-      return r.responses[r.sfreqfit.peak].stats.anova.p >= 0.01;
+      // if ($.isEmptyObject(r.responses)) { return false; }
+      try {
+        return r.responses[r.sfreqfit.peak].stats.anova.p >= 0.01;
+      } catch (err) {
+        console.log('exception at filtering irresponsive ROI', err);
+        return false;
+      }
     });
   },
   @computed(
