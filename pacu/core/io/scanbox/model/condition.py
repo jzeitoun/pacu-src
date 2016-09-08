@@ -36,4 +36,6 @@ class Condition(SQLite3Base):
         init.update(**payload.get('stimulus').get('kwargs'))
         init.pop('name', None)
         init.pop('unit', None)
+        init.pop('flicker', None)
+        init.pop('blank', None)
         return cls(**init)

@@ -176,6 +176,29 @@ class ScanboxIO(object):
             self.db_session_factory.kw.get('bind'))
         return self.attributes
 
+# s = glab()
+# entity = s.query(ExperimentV1).filter_by(keyword='day5_003_020').one_or_none()
+# condition = db.Condition.from_expv1(entity)
+
+#         session = self.session._session
+#         with session.begin():
+#             condition = db.Condition.from_expv1(entity)
+#             condition.trials.extend([db.Trial(**trial) for trial in entity])
+#             session.add(condition)
+
+# Condition import failed with reason below,
+# 'flicker' is an invalid keyword argument for Condition
+# Import channel 0.
+
+# autobinding correction
+# s = glab()
+# exps = s.query(ExperimentV1).all()
+# for exp in exps:
+#     kw = exp.payload['handler']['kwargs']
+#     exp_note = exp.payload['handler']['kwargs']['exp_note']
+#     if exp_note.startswith('dm27'):
+#         print exp.id, exp_note[5:], exp.keyword
+#         exp.keyword = exp_note[5:]
 
 # from pacu.profile import manager
 # from pacu.core.model.experiment import ExperimentV1
