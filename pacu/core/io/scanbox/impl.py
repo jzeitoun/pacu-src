@@ -164,7 +164,7 @@ class ScanboxIO(object):
                 session = self.session._session
                 with session.begin():
                     condition = db.Condition.from_expv1(entity)
-                    condition.trials.extend([db.Trial(**trial) for trial in entity])
+                    condition.trials.extend([db.Trial.init_and_update(**trial) for trial in entity])
                     session.add(condition)
             except Exception as e:
                 print 'Condition import failed with reason below,', str(e)
@@ -179,6 +179,7 @@ class ScanboxIO(object):
 # s = glab()
 # entity = s.query(ExperimentV1).filter_by(keyword='day5_003_020').one_or_none()
 # condition = db.Condition.from_expv1(entity)
+# condition.trials.extend([db.Trial.init_and_update(**trial) for trial in entity])
 
 #         session = self.session._session
 #         with session.begin():

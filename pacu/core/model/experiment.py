@@ -29,12 +29,13 @@ class ExperimentV1(Base):
         return iter(self.ordered_trials)
     @property
     def ordered_trials(self):
-        trials = self.trial_list[self.sequence].T.flatten()
+        seq = np.array(self.sequence)
+        trials = self.trial_list[seq].T.flatten()
         on_time, off_time , sequence, ran, order = [
             np.concatenate([
                 data[indice]
                 for data, indice
-                in zip(getattr(self, attr).T, self.sequence.T)
+                in zip(np.array(getattr(self, attr)).T, seq.T)
             ]) for attr in 'on_time off_time sequence ran order'.split()]
         return [
             dict(on_time=float(on_time), off_time=float(off_time),
