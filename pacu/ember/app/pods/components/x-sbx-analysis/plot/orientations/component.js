@@ -60,6 +60,9 @@ const options =  {
       hoverRadius: 0,
       hitRadius: 0
     }
+  },
+  animation: { // important
+    duration: null,
   }
 };
 const config = { type, data, options }
@@ -79,14 +82,15 @@ const DataFetcher = Ember.Object.extend({
     return byTrials[0].map((_, i) => byTrials.map(row => row[i]));
   },
   @computed('byReps') datasets(byReps) {
-    const borderColor = 'rgba(255, 255, 255, 0.1)';
+    const borderColor = 'rgba(255, 255, 255, 0.5)';
+    const borderWidth = 0.5;
     return byReps.map(rep => {
       let data = [].concat(...rep.map(trial => {
         if (Ember.isEmpty(trial)) { return []; }
         let {baseline, on} = trial.get('value');
         return [].concat(baseline, on);
       }));
-      return { data, borderColor };
+      return { data, borderColor, borderWidth };
     })
   },
   @computed('datasets') labels(datasets) {
@@ -116,9 +120,17 @@ export default Ember.Component.extend({
   height: 96,
   attributeBindings: ['width', 'height'],
   @computed() ctx() { return this.element.getContext('2d'); },
-  @computed('ctx') chart(ctx) { return new Chart(ctx, config); },
+  @computed('ctx') chart(ctx) {
+    const self = this;
+    const chart = new Chart(ctx, config);
+    const draw = chart.draw;
+    chart.draw = function() {
+      draw.apply(this, arguments);
+      self.chartDidDraw(this, ...arguments);
+    };
+    return chart;
+  },
   @computed('datatags') fetcher(datatags) {
-    console.log('generating controller');
     return DataFetcher.create({ datatags });
   },
   @observes('dimension.width') dimensionChanged() {
@@ -148,6 +160,18 @@ export default Ember.Component.extend({
     chart.data.labels = labels;
     chart.data.datasets = datasets;
     chart.update();
+  },
+  chartDidDraw(chart) {
+    const fetcher = this.get('fetcher');
+    const indices = fetcher.get('indices');
+    let len = fetcher.get('byReps')[0][0].get('value.on.length');
+    let { top, height } = chart.scales['y-axis-0'];
+    let width = chart.scales['x-axis-0'].getPixelForTick(len) - chart.scales['x-axis-0'].getPixelForTick(0);
+    chart.chart.ctx.fillStyle = 'rgba(255, 255, 255, 0.1)';
+    for (let x in indices) {
+      let x0 = chart.scales['x-axis-0'].getPixelForTick(parseInt(x));
+      chart.chart.ctx.fillRect(x0, top, width, height);
+    }
   },
   @on('willDestroyElement') dnit() {
     console.log('destroy orientations charts...');

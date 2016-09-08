@@ -157,67 +157,6 @@ class SpatialFrequencyDogFit(object):
         return getattr(self, _name)
 
 
-# relative_cutoff10 = 0.1 *(preferred_SF - flicker)
-# relative_cutoff20 = 0.2 * (preferred_SF - flicker)
-# cutoff10 = 0.1 * (preferred_SF)
-# cutoff20 = 0.2 *(preferred_SF)
-
-#     @property
-#     def cutoff10(self):
-#         # actually, can't we solve it by using it fsolve?
-#         if hasattr(self, '_cutoff10'):
-#             return self._cutoff10
-#         floor = 0.1 * (self.preferred_sfreq.y - self.flicker)
-#         factor = 0.0001
-#         step_factor = 0.00001
-#         check_factor = 0.0001
-#         guess = self.preferred_sfreq.x
-#         trial = 0
-#         while True:
-#             if trial > 100000:
-#                 self._cutoff10 = None
-#                 break
-#             trial += 1
-#             # print 'trial', trial, 'check with', guess
-#             compare = self.dog_function(guess)
-#             diff = compare - floor
-#             if 0 <= diff <= check_factor:
-#                 print 'found answer', diff
-#                 self._cutoff10 = Point(guess, floor)
-#                 break
-#             else:
-#                 # print 'fail', diff
-#                 guess = guess + factor
-#         return self._cutoff10
-#     @property
-#     def cutoff20(self):
-#         # actually, can't we solve it by using it fsolve?
-#         if hasattr(self, '_cutoff20'):
-#             return self._cutoff20
-#         floor = 0.2 * (self.preferred_sfreq.y - self.flicker)
-#         factor = 0.0001
-#         step_factor = 0.00001
-#         check_factor = 0.0001
-#         guess = self.preferred_sfreq.x
-#         trial = 0
-#         while True:
-#             if trial > 100000:
-#                 self._cutoff20 = None
-#                 print 'fail'
-#                 break
-#             trial += 1
-#             # print 'trial', trial, 'check with', guess
-#             compare = self.dog_function(guess)
-#             diff = compare - floor
-#             if 0 <= diff <= check_factor:
-#                 print 'found answer', diff
-#                 self._cutoff20 = Point(guess, floor)
-#                 break
-#             else:
-#                 # print 'fail', diff
-#                 guess = guess + factor
-#         return self._cutoff20
-
     def toDict(self):
         pref = self.preferred_sfreq.x
         peak = self.peak_sfreq.x
@@ -264,8 +203,8 @@ class SpatialFrequencyDogFit(object):
         pSF = self.preferred_sfreq.y
         rel_cutoff10 = 0.1 * (pSF - self.flicker)
         rel_cutoff20 = 0.2 * (pSF - self.flicker)
-        cutoff10 = 0.1 * pSF
-        cutoff20 = 0.2 * pSF
+        cutoff10 = 0.15 # * pSF
+        cutoff20 = 0.2 # * pSF
 
         rel_cutoff10 = self.make_cutoff('rel_cutoff10', rel_cutoff10)
         rel_cutoff20 = self.make_cutoff('rel_cutoff20', rel_cutoff20)
