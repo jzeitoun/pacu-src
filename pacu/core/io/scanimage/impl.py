@@ -235,18 +235,21 @@ class ScanimageIO(object):
 # path = 'tmp/Dario/2016.01.27/r.151117.3/DM9_RbV1_Contra004004'
 
 # import ujson
-# path = 'tmp/Dario/2016.04.11/x.160103.3/DM21_RbV1_Ipsi_002'
-# qwe = ScanimageIO(path).set_session('mainv2')
+# path = 'tmp/Dario/2016.04.01/x.160103.2/DM13_RbV1_Contra_002'
+# qwe = ScanimageIO(path).set_session('MEL')
 # asd = qwe.session.roi.values()
+# q = qwe.session.roi['1464301377.401976']
 # for index, roi in enumerate(asd):
-#     roi.sfreqfit.plot_local('{}.pdf'.format(index))
+# #     roi.sfreqfit.plot_local('{}.pdf'.format(index))
 #     try:
 #         d = ujson.dumps(roi)
-#         ujson.loads(d)
+# #         ujson.loads(d)
 #     except Exception as e:
+#         eroi = roi
 #         print e, index
-#         errs.append(roi)
-
+#         break
+# #         errs.append(roi)
+# 
 # for r in asd:
 #     a =r.toDict()
 # for key, roi in qwe.session.roi.items():

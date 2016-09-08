@@ -29,6 +29,8 @@ def nan_for_json(dt):
             new[key] = val
         elif val is None:
             new[key] = ''
+        elif np.isinf(val):
+            new[key] = 'inf'
         elif np.isnan(val):
             new[key] = 'nan'
         else:

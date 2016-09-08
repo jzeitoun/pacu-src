@@ -34,10 +34,16 @@ export default Ember.Object.extend({
   // If it is greater than 0.01 at the cell's peak SF then
   // it is NOT responsive.
   @computed('rois.[]') responsiveROIs(rois) {
-    return rois.filter(r => r.responses[r.sfreqfit.peak].stats.anova.p < 0.01 );
+    return rois.filter(r => {
+      if ($.isEmptyObject(r.responses)) { return false; }
+      return r.responses[r.sfreqfit.peak].stats.anova.p < 0.01;
+    });
   },
   @computed('rois.[]') irresponsiveROIs(rois) {
-    return rois.filter(r => r.responses[r.sfreqfit.peak].stats.anova.p >= 0.01 );
+    return rois.filter(r => {
+      if ($.isEmptyObject(r.responses)) { return false; }
+      return r.responses[r.sfreqfit.peak].stats.anova.p >= 0.01;
+    });
   },
   @computed(
     'mainResponse', 'curROI.responses', 'curROI.busy', 'sfrequencyIndex'
