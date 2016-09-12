@@ -7,7 +7,8 @@ from pacu.core.io.scanbox.method.fit.sogfit import SumOfGaussianFit
 
 def main(workspace, condition, roi, datatag):
     trials = roi.datatags.find_by('method', 'dff0'
-        ).find_by('trial_sf', datatag.trial_sf)
+        ).find_by('trial_sf', datatag.trial_sf
+        ).find_by('trial_blank', False).find_by('trial_flicker', False)
     best_pref_ori = roi.dt_best_preferred.value
     oris = []
     for ori in condition.orientations:

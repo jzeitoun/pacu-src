@@ -73,7 +73,9 @@ export default Model.extend({
       roi_id: this.get('id'),
       category: 'orientation',
       method: 'dff0',
-      trial_sf: sfreq
+      trial_sf: sfreq,
+      trial_blank: false,
+      trial_flicker: false,
     } });
   },
   @computed('workspace.cur_sfreq') sumofgaussiansBySF(sfreq) {
