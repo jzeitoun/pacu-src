@@ -176,7 +176,25 @@ class ScanboxIO(object):
             self.db_session_factory.kw.get('bind'))
         return self.attributes
 
+# autobinding correction
 # s = glab()
+# es = s.query(ExperimentV1).filter_by(
+#         stimulus_clsname='GratingsStimulus',
+#         handler_clsname='ExpV1Handler').all()
+# 
+# for e in es:
+#     try:
+#         e.duration = max(t for ts in e.off_time for t in ts)
+#     except Exception as er:
+#         print e.id, 'FALED', er
+
+# for ett in es:
+#     for key, val in ett.payload.items():
+#         for attr in 'clsname pkgname kwargs'.split():
+#             ett_attr = key + '_' + attr
+#             ett_val = val.get(attr)
+#             setattr(ett, ett_attr, ett_val)
+
 # entity = s.query(ExperimentV1).filter_by(keyword='day5_003_020').one_or_none()
 # condition = db.Condition.from_expv1(entity)
 # condition.trials.extend([db.Trial.init_and_update(**trial) for trial in entity])
@@ -190,10 +208,6 @@ class ScanboxIO(object):
 # Condition import failed with reason below,
 # 'flicker' is an invalid keyword argument for Condition
 # Import channel 0.
-
-# autobinding correction
-# s = glab()
-# exps = s.query(ExperimentV1).all()
 # for exp in exps:
 #     kw = exp.payload['handler']['kwargs']
 #     exp_note = exp.payload['handler']['kwargs']['exp_note']

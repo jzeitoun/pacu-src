@@ -5,6 +5,7 @@ import { belongsTo, hasMany } from 'ember-data/relationships';
 export default Model.extend({
   workspaces: hasMany('workspace'),
   trials: hasMany('trial'),
+  info: attr(),
   pixel_x: attr(),
   pixel_y: attr(),
   dist: attr(),

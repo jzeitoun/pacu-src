@@ -139,9 +139,9 @@ class ROI(object):
     def meanresponse_over_sf(self, adaptor):
         cfreq = adaptor.capture_frequency
         return np.array([
-            resp.orientations.ons[...,
-            int(1*cfreq):int(2*cfreq)
-        ].mean(axis=(1, 2)) for sf, resp in self.sorted_responses]).mean(axis=0)
+            resp.orientations.ons[..., int(1*cfreq):int(2*cfreq)].mean(axis=(1, 2))
+            for sf, resp in self.sorted_responses
+        ]).mean(axis=0)
     def update_with_adaptor(self, adaptor):
         gaussian = SumOfGaussianFit(
             adaptor.orientations,

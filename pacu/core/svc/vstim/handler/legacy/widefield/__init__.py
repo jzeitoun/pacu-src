@@ -96,7 +96,14 @@ class LegacyWidefieldHandlerResource(ExpV1HandlerResource):
         savemat(path.str, params)
 
         try:
+            payload = result.pop('payload')
             model = ExperimentV1(**result)
+            for key, val in payload.items():
+                print key, val
+                for attr in 'clsname pkgname kwargs'.split():
+                    ett_attr = key + '_' + attr
+                    ett_val = val.get(attr)
+                    setattr(model, ett_attr, ett_val)
             session = self.DB.instance()
             session.add(model)
             session.commit()

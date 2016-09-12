@@ -1,7 +1,8 @@
 import runpy
 import importlib
 
-from sqlalchemy import Column, Unicode, Float, Boolean, Integer
+from sqlalchemy.sql import func
+from sqlalchemy import Column, Unicode, Float, Boolean, Integer, DateTime
 from sqlalchemy.types import PickleType
 
 from pacu.core.io.scanbox.model.base import SQLite3Base
@@ -10,6 +11,7 @@ basemodule = 'pacu.core.io.scanbox.method'
 
 class Datatag(SQLite3Base):
     __tablename__ = 'datatags'
+    updated_at = Column(DateTime, onupdate=func.now())
     # exception
     etype = Column(Unicode(128))
     etext = Column(Unicode)
@@ -18,10 +20,18 @@ class Datatag(SQLite3Base):
     # search criteria
     category = Column(Unicode(128))
     method = Column(Unicode(128))
-    # ori = Column(Float)
-    # sf = Column(Float)
-    # tf = Column(Float)
-    # tid = Column(Integer)
+
+    # search trials
+    trial_on_time = Column(Float)
+    trial_off_time = Column(Float)
+    trial_ori = Column(Float)
+    trial_sf = Column(Float)
+    trial_tf = Column(Float)
+    trial_sequence = Column(Integer)
+    trial_order = Column(Integer)
+    trial_ran = Column(Integer)
+    trial_flicker = Column(Boolean)
+    trial_blank = Column(Boolean)
 
     def invalidate(self):
         self.value = None
@@ -38,6 +48,7 @@ class Datatag(SQLite3Base):
                 datatag=self,
             ))
         except Exception as e:
+            print 'Exception', type(e), e
             self.etype = unicode(type(e))
             self.etext = unicode(e)
         else:

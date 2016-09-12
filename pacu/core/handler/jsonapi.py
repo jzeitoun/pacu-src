@@ -71,8 +71,8 @@ class JSONAPIHandler(RequestHandler):
     url = r'/jsonapi/(?P<tablename>[\w-]+)/?(?P<id>\d*)'
     def prepare(self):
         self.locator = ResourceLocator.from_headers(self.request.headers)
-        print self.locator
         self.session = self.locator.Session()
+        self.session.bind.echo = False
         event.listen(self.session, 'before_flush', db.before_flush)
     def on_finish(self):
         event.remove(self.session, 'before_flush', db.before_flush)

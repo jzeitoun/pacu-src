@@ -17,6 +17,8 @@ class flist(list):
     @property
     def last(self):
         return self[-1]
+    def find_by(self, field, value):
+        return flist([e for e in self if getattr(e, field) == value])
 
 EphysCorrelation.workspace_id = Column(Integer, ForeignKey(Workspace.id))
 Colormap.workspace_id = Column(Integer, ForeignKey(Workspace.id))

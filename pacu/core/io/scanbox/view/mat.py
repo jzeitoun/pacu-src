@@ -7,6 +7,9 @@ from scipy import io
 
 from pacu.core.io.view.zero_dimension_array import ZeroDimensionArrayView
 from pacu.util.path import Path
+from pacu.profile import manager
+
+opt = manager.instance('opt')
 
 Dimension = namedtuple('Dimension', 'height, width')
 
@@ -18,6 +21,15 @@ class ScanboxMatView(ZeroDimensionArrayView):
     @property
     def sbxsize(self):
         return self.path.with_suffix('.sbx').size
+    @property
+    def sbxtime(self):
+        return self.path.with_suffix('.sbx').created_at
+    @property
+    def sbxpath(self):
+        return self.path.with_suffix('.sbx').relative_to(opt.scanbox_root)
+    @property
+    def iopath(self):
+        return self.sbxpath.with_suffix('.io')
     @property
     def shape(self):
         return tuple(reversed((self.nframes, self.channels) + self.dimension))
@@ -39,6 +51,9 @@ class ScanboxMatView(ZeroDimensionArrayView):
     @property
     def factor(self):
         return 1 if self.channels == 1 else 2
+    @property
+    def scanmodestr(self):
+        return 'uni' if self.scanmode == 1 else 'bi'
     def get_max_idx(self, size):
         return int(size/self.recordsPerBuffer/self.sz[1]*self.factor/4 - 1)
     def get_shape(self, size):
@@ -52,9 +67,18 @@ class ScanboxMatView(ZeroDimensionArrayView):
 #             'path nchan factor framerate recordsPerBuffer sz'.split()
 
     def toDict(self):
-#         import ipdb
-#         ipdb.set_trace()
-        return self.items()
+        data = self.items()
+        data['iopath'] = str(self.iopath)
+        data['framerate'] = self.framerate
+        data['frameratestr'] = str(self.framerate) + ' fps'
+        data['sbxsize'] = self.sbxsize.str
+        data['sbxtime'] = str(self.sbxtime)
+        data['sbxpath'] = self.sbxpath.str
+        data['nchannels'] = self.nchannels
+        data['nframes'] = self.nframes
+        data['nframesstr'] = str(self.nframes) + ' frames'
+        data['scanmodestr'] = self.scanmodestr
+        return data
     @property
     def duration(self):
         return self.nframes / self.framerate

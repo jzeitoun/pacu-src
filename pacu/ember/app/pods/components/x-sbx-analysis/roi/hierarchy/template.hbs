@@ -6,16 +6,25 @@
     <div class="content">({{roi.centroid.x}}, {{roi.centroid.y}})</div>
   </div>
 </div>
-<div>
-  <span class="fluid ui basic teal button inherit-font-size {{if roi.inAction "loading"}}"
+<div class="ui checkbox">
+  {{input type="checkbox" checked=roi.neuropil_enabled name="neuropil_enabled"}}
+  <label class="ui tiny label">Enable Neuropil</label>
+</div>
+<div class="ui {{if roi.neuropil_enabled "enabled" "disabled"}} input">
+  {{input type="number" value=roi.neuropil_ratio step=0.1}}
+</div>
+
+<div class="fluid mini ui vertical basic buttons">
+  <span class="ui basic teal button inherit-font-size {{if roi.inAction "loading"}}"
     {{action roi.refreshAll target=roi}}>
     Refresh All
   </span>
+  <span class="ui basic green button inherit-font-size {{if roi.inAction "loading"}}"
+    {{action roi.saveROI target=roi}}>
+    Save ROI
+  </span>
+  <span class="ui basic red button inherit-font-size {{if roi.inAction "loading"}}"
+    {{action roi.destroyROI target=roi}}>
+    Destroy ROI
+  </span>
 </div>
-{{!-- #each roi.traces as |t|}}
-<span class="fluid ui basic teal button inherit-font-size
-  {{if t.inAction "loading"}}"
-  {{action t.action "fetch" target=t}}>
-  Update {{t.category}}
-</span>
-{{/each --}}

@@ -12,13 +12,13 @@
   {{#each model.routes as |route|}}
     {{#ui-popup content=route.content tagName="span"}}
       {{#link-to route.linkTo class="nav circular ui small icon blue button"}}
-        <i class="{{route.icon}} retro icon"></i>
+        <i class="{{route.icon}} retro {{route.color}} icon"></i>
       {{/link-to}}
     {{/ui-popup}}
   {{/each}}
-  <h3 class="ui right floated inverted header teal app-info">
-    {{!model.route.featureName}}
-  </h3>
+  <h6 class="ui right floated inverted tiny header teal app-info">
+    {{currentPath}}
+  </h6>
 </section>
 
 <section class="ui clearing divider"></section> {{! clearing is useful. }}

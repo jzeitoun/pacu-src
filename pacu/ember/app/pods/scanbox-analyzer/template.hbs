@@ -1,0 +1,109 @@
+{{#x-sui-sticky class="sbx"}}
+<div class="ui small compact inverted icon menu">
+  <a class="item" {{action "noop"}}>
+    <i class="red line chart icon"></i>
+  </a>
+  <a class="item" {{action "noop"}}>
+    <i class="green file image outline icon"></i>
+  </a>
+  <a class="item" {{action "noop"}}>
+    Current SF: {{model.workspace.cur_sfreq}}
+  </a>
+  <a class="item" {{action "noop"}}>
+    Baseline Duration: {{model.workspace.baseline_duration}}
+  </a>
+</div>
+{{/x-sui-sticky}}
+
+{{model.workspace.activeROI.sfTuningCurve}}
+{{{model.workspace.activeROI.sfplot}}}
+
+<div id="route-sbx-analysis" class="ui inverted segment">
+  {{! MultiTrace Plot }}
+  {{#with (hash width=0) as |masterDimension|}}
+    {{x-sbx-analysis/plot/multi-trace
+      dimension=masterDimension
+      index=model.socket.img.curIndex datatags=model.workspace.dtsOverallMean}}
+    {{x-sbx-analysis/plot/orientations
+      dimension=masterDimension
+      condition=model.condition
+      roiID=model.workspace.activeROI.id
+      datapromise=model.workspace.activeROI.orientationsBySF}}
+    {{x-sbx-analysis/plot/sumofgaussians
+      dimension=masterDimension
+      condition=model.condition
+      roiID=model.workspace.activeROI.id
+      datapromise=model.workspace.activeROI.sumofgaussiansBySF}}
+
+    {{! x-sbx-analysis/plot/ephys-trace
+      dimension=masterDimension
+      index=model.socket.img.curIndex trace=model.socket.ephys.trace}}
+  {{/with}}
+
+  {{! Main Canvas Slider }}
+  <section class="ui clearing divider"></section>
+  <div class="ui">
+    {{input type="range" min="0" step="1"
+      max=stream.img.maxIndex value=stream.img.curIndex}}
+  </div>
+
+  <section class="ui clearing divider"></section>
+  <div class="ui padded grid">
+
+    {{! Main Canvas }}
+    {{#x-zoomable-container class="twelve wide column imagestack-container"
+      dimension=(mut stream.mainCanvasDimension) as |dim|}}
+      {{#x-layer
+        width=stream.img.width
+        height=stream.img.height
+        dimension=dim do=(route-action "do") as |layer|}}
+        <div class="ui {{if model.workspace.roisBusy "active"}} dimmer">
+          <div class="ui loader"></div>
+        </div>
+        {{layer.canvas-2d buffer=stream.img.buffer}}
+        {{layer.roi-manager workspace=model.workspace}}
+        {{!layer.context-menu centroid=model.focused.roi.centroid}}
+      {{/x-layer}}
+    {{/x-zoomable-container}}
+
+    {{! ROI Control }}
+    <div class="four wide column roi-list-container"
+      style={{model.socket.mainCanvasDimension.parallelContainerStyle}}>
+      {{!--
+      <div class="ui inverted segment">
+        <p class="fluid ui basic tiny green button"
+          {{action "reimportEphys"}}>Import Ephys</p>
+      </div>
+      --}}
+      {{#each model.workspace.rois as |roi index|}}
+        {{x-sbx-analysis/roi/hierarchy roi=roi colorIndex=index}}
+        <section class="ui clearing divider"></section>
+      {{else}}
+        <p class="ui mini yellow header">No rois yet...</p>
+      {{/each}}
+    </div>
+
+  </div>
+
+  {{!--
+  <div class="ui inverted segment">
+    <h3 class="ui blue header">
+      Ephys Correlations
+      <button class="ui red basic button"
+        {{action "appendModel" "ephys-correlation"}}>+</button></h3>
+    {{#each model.workspace.ecorrs as |ec|}}
+      {{x-model/ephys-correlation ec rois=model.workspace.rois}}
+    {{/each}}
+  </div>
+
+  <div class="ui inverted segment">
+    <h3 class="ui blue header">
+      Colormaps (Linked with: {{model.socket.colorMap.id}}) 
+      <button class="ui red basic button" {{action "appendModel" "colormap"}}>+</button></h3>
+    {{#each model.workspace.colormaps as |cm|}}
+      {{x-model/colormap cm}}
+    {{/each}}
+  </div>
+  --}}
+
+</div>

@@ -1,13 +1,15 @@
 __package__ = '' # unicode package name error
 
-import cv2
-import numpy as np
+from pacu.core.io.scanbox.method.overall.tracer import ROITracer
 
 def main(workspace, condition, roi, datatag):
-    frames = workspace.io.channel.mmap
-    mask = np.zeros(frames.shape[1:], dtype='uint8')
-    cv2.drawContours(mask, [roi.contours], 0, 255, -1)
-    return np.stack(cv2.mean(frame, mask)[0] for frame in frames)
+    frames = condition.io.ch0.mmap
+    tracer = ROITracer(roi, frames)
+    main_trace = tracer.trace()
+    if roi.neuropil_enabled:
+        np_trace = tracer.neuropil_trace(workspace.other_rois(roi))
+        main_trace -= np_trace * roi.neuropil_factor
+    return main_trace
 
 if __name__ == '__sbx_main__':
     datatag.value = main(workspace, condition, roi, datatag)

@@ -6,8 +6,8 @@ import numpy as np
 def main(workspace, condition, roi, datatag):
     on_duration = condition.on_duration
     off_duration = condition.off_duration
-    framerate = workspace.io.mat.framerate # capture_frequency
-    nframes = workspace.io.mat.nframes
+    framerate = condition.io.mat.framerate # capture_frequency
+    nframes = condition.io.mat.nframes
     on_frames = int(framerate * on_duration)
     off_frames = int(framerate * off_duration)
     trial = datatag.trial

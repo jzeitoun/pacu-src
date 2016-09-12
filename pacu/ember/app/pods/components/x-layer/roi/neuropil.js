@@ -2,7 +2,7 @@ import Ember from 'ember';
 import computed from 'ember-computed-decorators';
 import mat from 'pacu/utils/matrix';
 
-function outerPointsByRatio(polygon, centroid, m, n=2) {
+export function outerPointsByRatio(polygon, centroid, m, n=2) {
   const pointXs = polygon.getEach('x').map(x => (x*m - n*centroid.x) / (m - n));
   const pointYs = polygon.getEach('y').map(y => (y*m - n*centroid.y) / (m - n));
   return new Array(polygon.length).fill().map((_, index) => { return {

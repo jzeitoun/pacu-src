@@ -6,6 +6,8 @@ class Condition(object):
         self.sf = sf
         self.tf = tf
         self.tex = 'sin'
+        self.blank = False
+        self.flicker = False
         self.autoDraw = True
     __repr__ = repr.auto_strict
 
@@ -21,6 +23,8 @@ class BlankCondition(object):
         self.ori = ori
         self.sf = sf
         self.tf = tf
+        self.blank = True
+        self.flicker = False
         self.autoDraw = False
     __repr__ = repr.auto_strict
 
@@ -29,5 +33,7 @@ class FlickerCondition(object):
         self.ori = ori
         self.sf = sf
         self.tf = tf
+        self.blank = False
+        self.flicker = True
         self.autoDraw = True
     __repr__ = repr.auto_strict

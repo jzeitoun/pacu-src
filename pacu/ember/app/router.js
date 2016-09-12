@@ -43,6 +43,9 @@ Router.map(function() {
   });
   this.route('sbx-analysis',
     { path: '/sbx-analysis/:mouse/:day/:io_name/:workspace_id' });
+  this.route('scanbox-manager');
+  this.route('scanbox-analyzer', { path: '/scanbox-analyzer/*hops' });
+  this.route('blank');
 });
 
 export default Router;

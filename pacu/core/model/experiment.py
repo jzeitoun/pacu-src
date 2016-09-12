@@ -3,6 +3,7 @@ from datetime import datetime
 import numpy as np
 from sqlalchemy import Column
 from sqlalchemy import Integer
+from sqlalchemy import Float
 from sqlalchemy import Unicode
 from sqlalchemy import DateTime
 from sqlalchemy.types import PickleType
@@ -17,6 +18,7 @@ class ExperimentV1(Base):
     clsname = Column(Unicode(256))
     pkgname = Column(Unicode(256))
     keyword = Column(Unicode(256))
+    duration = Column(Float)
     message = Column(UnicodeText)
     on_time = Column(PickleType, default={})
     off_time = Column(PickleType, default={})
@@ -25,6 +27,26 @@ class ExperimentV1(Base):
     order = Column(PickleType, default={})
     payload = Column(PickleType, default={})
     trial_list = Column(PickleType, default={})
+
+    projection_clsname = Column(UnicodeText(256))
+    projection_pkgname = Column(UnicodeText(256))
+    projection_kwargs = Column(PickleType, default={})
+    clock_clsname = Column(UnicodeText(256))
+    clock_pkgname = Column(UnicodeText(256))
+    clock_kwargs = Column(PickleType, default={})
+    stimulus_clsname = Column(UnicodeText(256))
+    stimulus_pkgname = Column(UnicodeText(256))
+    stimulus_kwargs = Column(PickleType, default={})
+    window_clsname = Column(UnicodeText(256))
+    window_pkgname = Column(UnicodeText(256))
+    window_kwargs = Column(PickleType, default={})
+    handler_clsname = Column(UnicodeText(256))
+    handler_pkgname = Column(UnicodeText(256))
+    handler_kwargs = Column(PickleType, default={})
+    monitor_clsname = Column(UnicodeText(256))
+    monitor_pkgname = Column(UnicodeText(256))
+    monitor_kwargs = Column(PickleType, default={})
+
     def __iter__(self):
         return iter(self.ordered_trials)
     @property

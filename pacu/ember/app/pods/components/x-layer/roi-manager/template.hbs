@@ -1,5 +1,6 @@
 {{#each coloredROIs as |cr|}}
 
+  {{x-layer/roi/static-polygon polygon=cr.roi.neuropil class="neuropil"}}
   {{x-layer/roi-manager/polygon roi=cr.roi class="grabber interact"
     color=cr.color
     onPolygonUpdated=(route-action "updateModel" cr.roi)
@@ -26,6 +27,8 @@
 #{{elementId}} polygon {
   stroke-width: 3px;
 }
+#{{elementId}} polygon.neuropil {
+  stroke-width: 1px;
+  fill: rgba(0, 0, 0, 0.25);
+}
 </style>
-
-{{!onPolygonClicked=(route-action "locateFocus")}}
