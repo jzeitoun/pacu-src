@@ -2,6 +2,7 @@ __package__ = '' # unicode package name error
 
 import numpy as np
 
+from pacu.core.io.scanimage import util
 from pacu.core.io.scanbox.method.fit.sogfit import SumOfGaussianFit
 
 def main(workspace, condition, roi, datatag):
@@ -16,7 +17,7 @@ def main(workspace, condition, roi, datatag):
         oris.append(meantrace_for_ori)
     mat = np.array(oris).mean(1)
     fit = SumOfGaussianFit(condition.orientations, mat, best_pref_ori)
-    return dict(
+    return util.nan_for_json(dict(
         osi = fit.osi,
         dsi = fit.dsi,
         sigma = fit.sigma,
@@ -25,7 +26,7 @@ def main(workspace, condition, roi, datatag):
         residual = fit.residual,
         x = fit.stretched.x.tolist(),
         y_meas = fit.stretched.y.tolist(),
-        y_fit = fit.y_fit.tolist())
+        y_fit = fit.y_fit.tolist()))
 
 if __name__ == '__sbx_main__':
     datatag.value = main(workspace, condition, roi, datatag)

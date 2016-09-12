@@ -91,13 +91,6 @@ class ScanboxIO(object):
             err = dict(type=str(type(e)), detail=str(e))
             return dict(err=err, info=self.mat.toDict())
 
-# q = ScanboxIO('jzg1/day_ht/my4r_1_3_000_007.io')
-# q.remove_io()
-# q.import_raw(dict(id=919))
-
-# e = glab().query(ExperimentV1).get(920)
-# condition = schema.Condition.from_expv1(exp)
-
 # q = ScanboxIO('jzg1/day_ht/day5_003_020.io')
 # w = q.condition.workspaces.first
 # r = w.rois.first
