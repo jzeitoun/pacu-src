@@ -1,6 +1,7 @@
 import cv2
 import operator
 import numpy as np
+from collections import OrderedDict
 from sqlalchemy import Column, Integer, Boolean, Float
 from sqlalchemy.types import PickleType
 from sqlalchemy.orm import object_session
@@ -47,6 +48,29 @@ class ROI(SQLite3Base):
     @property
     def dt_fit_diffof(self):
         return self.datatags.find_by('method', 'diffof').first
+    @property
+    def dt_blank(self):
+        return self.datatags.find_by('method', 'dff0').find_by('trial_blank', True)
+    @property
+    def dt_flicker(self):
+        return self.datatags.find_by('method', 'dff0').find_by('trial_flicker', True)
+    @property
+    def dt_orientation(self): # False False
+        return self.datatags.find_by('method', 'dff0').find_by('trial_flicker', None).find_by('trial_blank', None)
+    @property
+    def dt_ori_by_sf(self): # False False
+        sfs = self.workspace.condition.sfrequencies
+        oris = self.workspace.condition.orientations
+        return OrderedDict([
+            (
+                sf,
+                OrderedDict([
+                (
+                    ori,
+                    self.datatags.find_by('trial_sf', sf).find_by('trial_ori', ori)
+                )
+                for ori in oris])
+            ) for sf in sfs])
 
     def before_flush_dirty(self, session, context): # before attached to session
         pass
@@ -58,6 +82,7 @@ class ROI(SQLite3Base):
         self.initialize_datatags()
     def refresh_all(self):
         for tag in self.datatags:
+            print 'REFRESH', tag.id, tag.category, tag.method
             tag.refresh()
     def initialize_datatags(self): # order is very important.
         from pacu.core.io.scanbox.model.datatag import Datatag
@@ -71,3 +96,4 @@ class ROI(SQLite3Base):
         for sf in self.workspace.condition.sfrequencies:
             Datatag(roi=self, category=u'fit', method=u'sumof', trial_sf=sf)
         Datatag(roi=self, category=u'fit', method=u'diffof')
+        Datatag(roi=self, category=u'anova', method=u'all')

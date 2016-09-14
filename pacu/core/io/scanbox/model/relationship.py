@@ -32,12 +32,12 @@ ROI.overall_mean = relationship(Datatag,
     primaryjoin=(ROI.id == Datatag.roi_id) & (Datatag.category == 'overall') & (Datatag.method == 'mean'),
     uselist=False,
     cascade='all, delete-orphan',
-    lazy='joined')
+    lazy='select')
 ROI.datatags = relationship(Datatag, order_by=Datatag.id,
     collection_class=flist,
     cascade='all, delete-orphan',
     backref='roi',
-    lazy='joined')
+    lazy='select')
 Trial.datatags = relationship(Datatag, order_by=Datatag.id,
     collection_class=flist,
     # cascade='all, delete-orphan',
@@ -47,17 +47,17 @@ Workspace.colormaps = relationship(Colormap, order_by=Colormap.id,
     collection_class=flist,
     cascade='all, delete-orphan',
     backref='workspace',
-    lazy='joined')
+    lazy='select')
 Workspace.rois = relationship(ROI, order_by=ROI.id,
     collection_class=flist,
     cascade='all, delete-orphan',
     backref='workspace',
-    lazy='joined')
+    lazy='select')
 Workspace.ecorrs = relationship(EphysCorrelation, order_by=EphysCorrelation.id,
     collection_class=flist,
     cascade='all, delete-orphan',
     backref='workspace',
-    lazy='joined')
+    lazy='select')
 Condition.workspaces = relationship(Workspace, order_by=Workspace.id,
     collection_class=flist,
     cascade='all, delete-orphan',
@@ -67,7 +67,7 @@ Condition.trials = relationship(Trial, order_by=Trial.id,
     collection_class=flist,
     cascade='all, delete-orphan',
     backref='condition',
-    lazy='joined')
+    lazy='select')
 
 __all__ = ('Workspace ROI Colormap Datatag '
            'EphysCorrelation Action Condition Trial').split()

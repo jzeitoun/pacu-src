@@ -29,12 +29,12 @@ export default Ember.Route.extend({
           icon: 'crosshairs',
           color: 'white',
         },
-        {
-          content: 'Scanbox V1 Data Controller',
-          linkTo: 'sbx-analyses',
-          icon: 'cube',
-          color: 'white',
-        },
+        // {
+        //   content: 'Scanbox V1 Data Controller',
+        //   linkTo: 'sbx-analyses',
+        //   icon: 'cube',
+        //   color: 'white',
+        // },
         {
           content: 'Scanbox V2 Manager',
           linkTo: 'scanbox-manager',

@@ -61,6 +61,9 @@ class ScanboxIO(object):
     @property
     def db_session(self):
         return self.sessionmaker()
+    def import_condition_by_id(self, id):
+        condition = glab().query(ExperimentV1).get(id)
+        self.import_condition(condition)
     def import_condition(self, exp):
         session = self.db_session
         try:
@@ -91,9 +94,19 @@ class ScanboxIO(object):
             err = dict(type=str(type(e)), detail=str(e))
             return dict(err=err, info=self.mat.toDict())
 
+# import numpy as np
+
+# q = ScanboxIO('jzg1/day1_000_002.io')
+# exp_id = 923
 # q = ScanboxIO('jzg1/day_ht/day5_003_020.io')
 # w = q.condition.workspaces.first
 # r = w.rois.first
+# a = [
+#     [np.array(rep.value['on']).mean() for rep in reps]
+#     for sf, oris in r.dt_ori_by_sf.items()
+#     for ori, reps in oris.items()
+# ]
+
 # a = r.dt_fit_diffof.refresh()
 
 # r.dt_best_preferred.refresh()
