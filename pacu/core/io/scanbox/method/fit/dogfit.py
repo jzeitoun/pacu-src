@@ -255,10 +255,9 @@ class SpatialFrequencyDogFit(object):
         fig.clf()
         plt.close(fig)
 
-    def plot_io(self, b64encode=False):
+    def plot_io(self, b64encode=True):
         plt, fig = self._plot()
         io = StringIO()
-
         if b64encode:
             fig.savefig(io, format='png', bbox_inches='tight')
             data = base64.b64encode(io.getvalue())
@@ -267,8 +266,7 @@ class SpatialFrequencyDogFit(object):
             data = io.getvalue()
         fig.clf()
         plt.close(fig)
-        return '<svg' + data.split('<svg')[1]
-        # return data
+        return data
 
     def plot(self):
         return self.plot_io(b64encode=False)

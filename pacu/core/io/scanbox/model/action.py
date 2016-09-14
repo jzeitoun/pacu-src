@@ -1,4 +1,6 @@
 import cv2
+import sys
+import traceback
 import numpy as np
 from sqlalchemy import Column, Integer, UnicodeText
 from sqlalchemy.types import PickleType
@@ -20,8 +22,13 @@ class Action(SQLite3Base):
         print 'An action running through!', self.__dict__
         Model = self._decl_class_registry.get(self.model_name)
         model = session.query(Model).get(self.model_id)
-        result = getattr(model, self.action_name)(
-            *self.action_args or [], **self.action_kwargs or {})
-        self.status_code = 200
-        if result:
-            self.meta = result
+        try:
+            result = getattr(model, self.action_name)(
+                *self.action_args or [], **self.action_kwargs or {})
+            self.status_code = 200
+            if result:
+                self.meta = result
+        except Exception as e:
+            reason = '<br/>'.join(traceback.format_exception(*sys.exc_info()))
+            self.status_code = 500
+            self.status_text = reason

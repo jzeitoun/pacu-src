@@ -10,9 +10,8 @@ def main(workspace, condition, roi, datatag):
     nframes = condition.io.mat.nframes
     on_frames = int(framerate * on_duration)
     off_frames = int(framerate * off_duration)
-    trial = datatag.trial
 
-    on_first_frame = int(datatag.trial.on_time*framerate)
+    on_first_frame = int(datatag.trial_on_time*framerate)
     on_last_frame = int(on_first_frame + on_frames)
 
     # we can use last off period when we work with very first trial

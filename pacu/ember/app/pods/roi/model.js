@@ -6,6 +6,7 @@ import { getCentroid } from 'pacu/pods/components/x-layer/roi/centroid';
 import { outerPointsByRatio } from 'pacu/pods/components/x-layer/roi/neuropil';
 
 export default Model.extend({
+  toast: Ember.inject.service(),
   created_at: attr('epoch'),
   active: attr('boolean', { defaultValue: false }),
   polygon: attr({ defaultValue: () => { return []; } }),
@@ -42,6 +43,7 @@ export default Model.extend({
     this.destroyRecord();
   },
   refreshAll() {
+    const self = this;
     if (this.get('inAction')) { return; }
     this.set('inAction', true);
     this.save().then(() => {
@@ -50,7 +52,11 @@ export default Model.extend({
         model_id: this.id,
         action_name: 'refresh_all'
       }).save().then((action) => {
-        // this.synchronizeDatatags();
+        if (action.get('status_code') === 500) {
+          this.get('toast').error(action.get('status_text'));
+        } else {
+          this.get('workspace').then(w => w.notifyPropertyChange('dtsOverallMean'));
+        }
       }).finally(() => {
         this.set('inAction', false);
       });
@@ -87,14 +93,24 @@ export default Model.extend({
     } });
   },
   @computed() sfTuningCurve() {
-    console.log('CALLING TUNING VCUVRE');
     return this.store.query('datatag', { filter: {
       roi_id: this.get('id'),
       category: 'fit',
       method: 'diffof',
-    } }).then(tcs => {
-      const plot = tcs.get('firstObject.value.plot');
-      this.set('sfplot', plot);
-    });
+    } });
+  },
+  @computed() anovaAll() {
+    return this.store.query('datatag', { filter: {
+      roi_id: this.get('id'),
+      category: 'anova',
+      method: 'all',
+    } });
+  },
+  @computed() bootstrapSF() {
+    return this.store.query('datatag', { filter: {
+      roi_id: this.get('id'),
+      category: 'bootstrap',
+      method: 'sf',
+    } });
   },
 });

@@ -28,46 +28,17 @@ class ROI(SQLite3Base):
     def neuropil_contours(self):
         return np.array([[p['x'], p['y']] for p in self.neuropil_polygon])
     @property
-    def dt_overall(self):
-        for dt in self.datatags:
-            if dt.category == 'overall':
-                return dt
-    @property
-    def dt_best_preferred(self):
-        for dt in self.datatags:
-            if dt.method == 'best_pref':
-                return dt
-    @property
-    def dt_reps(self):
-        for dt in self.datatags:
-            if dt.method == 'dff0':
-                return dt
-    @property
-    def dt_fit_sumof(self):
-        return self.datatags.find_by('method', 'sumof')
-    @property
-    def dt_fit_diffof(self):
-        return self.datatags.find_by('method', 'diffof').first
-    @property
-    def dt_blank(self):
-        return self.datatags.find_by('method', 'dff0').find_by('trial_blank', True)
-    @property
-    def dt_flicker(self):
-        return self.datatags.find_by('method', 'dff0').find_by('trial_flicker', True)
-    @property
-    def dt_orientation(self): # False False
-        return self.datatags.find_by('method', 'dff0').find_by('trial_flicker', None).find_by('trial_blank', None)
-    @property
-    def dt_ori_by_sf(self): # False False
+    def dt_ori_by_sf(self):
         sfs = self.workspace.condition.sfrequencies
         oris = self.workspace.condition.orientations
+        trials = self.datatags.filter_by(trial_flicker=False, trial_blank=False)
         return OrderedDict([
             (
                 sf,
                 OrderedDict([
                 (
                     ori,
-                    self.datatags.find_by('trial_sf', sf).find_by('trial_ori', ori)
+                    trials.filter_by(trial_sf=sf, trial_ori=ori)
                 )
                 for ori in oris])
             ) for sf in sfs])
@@ -84,7 +55,7 @@ class ROI(SQLite3Base):
         from pacu.core.io.scanbox.model.datatag import Datatag
         Datatag(roi=self, category=u'overall', method=u'mean')
         for trial in self.workspace.condition.trials:
-            dt = Datatag(roi=self, trial=trial,
+            dt = Datatag(roi=self, # trial=trial,
                 category=u'orientation', method=u'dff0')
             for attr in TRIAL_ATTRS:
                 setattr(dt, u'trial_' + attr, getattr(trial, attr))
@@ -93,7 +64,47 @@ class ROI(SQLite3Base):
             Datatag(roi=self, category=u'fit', method=u'sumof', trial_sf=sf)
         Datatag(roi=self, category=u'fit', method=u'diffof')
         Datatag(roi=self, category=u'anova', method=u'all')
+        Datatag(roi=self, category=u'bootstrap', method=u'sf')
     def refresh_all(self):
-        for tag in self.datatags:
-            print 'REFRESH', tag.id, tag.category, tag.method
-            tag.refresh()
+        dts0 = self.datatags.filter_by(category='overall', method='mean')
+        dts1 = self.datatags.filter_by(category='orientation', method='dff0')
+        dts2 = self.datatags.filter_by(category='orientation', method='best_pref')
+        dts3 = self.datatags.filter_by(category='fit', method='sumof')
+        dts4 = self.datatags.filter_by(category='fit', method='diffof')
+        dts5 = self.datatags.filter_by(category='anova', method='all')
+        dts6 = self.datatags.filter_by(category='bootstrap', method='sf')
+        print 'REFRESH TRACE'
+        for tag in dts0: tag.refresh()
+        print 'REFRESH df/f0'
+        for tag in dts1: tag.refresh()
+        print 'REFRESH best pref'
+        for tag in dts2: tag.refresh()
+        print 'REFRESH SoG'
+        for tag in dts3: tag.refresh()
+        print 'REFRESH DoG'
+        for tag in dts4: tag.refresh()
+        print 'Anova All'
+        for tag in dts5: tag.refresh()
+        print 'Bootstrap SF'
+        for tag in dts6: tag.refresh()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

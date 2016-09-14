@@ -6,14 +6,18 @@ import numpy as np
 from pacu.core.io.scanbox.method.fit.sogfit import SumOfGaussianFit
 
 def main(workspace, condition, roi, datatag):
+    cfreq = workspace.condition.info['framerate']
     sfs = []
-    oris = []
-    trials = roi.datatags.find_by('method', 'dff0')
+    trials = roi.datatags.filter_by(
+        method='dff0', trial_blank=False, trial_flicker=False)
     for sf in condition.sfrequencies:
-        sf_trials = trials.find_by('trial_sf', sf)
+        sf_trials = trials.filter_by(trial_sf=sf)
+        oris = []
         for ori in condition.orientations:
-            reps_by_ori = sf_trials.find_by('trial_ori', ori)
-            arr = np.array([rep.value['on'] for rep in reps_by_ori])
+            reps_by_ori = sf_trials.filter_by(trial_ori=ori)
+            arr = np.array([
+                rep.value['on'][int(1*cfreq):int(2*cfreq)]
+            for rep in reps_by_ori])
             meantrace_for_ori = arr.mean(0)
             oris.append(meantrace_for_ori)
         sfs.append(np.array(oris))

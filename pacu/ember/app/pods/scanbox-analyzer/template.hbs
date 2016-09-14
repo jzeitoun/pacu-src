@@ -9,8 +9,10 @@
   <a class="item" {{action "noop"}}>
     <i class="green file image outline icon"></i>
   </a>
-  <a class="item" {{action "noop"}}>
-    Current SF: {{model.workspace.cur_sfreq}}
+  <a class="item">
+    Current SF: {{x-dropdown-value
+      items=model.condition.sfrequencies
+      value=model.workspace.cur_sfreq}}
   </a>
   <a class="item" {{action "noop"}}>
     Baseline Duration: {{model.workspace.baseline_duration}}
@@ -26,7 +28,7 @@
   {{#with (hash width=0) as |masterDimension|}}
     {{x-sbx-analysis/plot/multi-trace
       dimension=masterDimension
-      index=model.socket.img.curIndex datatags=model.workspace.dtsOverallMean}}
+      index=model.stream.img.curIndex datatags=model.workspace.dtsOverallMean}}
     {{x-sbx-analysis/plot/orientations
       dimension=masterDimension
       condition=model.condition
@@ -78,7 +80,7 @@
           {{action "reimportEphys"}}>Import Ephys</p>
       </div>
       --}}
-      {{#each model.workspace.rois as |roi index|}}
+      {{#each model.rois as |roi index|}}
         {{x-sbx-analysis/roi/hierarchy roi=roi colorIndex=index}}
         <section class="ui clearing divider"></section>
       {{else}}
@@ -87,6 +89,53 @@
     </div>
 
   </div>
+
+  {{#each model.workspace.activeROI.sfTuningCurve as |sftc|}}
+    <img class="ui fluid image" alt="SF Tuning Curve"
+      src="data:image/png;base64,{{sftc.value.plot}}" />
+  {{/each}}
+
+  {{!--
+
+  {{#each model.workspace.activeROI.anovaAll as |anova|}}
+    <h3 class="ui header">Anova All</h3>
+    {{#each-in anova.value as |key val|}}
+      <p class="ui">{{key}}: {{val}}</p>
+    {{/each-in}}
+  {{/each}}
+
+  {{#each model.workspace.activeROI.bootstrapSF as |bsf|}}
+    <h3 class="ui header">Bootstrap SF</h3>
+    {{#each-in bsf.value as |key val|}}
+      <p class="ui">{{key}}: {{val}}</p>
+    {{/each-in}}
+  {{/each}}
+
+  --}}
+
+  <section class="ui clearing divider"></section>
+  <div class="ui inverted active tab segment" style="overflow-x: scroll;">
+    {{x-scanbox-analyzer/stats/table rois=model.rois curSF=model.workspace.cur_sfeq}}
+  </div>
+
+  {{!--
+  <section class="ui clearing divider"></section>
+  {{#x-alphatabs seq="qw"}}
+    <div class="ui inverted active tab segment" style="overflow-x: scroll;">
+      <p>Responsive ROIS</p>
+      {{x-sci-analysis/stats/wide rois=model.responsiveROIs curSF=model.curSF}}
+    </div>
+    <div class="ui inverted tab segment" style="overflow-x: scroll;">
+      <p>Non-responsive ROIS</p>
+      {{x-sci-analysis/stats/wide rois=model.irresponsiveROIs curSF=model.curSF}}
+    </div>
+  {{/x-alphatabs}}
+  --}}
+
+
+
+
+
 
   {{!--
   <div class="ui inverted segment">

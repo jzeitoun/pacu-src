@@ -96,11 +96,7 @@ class ScanboxIO(object):
             return dict(err=err, info=self.mat.toDict())
 
 # import numpy as np
-
 # q = ScanboxIO('jzg1/day1_000_002.io')
-# q.db_session.query(schema.Datatag).filter_by(method='dff0', trial_flicker=False, trial_blank=False).count()
-# exp_id = 923
-# q = ScanboxIO('jzg1/day_ht/day5_003_020.io')
 # w = q.condition.workspaces.first
 # r = w.rois.first
 # a = [

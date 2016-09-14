@@ -24,7 +24,8 @@ export default Ember.Route.extend({
       return wss.findBy('name', name);
     });
     const condition = this.store.findRecord('condition', 1);
-    const trials = this.store.findAll('trial');
+    // const trials = this.store.findAll('trial');
+    const rois = this.store.findAll('roi');
     const stream = new Ember.RSVP.Promise((resolve /*, reject */) => {
       return this.get('socket').create(
         this, modname, clsname, ioName
@@ -37,11 +38,11 @@ export default Ember.Route.extend({
         resolve(SocketStream.create({ wsx }));
       });
     });
-    return Ember.RSVP.hash({ workspace, condition, trials, stream });
+    return Ember.RSVP.hash({ workspace, condition, rois, /*trials,*/ stream });
   },
   afterModel(model /*, transition */) {
     this._super(...arguments);
-    if (Ember.isEmpty(model.workspace.get('rois'))) {
+    if (Ember.isEmpty(model.rois)) {
       this.toast.info(`Hey buddy, you have no ROIs in this workspace. 
         How about drawing some?`);
     }

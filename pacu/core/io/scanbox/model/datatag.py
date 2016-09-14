@@ -1,4 +1,6 @@
 import runpy
+import sys
+import traceback
 import importlib
 
 from sqlalchemy.sql import func
@@ -48,9 +50,12 @@ class Datatag(SQLite3Base):
                 datatag=self,
             ))
         except Exception as e:
-            print 'Exception', type(e), e
+            print '\n======== exception on datatag ========'
+            traceback.print_exception(*sys.exc_info())
+            print '======== exception on datatag ========\n'
             self.etype = unicode(type(e))
             self.etext = unicode(e)
+            raise e
         else:
             self.etype = None
             self.etext = None
