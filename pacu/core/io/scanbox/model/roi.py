@@ -85,8 +85,8 @@ class ROI(SQLite3Base):
         for tag in dts4: tag.refresh()
         print 'Anova All'
         for tag in dts5: tag.refresh()
-        print 'Bootstrap SF'
-        for tag in dts6: tag.refresh()
+        # print 'Bootstrap SF'
+        # for tag in dts6: tag.refresh()
 
 
 
