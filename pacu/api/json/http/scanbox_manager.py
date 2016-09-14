@@ -82,8 +82,17 @@ def get_conditions(req):
         return []
 
 def get_ios(req):
-    return [ScanboxIO(path.relative_to(workspace.path)).toDict()
-        for path in workspace.path.rglob('**/*.io')]
+    dataset = []
+    for path in workspace.path.rglob('**/*.io'):
+        try:
+            data = ScanboxIO(path.relative_to(workspace.path)).toDict()
+        except Exception as e:
+            print path, e
+        else:
+            dataset.append(data)
+    return dataset
+    # return [ScanboxIO(path.relative_to(workspace.path)).toDict()
+    #     for path in workspace.path.rglob('**/*.io')]
 
 def delete_io(req, iopath):
     io = ScanboxIO(iopath)
