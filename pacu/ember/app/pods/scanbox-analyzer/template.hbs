@@ -1,5 +1,8 @@
 {{#x-sui-sticky class="sbx"}}
 <div class="ui small compact inverted icon menu">
+  <a class="item" {{action "unloadModel"}}>
+    <i class="red line recycle icon"></i>
+  </a>
   <a class="item" {{action "noop"}}>
     <i class="red line chart icon"></i>
   </a>
@@ -15,8 +18,8 @@
 </div>
 {{/x-sui-sticky}}
 
-{{model.workspace.activeROI.sfTuningCurve}}
-{{{model.workspace.activeROI.sfplot}}}
+{{!model.workspace.activeROI.sfTuningCurve}}
+{{!model.workspace.activeROI.sfplot}}
 
 <div id="route-sbx-analysis" class="ui inverted segment">
   {{! MultiTrace Plot }}

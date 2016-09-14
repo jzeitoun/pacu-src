@@ -81,6 +81,9 @@ class JSONAPIHandler(RequestHandler):
             fkey[7:-1]: fval[0]
             for fkey, fval in self.request.arguments.items()
             if fkey.startswith('filter[')}
+        filter_by = {
+            k: False if v == 'false' else True if v == 'true' else v
+            for k, v in filter_by.items()}
         query = self.session.query(self.locator.orms.get(tablename))
         if filter_by:
             query = query.filter_by(**filter_by)

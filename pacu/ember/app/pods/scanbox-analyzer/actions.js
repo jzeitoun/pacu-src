@@ -20,4 +20,9 @@ export default {
       return this.toast.info(`${name} #${id} deleted.`);
     });
   },
+  unloadModel() {
+    this.store.unloadAll();
+    this.store.unloadAll();
+    this.toast.info('Released resources...');
+  }
 }

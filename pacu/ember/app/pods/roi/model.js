@@ -50,7 +50,7 @@ export default Model.extend({
         model_id: this.id,
         action_name: 'refresh_all'
       }).save().then((action) => {
-        this.synchronizeDatatags();
+        // this.synchronizeDatatags();
       }).finally(() => {
         this.set('inAction', false);
       });

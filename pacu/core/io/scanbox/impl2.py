@@ -62,6 +62,7 @@ class ScanboxIO(object):
     def db_session(self):
         return self.sessionmaker()
     def import_condition_by_id(self, id):
+        schema.recreate(self.db_path, echo=False)
         condition = glab().query(ExperimentV1).get(id)
         self.import_condition(condition)
     def import_condition(self, exp):
@@ -97,6 +98,7 @@ class ScanboxIO(object):
 # import numpy as np
 
 # q = ScanboxIO('jzg1/day1_000_002.io')
+# q.db_session.query(schema.Datatag).filter_by(method='dff0', trial_flicker=False, trial_blank=False).count()
 # exp_id = 923
 # q = ScanboxIO('jzg1/day_ht/day5_003_020.io')
 # w = q.condition.workspaces.first

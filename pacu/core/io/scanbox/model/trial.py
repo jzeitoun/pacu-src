@@ -15,5 +15,5 @@ class Trial(SQLite3Base):
     sequence = Column(Integer)
     order = Column(Integer)
     ran = Column(Integer)
-    flicker = Column(Boolean)
-    blank = Column(Boolean)
+    flicker = Column(Boolean, default=False)
+    blank = Column(Boolean, default=False)

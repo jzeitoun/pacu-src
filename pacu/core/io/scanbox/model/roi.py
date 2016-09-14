@@ -80,10 +80,6 @@ class ROI(SQLite3Base):
         #             tag.invalidate()
     def before_flush_new(self, session, context):
         self.initialize_datatags()
-    def refresh_all(self):
-        for tag in self.datatags:
-            print 'REFRESH', tag.id, tag.category, tag.method
-            tag.refresh()
     def initialize_datatags(self): # order is very important.
         from pacu.core.io.scanbox.model.datatag import Datatag
         Datatag(roi=self, category=u'overall', method=u'mean')
@@ -97,3 +93,7 @@ class ROI(SQLite3Base):
             Datatag(roi=self, category=u'fit', method=u'sumof', trial_sf=sf)
         Datatag(roi=self, category=u'fit', method=u'diffof')
         Datatag(roi=self, category=u'anova', method=u'all')
+    def refresh_all(self):
+        for tag in self.datatags:
+            print 'REFRESH', tag.id, tag.category, tag.method
+            tag.refresh()
