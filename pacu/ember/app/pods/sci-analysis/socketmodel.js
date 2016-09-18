@@ -51,7 +51,7 @@ export default Ember.Object.extend({
         return r.responses[r.sfreqfit.peak].stats.anova.p >= 0.01;
       } catch (err) {
         console.log('exception at filtering irresponsive ROI', err);
-        return false;
+        return true;
       }
     });
   },
