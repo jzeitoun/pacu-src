@@ -34,9 +34,9 @@ from tornado.wsgi import WSGIContainer
 from tornado.httpserver import HTTPServer
 from tornado.ioloop import IOLoop
 
+web = profile.manager.instance('web')
 http_server = HTTPServer(WSGIContainer(app))
-http_server.listen(5000)
-# IOLoop.instance().start()
+http_server.listen(web.port + 30000)
 
 def main(**kwargs):
     profile.manager.currents.update(kwargs)

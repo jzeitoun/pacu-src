@@ -4,7 +4,11 @@ import computed from 'ember-computed-decorators';
 export default JSONAPIAdapter.extend({
   // namespace: 'jsonapi',
   namespace: 'api',
-  host: 'http://localhost:5000',
+  host: function() {
+    const hostname = location.hostname;
+    const port = this.get('session.app.port') + 30000;
+    return `http://${hostname}:${port}`
+  }.property('session.app.port'),
   session: Ember.inject.service('session'),
   // @computed('session.jsonapi.{moduleName,sessionArgs,baseName}'
   // ) headers(m, s, b) {
