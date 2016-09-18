@@ -40,6 +40,9 @@ class ScanimageDBAdaptor(object):
             np.round(self.rec.duration_F).astype(int),
             np.round(self.rec.waitinterval_F).astype(int),
             np.round(self.rec.ontimes_F).astype(int),
+            # below may not be used any more.
+            # see `pacu.core.io.scanimage.trace.base` and
+            # `pacu.core.io.scanimage.response.orientation`.
             int(1.5*self.capture_frequency))
     @property
     def indice(self):

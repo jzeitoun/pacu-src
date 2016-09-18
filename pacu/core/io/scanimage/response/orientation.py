@@ -30,9 +30,13 @@ class Orientation(object):
         return np.array([rep.array for rep in self.ontimes]).mean(0)
     @property
     def windowed_mean_for_ontimes(self):
+        """
+        Dario mentioned 2016-09-19 UTC+9:
+        Maybe default it to use all frames for meantrace and 1/4 of the baseline.
+        """
         return [trial.array[
-            int(1*self.capture_frequency):int(2*self.capture_frequency)
-            # :
+            # int(1*self.capture_frequency):int(2*self.capture_frequency)
+            :
         ].mean() for trial in self.ontimes]
     @property
     def regular_mean_for_ontimes(self):

@@ -137,9 +137,16 @@ class ROI(object):
         sresps = sorted((sf, resp) for sf, resp in responses.items())
         return sresps
     def meanresponse_over_sf(self, adaptor):
+        """
+        Dario mentioned 2016-09-19 UTC+9:
+        Maybe default it to use all frames for meantrace and 1/4 of the baseline.
+        """
         cfreq = adaptor.capture_frequency
         return np.array([
-            resp.orientations.ons[..., int(1*cfreq):int(2*cfreq)].mean(axis=(1, 2))
+            resp.orientations.ons[
+                # ..., int(1*cfreq):int(2*cfreq)
+                :
+            ].mean(axis=(1, 2))
             for sf, resp in self.sorted_responses
         ]).mean(axis=0)
     def update_with_adaptor(self, adaptor):

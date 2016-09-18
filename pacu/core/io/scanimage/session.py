@@ -8,6 +8,7 @@ from pacu.util.inspect import repr
 from pacu.util.prop.memoized import memoized_property
 from pacu.profile import manager
 from pacu.core.model.ed.visstim2p import VisStim2P
+from pacu.core.model.glams import Mice
 from pacu.core.model.analysis import AnalysisV1
 from pacu.core.io.scanimage.nmspc import HybridNamespace
 
@@ -23,9 +24,16 @@ class ScanimageSession(object):
         self.opt = HybridNamespace.from_path(self.path.joinpath('opt'))
     def toDict(self):
         return dict(name=self.path.stem, path=self.path.str)
+    @property
+    def glams_session(self):
+        return manager.get('db').section('glams')()
+    @property
+    def ed_session(self):
+        return manager.get('db').section('ed')()
     def query_experiment_db(self):
-        Session = manager.get('db').section('ed')()
-        return Session().query(VisStim2P).filter_by(
+        mouse = self.glams_session.query(Mice).filter_by(name=self.mouse).one()
+        return self.ed_session.query(VisStim2P).filter_by(
+            mouse_id=mouse.id,
             date=self.datetime.date(),
             filename=self.package.rstrip('.imported'))
     @property
