@@ -1,5 +1,6 @@
 from __future__ import division
 
+import time
 from collections import namedtuple
 
 import numpy as np
@@ -72,7 +73,7 @@ class ScanboxMatView(ZeroDimensionArrayView):
         data['framerate'] = self.framerate
         data['frameratestr'] = str(self.framerate) + ' fps'
         data['sbxsize'] = self.sbxsize.str
-        data['sbxtime'] = str(self.sbxtime)
+        data['sbxtime'] = time.mktime(self.sbxtime.timetuple())
         data['sbxpath'] = self.sbxpath.str
         data['nchannels'] = self.nchannels
         data['nframes'] = self.nframes

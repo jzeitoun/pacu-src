@@ -12,20 +12,17 @@ export default Ember.Route.extend({
   session: Ember.inject.service(),
   actions: actions,
   model(param) {
-    window.S = this.store; window.R = this;
     const hops = param.hops.split('/');
     const name = hops.pop();
     const ioName = hops.join('/');
     this.get('session.jsonapi').setProperties({moduleName, baseName,
       sessionArgs: [ioName]
     });
-    const workspace = this.get('store').query(
-    'workspace', { filter: { name }, }).then(wss => {
-      return wss.findBy('name', name);
-    });
-    const condition = this.store.findRecord('condition', 1);
-    // const trials = this.store.findAll('trial');
-    const rois = this.store.findAll('roi');
+    const queryParam = { filter: { name }, include: 'condition,rois' };
+    const query = this.store.query('workspace', queryParam);
+    const workspace = query.then(wss => wss.get('firstObject'));
+    const condition = workspace.then(ws => ws.get('condition'));
+    const rois = workspace.then(ws => ws.get('rois'));
     const stream = new Ember.RSVP.Promise((resolve /*, reject */) => {
       return this.get('socket').create(
         this, modname, clsname, ioName
@@ -38,10 +35,11 @@ export default Ember.Route.extend({
         resolve(SocketStream.create({ wsx }));
       });
     });
-    return Ember.RSVP.hash({ workspace, condition, rois, /*trials,*/ stream });
+    return Ember.RSVP.hash({ condition, workspace, stream, rois });
   },
   afterModel(model /*, transition */) {
     this._super(...arguments);
+    window.M = model; window.S = this.store; window.R = this;
     if (Ember.isEmpty(model.rois)) {
       this.toast.info(`Hey buddy, you have no ROIs in this workspace. 
         How about drawing some?`);

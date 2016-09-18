@@ -67,29 +67,78 @@ from sqlalchemy import event
 # a request's Accept header contains the JSON API media type and
 # all instances of that media type are modified with media type parameters.
 
+from sqlalchemy import inspect
+
+def find_record(session, include, ORM, id):
+    entity = session.query(ORM).get(id)
+    data = entity.resource_object
+    included = []
+    attributes = entity.attributes_object
+    relationships = {}
+    for rel in include:
+        if not rel: continue
+        rel_etts = getattr(entity, rel)
+        rel_data = [ett.resource_object for ett in rel_etts]
+        relationships[rel] = dict(data=rel_data)
+        for ett in rel_etts:
+            incl = ett.resource_object
+            incl['attributes'] = ett.attributes_object
+            included.append(incl)
+    data['attributes'] = attributes
+    data['relationships'] = relationships
+    return dict(data=data, included=included)
+
+# def find_all(session, include, ORM);
+#     entity = session.query(ORM).get(id)
+#     data = entity.resource_object
+#     included = []
+#     attributes = entity.attributes_object
+#     relationships = {}
+#     for rel in include:
+#         if not rel: continue
+#         rel_etts = getattr(entity, rel)
+#         rel_data = [ett.resource_object for ett in rel_etts]
+#         relationships[rel] = dict(data=rel_data)
+#         for ett in rel_etts:
+#             incl = ett.resource_object
+#             incl['attributes'] = ett.attributes_object
+#             included.append(incl)
+#     data['attributes'] = attributes
+#     data['relationships'] = relationships
+#     return dict(data=data, included=included)
+
 class JSONAPIHandler(RequestHandler):
     url = r'/jsonapi/(?P<tablename>[\w-]+)/?(?P<id>\d*)'
     def prepare(self):
         self.locator = ResourceLocator.from_headers(self.request.headers)
         self.session = self.locator.Session()
-        self.session.bind.echo = False
+        self.session.bind.echo = True
         event.listen(self.session, 'before_flush', db.before_flush)
+        event.listen(self.session, 'after_commit', db.after_commit)
     def on_finish(self):
         event.remove(self.session, 'before_flush', db.before_flush)
+        event.remove(self.session, 'after_commit', db.after_commit)
     def get(self, tablename, id):
-        filter_by = {
-            fkey[7:-1]: fval[0]
-            for fkey, fval in self.request.arguments.items()
-            if fkey.startswith('filter[')}
-        filter_by = {
-            k: False if v == 'false' else True if v == 'true' else v
-            for k, v in filter_by.items()}
-        query = self.session.query(self.locator.orms.get(tablename))
-        if filter_by:
-            query = query.filter_by(**filter_by)
-        data = query.get(id) if id else [entity.as_jsonapi for entity in query]
-        dumped = ujson.dumps(dict(data=data))
-        self.finish(dumped)
+        include = self.get_argument('include', '').split(',')
+        ORM = self.locator.orms.get(tablename)
+        if id:
+            ja = find_record(self.session, include, ORM, id)
+        else:
+            ja = find_all(self.session, include, ORM)
+        self.finish(ujson.dumps(ja))
+        # filter_by = {
+        #     fkey[7:-1]: fval[0]
+        #     for fkey, fval in self.request.arguments.items()
+        #     if fkey.startswith('filter[')}
+        # filter_by = {
+        #     k: False if v == 'false' else True if v == 'true' else v
+        #     for k, v in filter_by.items()}
+        # query = self.session.query(self.locator.orms.get(tablename))
+        # if filter_by:
+        #     query = query.filter_by(**filter_by)
+        # data = query.get(id) if id else [entity.as_jsonapi for entity in query]
+        # dumped = ujson.dumps(dict(data=data))
+        # self.finish(dumped)
     def post(self, tablename, id):
         payload = ujson.loads(self.request.body)
         attrs = payload['data'].get('attributes') or {}

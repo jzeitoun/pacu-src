@@ -1,6 +1,8 @@
 import cv2
 import numpy as np
+
 from sqlalchemy import Column, Integer, UnicodeText, Float
+from sqlalchemy.orm import object_session
 from sqlalchemy.types import PickleType
 
 from pacu.core.io.scanbox.model.base import SQLite3Base
@@ -23,6 +25,7 @@ class Condition(SQLite3Base):
     orientations = Column(PickleType, default=[])
     sfrequencies = Column(PickleType, default=[])
     tfrequencies = Column(PickleType, default=[])
+    object_session = property(object_session)
     @classmethod
     def from_expv1(cls, entity):
         """
@@ -47,4 +50,11 @@ class Condition(SQLite3Base):
     @property
     def io(self):
         from pacu.core.io.scanbox.impl2 import ScanboxIO
+        # TODO: still has problem with relative paths
         return ScanboxIO(self.info.get('iopath'))
+    def append_workspace(self, name):
+        from pacu.core.io.scanbox.model import db as schema
+        with self.object_session.begin():
+            ws = schema.Workspace(name=name, condition=self)
+            if self.sfrequencies:
+                ws.cur_sfreq = self.sfrequencies[0]

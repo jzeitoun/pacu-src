@@ -31,7 +31,7 @@ class ScanboxIO(object):
         return ScanboxSBXView(self.sbx_path)
     def remove_io(self):
         self.path.rmtree()
-    def import_raw(self, cond=None):
+    def import_raw(self, condition_id=None):
         if self.path.is_dir():
             raise OSError('{} already exists!'.format(self.path))
         else:
@@ -40,16 +40,16 @@ class ScanboxIO(object):
         for nchan in range(self.mat.nchannels):
             ScanboxChannel(self.path.joinpath('{}.chan'.format(nchan))
             ).import_with_io(self)
-        print 'Create local database...'
-        schema.recreate(self.db_path, echo=False)
-        if cond and 'id' in cond and cond['id']:
-            condition = glab().query(ExperimentV1).get(cond['id'])
-            if condition:
-                print 'There is matching condition data in ED.'
-                print 'Parse and bind condition data..'
-                self.import_condition(condition)
-            else:
-                print 'No matching condition found!'
+        print 'Initialize local database...'
+        self.initialize_db()
+#         if cond and 'id' in cond and cond['id']:
+#             condition = glab().query(ExperimentV1).get(cond['id'])
+#             if condition:
+#                 print 'There is matching condition data in ED.'
+#                 print 'Parse and bind condition data..'
+#                 self.import_condition(condition)
+#             else:
+#                 print 'No matching condition found!'
         print 'Done!'
         return self.toDict()
     @memoized_property
@@ -58,25 +58,33 @@ class ScanboxIO(object):
         event.listen(maker, 'before_flush', schema.before_flush)
         event.listen(maker, 'after_commit', schema.after_commit)
         return maker
-    @property
+    @memoized_property
     def db_session(self):
         return self.sessionmaker()
-    def import_condition_by_id(self, id):
+    def initialize_db(self):
         schema.recreate(self.db_path, echo=False)
-        condition = glab().query(ExperimentV1).get(id)
-        self.import_condition(condition)
-    def import_condition(self, exp):
         session = self.db_session
-        try:
-            with session.begin():
-                condition = schema.Condition.from_expv1(exp)
-                condition.info = self.mat.toDict()
-                condition.trials.extend([
-                    schema.Trial.init_and_update(**trial)
-                    for trial in exp])
-                session.add(condition)
-        except Exception as e:
-            print 'Condition import failed with reason below,', str(e)
+        with session.begin():
+            condition = schema.Condition(info=self.mat.toDict())
+            session.add(condition)
+
+#     def import_condition_by_id(self, id):
+#         schema.recreate(self.db_path, echo=False)
+#         condition = glab().query(ExperimentV1).get(id)
+#         self.import_condition(condition)
+#     def import_condition(self, exp):
+#         session = self.db_session
+#         try:
+#             with session.begin():
+#                 condition = schema.Condition.from_expv1(exp)
+#                 condition.info = self.mat.toDict()
+#                 condition.trials.extend([
+#                     schema.Trial.init_and_update(**trial)
+#                     for trial in exp])
+#                 session.add(condition)
+#         except Exception as e:
+#             print 'Condition import failed with reason below,', str(e)
+
     @memoized_property
     def condition(self):
         # Session = schema.get_sessionmaker(self.db_path, echo=False)
@@ -96,7 +104,9 @@ class ScanboxIO(object):
             return dict(err=err, info=self.mat.toDict())
 
 # import numpy as np
+# q = ScanboxIO('day_ht/day5_003_020.io')
 # q = ScanboxIO('jzg1/day1_000_002.io')
+# q = ScanboxIO('day_ht/my4r_1_3_000_035.io')
 # w = q.condition.workspaces.first
 # r = w.rois.first
 # a = [
@@ -114,6 +124,5 @@ class ScanboxIO(object):
 # s.begin()
 # s.add(schema.ROI(workspace=q.condition.workspaces.first))
 # s.flush()
-
-def ScanboxIOStream(files): # magic protocol...
+def ScanboxIOStream(files): # magic protocol... for damn `files` kwargs
     return ScanboxIO(files)

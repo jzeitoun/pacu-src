@@ -76,6 +76,11 @@
         items=model.colormaps
         onValueChanged=(route-action "colormapIndexChanged")
       }}
+      <div class="ui">
+        Current channel: {{x-dropdown-value
+          items=model.channelNumbers
+          value=model.channelNumber}}
+      </div>
     </div>
   </div>
 

@@ -8,7 +8,7 @@ import { outerPointsByRatio } from 'pacu/pods/components/x-layer/roi/neuropil';
 export default Model.extend({
   toast: Ember.inject.service(),
   created_at: attr('epoch'),
-  active: attr('boolean', { defaultValue: false }),
+  // active: attr('boolean', { defaultValue: false }),
   polygon: attr({ defaultValue: () => { return []; } }),
   neuropil_ratio: attr({ defaultValue: 4.0 }),
   neuropil_factor: attr({ defaultValue: 0.7 }),
@@ -74,43 +74,43 @@ export default Model.extend({
       }
     });
   },
-  @computed('workspace.cur_sfreq') orientationsBySF(sfreq) {
-    return this.store.query('datatag', { filter: {
-      roi_id: this.get('id'),
-      category: 'orientation',
-      method: 'dff0',
-      trial_sf: sfreq,
-      trial_blank: false,
-      trial_flicker: false,
-    } });
-  },
-  @computed('workspace.cur_sfreq') sumofgaussiansBySF(sfreq) {
-    return this.store.query('datatag', { filter: {
-      roi_id: this.get('id'),
-      category: 'fit',
-      method: 'sumof',
-      trial_sf: sfreq
-    } });
-  },
-  @computed() sfTuningCurve() {
-    return this.store.query('datatag', { filter: {
-      roi_id: this.get('id'),
-      category: 'fit',
-      method: 'diffof',
-    } });
-  },
-  @computed() anovaAll() {
-    return this.store.query('datatag', { filter: {
-      roi_id: this.get('id'),
-      category: 'anova',
-      method: 'all',
-    } });
-  },
-  @computed() bootstrapSF() {
-    return this.store.query('datatag', { filter: {
-      roi_id: this.get('id'),
-      category: 'bootstrap',
-      method: 'sf',
-    } });
-  },
+  // @computed('workspace.cur_sfreq') orientationsBySF(sfreq) {
+  //   return this.store.query('datatag', { filter: {
+  //     roi_id: this.get('id'),
+  //     category: 'orientation',
+  //     method: 'dff0',
+  //     trial_sf: sfreq,
+  //     trial_blank: false,
+  //     trial_flicker: false,
+  //   } });
+  // },
+  // @computed('workspace.cur_sfreq') sumofgaussiansBySF(sfreq) {
+  //   return this.store.query('datatag', { filter: {
+  //     roi_id: this.get('id'),
+  //     category: 'fit',
+  //     method: 'sumof',
+  //     trial_sf: sfreq
+  //   } });
+  // },
+  // @computed() sfTuningCurve() {
+  //   return this.store.query('datatag', { filter: {
+  //     roi_id: this.get('id'),
+  //     category: 'fit',
+  //     method: 'diffof',
+  //   } });
+  // },
+  // @computed() anovaAll() {
+  //   return this.store.query('datatag', { filter: {
+  //     roi_id: this.get('id'),
+  //     category: 'anova',
+  //     method: 'all',
+  //   } });
+  // },
+  // @computed() bootstrapSF() {
+  //   return this.store.query('datatag', { filter: {
+  //     roi_id: this.get('id'),
+  //     category: 'bootstrap',
+  //     method: 'sf',
+  //   } });
+  // },
 });

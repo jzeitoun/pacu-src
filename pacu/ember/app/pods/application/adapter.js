@@ -2,7 +2,9 @@ import JSONAPIAdapter from 'ember-data/adapters/json-api';
 import computed from 'ember-computed-decorators';
 
 export default JSONAPIAdapter.extend({
-  namespace: 'jsonapi',
+  // namespace: 'jsonapi',
+  namespace: 'api',
+  host: 'http://localhost:5000',
   session: Ember.inject.service('session'),
   // @computed('session.jsonapi.{moduleName,sessionArgs,baseName}'
   // ) headers(m, s, b) {
@@ -32,8 +34,3 @@ export default JSONAPIAdapter.extend({
     return Ember.String.underscore(this._super(type));
   }
 });
-//   _ajaxRequest(options) {
-//     Ember.$.ajax(options);
-//   },
-//
-//

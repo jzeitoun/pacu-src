@@ -102,12 +102,7 @@ def delete_io(req, iopath):
 def post_workspace(req, iopath, name):
     io = ScanboxIO(iopath)
     io.path.resolve()
-    session = io.db_session
-    with session.begin():
-        condition = session.query(schema.Condition).one()
-        ws = schema.Workspace(name=name, condition=condition)
-        ws.cur_sfreq = condition.sfrequencies[0]
-        session.add(ws)
+    io.condition.append_workspace(name)
     return dict(name=name)
 
 def delete_workspace(req, iopath, name):

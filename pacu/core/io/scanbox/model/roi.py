@@ -20,7 +20,7 @@ class ROI(SQLite3Base):
     neuropil_factor = Column(Float, default=0.7, nullable=False)
     neuropil_polygon = Column(PickleType, default=[])
     neuropil_enabled = Column(Boolean, default=True)
-    active = Column(Boolean, default=False)
+    active = Column(Boolean, default=False) # do not use for a while
     @property
     def contours(self):
         return np.array([[p['x'], p['y']] for p in self.polygon])

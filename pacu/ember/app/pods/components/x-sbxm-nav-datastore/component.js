@@ -13,7 +13,7 @@ function importRaw(cond) {
   this.get('socket').create(this, modname, clsname, {path: ioPath}).then(wsx => {
     messages.pushObject({body: 'Please wait...'});
     wsx.invoke('import_raw', cond).then(newIO => {
-      console.log('IMPORT RAW DONE', newIO);
+      // console.log('IMPORT RAW DONE', newIO);
       this.get('ios').pushObject(newIO);
       this.toast.info(`Data imported successfully.
         Click "New Session" to setup your first analysis.`);
@@ -42,15 +42,13 @@ export default Ember.Component.extend({
   //
   classNames: ['ui', 'inverted', 'segment'],
   @on('didInsertElement') initialize() {
-    window.C = this;
+    // window.C = this;
     Ember.run.next(this, 'query');
   },
   @observes(...params) query() {
     this.set('busy', true);
     const { hops, src, glob, days } = this.getProperties(params);
     const promise = Ember.$.getJSON(src, { hops, glob, days }).then(data => {
-      console.log('then');
-      console.log(data);
       this.set('dirs', data.dirs);
       this.set('sbxs', data.sbxs);
     }).fail((err, text, statusText) => {
@@ -93,6 +91,10 @@ export default Ember.Component.extend({
     importRawWithCondition(cond) {
       $('.sbx.conditions.modal').modal('hide');
       importRaw.call(this, cond);
+    },
+    importRawWithoutCondition(cond) {
+      $('.sbx.conditions.modal').modal('hide');
+      importRaw.call(this);
     }
   },
   on_sse_print(msg, err) {

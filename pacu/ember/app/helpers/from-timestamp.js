@@ -7,7 +7,10 @@ const monthNames = [
   "November", "December"
 ];
 
-export function fromTimestamp(timestamp, hash) {
+export function fromTimestamp([timestamp, ...rest], hash) {
+  if (Ember.$.type(timestamp) === 'string') {
+    return timestamp;
+  }
   const date = new Date(timestamp * 1000);
   const day = date.getDate();
   const monthIndex = date.getMonth();

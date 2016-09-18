@@ -67,15 +67,16 @@ export default Ember.Object.extend({
     }
     return cur || main;
   },
-  @computed('channel') img(ch) { return Image.create(ch); },
+  @computed('channel', 'channelNumber') img(ch) { return Image.create(ch); },
   @computed('roiFetching') socketStatusClass(rf) {
     const stat = rf ? 'active' : '';
     return Ember.String.htmlSafe(stat);
   },
   initialize(route) {
-    // window.qwe = this;
+    window.SM = this;
     this.mirror(
       'main_response', 'channel',
+      'channel_numbers', 'channel_number',
       'colormaps', 'colormap_index',
       'sfrequencies', 'sfrequency_index',
       'r_value',
@@ -83,6 +84,7 @@ export default Ember.Object.extend({
     ).then((x) => {
       this.requestFrame(0);
     }).then(() => {
+      this.addObserver('channelNumber', this.channelChanged);
       this.invoke('session.roi.values').then(rois => {
       // this.invoke('session.load_rois').then(rois => {
         const roiObjects = rois.map(roi => {
@@ -111,5 +113,10 @@ export default Ember.Object.extend({
     const index = this.get('img.curIndex');
     this.get('rois').forEach(roi => roi.indexChanged(index));
     this.requestFrame(index);
-  }.observes('img.curIndex')
+  }.observes('img.curIndex'),
+  channelChanged: function() {
+    const num = this.get('channelNumber');
+    this.invoke('set_channel', num);
+    location.reload();
+  }
 });

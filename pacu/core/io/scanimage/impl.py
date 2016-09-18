@@ -94,6 +94,15 @@ class ScanimageIO(object):
     def set_channel(self, channel):
         self.session.opt['channel'] = channel
         return self
+    @property
+    def nchannel(self):
+        return len(list(self.path.glob('ch?.mmap.npy')))
+    @property
+    def channel_numbers(self):
+        return list(range(self.nchannel))
+    @property
+    def channel_number(self):
+        return self.session.opt['channel']
 
     colormap_index = 0
     colormaps = ['jet', 'gray', 'gist_heat', 'afmhot', 'bone']
@@ -220,6 +229,10 @@ class ScanimageIO(object):
 
 # import pandas as pd
 # from pacu.core.io.scanimage.response.orientation import Orientation
+
+# path = 'tmp/Dario/2015.04.18/x.150322.1/Contra001'
+# qwe = ScanimageIO(path).set_session('ht')
+
 # path = 'tmp/Dario/2015.12.02/x.151101.2/bV1_Contra_004'
 # path = 'tmp/Dario/2016.02.26/x.151114.1/DM3_RbV1_Contra_00002'
 

@@ -20,9 +20,9 @@ export default Model.extend({
   busyROIs: Ember.computed.uniq('savingROIs', 'loadingROIs'),
   roisIdle: Ember.computed.empty('busyROIs'),
   roisBusy: Ember.computed.not('roisIdle'),
-  @computed('rois.[]') dtsOverallMean(rois) {
-    return this.store.query('datatag', { filter: { category: 'overall' } });
-  },
+  // @computed('rois.[]') dtsOverallMean(rois) {
+  //   return this.store.query('datatag', { filter: { category: 'overalll' } });
+  // },
   appendROI(payload) {
     payload.workspace = this;
     return this.store.createRecord('roi', payload);

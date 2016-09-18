@@ -56,4 +56,24 @@ class Base(object):
         self.__dict__.update(kwargs)
         return self
 
+    @property
+    def resource_object(self):
+        """
+        type
+        id
+        -----------------
+        attributes
+        links
+        meta
+        relationships
+        """
+        return dict(id=self.id, type=self.__tablename__)
+    @property
+    def attributes_object(self):
+        i = inspect(type(self))
+        return OrderedDict([
+            (c.key, getattr(self, c.key))
+            for c in i.columns if c not in i.primary_key
+        ])
+
 SQLite3Base = declarative_base(cls=Base)

@@ -64,7 +64,7 @@ Condition.workspaces = relationship(Workspace, order_by=Workspace.id,
     collection_class=flist,
     cascade='all, delete-orphan',
     backref='condition',
-    lazy='joined')
+    lazy='select')
 Condition.trials = relationship(Trial, order_by=Trial.id,
     collection_class=flist,
     cascade='all, delete-orphan',

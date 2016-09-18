@@ -26,15 +26,15 @@
 <div id="route-sbx-analysis" class="ui inverted segment">
   {{! MultiTrace Plot }}
   {{#with (hash width=0) as |masterDimension|}}
-    {{x-sbx-analysis/plot/multi-trace
+    {{! x-sbx-analysis/plot/multi-trace
       dimension=masterDimension
       index=model.stream.img.curIndex datatags=model.workspace.dtsOverallMean}}
-    {{x-sbx-analysis/plot/orientations
+    {{! x-sbx-analysis/plot/orientations
       dimension=masterDimension
       condition=model.condition
       roiID=model.workspace.activeROI.id
       datapromise=model.workspace.activeROI.orientationsBySF}}
-    {{x-sbx-analysis/plot/sumofgaussians
+    {{! x-sbx-analysis/plot/sumofgaussians
       dimension=masterDimension
       condition=model.condition
       roiID=model.workspace.activeROI.id
@@ -73,14 +73,14 @@
 
     {{! ROI Control }}
     <div class="four wide column roi-list-container"
-      style={{model.socket.mainCanvasDimension.parallelContainerStyle}}>
+      style={{stream.mainCanvasDimension.parallelContainerStyle}}>
       {{!--
       <div class="ui inverted segment">
         <p class="fluid ui basic tiny green button"
           {{action "reimportEphys"}}>Import Ephys</p>
       </div>
       --}}
-      {{#each model.rois as |roi index|}}
+      {{#each model.workspace.rois as |roi index|}}
         {{x-sbx-analysis/roi/hierarchy roi=roi colorIndex=index}}
         <section class="ui clearing divider"></section>
       {{else}}
@@ -90,10 +90,11 @@
 
   </div>
 
-  {{#each model.workspace.activeROI.sfTuningCurve as |sftc|}}
+  <section class="ui clearing divider"></section>
+  {{!-- #each model.workspace.activeROI.sfTuningCurve as |sftc|}}
     <img class="ui fluid image" alt="SF Tuning Curve"
       src="data:image/png;base64,{{sftc.value.plot}}" />
-  {{/each}}
+  {{/each --}}
 
   {{!--
 
@@ -115,7 +116,7 @@
 
   <section class="ui clearing divider"></section>
   <div class="ui inverted active tab segment" style="overflow-x: scroll;">
-    {{x-scanbox-analyzer/stats/table rois=model.rois curSF=model.workspace.cur_sfeq}}
+    {{!x-scanbox-analyzer/stats/table rois=model.rois curSF=model.workspace.cur_sfeq}}
   </div>
 
   {{!--

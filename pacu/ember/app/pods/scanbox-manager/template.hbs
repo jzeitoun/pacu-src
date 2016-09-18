@@ -17,10 +17,10 @@
       {{#x-anlz-session-card
         title=io.info.iopath
         dot=io.info.scanmodestr
-        timeAgo=io.info.sbxtime
+        timeAgo=(from-timestamp io.info.sbxtime detailed=false)
         src=io.info.sbxsize
         user=io.info.nframesstr
-        desc="desc"
+        desc=""
         host=io.info.frameratestr
       }}
       {{#if io.err}}
