@@ -37,13 +37,13 @@ def recreate(dbpath='', echo=True):
     SQLite3Base.metadata.create_all(engine)
     return engine
 
-def get_sessionmaker(dbpath, echo=True, **kw):
+def get_sessionmaker(dbpath, echo=True, autocommit=True, **kw):
     from sqlalchemy import create_engine
     from sqlalchemy.orm import sessionmaker
     path = Path(dbpath)
     engine = create_engine('sqlite:///{}'.format(dbpath),
-        echo=echo, **kw) if path.is_file() else recreate('')
-    return sessionmaker(engine, autocommit=True)
+        echo=echo, **kw) if path.is_file() else recreate('', echo=echo)
+    return sessionmaker(engine, autocommit=autocommit)
 
 def Session(ioname, echo=True):
     """
@@ -55,8 +55,9 @@ def Session(ioname, echo=True):
     from sqlalchemy import create_engine
     from sqlalchemy.orm import sessionmaker
     dbpath = userenv.joinpath('scanbox', ioname, 'db.sqlite3')
-    engine = create_engine('sqlite:///{}'.format(dbpath), echo=echo)
-    return sessionmaker(engine, autocommit=True)
+    engine = create_engine('sqlite:///{}'.format(dbpath),
+        echo=echo, convert_unicode=True)
+    return sessionmaker(engine, autocommit=False)
 
 
 def find_orm(tablename):
