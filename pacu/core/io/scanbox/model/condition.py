@@ -10,6 +10,7 @@ from pacu.core.io.scanbox.model.base import SQLite3Base
 class Condition(SQLite3Base):
     __tablename__ = 'conditions'
     info = Column(PickleType)
+    exp_id = Column(Integer)
     imported = Column(Boolean, default=False)
     pixel_x = Column(Integer)
     pixel_y = Column(Integer)

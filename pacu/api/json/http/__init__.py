@@ -19,3 +19,9 @@ def delete(req, modname, fncname, *args, **kwargs):
     func = getattr(module, 'delete_{}'.format(fncname))
     rv = func(req, *args, **kwargs)
     return json.dumps(rv)#  or {})
+
+def patch(req, modname, fncname, *args, **kwargs):
+    module = importlib.import_module('pacu.api.json.http.{}'.format(modname))
+    func = getattr(module, 'patch_{}'.format(fncname))
+    rv = func(req, *args, **kwargs)
+    return json.dumps(rv)#  or {})

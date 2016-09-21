@@ -73,6 +73,7 @@ class ScanboxIO(object):
                     schema.Trial.init_and_update(**trial)
                     for trial in exp])
                 condition.imported = True
+                condition.exp_id = int(id)
                 session.add(condition)
         except Exception as e:
             print 'Condition import failed with reason below,', str(e)
@@ -129,3 +130,10 @@ class ScanboxIO(object):
 # s.flush()
 def ScanboxIOStream(files): # magic protocol... for damn `files` kwargs
     return ScanboxIO(files)
+
+# from pacu.core.io.scanbox.model import minimalbase as mb
+# old = '/Volumes/Users/ht/dev/current/pacu/tmp/legacydb/Kirstie/ka28/day1/Aligned_day1_000_002.io/db.sqlite3'
+# engine = mb.create_engine('sqlite:///{}'.format(old), echo=True)
+# session = mb.sessionmaker(engine)()
+
+# [r.polygon for r in session.query(mb.ROI).order_by(mb.ROI.id).all()]

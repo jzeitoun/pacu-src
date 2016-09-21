@@ -28,6 +28,7 @@
         <p class="ui red mini header">{{io.err.type}}</p>
         <p style="height: 64px; overflow-y: scroll">{{io.err.detail}}</p>
         <div class="ui vertical fluid buttons">
+          {{!-- <div class="ui red basic button" {{action "reinitializeDBSchema" io}}>Reinitialize DB Schema</div> --}}
           <div class="ui red basic button" {{action "removeImported" io}}>Remove Imported</div>
         </div>
       </div>

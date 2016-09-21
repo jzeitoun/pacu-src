@@ -112,3 +112,14 @@ def delete_workspace(req, iopath, name):
     with session.begin():
         ws = session.query(schema.Workspace).filter_by(name=name).one()
         session.delete(ws)
+
+def patch_db(req, iopath):
+    # how can i find exp id...
+    raise NotImplementedError
+#     io = ScanboxIO(iopath)
+#     io.path.resolve()
+#     import ipdb;ipdb.set_trace()
+#     session = io.db_session
+#     with session.begin():
+#         ws = session.query(schema.Workspace).filter_by(name=name).one()
+#         session.delete(ws)
