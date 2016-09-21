@@ -11,18 +11,13 @@ from pacu.core.io.scanbox.model.base import SQLite3Base
 
 basemodule = 'pacu.core.io.scanbox.method'
 
-class Datatag(SQLite3Base):
-    __tablename__ = 'datatags'
+class Datatag(object):
     updated_at = Column(DateTime, onupdate=func.now())
     # exception
     etype = Column(Unicode(128))
     etext = Column(Unicode)
     # dynamic
-    value = Column(PickleType, default=None)
-    # search criteria
-    category = Column(Unicode(128))
-    method = Column(Unicode(128))
-
+    value = NotImplemented
     # search trials
     trial_on_time = Column(Float)
     trial_off_time = Column(Float)
@@ -60,3 +55,43 @@ class Datatag(SQLite3Base):
             self.etype = None
             self.etext = None
         return self
+
+class DTOverallMean(Datatag, SQLite3Base):
+    __tablename__ = 'dtoverallmeans'
+    category = 'overall'
+    method = 'mean'
+    value = Column(PickleType, default=[])
+class DTTrialDff0(Datatag, SQLite3Base): # kind of private
+    __tablename__ = 'dttrialdff0s'
+    category = 'trial'
+    method = 'dff0'
+    value = Column(PickleType, default=[])
+class DTOrientationsMean(Datatag, SQLite3Base):
+    __tablename__ = 'dtorientationsmeans'
+    category = 'orientations'
+    method = 'mean'
+    indices = Column(PickleType, default={})
+    matrix = Column(PickleType, default=[])
+    meantrace = Column(PickleType, default=[])
+    on_frames = Column(Integer)
+    bs_frames = Column(Integer)
+class DTOrientationBestPref(Datatag, SQLite3Base):
+    __tablename__ = 'dtorientationbestprefs'
+    category = 'orientation'
+    method = 'bestpref'
+    value = Column(Float)
+class DTOrientationsFit(Datatag, SQLite3Base):
+    __tablename__ = 'dtorientationsfits'
+    category = 'orientations'
+    method = 'fit'
+    value = Column(PickleType, default={})
+class DTSFreqFit(Datatag, SQLite3Base):
+    __tablename__ = 'dtsfreqfits'
+    category = 'sfreq'
+    method = 'fit'
+    value = Column(PickleType, default={})
+class DTAnovaAll(Datatag, SQLite3Base):
+    __tablename__ = 'dtanovaalls'
+    category = 'anova'
+    method = 'all'
+    value = Column(PickleType, default={})

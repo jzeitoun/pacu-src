@@ -21,6 +21,8 @@ class ROI(SQLite3Base):
     neuropil_polygon = Column(PickleType, default=[])
     neuropil_enabled = Column(Boolean, default=True)
     active = Column(Boolean, default=False) # do not use for a while
+    draw_dtoverallmean = Column(Boolean, default=False)
+    object_session = property(object_session)
     @property
     def contours(self):
         return np.array([[p['x'], p['y']] for p in self.polygon])
@@ -31,7 +33,7 @@ class ROI(SQLite3Base):
     def dt_ori_by_sf(self):
         sfs = self.workspace.condition.sfrequencies
         oris = self.workspace.condition.orientations
-        trials = self.datatags.filter_by(trial_flicker=False, trial_blank=False)
+        trials = self.dttrialdff0s.filter_by(trial_flicker=False, trial_blank=False)
         return OrderedDict([
             (
                 sf,
@@ -52,39 +54,57 @@ class ROI(SQLite3Base):
     def before_flush_new(self, session, context):
         self.initialize_datatags()
     def initialize_datatags(self): # order is very important.
-        from pacu.core.io.scanbox.model.datatag import Datatag
-        Datatag(roi=self, category=u'overall', method=u'mean')
-        for trial in self.workspace.condition.trials:
-            dt = Datatag(roi=self, # trial=trial,
-                category=u'orientation', method=u'dff0')
-            for attr in TRIAL_ATTRS:
-                setattr(dt, u'trial_' + attr, getattr(trial, attr))
-        Datatag(roi=self, category=u'orientation', method=u'best_pref')
-        for sf in self.workspace.condition.sfrequencies:
-            Datatag(roi=self, category=u'fit', method=u'sumof', trial_sf=sf)
-        Datatag(roi=self, category=u'fit', method=u'diffof')
-        Datatag(roi=self, category=u'anova', method=u'all')
-        Datatag(roi=self, category=u'bootstrap', method=u'sf')
+        from pacu.core.io.scanbox.model.datatag import DTOverallMean
+        from pacu.core.io.scanbox.model.datatag import DTTrialDff0
+        from pacu.core.io.scanbox.model.datatag import DTOrientationsMean
+        from pacu.core.io.scanbox.model.datatag import DTOrientationBestPref
+        from pacu.core.io.scanbox.model.datatag import DTOrientationsFit
+        from pacu.core.io.scanbox.model.datatag import DTSFreqFit
+        from pacu.core.io.scanbox.model.datatag import DTAnovaAll
+        condition = self.workspace.condition
+        if not self.dtoverallmean:
+            print 'Initialize Overall Mean'
+            DTOverallMean(roi=self)
+        if not condition.imported:
+            return
+        if not self.dttrialdff0s:
+            print 'Initialize Trial DFF0'
+            for trial in condition.trials:
+                dt = DTTrialDff0(roi=self)
+                for attr in TRIAL_ATTRS:
+                    setattr(dt, u'trial_' + attr, getattr(trial, attr))
+        if not self.dtorientationsmeans:
+            print 'Initialize Orientations Mean'
+            for sf in self.workspace.condition.sfrequencies:
+                DTOrientationsMean(roi=self, trial_sf=sf)
+        if not self.dtorientationbestpref:
+            print 'Initialize Orientation Best Pref'
+            DTOrientationBestPref(roi=self)
+        if not self.dtorientationsfits:
+            print 'Initialize Orientations Fit'
+            for sf in condition.sfrequencies:
+                DTOrientationsFit(roi=self, trial_sf=sf)
+        if not self.dtsfreqfit:
+            print 'Initialize SFreq Fit'
+            DTSFreqFit(roi=self)
+        if not self.dtanovaall:
+            print 'Initialize Anova All'
+            DTAnovaAll(roi=self)
     def refresh_all(self):
-        dts0 = self.datatags.filter_by(category='overall', method='mean')
-        dts1 = self.datatags.filter_by(category='orientation', method='dff0')
-        dts2 = self.datatags.filter_by(category='orientation', method='best_pref')
-        dts3 = self.datatags.filter_by(category='fit', method='sumof')
-        dts4 = self.datatags.filter_by(category='fit', method='diffof')
-        dts5 = self.datatags.filter_by(category='anova', method='all')
-        dts6 = self.datatags.filter_by(category='bootstrap', method='sf')
         print 'REFRESH TRACE'
-        for tag in dts0: tag.refresh()
+        self.dtoverallmean.refresh()
         print 'REFRESH df/f0'
-        for tag in dts1: tag.refresh()
-        print 'REFRESH best pref'
-        for tag in dts2: tag.refresh()
-        print 'REFRESH SoG'
-        for tag in dts3: tag.refresh()
-        print 'REFRESH DoG'
-        for tag in dts4: tag.refresh()
-        print 'Anova All'
-        for tag in dts5: tag.refresh()
+        for tag in self.dttrialdff0s: tag.refresh()
+        print 'REFRESH Orientations'
+        for tag in self.dtorientationsmeans: tag.refresh()
+        print 'REFRESH BEST PREF'
+        self.dtorientationbestpref.refresh()
+        print 'REFRESH OriFit'
+        for tag in self.dtorientationsfits: tag.refresh()
+        print 'REFRESH SFreqFit'
+        self.dtsfreqfit.refresh()
+        print 'REFRESH Anova All'
+        self.dtanovaall.refresh()
         # print 'Bootstrap SF'
         # for tag in dts6: tag.refresh()
 

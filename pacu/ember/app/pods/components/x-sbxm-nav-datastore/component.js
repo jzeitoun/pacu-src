@@ -12,7 +12,7 @@ function importRaw(cond) {
   $console.modal('show', {closable: false});
   this.get('socket').create(this, modname, clsname, {path: ioPath}).then(wsx => {
     messages.pushObject({body: 'Please wait...'});
-    wsx.invoke('import_raw', cond).then(newIO => {
+    wsx.invoke('import_raw', cond.id).then(newIO => {
       // console.log('IMPORT RAW DONE', newIO);
       this.get('ios').pushObject(newIO);
       this.toast.info(`Data imported successfully.

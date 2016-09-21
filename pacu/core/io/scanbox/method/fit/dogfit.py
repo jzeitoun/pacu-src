@@ -171,14 +171,18 @@ class SpatialFrequencyDogFit(object):
         pref = self.preferred_sfreq.x
         peak = self.peak_sfreq.x
         ratio = self.bandwidth_ratio
-        dog_x = self.dog_x
-        dog_y = self.dog_y
+        dog_x = self.dog_x.tolist()
+        dog_y = self.dog_y.tolist()
         blank = self.blank
         flicker = self.flicker
-        sfx = self.xfreq
-        sfy = self.ymeas
-        param = self.dog_param
+        sfx = util.nan_for_list(self.xfreq.tolist())
+        sfy = util.nan_for_list(self.ymeas.tolist())
+        param = self.dog_param._asdict()
         plot = self.plot_io()
+        rc10 = self._rel_cutoff10
+        rc20 = self._rel_cutoff20
+        c15 = self._cutoff15
+        c20 = self._cutoff20
         return util.nan_for_json(dict(
             pref = pref,
             peak = peak,
@@ -191,10 +195,10 @@ class SpatialFrequencyDogFit(object):
             sfy = sfy,
             param = param,
             plot = plot,
-            rc10 = self._rel_cutoff10,
-            rc20 = self._rel_cutoff20,
-            c15 = self._cutoff15,
-            c20 = self._cutoff20
+            rc10 = rc10,
+            rc20 = rc20,
+            c15 = c15,
+            c20 = c20
         ))
     def _plot(self):
         print 'Prepare plotting...'

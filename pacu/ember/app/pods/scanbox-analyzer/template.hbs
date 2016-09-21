@@ -1,6 +1,6 @@
 {{#x-sui-sticky class="sbx"}}
 <div class="ui small compact inverted icon menu">
-  <a class="item" {{action "unloadModel"}}>
+  <a class="item" {{action "reloadRelationships"}}>
     <i class="red line recycle icon"></i>
   </a>
   <a class="item" {{action "noop"}}>
@@ -17,28 +17,29 @@
   <a class="item" {{action "noop"}}>
     Baseline Duration: {{model.workspace.baseline_duration}}
   </a>
+  {{!-- <a class="item" {{action "noop"}}>
+    Anova: {{model.workspace.activeROI.dtanovaall.value.p}}
+  </a> --}}
 </div>
 {{/x-sui-sticky}}
-
-{{!model.workspace.activeROI.sfTuningCurve}}
-{{!model.workspace.activeROI.sfplot}}
 
 <div id="route-sbx-analysis" class="ui inverted segment">
   {{! MultiTrace Plot }}
   {{#with (hash width=0) as |masterDimension|}}
-    {{! x-sbx-analysis/plot/multi-trace
+    {{x-sbx-analysis/plot/multi-trace
       dimension=masterDimension
-      index=model.stream.img.curIndex datatags=model.workspace.dtsOverallMean}}
-    {{! x-sbx-analysis/plot/orientations
-      dimension=masterDimension
-      condition=model.condition
-      roiID=model.workspace.activeROI.id
-      datapromise=model.workspace.activeROI.orientationsBySF}}
-    {{! x-sbx-analysis/plot/sumofgaussians
+      index=model.stream.img.curIndex
+      datatags=model.workspace.dtoverallmeans}}
+    {{x-sbx-analysis/plot/orientations
       dimension=masterDimension
       condition=model.condition
       roiID=model.workspace.activeROI.id
-      datapromise=model.workspace.activeROI.sumofgaussiansBySF}}
+      datatag=model.workspace.activeROI.dtorientationsmeanBySF}}
+    {{x-sbx-analysis/plot/sumofgaussians
+      dimension=masterDimension
+      condition=model.condition
+      roiID=model.workspace.activeROI.id
+      datatag=model.workspace.activeROI.dtorientationsfitBySF}}
 
     {{! x-sbx-analysis/plot/ephys-trace
       dimension=masterDimension
@@ -89,35 +90,15 @@
     </div>
 
   </div>
-
   <section class="ui clearing divider"></section>
-  {{!-- #each model.workspace.activeROI.sfTuningCurve as |sftc|}}
-    <img class="ui fluid image" alt="SF Tuning Curve"
-      src="data:image/png;base64,{{sftc.value.plot}}" />
-  {{/each --}}
+  {{x-scanbox-analyzer/stats/table rois=model.rois}}
 
-  {{!--
-
-  {{#each model.workspace.activeROI.anovaAll as |anova|}}
-    <h3 class="ui header">Anova All</h3>
-    {{#each-in anova.value as |key val|}}
-      <p class="ui">{{key}}: {{val}}</p>
-    {{/each-in}}
-  {{/each}}
-
-  {{#each model.workspace.activeROI.bootstrapSF as |bsf|}}
-    <h3 class="ui header">Bootstrap SF</h3>
-    {{#each-in bsf.value as |key val|}}
-      <p class="ui">{{key}}: {{val}}</p>
-    {{/each-in}}
-  {{/each}}
-
-  --}}
-
+  {{#if model.workspace.activeROI}}
   <section class="ui clearing divider"></section>
-  <div class="ui inverted active tab segment" style="overflow-x: scroll;">
-    {{!x-scanbox-analyzer/stats/table rois=model.rois curSF=model.workspace.cur_sfeq}}
-  </div>
+  <img class="ui fluid image" alt="SF Tuning Curve"
+    src="data:image/png;base64,{{model.workspace.activeROI.dtsfreqfit.value.plot}}" />
+  {{/if}}
+
 
   {{!--
   <section class="ui clearing divider"></section>

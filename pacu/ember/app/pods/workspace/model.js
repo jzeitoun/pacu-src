@@ -10,6 +10,7 @@ export default Model.extend({
   baseline_duration: attr(),
   // iopath: attr('string'),
   rois: hasMany('roi'),
+  dtoverallmeans: hasMany('dtoverallmean'),
   // colormaps: hasMany('colormap'),
   condition: belongsTo('condition'),
   // ecorrs: hasMany('ephys-correlation'),
@@ -21,7 +22,9 @@ export default Model.extend({
   roisIdle: Ember.computed.empty('busyROIs'),
   roisBusy: Ember.computed.not('roisIdle'),
   // @computed('rois.[]') dtsOverallMean(rois) {
-  //   return this.store.query('datatag', { filter: { category: 'overalll' } });
+    // const all = this.store.peekAll('datatag').filterBy('category', 'overall');
+    // console.log('dtsOverallMean', all);
+    // return all
   // },
   appendROI(payload) {
     payload.workspace = this;

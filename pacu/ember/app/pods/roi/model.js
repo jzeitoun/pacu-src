@@ -1,3 +1,4 @@
+import DS from 'ember-data';
 import Model from 'ember-data/model';
 import attr from 'ember-data/attr';
 import { belongsTo, hasMany } from 'ember-data/relationships';
@@ -14,9 +15,21 @@ export default Model.extend({
   neuropil_factor: attr({ defaultValue: 0.7 }),
   neuropil_polygon: attr({ defaultValue: () => { return []; } }),
   neuropil_enabled: attr({ defaultValue: true }),
+  draw_dtoverallmean: attr({ defaultValue: true }),
   centroid: attr({ defaultValue: () => { return {x: -1, y: -1}; } }),
   workspace: belongsTo('workspace'),
-  datatags: hasMany('datatag'),
+
+  dtorientationsmeans: hasMany('dtorientationsmean'),
+  dtorientationsfits: hasMany('dtorientationsfit'),
+  dtsfreqfit: belongsTo('dtsfreqfit'),
+  dtorientationbestpref: belongsTo('dtorientationbestpref'),
+  dtanovaall: belongsTo('dtanovaall'),
+  dtoverallmean: belongsTo('dtoverallmean'),
+  // @computed() anova_all() {
+  //   const promise = this.get('dtanovaall.promise');
+  //   console.log('getting anoval all with ', promise);
+  //   return DS.PromiseObject.create({ promise });
+  // },
   @observes('polygon.@each.{x,y}') updateCentroid(polygon) {
     const old = this.get('centroid');
     const nue = getCentroid(this.get('polygon'));
@@ -55,34 +68,32 @@ export default Model.extend({
         if (action.get('status_code') === 500) {
           this.get('toast').error(action.get('status_text'));
         } else {
-          this.get('workspace').then(w => w.notifyPropertyChange('dtsOverallMean'));
+          Ember.run.next(this, 'synchronizeDatatags');
         }
       }).finally(() => {
         this.set('inAction', false);
       });
     });
   },
-  /*@on('didCreate')*/ synchronizeDatatags() {
-    const roi_id = this.get('id');
-    this.store.query('datatag', { filter: { roi_id } });
+  // on('didCreate')
+  synchronizeDatatags() {
+    // console.log('SYNC RELATIONSHIP');
+    this.get('workspace.dtoverallmeans').reload();
+    this.get('dtorientationsmeans').reload();
+    this.get('dtorientationsfits').reload();
+    this.store.findRecord('dtsfreqfit', this.get('dtsfreqfit.id'));
+    this.store.findRecord('dtorientationbestpref', this.get('dtorientationbestpref.id'));
+    this.store.findRecord('dtanovaall', this.get('dtanovaall.id'));
   },
-  @on('didDelete') unpopulateDatatags() {
-    const id = this.get('id');
-    this.store.peekAll('datatag').map(dt => {
-      if (id == dt.get('roi_id')) { // comparing int with string
-        this.store.unloadRecord(dt);
-      }
-    });
+  @computed('workspace.cur_sfreq', 'dtorientationsmeans') dtorientationsmeanBySF(sfreq, dts) {
+    return dts.findBy('trial_sf', sfreq);
   },
-  // @computed('workspace.cur_sfreq') orientationsBySF(sfreq) {
-  //   return this.store.query('datatag', { filter: {
-  //     roi_id: this.get('id'),
-  //     category: 'orientation',
-  //     method: 'dff0',
-  //     trial_sf: sfreq,
-  //     trial_blank: false,
-  //     trial_flicker: false,
-  //   } });
+  @computed('workspace.cur_sfreq', 'dtorientationsfits') dtorientationsfitBySF(sfreq, dts) {
+    return dts.findBy('trial_sf', sfreq);
+  },
+  // @computed('dtsfreqfit.value.plot') sfreqfitplot(plot) {
+  //   console.log('UP', plot);
+  //   return plot;
   // },
   // @computed('workspace.cur_sfreq') sumofgaussiansBySF(sfreq) {
   //   return this.store.query('datatag', { filter: {

@@ -59,6 +59,7 @@ export default Ember.Component.extend({ //TODO: Simplify
     });
   },
   initialize: function() {
+    window.ASD = this;
     const child = this.element.firstElementChild;
     if (Ember.isNone(child)) { return; }
     $(window).on(`resize.${this.elementId}`, e => {

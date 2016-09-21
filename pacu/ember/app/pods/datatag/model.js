@@ -2,13 +2,11 @@ import Ember from 'ember';
 import Model from 'ember-data/model';
 import attr from 'ember-data/attr';
 import { belongsTo, hasMany } from 'ember-data/relationships';
+import { observes } from 'ember-computed-decorators';
 
 export default Model.extend({
   created_at: attr('epoch'),
   updated_at: attr('epoch'),
-  value: attr(),
-  category: attr('string'),
-  method: attr('string'),
   etext: attr('string'),
   etype: attr('string'),
   trial_on_time: attr(),
@@ -21,10 +19,17 @@ export default Model.extend({
   trial_ran: attr(),
   trial_flicker: attr(),
   trial_blank: attr(),
-  roi: belongsTo('roi'),
-  roi_id: attr(),
-  trial: belongsTo('trial'),
-  trial_id: attr(),
+  // roi: belongsTo('roi', { inverse: 'datatags' }),
+  // roi_id: attr(),
+  // trial: belongsTo('trial'),
+  // trial_id: attr(),
+  @observes('roi') roiChanged() {
+    this.get('roi').then(Ember.run.bind(this, 'cascadeDelete'));
+  },
+  cascadeDelete(roi) {
+    if (Ember.isPresent(roi)) { return; }
+    this.store.unloadRecord(this);
+  },
   action(name, ...args) {
     if (this.get('inAction')) { return; }
     this.set('inAction', true);
@@ -42,5 +47,5 @@ export default Model.extend({
         this.reload();
       });
     }
-  }
+  },
 });

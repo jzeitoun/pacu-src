@@ -6,6 +6,7 @@ export default Model.extend({
   workspaces: hasMany('workspace'),
   // trials: hasMany('trial'),
   info: attr(),
+  imported: attr(),
   pixel_x: attr(),
   pixel_y: attr(),
   dist: attr(),

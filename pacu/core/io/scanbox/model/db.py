@@ -4,6 +4,7 @@ from sqlalchemy.schema import CreateColumn
 from pacu.util import identity
 from pacu.util.path import Path
 from pacu.profile import manager
+from pacu.core.io.scanbox.model import relationship as sbxrels
 from pacu.core.io.scanbox.model.relationship import *
 from pacu.core.io.scanbox.model.base import SQLite3Base
 
@@ -11,6 +12,12 @@ opt = manager.instance('opt')
 userenv = identity.path.userenv
 
 def fix_incremental(meta, bind):
+    """
+    meta = schema.SQLite3Base.metadata
+    bind = io.db_session.bind
+    schema.fix_incremental(meta, bind)
+    """
+    meta.create_all(bind=bind, checkfirst=True)
     ref = inspect(bind)
     for table in meta.sorted_tables:
         orm_cols = set(col.name for col in table.c)
@@ -59,6 +66,11 @@ def Session(ioname, echo=True):
         echo=echo, convert_unicode=True)
     return sessionmaker(engine, autocommit=False)
 
+def engine(ioname, echo=True):
+    from sqlalchemy import create_engine
+    dbpath = userenv.joinpath('scanbox', ioname, 'db.sqlite3')
+    return create_engine('sqlite:///{}'.format(dbpath),
+        echo=echo, convert_unicode=True)
 
 def find_orm(tablename):
     return {c.__tablename__: c
@@ -99,3 +111,6 @@ def after_rollback(session):
 
 SQLite3Base.__flushed_attrs__ = ()
 SQLite3Base.__committed_attrs__ = ()
+
+def list_orms():
+    return [getattr(sbxrels, k) for k in sbxrels.__all__]

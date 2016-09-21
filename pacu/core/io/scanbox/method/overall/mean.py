@@ -9,7 +9,7 @@ def main(workspace, condition, roi, datatag):
     if roi.neuropil_enabled:
         np_trace = tracer.neuropil_trace(workspace.other_rois(roi))
         main_trace -= np_trace * roi.neuropil_factor
-    return main_trace
+    return main_trace.tolist()
 
 if __name__ == '__sbx_main__':
     datatag.value = main(workspace, condition, roi, datatag)

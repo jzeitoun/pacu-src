@@ -1,6 +1,5 @@
 __package__ = '' # unicode package name error
 
-import cv2
 import numpy as np
 
 from pacu.core.io.scanbox.method.fit.sogfit import SumOfGaussianFit
@@ -8,8 +7,7 @@ from pacu.core.io.scanbox.method.fit.sogfit import SumOfGaussianFit
 def main(workspace, condition, roi, datatag):
     cfreq = workspace.condition.info['framerate']
     sfs = []
-    trials = roi.datatags.filter_by(
-        method='dff0', trial_blank=False, trial_flicker=False)
+    trials = roi.dttrialdff0s.filter_by(trial_blank=False, trial_flicker=False)
     for sf in condition.sfrequencies:
         sf_trials = trials.filter_by(trial_sf=sf)
         oris = []

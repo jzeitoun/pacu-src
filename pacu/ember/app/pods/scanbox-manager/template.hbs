@@ -20,7 +20,7 @@
         timeAgo=(from-timestamp io.info.sbxtime detailed=false)
         src=io.info.sbxsize
         user=io.info.nframesstr
-        desc=""
+        desc=(concat "With condition: " io.has_condition)
         host=io.info.frameratestr
       }}
       {{#if io.err}}

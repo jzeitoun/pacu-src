@@ -6,6 +6,8 @@ const modname = 'pacu.core.io.scanbox.impl2';
 const clsname = 'ScanboxIOStream';
 const moduleName = 'pacu.core.io.scanbox.model.db';
 const baseName = 'SQLite3Base';
+const include = 'condition,dtoverallmeans,rois,rois.dtorientationsmeans,rois.dtorientationbestpref,rois.dtorientationsfits,rois.dtsfreqfit,rois.dtanovaall';
+const queryParam = { include, filter: { name } };
 
 export default Ember.Route.extend({
   socket: Ember.inject.service(),
@@ -18,21 +20,24 @@ export default Ember.Route.extend({
     this.get('session.jsonapi').setProperties({moduleName, baseName,
       sessionArgs: [ioName]
     });
-    const queryParam = { filter: { name }, include: 'condition,rois' };
     const query = this.store.query('workspace', queryParam);
     const workspace = query.then(wss => wss.get('firstObject'));
     const condition = workspace.then(ws => ws.get('condition'));
     const rois = workspace.then(ws => ws.get('rois'));
-    const stream = new Ember.RSVP.Promise((resolve /*, reject */) => {
-      return this.get('socket').create(
-        this, modname, clsname, ioName
-      ).then((wsx) => {
-        wsx.socket.onclose = () => {
-          this.toast.warning('WebSocket connection closed.');
-        };
-        this.set('wsx', wsx);
-        this.toast.success('WebSocket connection estabilished.');
-        resolve(SocketStream.create({ wsx }));
+    const stream = rois.then(() => {
+      return new Ember.RSVP.Promise((resolve /*, reject */) => {
+        return this.get('socket').create(
+          this, modname, clsname, ioName
+        ).then((wsx) => {
+          wsx.socket.onclose = () => {
+            this.toast.warning('WebSocket connection closed.');
+          };
+          this.set('wsx', wsx);
+          this.toast.success('WebSocket connection estabilished.');
+          Ember.run.later(() => {
+            resolve(SocketStream.create({ wsx }));
+          }, 1000); // necessary
+        });
       });
     });
     return Ember.RSVP.hash({ condition, workspace, stream, rois });

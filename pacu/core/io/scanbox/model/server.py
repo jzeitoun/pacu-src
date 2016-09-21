@@ -3,25 +3,28 @@ import importlib
 from flask import Flask
 from flask import request
 from flask_restless import APIManager
-from flask_restless.views.base import ModelView
+from flask_restless.serialization import DefaultRelationshipDeserializer
+from sqlalchemy import event
 
 from pacu.core.io.scanbox.model import db as schema
 
-class nmspc:
-    session = schema.get_sessionmaker(':memory:', echo=False, autocommit=False)
+original = DefaultRelationshipDeserializer.__call__
+def override(self, data):
+    return None if data is None else original(self, data)
+DefaultRelationshipDeserializer.__call__ = override
 
-# monkey patching for dynamic session binding
-modelview_init_original = ModelView.__init__
-def modelview_init_override(self, session, model, *args, **kw):
-    modelview_init_original(self, nmspc.session, model, *args, **kw)
-ModelView.__init__ = modelview_init_override
+class nmspc:
+    session = schema.get_sessionmaker(':memory:', echo=False, autocommit=False)()
+    event.listen(session, 'before_flush', schema.before_flush)
+    event.listen(session, 'after_commit', schema.after_commit)
 
 def select_db_session():
     sa = request.headers.get('pacu-jsonapi-session-arguments')
     mn = request.headers.get('pacu-jsonapi-module-name')
+    nmspc.session.bind = None
     if all((sa, mn)):
-        Session = importlib.import_module(mn).Session(*sa.split(','), echo=False)
-        nmspc.session = Session()
+        engine = importlib.import_module(mn).engine(*sa.split(','), echo=False)
+        nmspc.session.bind = engine
 
 def add_cors_headers(response):
     response.headers['Access-Control-Allow-Origin'] = '*'
@@ -36,11 +39,6 @@ def create_endpoint():
     app.after_request(add_cors_headers)
     methods = 'GET POST PUT DELETE PATCH'.split()
     manager = APIManager(app=app, session=nmspc.session)
-    manager.create_api(schema.Workspace, methods=methods)
-    manager.create_api(schema.Condition, methods=methods)
-    manager.create_api(schema.ROI, methods=methods)
-    manager.create_api(schema.Datatag, methods=methods)
-    manager.create_api(schema.Trial, methods=methods)
-    manager.create_api(schema.Colormap, methods=methods)
-    manager.create_api(schema.EphysCorrelation, methods=methods)
+    for orm in schema.list_orms():
+        manager.create_api(orm, methods=methods)
     return app

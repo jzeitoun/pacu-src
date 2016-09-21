@@ -68,24 +68,30 @@ const options =  {
 const config = { type, data, options }
 
 const DataFetcher = Ember.Object.extend({
-//   stretched: [],
-//   fit: {x:[], y:[]},
-  @computed('datatag') labels(datatag) {
-    return datatag.x;
+  @computed('datatag') orientations(datatag) {
+    // if (Ember.isNone(datatag)) { return []; }
+    return datatag.get('value.orientations') || [];
   },
   @computed('datatag') datasets(datatag) {
+    // if (Ember.isNone(datatag)) { return []; }
+    const y_meas = datatag.get('value.y_meas') || [];
+    const y_fit = datatag.get('value.y_fit') || [];
     const measureData = {
       borderColor: 'rgba(255, 255, 255, 1)',
       borderWidth: 0.5,
-      data: datatag.y_meas,
+      data: y_meas,
     };
     const fitData = {
       borderColor: 'rgba(255, 0, 0, 1)',
       borderWidth: 1,
-      data: datatag.y_fit,
+      data: y_fit,
     };
     return [measureData, fitData];
-  }
+  },
+  @computed('datatag') labels(datatag) {
+    // if (Ember.isNone(datatag)) { return []; }
+    return datatag.get('value.x') || [];
+  },
 });
 
 export default Ember.Component.extend({
@@ -96,33 +102,33 @@ export default Ember.Component.extend({
   attributeBindings: ['width', 'height'],
   @computed() ctx() { return this.element.getContext('2d'); },
   @computed('ctx') chart(ctx) { return new Chart(ctx, config); },
-  @observes('datapromise') promiseIncoming() {
-    const prom = this.get('datapromise');
-    if (Ember.isNone(prom)) {
-      this.set('datatag', {});
-    } else {
-      prom.then(data => {
-        this.set('datatag', data.get('firstObject.value'));
-      });
-    }
+  // @observes('datapromise') promiseIncoming() {
+  //   const prom = this.get('datapromise');
+  //   if (Ember.isNone(prom)) {
+  //     this.set('datatag', {});
+  //   } else {
+  //     prom.then(data => {
+  //       this.set('datatag', data.get('firstObject.value'));
+  //     });
+  //   }
+  // },
+  datatag: Ember.Object.create({ value: {} }),
+  @computed('datatag') fetcher(datatag) {
+    return DataFetcher.create({ datatag });
   },
-  @computed('condition', 'datatag') fetcher(condition, datatag) {
-    return DataFetcher.create({ datatag, condition });
-  },
-  @observes('dimension.width') dimensionChanged() {
-    this.get('chart').update();
-  },
+  // @observes('dimension.width') dimensionChanged() {
+  //   this.get('chart').update();
+  // },
   @observes('datatag') draw() {
-    const fetcher = this.get('fetcher');
-    const chart = this.get('chart');
-    if (Ember.$.isEmptyObject(this.get('datatag'))) {
-      chart.data.datasets = datasets;
-      chart.update();
-      return;
-    }
+    const {chart, fetcher, roiID} = this.getProperties('chart', 'fetcher', 'roiID');
+    // if (Ember.$.isEmptyObject(this.get('datatag'))) {
+    //   chart.data.datasets = datasets;
+    //   chart.update();
+    //   return;
+    // }
     const labels = fetcher.get('labels');
     const datasets = fetcher.get('datasets');
-    const orientations = fetcher.get('condition.orientations');
+    const orientations = fetcher.get('orientations');
     const ticks = chart.config.options.scales.xAxes[0].ticks;
     ticks.callback = (value, index, values) => {
       if (orientations.includes(value)) {
@@ -133,8 +139,10 @@ export default Ember.Component.extend({
     chart.data.datasets = datasets;
     chart.update();
   },
+  @on('didInsertElement') initialize() {
+    Ember.run.next(this, 'draw');
+  },
   @on('willDestroyElement') dnit() {
-    console.log('destroy orientations charts...');
     this.get('chart').destroy();
   }
 });

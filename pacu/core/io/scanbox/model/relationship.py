@@ -1,9 +1,11 @@
 from sqlalchemy import Column, Integer, Unicode, ForeignKey
+from sqlalchemy.orm import join
 from sqlalchemy.orm import relationship
+from sqlalchemy.ext.associationproxy import association_proxy
+
 
 from pacu.core.io.scanbox.model.workspace import Workspace
 from pacu.core.io.scanbox.model.roi import ROI
-from pacu.core.io.scanbox.model.datatag import Datatag
 from pacu.core.io.scanbox.model.ephys_correlation import EphysCorrelation
 from pacu.core.io.scanbox.model.colormap import Colormap
 from pacu.core.io.scanbox.model.action import Action
@@ -25,26 +27,69 @@ class flist(list):
 EphysCorrelation.workspace_id = Column(Integer, ForeignKey(Workspace.id))
 Colormap.workspace_id = Column(Integer, ForeignKey(Workspace.id))
 ROI.workspace_id = Column(Integer, ForeignKey(Workspace.id))
-Datatag.roi_id = Column(Integer, ForeignKey(ROI.id))
-Datatag.trial_id = Column(Integer, ForeignKey(Trial.id))
 Workspace.condition_id = Column(Integer, ForeignKey(Condition.id))
 Trial.condition_id = Column(Integer, ForeignKey(Condition.id))
 
-ROI.overall_mean = relationship(Datatag,
-    primaryjoin=(ROI.id == Datatag.roi_id) & (Datatag.category == 'overall') & (Datatag.method == 'mean'),
+from pacu.core.io.scanbox.model.datatag import DTOverallMean
+DTOverallMean.roi_id = Column(Integer, ForeignKey(ROI.id))
+ROI.dtoverallmean = relationship(DTOverallMean, order_by=DTOverallMean.id,
     uselist=False,
-    cascade='all, delete-orphan',
-    lazy='select')
-ROI.datatags = relationship(Datatag, order_by=Datatag.id,
-    collection_class=flist,
     cascade='all, delete-orphan',
     backref='roi',
     lazy='select')
-Trial.datatags = relationship(Datatag, order_by=Datatag.id,
+from pacu.core.io.scanbox.model.datatag import DTTrialDff0
+DTTrialDff0.roi_id = Column(Integer, ForeignKey(ROI.id))
+ROI.dttrialdff0s = relationship(DTTrialDff0, order_by=DTTrialDff0.id,
+    cascade='all, delete-orphan',
     collection_class=flist,
-    # cascade='all, delete-orphan',
-    backref='trial',
-    lazy='select') # select as a default
+    backref='roi',
+    lazy='select')
+from pacu.core.io.scanbox.model.datatag import DTOrientationsMean
+DTOrientationsMean.roi_id = Column(Integer, ForeignKey(ROI.id))
+ROI.dtorientationsmeans = relationship(DTOrientationsMean, order_by=DTOrientationsMean.id,
+    cascade='all, delete-orphan',
+    collection_class=flist,
+    backref='roi',
+    lazy='select')
+from pacu.core.io.scanbox.model.datatag import DTOrientationBestPref
+DTOrientationBestPref.roi_id = Column(Integer, ForeignKey(ROI.id))
+ROI.dtorientationbestpref = relationship(DTOrientationBestPref, order_by=DTOrientationBestPref.id,
+    uselist=False,
+    cascade='all, delete-orphan',
+    backref='roi',
+    lazy='select')
+from pacu.core.io.scanbox.model.datatag import DTOrientationsFit
+DTOrientationsFit.roi_id = Column(Integer, ForeignKey(ROI.id))
+ROI.dtorientationsfits = relationship(DTOrientationsFit, order_by=DTOrientationsFit.id,
+    cascade='all, delete-orphan',
+    collection_class=flist,
+    backref='roi',
+    lazy='select')
+from pacu.core.io.scanbox.model.datatag import DTSFreqFit
+DTSFreqFit.roi_id = Column(Integer, ForeignKey(ROI.id))
+ROI.dtsfreqfit = relationship(DTSFreqFit, order_by=DTSFreqFit.id,
+    cascade='all, delete-orphan',
+    uselist=False,
+    backref='roi',
+    lazy='select')
+from pacu.core.io.scanbox.model.datatag import DTAnovaAll
+DTAnovaAll.roi_id = Column(Integer, ForeignKey(ROI.id))
+ROI.dtanovaall = relationship(DTAnovaAll, order_by=DTAnovaAll.id,
+    uselist=False,
+    cascade='all, delete-orphan',
+    backref='roi',
+    lazy='select')
+
+# Workspace.dtoverallmeans = association_proxy('rois', 'dtoverallmean')
+# below is instrumented attribute version
+Workspace.dtoverallmeans = relationship(DTOverallMean,
+    secondary=join(Workspace, ROI),
+    primaryjoin=Workspace.id == ROI.workspace_id,
+    secondaryjoin=ROI.id == DTOverallMean.roi_id,
+    collection_class=flist,
+    viewonly=True,
+    lazy='select'
+)
 Workspace.colormaps = relationship(Colormap, order_by=Colormap.id,
     collection_class=flist,
     cascade='all, delete-orphan',
@@ -71,5 +116,8 @@ Condition.trials = relationship(Trial, order_by=Trial.id,
     backref='condition',
     lazy='select')
 
-__all__ = ('Workspace ROI Colormap Datatag '
+__all__ = ('Workspace ROI Colormap '
+           'DTOverallMean DTTrialDff0 DTOrientationsMean '
+           'DTOrientationBestPref '
+           'DTOrientationsFit DTSFreqFit DTAnovaAll '
            'EphysCorrelation Action Condition Trial').split()

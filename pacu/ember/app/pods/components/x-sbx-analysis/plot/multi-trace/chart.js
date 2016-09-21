@@ -73,18 +73,21 @@ const options = {
 };
 
 export default Ember.Object.extend({
-  @computed('traces') labels(traces) {
-    const lens = traces.map(t => t.value.length);
+  @computed('datatags') traces(dts) {
+    return dts.getEach('value');
+  },
+  @computed('traces') labels(traces) { // should work with non-isNew entities
+    const lens = traces.getEach('length');
     if (Ember.isEmpty(lens)) { return []; }
     return Array.from(Array(Math.max(...lens)).keys()); // range the JS way.
   },
-  @computed('traces') datasets(traces) {
-    return traces.map((trace, index) => {
+  @computed('datatags') datasets(dts) {
+    return dts.map((datatag, index) => {
       return {
-        borderColor: trace.color || color.google20[index],
+        borderColor: datatag.color || color.google20[index],
         borderWidth: 0.5,
-        data: trace.value,
-        label: `ROI #${trace.roi}`,
+        data: datatag.get('value'),
+        label: `ROI #${datatag.get('roi.id')}`,
       }
     });
   }

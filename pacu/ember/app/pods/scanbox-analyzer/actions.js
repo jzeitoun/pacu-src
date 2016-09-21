@@ -20,9 +20,12 @@ export default {
       return this.toast.info(`${name} #${id} deleted.`);
     });
   },
-  unloadModel() {
-    this.store.unloadAll();
-    this.store.unloadAll();
-    this.toast.info('Released resources...');
+  reloadRelationships() {
+    this.toast.info('Reload datatags...');
+    this.currentModel.workspace.get('dtoverallmeans').reload();
+  },
+  roiClicked(roi) {
+    this.currentModel.rois.setEach('active', false);
+    roi.set('active', true);
   }
 }

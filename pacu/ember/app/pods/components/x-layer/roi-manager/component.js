@@ -52,6 +52,7 @@ export default Ember.Component.extend({
     Ember.$(document).off('keyup.roi-manager');
   },
   @computed('workspace.rois.[]') coloredROIs(rois) {
+    if (Ember.isNone(rois)) { return }
     return rois.map((r, i) => {
       return {roi: r, color: color.getGoogle20(i)};
     });
