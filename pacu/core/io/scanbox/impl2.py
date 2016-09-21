@@ -108,6 +108,7 @@ class ScanboxIO(object):
 
 # q.initialize_db(638)
 # q = ScanboxIO('day_ht/my4r_1_3_000_035.io')
+# q = ScanboxIO('day_ht/my4r_1_3_000_035.io')
 
 # q = ScanboxIO('day1_000_002.io')
 # r = q.condition.workspaces.first.rois.first
@@ -131,9 +132,10 @@ class ScanboxIO(object):
 def ScanboxIOStream(files): # magic protocol... for damn `files` kwargs
     return ScanboxIO(files)
 
+# import ujson
 # from pacu.core.io.scanbox.model import minimalbase as mb
 # old = '/Volumes/Users/ht/dev/current/pacu/tmp/legacydb/Kirstie/ka28/day1/Aligned_day1_000_002.io/db.sqlite3'
 # engine = mb.create_engine('sqlite:///{}'.format(old), echo=True)
 # session = mb.sessionmaker(engine)()
-
-# [r.polygon for r in session.query(mb.ROI).order_by(mb.ROI.id).all()]
+# a = [r.polygon for r in session.query(mb.ROI).order_by(mb.ROI.id).all()]
+# qwe = ujson.dumps(a)

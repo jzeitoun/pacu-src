@@ -29,5 +29,13 @@ export default Model.extend({
   appendROI(payload) {
     payload.workspace = this;
     return this.store.createRecord('roi', payload);
+  },
+  importROIs(jsonstr) {
+    const payloads = JSON.parse(jsonstr);
+    for (let polygon of payloads) {
+      this.store.createRecord('roi', {
+        polygon, workspace: this
+      }).save();
+    }
   }
 });

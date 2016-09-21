@@ -3,7 +3,6 @@ from sqlalchemy.orm import relationship
 from sqlalchemy.types import PickleType
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
-from pacu.core.io.scanbox.model.condition import BaseCondition
 
 MinimalBase = declarative_base()
 

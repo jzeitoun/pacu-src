@@ -27,17 +27,17 @@ function removeImported(io) {
   });
 }
 
-function reinitializeDBSchema(io) {
-  Ember.$.ajax('/api/json/scanbox_manager/db', {
-    type: 'PATCH',
-    data: { iopath: io.info.iopath },
-    dataType: 'json',
-  }).then(data => {
-    // this.currentModel.ios.removeObject(io);
-  }).fail((err, text, statusText) => {
-    this.toast.error(err.responseText, err.statusText);
-  });
-}
+// function reinitializeDBSchema(io) {
+//   Ember.$.ajax('/api/json/scanbox_manager/db', {
+//     type: 'PATCH',
+//     data: { iopath: io.info.iopath },
+//     dataType: 'json',
+//   }).then(data => {
+//     // this.currentModel.ios.removeObject(io);
+//   }).fail((err, text, statusText) => {
+//     this.toast.error(err.responseText, err.statusText);
+//   });
+// }
 
 function removeWorkspace(io, name) {
   Ember.$.ajax('/api/json/scanbox_manager/workspace', {
@@ -79,17 +79,17 @@ export default Ember.Route.extend({
         newWorkspace.call(this, io, inputValue);
       });
     },
-    reinitializeDBSchema(io) {
-      swal({
-        title: "Are you sure?",
-        text: "You will not be able to undo this!",
-        type: "warning",
-        showCancelButton: true,
-        closeOnConfirm: true,
-        confirmButtonColor: "#DD6B55",
-        confirmButtonText: "Yes, initialize it!",
-      }, reinitializeDBSchema.bind(this, io));
-    },
+    // reinitializeDBSchema(io) {
+    //   swal({
+    //     title: "Are you sure?",
+    //     text: "You will not be able to undo this!",
+    //     type: "warning",
+    //     showCancelButton: true,
+    //     closeOnConfirm: true,
+    //     confirmButtonColor: "#DD6B55",
+    //     confirmButtonText: "Yes, initialize it!",
+    //   }, reinitializeDBSchema.bind(this, io));
+    // },
     removeImported(io) {
       swal({
         title: "Are you sure?",

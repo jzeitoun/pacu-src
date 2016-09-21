@@ -1,7 +1,7 @@
 import Ember from 'ember';
 import computed, { on, observes } from 'ember-computed-decorators';
 
-function importRaw(cond) {
+function importRaw(cond={}) {
   const self = this;
   const modname = 'pacu.core.io.scanbox.impl2';
   const clsname = 'ScanboxIO';

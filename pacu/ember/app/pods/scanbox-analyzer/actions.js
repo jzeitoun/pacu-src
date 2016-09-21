@@ -20,12 +20,12 @@ export default {
       return this.toast.info(`${name} #${id} deleted.`);
     });
   },
-  reloadRelationships() {
-    this.toast.info('Reload datatags...');
-    this.currentModel.workspace.get('dtoverallmeans').reload();
-  },
   roiClicked(roi) {
     this.currentModel.rois.setEach('active', false);
     roi.set('active', true);
-  }
+  },
+  importROIs() {
+    // this.toast.info('Reload datatags...');
+    // this.currentModel.workspace.get('dtoverallmeans').reload();
+  },
 }
