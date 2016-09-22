@@ -128,9 +128,11 @@ function makeSFcolumn(sfs) {
         width: '200px',
         format: function() {
           let o = this.get('row.dtanovaeachs').objectAt(index);
-          const f = o.get('f') || '';
-          const p = o.get('p') || '';
-          return Ember.String.htmlSafe(`f: ${f} <br/> p: ${p}`);
+          if (o) {
+            const f = o.get('f') || '';
+            const p = o.get('p') || '';
+            return Ember.String.htmlSafe(`f: ${f} <br/> p: ${p}`);
+          }
         }
       }
     })
