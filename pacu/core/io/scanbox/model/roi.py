@@ -110,13 +110,8 @@ class ROI(SQLite3Base):
         self.dtsfreqfit.refresh()
         print 'REFRESH Anova All'
         self.dtanovaall.refresh()
-        if self.dtanovaeachs:
-            print 'REFRESH Anova Each'
-            for tag in self.dtanovaeachs: tag.refresh()
-        else:
-            print 'Initialize Anova Each and refresh'
-            for sf in self.workspace.condition.sfrequencies:
-                DTAnovaEach(roi=self, trial_sf=sf).refresh()
+        print 'REFRESH Anova Each'
+        for tag in self.dtanovaeachs: tag.refresh()
         # print 'Bootstrap SF'
         # for tag in dts6: tag.refresh()
 

@@ -100,6 +100,13 @@ class ScanboxIO(object):
         meta = schema.SQLite3Base.metadata
         bind = self.db_session.bind
         schema.fix_incremental(meta, bind)
+        session = self.condition.object_session
+        session.begin()
+        for ws in self.condition.workspaces:
+            for roi in ws.rois:
+                print roi.initialize_datatags()
+        session.commit()
+
 
 # import numpy as np
 # q = ScanboxIO('day_ht/day5_003_020.io') # 638

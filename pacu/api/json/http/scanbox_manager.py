@@ -94,6 +94,11 @@ def get_ios(req):
     # return [ScanboxIO(path.relative_to(workspace.path)).toDict()
     #     for path in workspace.path.rglob('**/*.io')]
 
+def fix_all():
+    for path in workspace.path.rglob('**/*.io'):
+        print 'fix', path
+        ScanboxIO(path.relative_to(workspace.path)).fix_db_schema()
+
 def delete_io(req, iopath):
     io = ScanboxIO(iopath)
     io.path.resolve()
