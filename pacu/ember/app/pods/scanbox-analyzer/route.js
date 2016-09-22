@@ -6,7 +6,7 @@ const modname = 'pacu.core.io.scanbox.impl2';
 const clsname = 'ScanboxIOStream';
 const moduleName = 'pacu.core.io.scanbox.model.db';
 const baseName = 'SQLite3Base';
-const include = 'condition,dtoverallmeans,rois,rois.dtorientationsmeans,rois.dtorientationbestpref,rois.dtorientationsfits,rois.dtsfreqfit,rois.dtanovaall';
+const include = 'condition,dtoverallmeans,rois,rois.dtorientationsmeans,rois.dtorientationbestpref,rois.dtorientationsfits,rois.dtanovaeachs,rois.dtsfreqfit,rois.dtanovaall';
 const queryParam = { include, filter: { name } };
 
 export default Ember.Route.extend({

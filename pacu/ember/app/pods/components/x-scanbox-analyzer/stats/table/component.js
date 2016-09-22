@@ -115,16 +115,45 @@ const columns = [
   ]
 }
 ];
+function makeSFcolumn(sfs) {
+  return {
+    label: 'Anova Each',
+    sortable: false,
+    align: 'center',
+    subColumns: sfs.map((sf, index) => {
+      return {
+        label: sf,
+        sortable: false,
+        valuePath: 'dtanovaeachs',
+        width: '200px',
+        format: function() {
+          let o = this.get('row.dtanovaeachs').objectAt(index);
+          const f = o.get('f') || '';
+          const p = o.get('p') || '';
+          return Ember.String.htmlSafe(`f: ${f} <br/> p: ${p}`);
+        }
+      }
+    })
+  }
+}
 export default Ember.Component.extend({
   model: model,
   @computed() columns() { return columns; },
   @computed() table() {
+    window.T = this;
+    const sfs = this.get('condition.sfrequencies');
+    const sfc = makeSFcolumn(sfs);
     const columns = this.get('columns');
-    const rois = this.get('rois');
-    return new Table(columns, rois);
+    const rois = this.get('onlyROIs');
+    return new Table([].concat(columns, sfc), rois);
   },
-  @observes('rois.@each.isNew') roiUpdated() {
-    const rois = this.get('rois');
+  @computed('rois.[]') onlyROIs(rois) {
+    const onlys = rois.filter(r => !r.get('isNew'));
+    return onlys
+  },
+  @observes('onlyROIs.[]') roiUpdated() {
+    const rois = this.get('onlyROIs');
+    // console.log('ROIUP', rois.get('length'));
     this.get('table').setRows(rois.filter(r => !r.get('isNew')));
   }
 });

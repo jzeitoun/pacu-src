@@ -95,3 +95,22 @@ class DTAnovaAll(Datatag, SQLite3Base):
     category = 'anova'
     method = 'all'
     value = Column(PickleType, default={})
+class DTAnovaEach(Datatag, SQLite3Base):
+    __tablename__ = 'dtanovaeachs'
+    category = 'anova'
+    method = 'each'
+    f = Column(PickleType)
+    p = Column(PickleType)
+
+"""
+add datatag derived class in datatag.py
+add python method file
+add relationship and __all__
+modify roi.py initialize and refresh
+fix schema incremental
+add ember model (with same fields)
+define relationship field in roi.js
+modify synchonizeDataTags
+modify include attr in route
+need to append datatable?
+"""

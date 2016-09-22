@@ -79,7 +79,13 @@ ROI.dtanovaall = relationship(DTAnovaAll, order_by=DTAnovaAll.id,
     cascade='all, delete-orphan',
     backref='roi',
     lazy='select')
-
+from pacu.core.io.scanbox.model.datatag import DTAnovaEach
+DTAnovaEach.roi_id = Column(Integer, ForeignKey(ROI.id))
+ROI.dtanovaeachs = relationship(DTAnovaEach, order_by=DTAnovaEach.id,
+    cascade='all, delete-orphan',
+    collection_class=flist,
+    backref='roi',
+    lazy='select')
 # Workspace.dtoverallmeans = association_proxy('rois', 'dtoverallmean')
 # below is instrumented attribute version
 Workspace.dtoverallmeans = relationship(DTOverallMean,
@@ -119,5 +125,6 @@ Condition.trials = relationship(Trial, order_by=Trial.id,
 __all__ = ('Workspace ROI Colormap '
            'DTOverallMean DTTrialDff0 DTOrientationsMean '
            'DTOrientationBestPref '
+           'DTAnovaEach '
            'DTOrientationsFit DTSFreqFit DTAnovaAll '
            'EphysCorrelation Action Condition Trial').split()

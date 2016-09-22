@@ -103,6 +103,7 @@ class ScanboxIO(object):
 
 # import numpy as np
 # q = ScanboxIO('day_ht/day5_003_020.io') # 638
+# q = ScanboxIO('Kirstie/day1_000_002.io')
 # r = q.condition.workspaces.first.rois.first
 # a = r.dtorientationsmeans.first
 
@@ -134,7 +135,9 @@ def ScanboxIOStream(files): # magic protocol... for damn `files` kwargs
 
 # import ujson
 # from pacu.core.io.scanbox.model import minimalbase as mb
-# old = '/Volumes/Users/ht/dev/current/pacu/tmp/legacydb/Kirstie/ka28/day1/Aligned_day1_000_002.io/db.sqlite3'
+# # old = '/Volumes/Users/ht/dev/current/pacu/tmp/legacydb/Kirstie/ka28/day1/Aligned_day1_000_002.io/db.sqlite3'
+# # old = '/Volumes/Users/ht/dev/current/pacu/tmp/legacydb/Kirstie/ka28/day1/Aligned_day1_000_002.io/db.sqlite3'
+# old = '/Volumes/Users/ht/dev/current/pacu/tmp/legacydb/Kirstie/ka28/day1/day1_000_002.io/db.sqlite3'
 # engine = mb.create_engine('sqlite:///{}'.format(old), echo=True)
 # session = mb.sessionmaker(engine)()
 # a = [r.polygon for r in session.query(mb.ROI).order_by(mb.ROI.id).all()]

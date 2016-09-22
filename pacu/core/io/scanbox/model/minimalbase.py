@@ -14,6 +14,7 @@ class ROI(MinimalBase):
     __tablename__ = 'rois'
     id = Column(Integer, primary_key=True)
     polygon = Column(PickleType, default=[])
+    # neuropil 
 
 ROI.workspace_id = Column(Integer, ForeignKey(Workspace.id))
 Workspace.rois = relationship(ROI, order_by=ROI.id)

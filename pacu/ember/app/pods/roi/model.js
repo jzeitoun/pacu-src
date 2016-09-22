@@ -21,6 +21,7 @@ export default Model.extend({
 
   dtorientationsmeans: hasMany('dtorientationsmean'),
   dtorientationsfits: hasMany('dtorientationsfit'),
+  dtanovaeachs: hasMany('dtanovaeach'),
   dtsfreqfit: belongsTo('dtsfreqfit'),
   dtorientationbestpref: belongsTo('dtorientationbestpref'),
   dtanovaall: belongsTo('dtanovaall'),
@@ -77,10 +78,11 @@ export default Model.extend({
   },
   // on('didCreate')
   synchronizeDatatags() {
-    // console.log('SYNC RELATIONSHIP');
+    console.log('SYNC RELATIONSHIP');
     this.get('workspace.dtoverallmeans').reload();
     this.get('dtorientationsmeans').reload();
     this.get('dtorientationsfits').reload();
+    this.get('dtanovaeachs').reload();
     this.store.findRecord('dtsfreqfit', this.get('dtsfreqfit.id'));
     this.store.findRecord('dtorientationbestpref', this.get('dtorientationbestpref.id'));
     this.store.findRecord('dtanovaall', this.get('dtanovaall.id'));

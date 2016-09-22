@@ -61,6 +61,7 @@ class ROI(SQLite3Base):
         from pacu.core.io.scanbox.model.datatag import DTOrientationsFit
         from pacu.core.io.scanbox.model.datatag import DTSFreqFit
         from pacu.core.io.scanbox.model.datatag import DTAnovaAll
+        from pacu.core.io.scanbox.model.datatag import DTAnovaEach
         condition = self.workspace.condition
         if not self.dtoverallmean:
             print 'Initialize Overall Mean'
@@ -84,6 +85,10 @@ class ROI(SQLite3Base):
             print 'Initialize Orientations Fit'
             for sf in condition.sfrequencies:
                 DTOrientationsFit(roi=self, trial_sf=sf)
+        if not self.dtanovaeachs:
+            print 'Initialize Anova Each'
+            for sf in condition.sfrequencies:
+                DTAnovaEach(roi=self, trial_sf=sf)
         if not self.dtsfreqfit:
             print 'Initialize SFreq Fit'
             DTSFreqFit(roi=self)
@@ -105,6 +110,8 @@ class ROI(SQLite3Base):
         self.dtsfreqfit.refresh()
         print 'REFRESH Anova All'
         self.dtanovaall.refresh()
+        print 'REFRESH Anova Each'
+        for tag in self.dtanovaeachs: tag.refresh()
         # print 'Bootstrap SF'
         # for tag in dts6: tag.refresh()
 
