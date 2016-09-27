@@ -7,6 +7,8 @@ from pacu.core.io.scanbox.method.fit.sogfit import SumOfGaussianFit
 #
 # SORT SORT SORT SORT SORT SORT SORT SORT SORT SORT SORT SORT SORT
 # DID YOU SORT DATTAG?
+# self.CV = getCV(meanresponses=self.meanresponses, angles=c['orientations'])
+
 def main(workspace, condition, roi, datatag):
     trials = roi.dttrialdff0s.filter_by(
         trial_sf=datatag.trial_sf,
@@ -26,6 +28,7 @@ def main(workspace, condition, roi, datatag):
         orientations = condition.orientations,
         osi = fit.osi,
         dsi = fit.dsi,
+        cv = fit.cv,
         sigma = fit.sigma,
         o_pref = fit.o_pref,
         r_max = fit.r_max,

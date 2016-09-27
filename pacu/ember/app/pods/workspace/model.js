@@ -1,7 +1,7 @@
 import Model from 'ember-data/model';
 import attr from 'ember-data/attr';
 import { belongsTo, hasMany } from 'ember-data/relationships';
-import computed  from 'ember-computed-decorators';
+import computed from 'ember-computed-decorators';
 
 export default Model.extend({
   created_at: attr('epoch'),
@@ -37,5 +37,6 @@ export default Model.extend({
         polygon, workspace: this
       }).save();
     }
-  }
+  },
+  loadedROIs: Ember.computed.filterBy('rois', 'isNew', false)
 });

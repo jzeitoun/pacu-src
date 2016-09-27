@@ -79,7 +79,6 @@ export default Model.extend({
   // on('didCreate')
   synchronizeDatatags() {
     console.log('SYNC RELATIONSHIP');
-    this.get('workspace.dtoverallmeans').reload();
     this.get('dtorientationsmeans').reload();
     this.get('dtorientationsfits').reload();
     this.get('dtanovaeachs').reload();

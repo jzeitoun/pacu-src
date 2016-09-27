@@ -1,5 +1,7 @@
 import importlib
 
+import ujson
+from flask import json
 from flask import Flask
 from flask import request
 from flask_restless import APIManager
@@ -12,6 +14,12 @@ original = DefaultRelationshipDeserializer.__call__
 def override(self, data):
     return None if data is None else original(self, data)
 DefaultRelationshipDeserializer.__call__ = override
+
+# # patching json dump
+# def mydumps(payload, **kwargs):
+#     return ujson.dumps(payload, double_precision=4)
+# json._json.dumps = mydumps
+
 
 class nmspc:
     session = schema.get_sessionmaker(':memory:', echo=False, autocommit=False)()
@@ -33,12 +41,29 @@ def add_cors_headers(response):
     response.headers['Access-Control-Allow-Credentials'] = 'true'
     return response
 
+from pacu.core.io.scanbox.model.relationship import *
+
 def create_endpoint():
     app = Flask(__name__)
     app.before_request(select_db_session)
     app.after_request(add_cors_headers)
     methods = 'GET POST PUT DELETE PATCH'.split()
     manager = APIManager(app=app, session=nmspc.session)
-    for orm in schema.list_orms():
-        manager.create_api(orm, methods=methods)
+    # for orm in schema.list_orms():
+    #     manager.create_api(orm, methods=methods)
+    manager.create_api(Workspace, methods=methods)
+    manager.create_api(Condition, methods=methods, exclude=['trials', 'trial_list'])
+    manager.create_api(Trial, methods=methods)
+    manager.create_api(ROI, methods=methods, exclude=['dttrialdff0s'])
+    manager.create_api(Colormap, methods=methods)
+    manager.create_api(DTOverallMean, methods=methods)
+    manager.create_api(DTTrialDff0, methods=methods)
+    manager.create_api(DTOrientationsMean, methods=methods)
+    manager.create_api(DTOrientationBestPref, methods=methods)
+    manager.create_api(DTAnovaEach, methods=methods)
+    manager.create_api(DTOrientationsFit, methods=methods)
+    manager.create_api(DTSFreqFit, methods=methods)
+    manager.create_api(DTAnovaAll, methods=methods)
+    manager.create_api(EphysCorrelation, methods=methods)
+    manager.create_api(Action, methods=methods)
     return app

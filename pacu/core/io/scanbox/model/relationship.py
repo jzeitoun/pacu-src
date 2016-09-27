@@ -23,6 +23,8 @@ class flist(list):
         return flist([e for e in self
             if all(getattr(e, k) == v for k, v in kwargs.items())
         ])
+    def map_by(self, *attrs):
+        return {attr: [getattr(e, attr) for e in self] for attr in attrs}
 
 EphysCorrelation.workspace_id = Column(Integer, ForeignKey(Workspace.id))
 Colormap.workspace_id = Column(Integer, ForeignKey(Workspace.id))
@@ -86,16 +88,20 @@ ROI.dtanovaeachs = relationship(DTAnovaEach, order_by=DTAnovaEach.id,
     collection_class=flist,
     backref='roi',
     lazy='select')
+
+# this work but this is not query-enabled style
 # Workspace.dtoverallmeans = association_proxy('rois', 'dtoverallmean')
 # below is instrumented attribute version
 Workspace.dtoverallmeans = relationship(DTOverallMean,
-    secondary=join(Workspace, ROI),
+    secondary=join(ROI, DTOverallMean),
     primaryjoin=Workspace.id == ROI.workspace_id,
     secondaryjoin=ROI.id == DTOverallMean.roi_id,
     collection_class=flist,
     viewonly=True,
     lazy='select'
 )
+# but maybe there's no point to have a rel like above.
+
 Workspace.colormaps = relationship(Colormap, order_by=Colormap.id,
     collection_class=flist,
     cascade='all, delete-orphan',

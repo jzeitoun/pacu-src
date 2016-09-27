@@ -161,8 +161,8 @@ const DataFetcher = Ember.Object.extend({
 export default Ember.Component.extend({
   tagName: 'canvas',
   classNames: 'noselect',
-  width: 500,
-  height: 96,
+  // width: 500,
+  height: 52,
   attributeBindings: ['width', 'height'],
   @computed() ctx() { return this.element.getContext('2d'); },
   @computed('ctx') chart(ctx) {

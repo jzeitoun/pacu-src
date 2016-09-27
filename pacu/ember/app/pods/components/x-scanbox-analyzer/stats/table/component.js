@@ -142,7 +142,6 @@ export default Ember.Component.extend({
   model: model,
   @computed() columns() { return columns; },
   @computed() table() {
-    window.T = this;
     const sfs = this.get('condition.sfrequencies');
     const sfc = makeSFcolumn(sfs);
     const columns = this.get('columns');

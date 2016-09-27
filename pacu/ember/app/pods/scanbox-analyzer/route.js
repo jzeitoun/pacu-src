@@ -6,8 +6,11 @@ const modname = 'pacu.core.io.scanbox.impl2';
 const clsname = 'ScanboxIOStream';
 const moduleName = 'pacu.core.io.scanbox.model.db';
 const baseName = 'SQLite3Base';
-const include = 'condition,dtoverallmeans,rois,rois.dtorientationsmeans,rois.dtorientationbestpref,rois.dtorientationsfits,rois.dtanovaeachs,rois.dtsfreqfit,rois.dtanovaall';
-const queryParam = { include, filter: { name } };
+const include = 'condition,rois,rois.dtorientationsmeans,rois.dtorientationbestpref,rois.dtorientationsfits,rois.dtanovaeachs,rois.dtsfreqfit,rois.dtanovaall';
+// const include = 'condition,dtoverallmeans,rois,rois.dtorientationsmeans,rois.dtorientationbestpref,rois.dtorientationsfits,rois.dtanovaeachs,rois.dtsfreqfit,rois.dtanovaall';
+// const include = 'condition,rois';
+// const include = 'condition';
+const queryParam = { include };
 
 export default Ember.Route.extend({
   socket: Ember.inject.service(),
@@ -20,11 +23,14 @@ export default Ember.Route.extend({
     this.get('session.jsonapi').setProperties({moduleName, baseName,
       sessionArgs: [ioName]
     });
-    const query = this.store.query('workspace', queryParam);
-    const workspace = query.then(wss => wss.get('firstObject'));
+    const kw = {iopath:ioName, wsname: name};
+    const workspace = new Ember.RSVP.Promise((resolve, reject) => {
+      Ember.$.getJSON('/api/json/scanbox_manager/workspace_id', kw).then(id => {
+        resolve(this.store.findRecord('workspace', id, queryParam));
+      });
+    });
     const condition = workspace.then(ws => ws.get('condition'));
-    const rois = workspace.then(ws => ws.get('rois'));
-    const stream = rois.then(() => {
+    const stream = condition.then(() => {
       return new Ember.RSVP.Promise((resolve /*, reject */) => {
         return this.get('socket').create(
           this, modname, clsname, ioName
@@ -40,7 +46,7 @@ export default Ember.Route.extend({
         });
       });
     });
-    return Ember.RSVP.hash({ condition, workspace, stream, rois });
+    return Ember.RSVP.hash({ condition, workspace, stream });
   },
   afterModel(model /*, transition */) {
     this._super(...arguments);

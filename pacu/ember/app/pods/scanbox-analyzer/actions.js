@@ -6,6 +6,11 @@ export default {
     this.wsx.dnit();
     this.wsx = null;
   },
+  didTransition() {
+    Ember.run.schedule('afterRender', () => {
+      // maybe better place to init websocket & stream?
+    });
+  },
   updateModel(model) {
     return model.save().then(() => {
       const name = model.constructor.modelName;

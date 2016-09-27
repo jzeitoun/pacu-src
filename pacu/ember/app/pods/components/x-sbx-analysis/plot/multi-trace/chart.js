@@ -73,7 +73,7 @@ const options = {
 };
 
 export default Ember.Object.extend({
-  @computed('datatags') traces(dts) {
+  @computed('datatags') traces(dts=[]) {
     return dts.getEach('value');
   },
   @computed('traces') labels(traces) { // should work with non-isNew entities
@@ -81,7 +81,7 @@ export default Ember.Object.extend({
     if (Ember.isEmpty(lens)) { return []; }
     return Array.from(Array(Math.max(...lens)).keys()); // range the JS way.
   },
-  @computed('datatags') datasets(dts) {
+  @computed('datatags') datasets(dts=[]) {
     return dts.map((datatag, index) => {
       return {
         borderColor: datatag.color || color.google20[index],

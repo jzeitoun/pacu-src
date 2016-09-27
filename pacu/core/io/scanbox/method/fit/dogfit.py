@@ -179,10 +179,11 @@ class SpatialFrequencyDogFit(object):
         sfy = util.nan_for_list(self.ymeas.tolist())
         param = self.dog_param._asdict()
         plot = self.plot_io()
-        rc10 = self._rel_cutoff10
-        rc20 = self._rel_cutoff20
-        c15 = self._cutoff15
-        c20 = self._cutoff20
+        # rc10 = self._rel_cutoff10
+        # rc20 = self._rel_cutoff20
+        rc33 = self._rel_cutoff33
+        # c15 = self._cutoff15
+        # c20 = self._cutoff20
         return util.nan_for_json(dict(
             pref = pref,
             peak = peak,
@@ -195,10 +196,11 @@ class SpatialFrequencyDogFit(object):
             sfy = sfy,
             param = param,
             plot = plot,
-            rc10 = rc10,
-            rc20 = rc20,
-            c15 = c15,
-            c20 = c20
+            # rc10 = rc10,
+            # rc20 = rc20,
+            rc33 = rc33,
+            # c15 = c15,
+            # c20 = c20
         ))
     def _plot(self):
         print 'Prepare plotting...'
@@ -215,28 +217,33 @@ class SpatialFrequencyDogFit(object):
 
 
         pSF = self.preferred_sfreq.y
-        rel_cutoff10 = 0.1 * (pSF - self.flicker)
-        rel_cutoff20 = 0.2 * (pSF - self.flicker)
-        cutoff15 = 0.15 # * pSF
-        cutoff20 = 0.2 # * pSF
+        # rel_cutoff10 = 0.1 * (pSF - self.flicker)
+        # rel_cutoff20 = 0.2 * (pSF - self.flicker)
+        rel_cutoff33 = 0.33 * (pSF - self.flicker)
+        # cutoff15 = 0.15 # * pSF
+        # cutoff20 = 0.2 # * pSF
 
-        rel_cutoff10 = self.make_cutoff('rel_cutoff10', rel_cutoff10)
-        rel_cutoff20 = self.make_cutoff('rel_cutoff20', rel_cutoff20)
-        cutoff15 = self.make_cutoff('cutoff15', cutoff15)
-        cutoff20 = self.make_cutoff('cutoff20', cutoff20)
+        # rel_cutoff10 = self.make_cutoff('rel_cutoff10', rel_cutoff10)
+        # rel_cutoff20 = self.make_cutoff('rel_cutoff20', rel_cutoff20)
+        rel_cutoff33 = self.make_cutoff('rel_cutoff33', rel_cutoff33)
+        # cutoff15 = self.make_cutoff('cutoff15', cutoff15)
+        # cutoff20 = self.make_cutoff('cutoff20', cutoff20)
 
-        if rel_cutoff10:
-            x, y = rel_cutoff10
-            ax.scatter(x, y, label='SF Rel Cutoff 10', color='black', marker='x')
-        if rel_cutoff20:
-            x, y = rel_cutoff20
-            ax.scatter(x, y, label='SF Rel Cutoff 20', color='black', marker='*')
-        if cutoff15:
-            x, y = cutoff15
-            ax.scatter(x, y, label='SF Cutoff 15', color='black', marker='v')
-        if cutoff20:
-            x, y = cutoff20
-            ax.scatter(x, y, label='SF Cutoff 20', color='black', marker='^')
+        # if rel_cutoff10:
+        #     x, y = rel_cutoff10
+        #     ax.scatter(x, y, label='SF Rel Cutoff 10', color='black', marker='x')
+        # if rel_cutoff20:
+        #     x, y = rel_cutoff20
+        #     ax.scatter(x, y, label='SF Rel Cutoff 20', color='black', marker='*')
+        if rel_cutoff33:
+            x, y = rel_cutoff33
+            ax.scatter(x, y, label='SF Rel Cutoff 33', color='black', marker='x')
+        # if cutoff15:
+        #     x, y = cutoff15
+        #     ax.scatter(x, y, label='SF Cutoff 15', color='black', marker='v')
+        # if cutoff20:
+        #     x, y = cutoff20
+        #     ax.scatter(x, y, label='SF Cutoff 20', color='black', marker='^')
 
 
         if not np.isnan(self.bandwidth_ratio):

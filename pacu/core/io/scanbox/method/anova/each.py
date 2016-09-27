@@ -23,5 +23,5 @@ def main(workspace, condition, roi, datatag):
 
 if __name__ == '__sbx_main__':
     f, p = main(workspace, condition, roi, datatag)
-    datatag.f = f
-    datatag.p = p
+    datatag.f = 'nan' if np.isnan(f) else f
+    datatag.p = 'nan' if np.isnan(p) else p

@@ -106,11 +106,20 @@ class ScanboxIO(object):
             for roi in ws.rois:
                 print roi.initialize_datatags()
         session.commit()
+    def echo_on(self):
+        self.db_session.bind.engine.echo=True
+        return self
+    def echo_off(self):
+        self.db_session.bind.engine.echo=False
+        return self
 
 
-# import numpy as np
+import numpy as np
+import ujson
 # q = ScanboxIO('day_ht/day5_003_020.io') # 638
-# q = ScanboxIO('Kirstie/day1_000_002.io')
+# q = ScanboxIO('Kirstie/day1_000_002.io').echo_on()
+
+# w = q.condition.workspaces.first
 # r = q.condition.workspaces.first.rois.first
 # a = r.dtorientationsmeans.first
 

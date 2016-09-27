@@ -99,6 +99,12 @@ def fix_all():
         print 'fix', path
         ScanboxIO(path.relative_to(workspace.path)).fix_db_schema()
 
+def get_workspace_id(req, iopath=None, wsname=None):
+    io = ScanboxIO(iopath)
+    ws = io.condition.object_session.query(
+        schema.Workspace.id).filter_by(name=wsname).one()
+    return ws.id
+
 def delete_io(req, iopath):
     io = ScanboxIO(iopath)
     io.path.resolve()
