@@ -117,8 +117,8 @@ class ScanboxIO(object):
 import numpy as np
 import ujson
 # q = ScanboxIO('day_ht/day5_003_020.io') # 638
-# q = ScanboxIO('Kirstie/day1_000_002.io').echo_on()
-
+q = ScanboxIO('Kirstie/day1_000_002.io').echo_on() # 70
+# q = ScanboxIO('day_ht/Aligned_dm27_000_000.io') # aligned
 # w = q.condition.workspaces.first
 # r = q.condition.workspaces.first.rois.first
 # a = r.dtorientationsmeans.first

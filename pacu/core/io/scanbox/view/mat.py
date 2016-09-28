@@ -20,6 +20,9 @@ class ScanboxMatView(ZeroDimensionArrayView):
         array = io.loadmat(self.path.str, squeeze_me=True).get('info')
         super(ScanboxMatView, self).__init__(array)
     @property
+    def is_aligned(self):
+        return self.path.name.startswith('Aligned')
+    @property
     def sbxsize(self):
         return self.path.with_suffix('.sbx').size
     @property
@@ -44,7 +47,9 @@ class ScanboxMatView(ZeroDimensionArrayView):
         return nframes * (1 if self.scanmode else 2)
     @property
     def framerate(self):
-        rate = self.resfreq / self.recordsPerBuffer
+        recordsPerBuffer = self.originalRecordsPerBuffer \
+                        if self.is_aligned else self.recordsPerBuffer
+        rate = self.resfreq / recordsPerBuffer
         return rate if self.scanmode else rate * 2
     @property
     def nchannels(self):

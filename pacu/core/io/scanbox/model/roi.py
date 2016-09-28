@@ -103,13 +103,16 @@ class ROI(SQLite3Base):
         print 'REFRESH Orientations'
         for tag in self.dtorientationsmeans: tag.refresh()
         print 'REFRESH BEST PREF'
-        self.dtorientationbestpref.refresh()
+        if self.dtorientationbestpref:
+            self.dtorientationbestpref.refresh()
         print 'REFRESH OriFit'
         for tag in self.dtorientationsfits: tag.refresh()
         print 'REFRESH SFreqFit'
-        self.dtsfreqfit.refresh()
+        if self.dtsfreqfit:
+            self.dtsfreqfit.refresh()
         print 'REFRESH Anova All'
-        self.dtanovaall.refresh()
+        if self.dtanovaall:
+            self.dtanovaall.refresh()
         print 'REFRESH Anova Each'
         for tag in self.dtanovaeachs: tag.refresh()
         # print 'Bootstrap SF'

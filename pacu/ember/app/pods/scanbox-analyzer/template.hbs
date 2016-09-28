@@ -23,7 +23,7 @@
 <div id="route-sbx-analysis" class="ui inverted segment">
   {{! MultiTrace Plot }}
   {{#with (hash width=0) as |masterDimension|}}
-    {{!x-sbx-analysis/plot/multi-trace
+    {{x-sbx-analysis/plot/multi-trace
       dimension=masterDimension
       index=model.stream.img.curIndex
       datatags=model.workspace.dtoverallmeans}}

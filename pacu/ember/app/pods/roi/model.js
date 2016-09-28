@@ -78,13 +78,17 @@ export default Model.extend({
   },
   // on('didCreate')
   synchronizeDatatags() {
-    console.log('SYNC RELATIONSHIP');
-    this.get('dtorientationsmeans').reload();
-    this.get('dtorientationsfits').reload();
-    this.get('dtanovaeachs').reload();
-    this.store.findRecord('dtsfreqfit', this.get('dtsfreqfit.id'));
-    this.store.findRecord('dtorientationbestpref', this.get('dtorientationbestpref.id'));
-    this.store.findRecord('dtanovaall', this.get('dtanovaall.id'));
+    // console.log('SYNC RELATIONSHIP');
+    if (this.get('workspace.condition.imported')) {
+      this.get('dtorientationsmeans').reload();
+      this.get('dtorientationsfits').reload();
+      this.get('dtanovaeachs').reload();
+      this.store.findRecord('dtsfreqfit', this.get('dtsfreqfit.id'));
+      this.store.findRecord('dtorientationbestpref', this.get('dtorientationbestpref.id'));
+      this.store.findRecord('dtanovaall', this.get('dtanovaall.id'));
+    } else {
+      this.get('workspace.dtoverallmeans').reload();
+    }
   },
   @computed('workspace.cur_sfreq', 'dtorientationsmeans') dtorientationsmeanBySF(sfreq, dts) {
     return dts.findBy('trial_sf', sfreq);

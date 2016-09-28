@@ -7,6 +7,7 @@ from flask import request
 from flask_restless import APIManager
 from flask_restless.serialization import DefaultRelationshipDeserializer
 from sqlalchemy import event
+from flask_restless.views.base import APIBase
 
 from pacu.core.io.scanbox.model import db as schema
 
@@ -14,6 +15,12 @@ original = DefaultRelationshipDeserializer.__call__
 def override(self, data):
     return None if data is None else original(self, data)
 DefaultRelationshipDeserializer.__call__ = override
+
+original_smany = APIBase._serialize_many
+def smany(self, instances, relationship=False):
+    return original_smany(self,
+        [i for i in instances if i], relationship=relationship)
+APIBase._serialize_many = smany
 
 # # patching json dump
 # def mydumps(payload, **kwargs):
