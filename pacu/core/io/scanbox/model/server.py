@@ -22,10 +22,10 @@ def smany(self, instances, relationship=False):
         [i for i in instances if i], relationship=relationship)
 APIBase._serialize_many = smany
 
-# # patching json dump
-# def mydumps(payload, **kwargs):
-#     return ujson.dumps(payload, double_precision=4)
-# json._json.dumps = mydumps
+# patching json dump
+def mydumps(payload, **kwargs):
+    return ujson.dumps(payload, double_precision=4)
+json._json.dumps = mydumps
 
 
 class nmspc:

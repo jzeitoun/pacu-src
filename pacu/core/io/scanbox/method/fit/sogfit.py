@@ -148,13 +148,12 @@ class SumOfGaussianFit(object):
         return (r_pref - r_opposite)/(r_pref + r_opposite)
     @property
     def cv(self):
-        return 'NotImplemented'
-        # sqrt, sin, cos, sum = np.sqrt, np.sin, np.cos, np.sum
-        # two_thetas = 2*(np.array(self.xoris)/360)*2*np.pi
-        # R_thetas = self.y_meas
-        # return sqrt(
-        #     sum((R_thetas * sin(two_thetas)))**2 + sum((R_thetas * cos(two_thetas)))**2
-        # ) / sum(R_thetas)
+        sqrt, sin, cos, sum = np.sqrt, np.sin, np.cos, np.sum
+        two_thetas = 2*(np.array(self.xoris)/360)*2*np.pi
+        R_thetas = self.ymeas
+        return sqrt(
+            sum((R_thetas * sin(two_thetas)))**2 + sum((R_thetas * cos(two_thetas)))**2
+        ) / sum(R_thetas)
     @property
     def sigma(self):
         return self.fit_params[2]

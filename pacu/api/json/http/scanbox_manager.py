@@ -102,7 +102,7 @@ def fix_all():
 def get_workspace_id(req, iopath=None, wsname=None):
     io = ScanboxIO(iopath)
     ws = io.condition.object_session.query(
-        schema.Workspace.id).filter_by(name=wsname).one()
+        schema.Workspace.id).filter_by(name=unicode(wsname)).one()
     return ws.id
 
 def delete_io(req, iopath):
