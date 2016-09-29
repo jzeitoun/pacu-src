@@ -29,7 +29,8 @@ json._json.dumps = mydumps
 
 
 class nmspc:
-    session = schema.get_sessionmaker(':memory:', echo=False, autocommit=False)()
+    # '' <- memory
+    session = schema.get_sessionmaker('', echo=False, autocommit=False)()
     event.listen(session, 'before_flush', schema.before_flush)
     event.listen(session, 'after_commit', schema.after_commit)
 
