@@ -21,6 +21,7 @@ from pacu.core.svc.vstim.stimulus.duration import OffDuration
 from pacu.core.svc.vstim.stimulus.blank import Blank
 from pacu.core.svc.vstim.stimulus.flicker import Flicker
 from pacu.core.svc.vstim.stimulus.gratings.condition import Condition
+from pacu.core.svc.vstim.stimulus.contrast import Contrast
 from pacu.core.svc.vstim.stimulus.gratings.condition import BlankCondition
 from pacu.core.svc.vstim.stimulus.gratings.condition import FlickerCondition
 from pacu.core.svc.vstim.stimulus.gratings.trial import Trial
@@ -34,6 +35,7 @@ class StimulusResource(Resource):
         win = self.window.instance
         self.textstim = TextStim(win, text='')
         self.instance = GratingStim(win=win, units='deg', tex='sin',
+            contrast = self.component.contrast,
             size = misc.pix2deg(win.size, win.monitor)*2)
         try:
             self.interval = self.window.get_isi()
@@ -107,4 +109,5 @@ class GratingsStimulus(Component):
     flicker = Flicker(True)
     on_duration = OnDuration(0.1)
     off_duration = OffDuration(0)
+    contrast = Contrast(1.0)
     __call__ = StimulusResource.bind('window', 'clock', 'projection')

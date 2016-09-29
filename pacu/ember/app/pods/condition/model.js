@@ -12,6 +12,7 @@ export default Model.extend({
   dist: attr(),
   width: attr(),
   height: attr(),
+  contrast: attr(),
   gamma: attr(),
   on_duration: attr(),
   off_duration: attr(),

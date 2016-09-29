@@ -23,6 +23,9 @@
         desc=(concat "With condition: " io.has_condition)
         host=io.info.frameratestr
       }}
+      {{#if io.dbfixed}}
+        <h5 class="ui centered header">new db schema!</h5>
+      {{/if}}
       {{#if io.err}}
       <div class="extra content">
         <p class="ui red mini header">{{io.err.type}}</p>

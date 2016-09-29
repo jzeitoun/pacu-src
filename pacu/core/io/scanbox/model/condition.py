@@ -18,6 +18,7 @@ class Condition(SQLite3Base):
     width = Column(Float)
     height = Column(Float)
     gamma = Column(Float)
+    contrast = Column(Float, default=1.0)
     on_duration = Column(Float)
     off_duration = Column(Float)
     repetition = Column(Integer)

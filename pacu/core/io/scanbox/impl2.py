@@ -94,30 +94,39 @@ class ScanboxIO(object):
                     has_condition = self.condition.imported,
                 workspaces=[ws.name for ws in self.condition.workspaces])
         except Exception as e:
+            if 'no such column' in str(e):
+                self.fix_db_schema()
+                print 'Fixing DB Schema'
+                return dict(info=self.condition.info, dbfixed=True,
+                        has_condition = self.condition.imported,
+                    workspaces=[ws.name for ws in self.condition.workspaces])
             err = dict(type=str(type(e)), detail=str(e))
             return dict(err=err, info=self.mat.toDict())
     def fix_db_schema(self):
         meta = schema.SQLite3Base.metadata
         bind = self.db_session.bind
         schema.fix_incremental(meta, bind)
-        session = self.condition.object_session
-        session.begin()
-        for ws in self.condition.workspaces:
-            for roi in ws.rois:
-                print roi.initialize_datatags()
-        session.commit()
+#        session = self.condition.object_session
+#         session.begin()
+#         for ws in self.condition.workspaces:
+#             for roi in ws.rois:
+#                 print roi.initialize_datatags()
+#        session.commit()
     def echo_on(self):
         self.db_session.bind.engine.echo=True
         return self
     def echo_off(self):
         self.db_session.bind.engine.echo=False
         return self
+    @classmethod
+    def iter_every_io(cls):
+        return (cls(path) for path in userenv.joinpath('scanbox').rglob('*.io'))
 
-
-import numpy as np
-import ujson
+# import numpy as np
+# import ujson
 # q = ScanboxIO('day_ht/day5_003_020.io') # 638
-q = ScanboxIO('Kirstie/day1_000_002.io').echo_on() # 70
+# q = ScanboxIO('Kirstie/day1_000_002.io').echo_on() # 70
+# exp = glab().query(ExperimentV1).get(997)
 # q = ScanboxIO('day_ht/Aligned_dm27_000_000.io') # aligned
 # w = q.condition.workspaces.first
 # r = q.condition.workspaces.first.rois.first

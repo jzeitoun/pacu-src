@@ -1,5 +1,6 @@
 from sqlalchemy import inspect
 from sqlalchemy.schema import CreateColumn
+from sqlalchemy import schema
 
 from pacu.util import identity
 from pacu.util.path import Path
@@ -10,6 +11,10 @@ from pacu.core.io.scanbox.model.base import SQLite3Base
 
 opt = manager.instance('opt')
 userenv = identity.path.userenv
+
+
+# glab = manager.get('db').section('glab')
+# bind = glab()().bind
 
 def fix_incremental(meta, bind):
     """
@@ -22,14 +27,33 @@ def fix_incremental(meta, bind):
     for table in meta.sorted_tables:
         orm_cols = set(col.name for col in table.c)
         ref_cols = set(col['name'] for col in ref.get_columns(table.name))
-        col_diff = orm_cols - ref_cols
-        if col_diff:
-            print table.name, 'has diff', col_diff
-        with bind.begin() as conn:
-            for col in (col for col in table.c if col.name in col_diff):
-                column_sql = CreateColumn(col).compile(bind).string
-                sql = 'ALTER TABLE {} ADD COLUMN {}'.format(table.name, column_sql)
-                conn.execute(sql)
+        col_to_create = orm_cols - ref_cols
+        col_to_delete = ref_cols - orm_cols
+        if col_to_create:
+            print table.name, 'has diff to create', col_to_create
+            with bind.begin() as conn:
+                for col_name in col_to_create:
+                    col = table.c.get(col_name)
+                    column_sql = CreateColumn(col).compile(bind).string
+                    sql = 'ALTER TABLE {} ADD COLUMN {}'.format(table.name, column_sql)
+                    if col.default:
+                        sql += ' DEFAULT {!r}'.format(col.default.arg)
+                    if not col.nullable:
+                        sql += ' NOT NULL'
+                    print 'executing sql: ' + sql
+                    conn.execute(sql)
+        if col_to_delete:
+            print table.name, 'has diff to delete', col_to_delete, 'maybe later version.'
+            """
+            BEGIN TRANSACTION;
+            CREATE TEMPORARY TABLE t1_backup(a,b);
+            INSERT INTO t1_backup SELECT a,b FROM t1;
+            DROP TABLE t1;
+            CREATE TABLE t1(a,b);
+            INSERT INTO t1 SELECT a,b FROM t1_backup;
+            DROP TABLE t1_backup;
+            COMMIT;
+            """
 
 def upgrade(metadata, bind):
     metadata.create_all(bind)
