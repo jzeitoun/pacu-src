@@ -207,26 +207,27 @@ def test_m1(io, index=0):
 # cv2.drawContours(mask, [cnt], 0, 255, -1)
 # x, y, w, h = cv2.boundingRect(np.array([cnt]))
 # 
-# gca().invert_yaxis()
-# scatter(*zip(*cnt))
-# r = Rectangle((x, y), w-1, h-1, fill=False)
-# gca().add_artist(r)
-# 
-# 
-# small_frames = frames[:, y:y+h, x:x+w]
-# small_cnt = cnt - [x, y]
-# small_mask = np.zeros(small_frames.shape[1:], dtype='uint8')
-# cv2.drawContours(small_mask, [small_cnt], 0, 255, -1)
-# 
-# figure()
-# 
-# gca().invert_yaxis()
-# scatter(*zip(*small_cnt))
-# r = Rectangle((0, 0), w-1, h-1, fill=False)
-# gca().add_artist(r)
-# 
+# # gca().invert_yaxis()
+# # scatter(*zip(*cnt))
+# # r = Rectangle((x, y), w-1, h-1, fill=False)
+# # gca().add_artist(r)
+# # 
+# # 
+# b_frames = frames[:, y:y+h, x:x+w]
+# b_mask = mask[y:y+h, x:x+w]
+# # figure()
+# # 
+# # gca().invert_yaxis()
+# # scatter(*zip(*small_cnt))
+# # r = Rectangle((0, 0), w-1, h-1, fill=False)
+# # gca().add_artist(r)
+# # 
 # def trace(frames, mask):
 #     return np.stack(cv2.mean(frame, mask)[0] for frame in frames)
+# def trace2(frames, mask):
+#     arr = []
+#     for frame in frames:
+#         arr.append(cv2.mean(frame, mask)[0])
 # print (mask > 0).sum(), (small_mask > 0).sum(), len(cnt)
 
 # qwe = glab()().query(ExperimentV1).get(5)
