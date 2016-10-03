@@ -1,4 +1,5 @@
 import Ember from 'ember';
+import download from 'pacu/utils/download';
 
 export default {
   willTransition: function(transition) {
@@ -29,8 +30,13 @@ export default {
     this.currentModel.rois.setEach('active', false);
     roi.set('active', true);
   },
-  importROIs() {
-    // this.toast.info('Reload datatags...');
-    // this.currentModel.workspace.get('dtoverallmeans').reload();
+  exportROIs() {
+    this.toast.info('Export ROIs...');
+    const url = '/api/json/scanbox_manager/rois_exported';
+    const name = this.currentModel.name;
+    Ember.$.get(url, name).then(data => {
+      const ts = +(new Date);
+      download.fromByteString(data, `${ts}-${name.io}-${name.ws}-rois.json`, 'application/json');
+    });
   },
 }

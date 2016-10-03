@@ -18,12 +18,12 @@ export default Ember.Route.extend({
   actions: actions,
   model(param) {
     const hops = param.hops.split('/');
-    const name = hops.pop();
+    const wsName = hops.pop();
     const ioName = hops.join('/');
     this.get('session.jsonapi').setProperties({moduleName, baseName,
       sessionArgs: [ioName]
     });
-    const kw = {iopath:ioName, wsname: name};
+    const kw = {iopath:ioName, wsname: wsName};
     const workspace = new Ember.RSVP.Promise((resolve, reject) => {
       Ember.$.getJSON('/api/json/scanbox_manager/workspace_id', kw).then(id => {
         resolve(this.store.findRecord('workspace', id, queryParam));
@@ -46,7 +46,8 @@ export default Ember.Route.extend({
         });
       });
     });
-    return Ember.RSVP.hash({ condition, workspace, stream });
+    const name = { io: ioName, ws: wsName };
+    return Ember.RSVP.hash({ condition, workspace, stream, name });
   },
   afterModel(model /*, transition */) {
     this._super(...arguments);

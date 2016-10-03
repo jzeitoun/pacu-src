@@ -127,3 +127,6 @@ class ScanboxChannel(object):
     def dimension(self):
         z, y, x = self.mmap.shape
         return dict(depth=z, height=y, width=x)
+    @property
+    def shape(self):
+        return (self.meta.z, self.meta.y, self.meta.x)

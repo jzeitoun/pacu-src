@@ -104,6 +104,14 @@ def get_workspace_id(req, iopath=None, wsname=None):
     ws = io.condition.object_session.query(
         schema.Workspace.id).filter_by(name=unicode(wsname)).one()
     return ws.id
+def get_rois_exported(req, io, ws):
+    io = ScanboxIO(io)
+    ws = io.condition.workspaces.filter_by(name=ws).first
+    data = dict(rois = [r.export() for r in ws.rois])
+    return data
+    # req.handler.set_header('Content-Type', 'application/octet-stream')
+    # req.handler.set_header('Content-Disposition', 'attachment; filename=oarubgarg.json')
+    # req.handler.write(ujson.dumps(data))
 
 def delete_io(req, iopath):
     io = ScanboxIO(iopath)

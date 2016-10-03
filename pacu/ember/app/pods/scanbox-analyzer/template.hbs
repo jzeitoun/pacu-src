@@ -1,7 +1,7 @@
 {{#x-sui-sticky class="sbx"}}
 <div class="ui small compact inverted icon menu">
-  <a class="item" {{action "importROIs"}}>
-    <i class="red line recycle icon"></i>
+  <a class="item" download="wow.json" {{action "exportROIs"}}>
+    <i class="red line cloud download icon"></i>
   </a>
   <a class="item" {{action "noop"}}>
     <i class="red line chart icon"></i>
@@ -90,5 +90,13 @@
       condition=model.condition
       rois=model.workspace.loadedROIs}}
   </div>
+
+  {{!-- logging message
+  <section class="ui clearing divider"></section>
+  <div class="ui inverted basic segment"
+    style="height: 200px; overflow-y: scroll;">
+    <pre>{{model.condition.message}}</pre>
+  </div>
+  --}}
 
 </div>

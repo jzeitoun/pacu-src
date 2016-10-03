@@ -117,9 +117,11 @@ class ROI(SQLite3Base):
         for tag in self.dtanovaeachs: tag.refresh()
         # print 'Bootstrap SF'
         # for tag in dts6: tag.refresh()
-
-
-
+    def export(self):
+        fields = ('polygon', 'neuropil_ratio',
+            'neuropil_enabled', 'neuropil_factor', 'neuropil_polygon')
+        attrs = {f: getattr(self, f) for f in fields}
+        return dict(id=self.id, attrs=attrs)
 
 
 

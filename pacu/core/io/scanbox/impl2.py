@@ -122,19 +122,114 @@ class ScanboxIO(object):
     def iter_every_io(cls):
         return (cls(path) for path in userenv.joinpath('scanbox').rglob('*.io'))
 
+
+import cv2
+import numpy as np
+import time
+
+# q = ScanboxIO('day_ht/Aligned_day1_000_001.io').echo_off()
+
+def trace(frames, mask):
+    return np.stack(cv2.mean(frame, mask)[0] for frame in frames)
+
+def test_m0(io, index=0):
+    r = io.condition.workspaces.first.rois[index]
+    cnt = r.contours
+    shape = io.ch0.shape
+
+    frames = np.memmap(io.ch0.mmappath.str,
+        mode='r', dtype=io.ch0.meta.dtype, shape=shape)
+
+    mask = np.zeros(shape[1:], dtype='uint8')
+    cv2.drawContours(mask, [cnt], 0, 255, -1)
+    x, y, w, h = cv2.boundingRect(np.array([cnt]))
+
+    small_frames = frames[:, y:y+h, x:x+w]
+    small_cnt = cnt - [x, y]
+    small_mask = np.zeros(small_frames.shape[1:], dtype='uint8')
+    cv2.drawContours(small_mask, [small_cnt], 0, 255, -1)
+    print (mask > 0).sum(), (small_mask > 0).sum(), len(cnt)
+    s = time.time()
+    print 'result', trace(frames, mask).sum()
+    print time.time() - s
+
+def test_m1(io, index=0):
+    r = io.condition.workspaces.first.rois[index]
+    cnt = r.contours
+    shape = io.ch0.shape
+
+    frames = np.memmap(io.ch0.mmappath.str,
+        mode='r', dtype=io.ch0.meta.dtype, shape=shape)
+
+    mask = np.zeros(shape[1:], dtype='uint8')
+    cv2.drawContours(mask, [cnt], 0, 255, -1)
+    x, y, w, h = cv2.boundingRect(np.array([cnt]))
+
+    small_frames = frames[:, y:y+h, x:x+w]
+    small_cnt = cnt - [x, y]
+    small_mask = np.zeros(small_frames.shape[1:], dtype='uint8')
+    cv2.drawContours(small_mask, [small_cnt], 0, 255, -1)
+    print (mask > 0).sum(), (small_mask > 0).sum(), len(cnt)
+    s = time.time()
+    print 'result', trace(small_frames, small_mask).sum()
+    print time.time() - s
+
+
+
+
+
+
+
+
 # import numpy as np
 # import ujson
 # q = ScanboxIO('day_ht/day5_003_020.io') # 638
 # q = ScanboxIO('Kirstie/day1_000_002.io').echo_on() # 70
+# qwe = glab()().query(ExperimentV1).get(923)
 # exp = glab().query(ExperimentV1).get(997)
 # q = ScanboxIO('day_ht/Aligned_dm27_000_000.io') # aligned
 # w = q.condition.workspaces.first
 # r = q.condition.workspaces.first.rois.first
 # a = r.dtorientationsmeans.first
+# import cv2
+# import numpy as np
+# from matplotlib.pyplot import *
+# from matplotlib.patches import Rectangle
+# get_ipython().magic('pylab')
+# 
+# # q = ScanboxIO('day_ht/my4r_1_3_000_007.io').echo_off()
+# q = ScanboxIO('day_ht/Aligned_day1_000_001.io').echo_off()
+# r = q.condition.workspaces.first.rois.first
+# cnt = r.contours
+# frames = q.condition.io.ch0.mmap
+# shape = frames.shape[1:]
+# mask = np.zeros(shape, dtype='uint8')
+# cv2.drawContours(mask, [cnt], 0, 255, -1)
+# x, y, w, h = cv2.boundingRect(np.array([cnt]))
+# 
+# gca().invert_yaxis()
+# scatter(*zip(*cnt))
+# r = Rectangle((x, y), w-1, h-1, fill=False)
+# gca().add_artist(r)
+# 
+# 
+# small_frames = frames[:, y:y+h, x:x+w]
+# small_cnt = cnt - [x, y]
+# small_mask = np.zeros(small_frames.shape[1:], dtype='uint8')
+# cv2.drawContours(small_mask, [small_cnt], 0, 255, -1)
+# 
+# figure()
+# 
+# gca().invert_yaxis()
+# scatter(*zip(*small_cnt))
+# r = Rectangle((0, 0), w-1, h-1, fill=False)
+# gca().add_artist(r)
+# 
+# def trace(frames, mask):
+#     return np.stack(cv2.mean(frame, mask)[0] for frame in frames)
+# print (mask > 0).sum(), (small_mask > 0).sum(), len(cnt)
 
-# q.initialize_db(638)
-# q = ScanboxIO('day_ht/my4r_1_3_000_035.io')
-# q = ScanboxIO('day_ht/my4r_1_3_000_035.io')
+# qwe = glab()().query(ExperimentV1).get(5)
 
 # q = ScanboxIO('day1_000_002.io')
 # r = q.condition.workspaces.first.rois.first

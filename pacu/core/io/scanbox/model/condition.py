@@ -1,3 +1,5 @@
+from collections import namedtuple
+
 import cv2
 import numpy as np
 
@@ -6,6 +8,8 @@ from sqlalchemy.orm import object_session
 from sqlalchemy.types import PickleType
 
 from pacu.core.io.scanbox.model.base import SQLite3Base
+
+Times = namedtuple('Times', 'on off')
 
 class Condition(SQLite3Base):
     __tablename__ = 'conditions'
@@ -24,6 +28,7 @@ class Condition(SQLite3Base):
     repetition = Column(Integer)
     projection = Column(UnicodeText)
     keyword = Column(UnicodeText)
+    message = Column(UnicodeText)
     trial_list = Column(PickleType, default=[])
     orientations = Column(PickleType, default=[])
     sfrequencies = Column(PickleType, default=[])
@@ -38,6 +43,7 @@ class Condition(SQLite3Base):
         payload = entity.payload
         self.keyword = entity.keyword
         self.projection = entity.projection_clsname
+        self.message = entity.message
         for k, v in entity.monitor_kwargs.items():
             setattr(self, k, v)
         for k, v in entity.stimulus_kwargs.items():
@@ -53,3 +59,7 @@ class Condition(SQLite3Base):
             ws = schema.Workspace(name=name, condition=self)
             if self.sfrequencies:
                 ws.cur_sfreq = self.sfrequencies[0]
+    @property
+    def timings(self):
+        times = self.trials.map_by('on_time', 'off_time')
+        return [(on, off, off-on-self.on_duration) for on, off in zip(times['on_time'], times['off_time'])]

@@ -15,6 +15,7 @@ class APIHandler(RequestHandler):
     url = r'/api/(?P<api>[\w-]+)(?P<args>[\w/\-\.]*)'
     def prepare(self):
         try:
+            self.request.handler = self
             api = self.path_kwargs['api']
             args = self.path_kwargs['args']
             try:
@@ -62,7 +63,7 @@ class APIHandler(RequestHandler):
             self.set_status(403)
             self.write(str(e))
         else:
-            self.finish(result)
+            self.finish(result) if result is not None else self.finish()
     def post(self, api, args):
         try:
             result = self.http.post(self.request, *self.args, **self.kwargs)

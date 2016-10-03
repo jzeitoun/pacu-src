@@ -7,6 +7,7 @@ export default Model.extend({
   // trials: hasMany('trial'),
   info: attr(),
   imported: attr(),
+  message: attr(),
   pixel_x: attr(),
   pixel_y: attr(),
   dist: attr(),
