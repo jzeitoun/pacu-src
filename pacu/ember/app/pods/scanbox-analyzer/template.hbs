@@ -1,7 +1,11 @@
 {{#x-sui-sticky class="sbx"}}
 <div class="ui small compact inverted icon menu">
-  <a class="item" download="wow.json" {{action "exportROIs"}}>
-    <i class="red line cloud download icon"></i>
+  <a class="item" {{action "exportROIs"}}>
+    <i class="yellow line cloud download icon"></i>
+  </a>
+  <input type="file" id="roi-import-file" style="display: none"/>
+  <a class="item" {{action "importROIs"}}>
+    <i class="yellow line cloud upload icon"></i>
   </a>
   <a class="item" {{action "noop"}}>
     <i class="red line chart icon"></i>

@@ -39,25 +39,6 @@ class ScanboxChannel(object):
         else:
             print 'Uni-directional recording.'
         return self._import_with_io3(io)
-        # raw = np.memmap(io.sbx.path.str, shape=io.mat.shape,
-        #     dtype='uint16', mode='r', order='F'
-        # ).transpose(3, 1, 0, 2)[..., self.channel]
-        # print 'Extracting metadata'
-        # meta = ScanboxChannelMeta(raw.dtype.name, *raw.shape)
-        # print 'Convert raw data'
-        # mmap = np.memmap(self.mmappath.str,
-        #     mode='w+', dtype=raw.dtype, shape=raw.shape)
-        # print 'Write to disk...'
-        # mmap[:] = ~raw
-        # print 'Calculating basic statistics'
-        # max = mmap.max(axis=(1,2))
-        # min = mmap.min(axis=(1,2))
-        # mean = mmap.mean(axis=(1,2))
-        # stat = np.rec.fromarrays([max, min, mean], names='MAX, MIN, MEAN')
-        # meta.save(self.metapath.str)
-        # np.save(self.statpath.str, stat)
-        # print 'Converting done!'
-        # return self
     def _import_with_io3(self, io):
         height, width = io.mat.sz
         shape = io.mat.get_shape(io.sbx.path.size)

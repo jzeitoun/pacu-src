@@ -9,8 +9,8 @@ def trace_with_bounding_rect(frames, cnt, mask):
     # np.stack is really necessary?
     # also iterate over large arrays?
     # or custom mean algo?
-    return np.stack(cv2.mean(frame, bonuding_mask)[0]
-        for frame in bounding_frames)
+    return np.array([cv2.mean(frame, bonuding_mask)[0]
+        for frame in bounding_frames], dtype='float64')
 
 class ROITracer(object):
     def __init__(self, roi, frames):

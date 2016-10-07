@@ -123,56 +123,56 @@ class ScanboxIO(object):
         return (cls(path) for path in userenv.joinpath('scanbox').rglob('*.io'))
 
 
-import cv2
-import numpy as np
-import time
-
-# q = ScanboxIO('day_ht/Aligned_day1_000_001.io').echo_off()
-
-def trace(frames, mask):
-    return np.stack(cv2.mean(frame, mask)[0] for frame in frames)
-
-def test_m0(io, index=0):
-    r = io.condition.workspaces.first.rois[index]
-    cnt = r.contours
-    shape = io.ch0.shape
-
-    frames = np.memmap(io.ch0.mmappath.str,
-        mode='r', dtype=io.ch0.meta.dtype, shape=shape)
-
-    mask = np.zeros(shape[1:], dtype='uint8')
-    cv2.drawContours(mask, [cnt], 0, 255, -1)
-    x, y, w, h = cv2.boundingRect(np.array([cnt]))
-
-    small_frames = frames[:, y:y+h, x:x+w]
-    small_cnt = cnt - [x, y]
-    small_mask = np.zeros(small_frames.shape[1:], dtype='uint8')
-    cv2.drawContours(small_mask, [small_cnt], 0, 255, -1)
-    print (mask > 0).sum(), (small_mask > 0).sum(), len(cnt)
-    s = time.time()
-    print 'result', trace(frames, mask).sum()
-    print time.time() - s
-
-def test_m1(io, index=0):
-    r = io.condition.workspaces.first.rois[index]
-    cnt = r.contours
-    shape = io.ch0.shape
-
-    frames = np.memmap(io.ch0.mmappath.str,
-        mode='r', dtype=io.ch0.meta.dtype, shape=shape)
-
-    mask = np.zeros(shape[1:], dtype='uint8')
-    cv2.drawContours(mask, [cnt], 0, 255, -1)
-    x, y, w, h = cv2.boundingRect(np.array([cnt]))
-
-    small_frames = frames[:, y:y+h, x:x+w]
-    small_cnt = cnt - [x, y]
-    small_mask = np.zeros(small_frames.shape[1:], dtype='uint8')
-    cv2.drawContours(small_mask, [small_cnt], 0, 255, -1)
-    print (mask > 0).sum(), (small_mask > 0).sum(), len(cnt)
-    s = time.time()
-    print 'result', trace(small_frames, small_mask).sum()
-    print time.time() - s
+# import cv2
+# import numpy as np
+# import time
+# 
+# # q = ScanboxIO('day_ht/Aligned_day1_000_001.io').echo_off()
+# 
+# def trace(frames, mask):
+#     return np.stack(cv2.mean(frame, mask)[0] for frame in frames)
+# 
+# def test_m0(io, index=0):
+#     r = io.condition.workspaces.first.rois[index]
+#     cnt = r.contours
+#     shape = io.ch0.shape
+# 
+#     frames = np.memmap(io.ch0.mmappath.str,
+#         mode='r', dtype=io.ch0.meta.dtype, shape=shape)
+# 
+#     mask = np.zeros(shape[1:], dtype='uint8')
+#     cv2.drawContours(mask, [cnt], 0, 255, -1)
+#     x, y, w, h = cv2.boundingRect(np.array([cnt]))
+# 
+#     small_frames = frames[:, y:y+h, x:x+w]
+#     small_cnt = cnt - [x, y]
+#     small_mask = np.zeros(small_frames.shape[1:], dtype='uint8')
+#     cv2.drawContours(small_mask, [small_cnt], 0, 255, -1)
+#     print (mask > 0).sum(), (small_mask > 0).sum(), len(cnt)
+#     s = time.time()
+#     print 'result', trace(frames, mask).sum()
+#     print time.time() - s
+# 
+# def test_m1(io, index=0):
+#     r = io.condition.workspaces.first.rois[index]
+#     cnt = r.contours
+#     shape = io.ch0.shape
+# 
+#     frames = np.memmap(io.ch0.mmappath.str,
+#         mode='r', dtype=io.ch0.meta.dtype, shape=shape)
+# 
+#     mask = np.zeros(shape[1:], dtype='uint8')
+#     cv2.drawContours(mask, [cnt], 0, 255, -1)
+#     x, y, w, h = cv2.boundingRect(np.array([cnt]))
+# 
+#     small_frames = frames[:, y:y+h, x:x+w]
+#     small_cnt = cnt - [x, y]
+#     small_mask = np.zeros(small_frames.shape[1:], dtype='uint8')
+#     cv2.drawContours(small_mask, [small_cnt], 0, 255, -1)
+#     print (mask > 0).sum(), (small_mask > 0).sum(), len(cnt)
+#     s = time.time()
+#     print 'result', trace(small_frames, small_mask).sum()
+#     print time.time() - s
 
 
 
@@ -198,68 +198,51 @@ def test_m1(io, index=0):
 # get_ipython().magic('pylab')
 # 
 # # q = ScanboxIO('day_ht/my4r_1_3_000_007.io').echo_off()
-# q = ScanboxIO('day_ht/Aligned_day1_000_001.io').echo_off()
+
+# import os
+# import time
+# print 'purge disk cache', os.system('sudo purge')
+# 
+# 
+# q = ScanboxIO('Kirstie/ka28/day1/day1_000_002.io')
+# # q = ScanboxIO('day_ht/Aligned_day1_000_001.io').echo_off()
+# # q = ScanboxIO('day_ht/my4r_1_3_000_007.io').echo_off()
 # r = q.condition.workspaces.first.rois.first
 # cnt = r.contours
-# frames = q.condition.io.ch0.mmap
+# frames = q.condition.io.ch0.mmap # going 8bit does not help
 # shape = frames.shape[1:]
 # mask = np.zeros(shape, dtype='uint8')
 # cv2.drawContours(mask, [cnt], 0, 255, -1)
 # x, y, w, h = cv2.boundingRect(np.array([cnt]))
 # 
-# # gca().invert_yaxis()
-# # scatter(*zip(*cnt))
-# # r = Rectangle((x, y), w-1, h-1, fill=False)
-# # gca().add_artist(r)
-# # 
-# # 
-# b_frames = frames[:, y:y+h, x:x+w]
+# b_frames = frames[::, y:y+h, x:x+w] # down sampling also could work for large
+# print 'FRAME LENGTH', len(b_frames)
 # b_mask = mask[y:y+h, x:x+w]
-# # figure()
-# # 
-# # gca().invert_yaxis()
-# # scatter(*zip(*small_cnt))
-# # r = Rectangle((0, 0), w-1, h-1, fill=False)
-# # gca().add_artist(r)
-# # 
-# def trace(frames, mask):
-#     return np.stack(cv2.mean(frame, mask)[0] for frame in frames)
+# 
 # def trace2(frames, mask):
-#     arr = []
-#     for frame in frames:
-#         arr.append(cv2.mean(frame, mask)[0])
+#     s = time.time()
+#     rv = np.array([cv2.mean(frame, mask)[0] for frame in frames], dtype='float64')
+#     print 'ELAPSED:', time.time() - s
+#     return rv
+
+
+# f = np.memmap(q.condition.io.ch0.mmappath.str, dtype='uint16')
+
+# gca().invert_yaxis()
+# scatter(*zip(*cnt))
+# r = Rectangle((x, y), w-1, h-1, fill=False)
+# gca().add_artist(r)
+# 
+# 
+# figure()
+# 
+# gca().invert_yaxis()
+# scatter(*zip(*small_cnt))
+# r = Rectangle((0, 0), w-1, h-1, fill=False)
+# gca().add_artist(r)
+# 
+
 # print (mask > 0).sum(), (small_mask > 0).sum(), len(cnt)
 
-# qwe = glab()().query(ExperimentV1).get(5)
-
-# q = ScanboxIO('day1_000_002.io')
-# r = q.condition.workspaces.first.rois.first
-# w = q.condition.workspaces.first
-# ipr = w.rois.first
-# a = [
-#     [np.array(rep.value['on']).mean() for rep in reps]
-#     for sf, oris in r.dt_ori_by_sf.items()
-#     for ori, reps in oris.items()
-# ]
-
-# a = r.dt_fit_diffof.refresh()
-
-# r.dt_best_preferred.refresh()
-# r.dt_overall.refresh()
-# s = object_session(q.condition)
-# s.bind.echo = True
-# s.begin()
-# s.add(schema.ROI(workspace=q.condition.workspaces.first))
-# s.flush()
 def ScanboxIOStream(files): # magic protocol... for damn `files` kwargs
     return ScanboxIO(files)
-
-# import ujson
-# from pacu.core.io.scanbox.model import minimalbase as mb
-# # old = '/Volumes/Users/ht/dev/current/pacu/tmp/legacydb/Kirstie/ka28/day1/Aligned_day1_000_002.io/db.sqlite3'
-# # old = '/Volumes/Users/ht/dev/current/pacu/tmp/legacydb/Kirstie/ka28/day1/Aligned_day1_000_002.io/db.sqlite3'
-# old = '/Volumes/Users/ht/dev/current/pacu/tmp/legacydb/Kirstie/ka28/day1/day1_000_002.io/db.sqlite3'
-# engine = mb.create_engine('sqlite:///{}'.format(old), echo=True)
-# session = mb.sessionmaker(engine)()
-# a = [r.polygon for r in session.query(mb.ROI).order_by(mb.ROI.id).all()]
-# qwe = ujson.dumps(a)
