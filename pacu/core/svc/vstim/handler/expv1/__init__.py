@@ -42,7 +42,8 @@ class ExpV1HandlerResource(HandlerResource):
         finally:
             vispath = identity.path.userenv.joinpath('visstim')
             vispath.mkdir_if_none()
-            logfile = '{}.{}.pickle'.format(datetime.now(), self.component.keyword)
+            ftime = datetime.now().strftime('%Y-%m-%d_%H_%M_%S')
+            logfile = '{}.{}.pickle'.format(ftime, self.component.keyword)
             logpath = vispath.joinpath(logfile)
             with logpath.open(mode='wb') as f:
                 cPickle.dump(dict(
