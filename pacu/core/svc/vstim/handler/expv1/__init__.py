@@ -34,7 +34,8 @@ class ExpV1HandlerResource(HandlerResource):
             session.commit()
         except Exception as e:
             print 'An exception from DB!', e
-            result['error'] = str(e)
+            result['errormsg'] = str(e)
+            result['errortype'] = type(e)
             raise e
         else:
             result.update(id=model.id, created_at=model.created_at)
