@@ -2,7 +2,7 @@ import cv2
 import operator
 import numpy as np
 from collections import OrderedDict
-from sqlalchemy import Column, Integer, Boolean, Float
+from sqlalchemy import Column, Integer, Boolean, Float, UnicodeText
 from sqlalchemy.types import PickleType
 from sqlalchemy.orm import object_session
 

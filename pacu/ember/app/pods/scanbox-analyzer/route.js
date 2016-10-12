@@ -8,8 +8,6 @@ const moduleName = 'pacu.core.io.scanbox.model.db';
 const baseName = 'SQLite3Base';
 // const include = 'condition,rois,rois.dtorientationsmeans,rois.dtorientationbestpref,rois.dtorientationsfits,rois.dtanovaeachs,rois.dtsfreqfit,rois.dtanovaall';
 const include = 'condition,dtoverallmeans,rois,rois.dtorientationsmeans,rois.dtorientationbestpref,rois.dtorientationsfits,rois.dtanovaeachs,rois.dtsfreqfit,rois.dtanovaall';
-// const include = 'condition,rois';
-// const include = 'condition';
 const queryParam = { include };
 
 export default Ember.Route.extend({

@@ -1,36 +1,47 @@
-<p class="ui header" style={{colorStyle}}>
-  ROI #{{roi.id}} ({{roi.polygon.length}})</p>
-<div class="ui list">
-  <div class="item">
-    <i class="selected radio icon"></i>
-    <div class="content">({{roi.centroid.x}}, {{roi.centroid.y}})</div>
+<div class="ui small roi dropdown icon {{if roi.inAction "disabled"}} item">
+  <i class="gray {{if roi.active "big"}} {{if roi.inAction "loading"}} setting icon"></i>
+  <div class="menu">
+    <div class="header">
+      Data
+    </div>
+    <div class="item" {{action roi.refreshAll target=roi}}>
+      Compute
+    </div>
+    {{!<div class="item"> Clear </div>}}
+    <div class="divider"></div>
+    <div class="header">
+      Trace {{if roi.draw_dtoverallmean "✓" "✗"}}
+    </div>
+    <div class="item" {{action roi.enableTrace target=roi}}>
+      Enable
+    </div>
+    <div class="item" {{action roi.disableTrace target=roi}}>
+      Disable
+    </div>
+    <div class="divider"></div>
+    <div class="header">
+      ROI - ({{roi.polygon.length}})
+    </div>
+    <div class="item" {{action roi.destroyROI target=roi}}>
+      Destroy
+    </div>
+    <div class="divider"></div>
+    <div class="header">
+      Neuropil {{if roi.neuropil_enabled "✓" "✗"}}
+    </div>
+    <div class="item" {{action roi.enableNeuropil target=roi}}>
+      Enable
+    </div>
+    <div class="item" {{action roi.disableNeuropil target=roi}}>
+      Disable
+    </div>
+    <div class="item" {{action roi.setNeuropilRatio target=roi}}>
+      Set amount ({{roi.neuropil_ratio}})
+    </div>
   </div>
 </div>
-{{!--
-<div class="ui checkbox">
-  {{input type="checkbox" checked=roi.draw_dtoverall_mean name="draw_dtoverall_mean"}}
-  <label class="ui tiny label">Enable Overall Trace</label>
-</div>
---}}
-<div class="ui checkbox">
-  {{input type="checkbox" checked=roi.neuropil_enabled name="neuropil_enabled"}}
-  <label class="ui tiny label">Enable Neuropil</label>
-</div>
-<div class="ui {{if roi.neuropil_enabled "enabled" "disabled"}} input">
-  {{input type="number" value=roi.neuropil_ratio step=0.1}}
-</div>
-
-<div class="fluid mini ui vertical basic buttons">
-  <span class="ui basic teal button inherit-font-size {{if roi.inAction "loading"}}"
-    {{action roi.refreshAll target=roi}}>
-    Refresh All
-  </span>
-  <span class="ui basic green button inherit-font-size {{if roi.inAction "loading"}}"
-    {{action roi.saveROI target=roi}}>
-    Save ROI
-  </span>
-  <span class="ui basic red button inherit-font-size {{if roi.inAction "loading"}}"
-    {{action roi.destroyROI target=roi}}>
-    Destroy ROI
+<div class="menu" {{action roi.focus target=roi}}>
+  <span class="item">
+    #{{roi.id}} ({{roi.centroid.x}}, {{roi.centroid.y}})
   </span>
 </div>

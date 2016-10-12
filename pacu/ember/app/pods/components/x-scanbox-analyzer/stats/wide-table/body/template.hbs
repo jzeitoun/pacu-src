@@ -1,6 +1,6 @@
 {{#each rois as |roi|}}
   {{#each subRows as |sfreq index|}}
-    <tr>
+    <tr class="{{if roi.active "negative"}}">
     {{#if (eq index 0)}}
       {{#each singleCols as |scol|}}
       <td rowspan="{{condition.sfrequencies.length}}">{{get roi scol.valuePath}}</td>

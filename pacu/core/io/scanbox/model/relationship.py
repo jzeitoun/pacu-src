@@ -3,7 +3,6 @@ from sqlalchemy.orm import join
 from sqlalchemy.orm import relationship
 from sqlalchemy.ext.associationproxy import association_proxy
 
-
 from pacu.core.io.scanbox.model.workspace import Workspace
 from pacu.core.io.scanbox.model.roi import ROI
 from pacu.core.io.scanbox.model.ephys_correlation import EphysCorrelation
@@ -95,12 +94,11 @@ ROI.dtanovaeachs = relationship(DTAnovaEach, order_by=DTAnovaEach.id,
 Workspace.dtoverallmeans = relationship(DTOverallMean,
     secondary=join(ROI, DTOverallMean),
     primaryjoin=Workspace.id == ROI.workspace_id,
-    secondaryjoin=ROI.id == DTOverallMean.roi_id,
+    secondaryjoin=ROI.draw_dtoverallmean & (ROI.id == DTOverallMean.roi_id),
     collection_class=flist,
     viewonly=True,
     lazy='select'
 )
-# but maybe there's no point to have a rel like above.
 
 Workspace.colormaps = relationship(Colormap, order_by=Colormap.id,
     collection_class=flist,

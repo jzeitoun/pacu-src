@@ -14,8 +14,8 @@ export default Model.extend({
   neuropil_ratio: attr({ defaultValue: 4.0 }),
   neuropil_factor: attr({ defaultValue: 0.7 }),
   neuropil_polygon: attr({ defaultValue: () => { return []; } }),
-  neuropil_enabled: attr({ defaultValue: true }),
-  draw_dtoverallmean: attr({ defaultValue: true }),
+  neuropil_enabled: attr({ defaultValue: false }),
+  draw_dtoverallmean: attr({ defaultValue: false }),
   centroid: attr({ defaultValue: () => { return {x: -1, y: -1}; } }),
   workspace: belongsTo('workspace'),
 
@@ -49,6 +49,40 @@ export default Model.extend({
     const npp = outerPointsByRatio(polygon, centroid, npRatio);
     Ember.run.next(this, 'set', 'neuropil_polygon', npp);
     return npp;
+  },
+  unfocus() {
+    this.get('workspace.rois').setEach('active', false);
+  },
+  focus() {
+    this.unfocus();
+    this.set('active', true);
+  },
+  enableTrace() {
+    this.set('draw_dtoverallmean', true);
+    this.save();
+  },
+  disableTrace() {
+    this.set('draw_dtoverallmean', false);
+    this.save();
+  },
+  enableNeuropil() {
+    this.set('neuropil_enabled', true);
+    this.save();
+  },
+  disableNeuropil() {
+    this.set('neuropil_enabled', false);
+    this.save();
+  },
+  setNeuropilRatio() {
+    const ratio = prompt("Please enter neuropil ratio amount",
+      this.get('neuropil_ratio'));
+    const fRatio = parseFloat(ratio);
+    if (isNaN(fRatio)) {
+      this.get('toast').warning(`Invalid value ${ratio}.`);
+    } else {
+      this.set('neuropil_ratio', fRatio);
+      this.save();
+    }
   },
   saveROI() {
     this.save();

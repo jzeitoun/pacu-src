@@ -196,17 +196,16 @@ class ScanboxIO(object):
 # from matplotlib.pyplot import *
 # from matplotlib.patches import Rectangle
 # get_ipython().magic('pylab')
-# 
-# # q = ScanboxIO('day_ht/my4r_1_3_000_007.io').echo_off()
+
+# q = ScanboxIO('day_ht/my4r_1_3_000_007.io').echo_on()
 
 # import os
 # import time
 # print 'purge disk cache', os.system('sudo purge')
-# 
-# 
 # q = ScanboxIO('Kirstie/ka28/day1/day1_000_002.io')
 # # q = ScanboxIO('day_ht/Aligned_day1_000_001.io').echo_off()
-# # q = ScanboxIO('day_ht/my4r_1_3_000_007.io').echo_off()
+# q = ScanboxIO('day_ht/my4r_1_3_000_007.io').echo_off()
+
 # r = q.condition.workspaces.first.rois.first
 # cnt = r.contours
 # frames = q.condition.io.ch0.mmap # going 8bit does not help
@@ -246,3 +245,46 @@ class ScanboxIO(object):
 
 def ScanboxIOStream(files): # magic protocol... for damn `files` kwargs
     return ScanboxIO(files)
+
+def redump(filename):
+    """
+    redump('2016-10-11_12_05_11.x.160921.1_P19_004_001.pickle')
+    """
+    import cPickle
+    with open(filename, 'rb') as f:
+        data = cPickle.load(f)
+    print data.keys()
+    result = data['result']
+    keyword = data['keyword']
+    payload = data['payload']
+    errormsg = result.pop('errormsg')
+    errortype = result.pop('errortype')
+    model = ExperimentV1(**result)
+    model.duration = max(t for ts in model.off_time for t in ts)
+    model.keyword = keyword
+    for key, val in payload.items():
+        for attr in 'clsname pkgname kwargs'.split():
+            ett_attr = key + '_' + attr
+            ett_val = val.get(attr)
+            setattr(model, ett_attr, ett_val)
+    session = glab()
+    session.add(model)
+    session.commit()
+    return model
+
+# session = glab()
+# exp = session.query(ExperimentV1).get(1073)
+# condition = schema.Condition()
+# condition.from_expv1(exp)
+# try:
+#     with session.begin():
+#         condition = session.query(schema.Condition).one()
+#         condition.from_expv1(exp)
+#         condition.trials.extend([
+#             schema.Trial.init_and_update(**trial)
+#             for trial in exp])
+#         condition.imported = True
+#         condition.exp_id = int(id)
+#         session.add(condition)
+# except Exception as e:
+#     print 'Condition import failed with reason below,', str(e)

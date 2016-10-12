@@ -6,7 +6,7 @@ from pacu.util.inspect import repr
 from pacu.util.path import Path
 from pacu.util.prop.memoized import memoized_property
 from matplotlib.colors import Normalize
-from matplotlib.cm import ScalarMappable
+from matplotlib.cm import ScalarMappable, jet
 from pacu.core.io.util.colormap.distorted2 import DistortedColormap2
 
 class ScanboxChannelMeta(object):
@@ -29,6 +29,7 @@ class ScanboxChannel(object):
     def __init__(self, path):
         self.path = Path(path).ensure_suffix('.chan')
         self.channel = int(self.path.stem)
+        self.maxppath = self.path.join_suffixes('.maxp.npy')
         self.mmappath = self.path.join_suffixes('.mmap.npy')
         self.statpath = self.path.join_suffixes('.stat.npy')
         self.metapath = self.path.join_suffixes('.meta.json')
@@ -92,6 +93,21 @@ class ScanboxChannel(object):
         y2 = float(ymid2) / 100
         self.dcmap = DistortedColormap2(name,
             xmid1=x1, ymid1=y1, xmid2=x2, ymid2=y2)
+    def request_maxp(self):
+        return jet(
+            self.maxp.view('uint8')[..., 1::2], bytes=True).tostring()
+    @property
+    def has_maxp(self):
+        return self.maxppath.is_file()
+    @memoized_property
+    def maxp(self):
+        return np.load(self.maxppath.str) if self.maxppath.is_file() else None
+    @maxp.invalidator
+    def create_maxp(self):
+        print 'Create max projection image...could take up from a few minutes to hours.'
+        frame = self.mmap.max(0)
+        np.save(self.maxppath.str, frame)
+        print 'done!'
     @memoized_property
     def stat(self):
         stat = np.load(self.statpath.str)

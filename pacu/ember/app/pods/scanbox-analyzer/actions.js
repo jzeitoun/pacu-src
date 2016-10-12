@@ -51,10 +51,10 @@ export default {
       return this.toast.info(`${name} #${id} deleted.`);
     });
   },
-  roiClicked(roi) {
-    this.currentModel.rois.setEach('active', false);
-    roi.set('active', true);
-  },
+//   roiClicked(roi) {
+//     this.currentModel.rois.setEach('active', false);
+//     roi.set('active', true);
+//   },
   exportROIs() {
     this.toast.info('Export ROIs...');
     const url = '/api/json/scanbox_manager/rois_exported';
@@ -66,5 +66,21 @@ export default {
   },
   importROIs() {
     $('#roi-import-file').click();
+  },
+  reloadTracePlot() {
+    this.toast.info('Update traces...');
+    this.currentModel.workspace.get('dtoverallmeans').reload();
+  },
+  initMPI() {
+    const stream = this.currentModel.stream;
+    this.set('controller.maxpBusy', true);
+    stream.invoke('ch0.create_maxp').finally(() => {
+      this.set('controller.maxpBusy', false);
+      stream.mirror('ch0.has_maxp');
+    });
+  },
+  overlayMPI() {
+    this.toast.info('Locating max projection image...');
+    this.currentModel.stream.overlayMPI();
   }
 }

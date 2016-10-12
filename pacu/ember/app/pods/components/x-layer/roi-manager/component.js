@@ -59,16 +59,13 @@ export default Ember.Component.extend({
   },
   actions: {
     unfocus() {
-      this.get('workspace.rois').filterBy('active').forEach(r => {
-        r.set('active', false); // r.save();
-      });
+      this.get('workspace.rois').setEach('active', false);
     },
     focus(roi) {
       this.send('unfocus');
-      roi.set('active', true); // roi.save();
+      roi.set('active', true);
     },
     dupe(roi) {
-      return;
       // return this.get('workspace').appendROI({
       //   polygon: roi.get('polygon')
       // });

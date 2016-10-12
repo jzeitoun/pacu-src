@@ -2,6 +2,7 @@ import Ember from 'ember';
 import computed, { on } from 'ember-computed-decorators';
 
 const Image = Ember.Object.extend({
+  mpi: false,
   buffer: null,
   curIndex: 0,
   @computed('depth') maxIndex(d) {
@@ -15,12 +16,13 @@ export default Ember.Object.extend({
   invoke(func, ...args) { return this.get('wsx').invoke(func, ...args); },
   @computed('ch0Dimension') img(ch) { return Image.create(ch); },
   @on('init') initialize() {
-    this.mirror('ch0.dimension');
+    this.mirror('ch0.dimension', 'ch0.has_maxp');
   },
   requestFrame(index) {
     return this.get('wsx').invokeAsBinary(
         'ch0.request_frame', parseInt(index)).then(buffer => {
       this.set('img.buffer', buffer);
+      this.set('img.mpi', false);
     });
   },
   indexChanged: function() {
@@ -29,6 +31,12 @@ export default Ember.Object.extend({
   @computed() mainCanvasDimension() {
     return { height: 0 };
   },
+  overlayMPI() {
+    this.get('wsx').invokeAsBinary('ch0.request_maxp').then(buffer => {
+      this.set('img.buffer', buffer);
+      this.set('img.mpi', true);
+    });
+  }
   // colorMapChanged: function() {
   //   const cmap = this.get('colorMap').toJSON();
   //   this.invoke('channel.update_colormap',
