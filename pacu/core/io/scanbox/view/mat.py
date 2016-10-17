@@ -47,8 +47,12 @@ class ScanboxMatView(ZeroDimensionArrayView):
         return nframes * (1 if self.scanmode else 2)
     @property
     def framerate(self):
-        recordsPerBuffer = self.originalRecordsPerBuffer \
-                        if self.is_aligned else self.recordsPerBuffer
+        # recordsPerBuffer = self.originalRecordsPerBuffer \
+        #                 if self.is_aligned else self.recordsPerBuffer
+        if self.is_aligned:
+            recordsPerBuffer = self.originalRecordsPerBuffer
+        else:
+            recordsPerBuffer = self.recordsPerBuffer
         rate = self.resfreq / recordsPerBuffer
         return rate if self.scanmode else rate * 2
     @property
@@ -90,5 +94,11 @@ class ScanboxMatView(ZeroDimensionArrayView):
         return self.nframes / self.framerate
         # return '{s.nframes} frames at {s.framerate} fps is 00:01:14:01'.format(s=self)
         #  duration = frame_count / frame_rate
+#     @property
+#     def originalRecordsPerBuffer(self):
+#         obuf = self._dict.get('originalRecordsPerBuffer')                                                                                                                         
+#         buf = self.recordsPerBuffer
+#         print 'original: {}, normal: buf'.format(obuf, buf)
+#         return obuf or buf
 
 # u0 = ScanboxMatView('/Volumes/Users/ht/Desktop/sbx/Day0_000_007.mat')

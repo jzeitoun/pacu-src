@@ -1,3 +1,4 @@
+import re
 from collections import namedtuple
 
 import cv2
@@ -10,6 +11,7 @@ from sqlalchemy.types import PickleType
 from pacu.core.io.scanbox.model.base import SQLite3Base
 
 Times = namedtuple('Times', 'on off')
+re_ts = re.compile(r'(?P<ts>[\d\.]+)\s.*')
 
 class Condition(SQLite3Base):
     __tablename__ = 'conditions'
@@ -34,6 +36,13 @@ class Condition(SQLite3Base):
     sfrequencies = Column(PickleType, default=[])
     tfrequencies = Column(PickleType, default=[])
     object_session = property(object_session)
+    @property
+    def on_times_psychopy(self):
+        message = self.message or ''
+        tss_str = [re_ts.match(line).group('ts')
+            for line in message.splitlines() if 'Entering trial #' in line]
+        tss = map(float, tss_str)
+        return [ts-tss[0] for ts in tss]
     def from_expv1(self, entity):
         """
         Read from pacu.core.model.experiment.ExperimentV1

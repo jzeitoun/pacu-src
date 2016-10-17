@@ -123,71 +123,33 @@ class ScanboxIO(object):
         return (cls(path) for path in userenv.joinpath('scanbox').rglob('*.io'))
 
 
-# import cv2
-# import numpy as np
-# import time
-# 
-# # q = ScanboxIO('day_ht/Aligned_day1_000_001.io').echo_off()
-# 
-# def trace(frames, mask):
-#     return np.stack(cv2.mean(frame, mask)[0] for frame in frames)
-# 
-# def test_m0(io, index=0):
-#     r = io.condition.workspaces.first.rois[index]
-#     cnt = r.contours
-#     shape = io.ch0.shape
-# 
-#     frames = np.memmap(io.ch0.mmappath.str,
-#         mode='r', dtype=io.ch0.meta.dtype, shape=shape)
-# 
-#     mask = np.zeros(shape[1:], dtype='uint8')
-#     cv2.drawContours(mask, [cnt], 0, 255, -1)
-#     x, y, w, h = cv2.boundingRect(np.array([cnt]))
-# 
-#     small_frames = frames[:, y:y+h, x:x+w]
-#     small_cnt = cnt - [x, y]
-#     small_mask = np.zeros(small_frames.shape[1:], dtype='uint8')
-#     cv2.drawContours(small_mask, [small_cnt], 0, 255, -1)
-#     print (mask > 0).sum(), (small_mask > 0).sum(), len(cnt)
-#     s = time.time()
-#     print 'result', trace(frames, mask).sum()
-#     print time.time() - s
-# 
-# def test_m1(io, index=0):
-#     r = io.condition.workspaces.first.rois[index]
-#     cnt = r.contours
-#     shape = io.ch0.shape
-# 
-#     frames = np.memmap(io.ch0.mmappath.str,
-#         mode='r', dtype=io.ch0.meta.dtype, shape=shape)
-# 
-#     mask = np.zeros(shape[1:], dtype='uint8')
-#     cv2.drawContours(mask, [cnt], 0, 255, -1)
-#     x, y, w, h = cv2.boundingRect(np.array([cnt]))
-# 
-#     small_frames = frames[:, y:y+h, x:x+w]
-#     small_cnt = cnt - [x, y]
-#     small_mask = np.zeros(small_frames.shape[1:], dtype='uint8')
-#     cv2.drawContours(small_mask, [small_cnt], 0, 255, -1)
-#     print (mask > 0).sum(), (small_mask > 0).sum(), len(cnt)
-#     s = time.time()
-#     print 'result', trace(small_frames, small_mask).sum()
-#     print time.time() - s
-
-
-
-
-
-
-
-
-# import numpy as np
+import re
+import numpy as np
+from matplotlib import pyplot
 # import ujson
-# q = ScanboxIO('day_ht/day5_003_020.io') # 638
-# q = ScanboxIO('Kirstie/day1_000_002.io').echo_on() # 70
-# qwe = glab()().query(ExperimentV1).get(923)
-# exp = glab().query(ExperimentV1).get(997)
-# q = ScanboxIO('day_ht/Aligned_dm27_000_000.io') # aligned
+# qwe = glab()().query(ExperimentV1).get(1087)
+# get_ipython().magic('pylab')
+def plot_timing_diff(id=1087):
+    qwe = glab()().query(ExperimentV1).get(id)
+    asd = map(float,
+        [re.match(r'(?P<num>[\d\.]+)\s.*', line).groupdict().get('num')
+            for line in qwe.message.splitlines() if 'Entering' in line])
+    ps = [e-asd[0] for e in asd]
+    lj = [t.get('on_time') for t in qwe.ordered_trials]
+    delayinfo = ('{} sec took to show the '
+        'first trial after synchronization').format(lj[0])
+    try:
+        thediff = np.array(ps) - np.array(lj)
+    except Exception as e:
+        raise e
+    else:
+        pyplot.figure()
+        pyplot.plot(thediff)
+        pyplot.suptitle(qwe.keyword)
+        pyplot.title(delayinfo)
+        pyplot.ylabel('psychopy - labjack in second')
+        pyplot.xlabel('trials in order')
+
 # w = q.condition.workspaces.first
 # r = q.condition.workspaces.first.rois.first
 # a = r.dtorientationsmeans.first
@@ -197,13 +159,12 @@ class ScanboxIO(object):
 # from matplotlib.patches import Rectangle
 # get_ipython().magic('pylab')
 
-# q = ScanboxIO('day_ht/my4r_1_3_000_007.io').echo_on()
-
 # import os
 # import time
 # print 'purge disk cache', os.system('sudo purge')
 # q = ScanboxIO('Kirstie/ka28/day1/day1_000_002.io')
-# # q = ScanboxIO('day_ht/Aligned_day1_000_001.io').echo_off()
+# q = ScanboxIO('day_ht/Aligned_day1_000_001.io').echo_off()
+# q = ScanboxIO('day_ht/Aligned_day3_000_006.io').echo_off()
 # q = ScanboxIO('day_ht/my4r_1_3_000_007.io').echo_off()
 
 # r = q.condition.workspaces.first.rois.first
