@@ -70,8 +70,8 @@ class ROI(SQLite3Base):
             return
         if not self.dttrialdff0s:
             print 'Initialize Trial DFF0'
-            # n_trials =  len(condition.trials)
-            # n_ontimes = len(condition.on_times_psychopy)
+            n_trials =  len(condition.trials)
+            n_ontimes = len(condition.on_times_psychopy)
             if n_trials == n_ontimes:
                 for trial, ont in zip(condition.trials, condition.on_times_psychopy):
                     dt = DTTrialDff0(roi=self)
