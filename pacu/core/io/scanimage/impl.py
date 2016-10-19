@@ -248,8 +248,10 @@ class ScanimageIO(object):
 # path = 'tmp/Dario/2016.01.27/r.151117.3/DM9_RbV1_Contra004004'
 
 # import ujson
-# path = 'tmp/Dario/2016.04.01/x.160103.2/DM13_RbV1_Contra_002'
-# qwe = ScanimageIO(path).set_session('MEL')
+# path = 'tmp/Dario/2014.06.13/x.140513.3/field2001'
+# qwe = ScanimageIO(path).set_session('ht')
+# r = qwe.session.roi.values()[0]
+
 # asd = qwe.session.roi.values()
 # q = qwe.session.roi['1464301377.401976']
 # for index, roi in enumerate(asd):

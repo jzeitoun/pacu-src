@@ -199,6 +199,13 @@ class SpatialFrequencyDogFit(object):
         px, py = self.peak_sfreq
         ax.plot(px, py, 'o', label='peak-sf')
 
+        if self.flicker is None:
+            print 'flicker is none, skip plotting.'
+            self._rel_cutoff10 = None
+            self._rel_cutoff20 = None
+            self._cutoff15 = None
+            self._cutoff20 = None
+            return plt, fig
 
         pSF = self.preferred_sfreq.y
         rel_cutoff10 = 0.1 * (pSF - self.flicker)
