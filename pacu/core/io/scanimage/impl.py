@@ -233,11 +233,6 @@ class ScanimageIO(object):
 # path = 'tmp/Dario/2015.04.18/x.150322.1/Contra001'
 # qwe = ScanimageIO(path).set_session('ht')
 
-# path = 'tmp/Dario/2015.12.02/x.151101.2/bV1_Contra_004'
-# path = 'tmp/Dario/2016.02.26/x.151114.1/DM3_RbV1_Contra_00002'
-
-# path = 'tmp/Dario/2016.05.02/r.160125.1/DM23_RbV1_Contra_002'
-
 
 
 # from scipy import stats
@@ -249,7 +244,8 @@ class ScanimageIO(object):
 
 # import ujson
 # path = 'tmp/Dario/2014.06.13/x.140513.3/field2001'
-# qwe = ScanimageIO(path).set_session('ht')
+# path = 'tmp/Dario/2014.07.07/a.20140124.wt_for_transplant.1/field002'
+# qwe = ScanimageIO(path).set_session('main')
 # r = qwe.session.roi.values()[0]
 
 # asd = qwe.session.roi.values()

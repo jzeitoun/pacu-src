@@ -48,7 +48,8 @@ export default Ember.Object.extend({
     return rois.filter(r => {
       // if ($.isEmptyObject(r.responses)) { return false; }
       try {
-        return r.responses[r.sfreqfit.peak].stats.anova.p >= 0.01;
+        return Ember.isEmpty(r.responses[r.sfreqfit.peak].stats.anova.p
+        ) || r.responses[r.sfreqfit.peak].stats.anova.p >= 0.01;
       } catch (err) {
         console.log('exception at filtering irresponsive ROI', err);
         return true;
