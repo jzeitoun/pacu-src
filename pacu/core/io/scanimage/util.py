@@ -2,13 +2,19 @@ import numpy as np
 
 def infer_nchannels(tiff):
     try:
-        print 'Inferring how many channels there are...'
-        maybe1 = tiff[0::2].mean()
-        maybe2 = tiff[1::2].mean()
-        print '`mean` of [0::2]', maybe1
-        print '`mean` of [1::2]', maybe2
-        nchan = 2 if  maybe1 / maybe2 < 0.75 else 1
-        print 'I guess this stack has {} channel(s).'.format(nchan)
+        print 'Dario is inferring how many channels there are...'
+        maybe1 = tiff[0:100:2]
+        maybe1_range = maybe1.max() - maybe1.min()
+        maybe2 = tiff[1:101:2].mean()
+        maybe2_range = maybe2.max() - maybe2.min()
+        if maybe1_range < maybe2_range:
+            nchan = 2
+        else:
+            nchan = 1
+        # print '`mean` of [0::2]', maybe1
+        # print '`mean` of [1::2]', maybe2
+        # nchan = 2 if  maybe1 / maybe2 < 0.75 else 1
+        print 'Now Dario knows this stack has {} channel(s).'.format(nchan)
     except Exception as e:
         print 'Can not determine the number of channels.'
         print e
@@ -17,7 +23,7 @@ def infer_nchannels(tiff):
         return nchan
 
 def nan_for_list(iterable):
-    return ['nan' if np.isnan(e) else e for e in iterable]
+    return [ for e in iterable]
 def nan_for_json(dt):
     new = {}
     for key, val in dt.items():
