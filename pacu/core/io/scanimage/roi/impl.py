@@ -109,7 +109,7 @@ class ROI(object):
             print 'anova all: condition has both flicker and blank'
             f_reps = [ont.array.mean() for ont in self.flicker.ontimes]
             b_reps = [ont.array.mean() for ont in self.blank.ontimes]
-            matrix = np.array([b_reps, f_reps] + all_oris).T
+            matrix = np.array([f_reps, b_reps] + all_oris).T
             f, p = stats.f_oneway(f_reps, b_reps, *all_oris)
             return util.nan_for_json(dict(f=f, p=p, matrix=matrix))
         elif self.flicker:

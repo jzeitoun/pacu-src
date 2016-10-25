@@ -103,10 +103,15 @@ class ScanimageIO(object):
     @property
     def channel_number(self):
         return self.session.opt['channel']
-
     colormap_index = 0
     colormaps = ['jet', 'gray', 'gist_heat', 'afmhot', 'bone']
-
+    @property
+    def has_blank_and_flicker(self):
+        if self.db:
+            rec = self.db.rec
+            return [rec.blankOn, rec.flickerOn]
+        else:
+            return [None, None]
     @property
     def sfrequency(self):
         return self.db.locator.sfrequencies.current if self.db else ''
@@ -117,6 +122,9 @@ class ScanimageIO(object):
     @property
     def sfrequencies(self):
         return self.db.locator.sfrequencies if self.db else []
+    @property
+    def orientations(self):
+        return self.db.orientations if self.db else []
     # @sfrequency.invalidator
     def set_sfrequency_index(self, sfreq_index):
         self.sfrequencies.set_cursor(sfreq_index)
@@ -244,6 +252,7 @@ class ScanimageIO(object):
 
 # import ujson
 # path = 'tmp/Dario/2014.06.13/x.140513.3/field2001'
+
 # path = 'tmp/Dario/2014.07.07/a.20140124.wt_for_transplant.1/field002'
 # qwe = ScanimageIO(path).set_session('main')
 # r = qwe.session.roi.values()[0]

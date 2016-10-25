@@ -80,8 +80,8 @@ export default Ember.Object.extend({
       'channel_numbers', 'channel_number',
       'colormaps', 'colormap_index',
       'sfrequencies', 'sfrequency_index',
-      'r_value',
-      'sog_initial_guess'
+      'r_value', 'has_blank_and_flicker',
+      'orientations', 'sog_initial_guess'
     ).then((x) => {
       this.requestFrame(0);
     }).then(() => {

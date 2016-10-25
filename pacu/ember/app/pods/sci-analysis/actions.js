@@ -153,7 +153,17 @@ export default {
     upsertROI.call(this, roi);
   },
   exportAllAnova(roi) {
+    const header = [];
     const lines = [];
+    const [hasBlank, hasFlicker] = this.currentModel.get('hasBlankAndFlicker');
+    const orientations = this.currentModel.get('orientations');
+
+    // header
+    if (hasBlank) { header.push('Blank'); }
+    if (hasFlicker) { header.push('Flicker'); }
+    lines.push(header.concat(orientations).join('\t'));
+
+    // values
     for (let rep of roi.anova_all.matrix) {
       lines.push(rep.join('\t'));
     }
