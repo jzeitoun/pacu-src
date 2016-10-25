@@ -2,6 +2,8 @@ import numpy as np
 
 def infer_nchannels(tiff):
     try:
+        print 'Number of channel is 2, fixed, no inferring.'
+        return 2
         print 'Dario is inferring how many channels there are...'
         maybe1 = tiff[0:100:2]
         maybe1_range = maybe1.max() - maybe1.min()
