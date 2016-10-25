@@ -5,9 +5,9 @@ def infer_nchannels(tiff):
         print 'Dario is inferring how many channels there are...'
         maybe1 = tiff[0:100:2]
         maybe1_range = maybe1.max() - maybe1.min()
-        maybe2 = tiff[1:101:2].mean()
+        maybe2 = tiff[1:101:2]
         maybe2_range = maybe2.max() - maybe2.min()
-        if maybe1_range < maybe2_range:
+        if maybe1_range < 2*maybe2_range:
             nchan = 2
         else:
             nchan = 1
@@ -21,6 +21,10 @@ def infer_nchannels(tiff):
         return 0
     else:
         return nchan
+
+import tifffile
+path = 'x574lef_36dat_contra004.tif'
+tiff = np.load('tiff.npy') # tifffile.imread(path)
 
 def nan_for_list(iterable):
     return ['nan' if np.isnan(e) else e for e in iterable]
