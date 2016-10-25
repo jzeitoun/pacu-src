@@ -23,7 +23,7 @@ def infer_nchannels(tiff):
         return nchan
 
 def nan_for_list(iterable):
-    return [ for e in iterable]
+    return ['nan' if np.isnan(e) else e for e in iterable]
 def nan_for_json(dt):
     new = {}
     for key, val in dt.items():
