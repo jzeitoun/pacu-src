@@ -22,10 +22,6 @@ def infer_nchannels(tiff):
     else:
         return nchan
 
-import tifffile
-path = 'x574lef_36dat_contra004.tif'
-tiff = np.load('tiff.npy') # tifffile.imread(path)
-
 def nan_for_list(iterable):
     return ['nan' if np.isnan(e) else e for e in iterable]
 def nan_for_json(dt):
