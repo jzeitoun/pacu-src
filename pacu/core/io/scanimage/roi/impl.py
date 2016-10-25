@@ -104,12 +104,25 @@ class ROI(object):
             [ont.array.mean() for ont in ori.ontimes]
             for sf, resp in self.sorted_responses
             for ori in resp.orientations.responses]
-        # print 'number of alll oris', len(all_oris)
+        print 'anova all: number of alll oris: {}'.format(len(all_oris))
         if self.flicker and self.blank:
+            print 'anova all: condition has both flicker and blank'
             f_reps = [ont.array.mean() for ont in self.flicker.ontimes]
             b_reps = [ont.array.mean() for ont in self.blank.ontimes]
             matrix = np.array([b_reps, f_reps] + all_oris).T
             f, p = stats.f_oneway(f_reps, b_reps, *all_oris)
+            return util.nan_for_json(dict(f=f, p=p, matrix=matrix))
+        elif self.flicker:
+            print 'anova all: condition has only flicker'
+            f_reps = [ont.array.mean() for ont in self.flicker.ontimes]
+            matrix = np.array([f_reps] + all_oris).T
+            f, p = stats.f_oneway(f_reps, *all_oris)
+            return util.nan_for_json(dict(f=f, p=p, matrix=matrix))
+        elif self.blank:
+            print 'anova all: condition has only blank'
+            b_reps = [ont.array.mean() for ont in self.blank.ontimes]
+            matrix = np.array([b_reps] + all_oris).T
+            f, p = stats.f_oneway(b_reps, *all_oris)
             return util.nan_for_json(dict(f=f, p=p, matrix=matrix))
         else:
             matrix = [[]]

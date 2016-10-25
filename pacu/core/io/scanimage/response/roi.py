@@ -42,7 +42,16 @@ class ROIResponse(BaseResponse):
                 f_reps = self.flicker.windowed_mean_for_ontimes
                 f, p = stats.f_oneway(b_reps, f_reps, *oris)
                 return dict(f=f, p=p)
+            elif self.flicker:
+                f_reps = self.flicker.windowed_mean_for_ontimes
+                f, p = stats.f_oneway(f_reps, *oris)
+                return dict(f=f, p=p)
+            elif self.blank:
+                b_reps = self.blank.windowed_mean_for_ontimes
+                f, p = stats.f_oneway(b_reps, *oris)
+                return dict(f=f, p=p)
         except Exception as e:
+            print 'anova each exception: ', e
             return {}
     @property
     def ttest(self):
