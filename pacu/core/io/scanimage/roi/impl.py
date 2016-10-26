@@ -37,6 +37,7 @@ class ROI(object):
     vectors = ()
     polygon = ()
     neuropil = ()
+    error = None
     blank = None
     flicker = None
     responses = None

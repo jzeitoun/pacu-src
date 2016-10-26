@@ -254,8 +254,10 @@ class ScanimageIO(object):
 # path = 'tmp/Dario/2014.06.13/x.140513.3/field2001'
 
 # path = 'tmp/Dario/2014.07.07/a.20140124.wt_for_transplant.1/field002'
+# path = 'tmp/Dario/2014.06.15/x.140513.4/Syn-flexGCaMP6s002'
 # qwe = ScanimageIO(path).set_session('main')
 # r = qwe.session.roi.values()[0]
+# r = qwe.session.roi['1477437377.839845']
 
 # asd = qwe.session.roi.values()
 # q = qwe.session.roi['1464301377.401976']

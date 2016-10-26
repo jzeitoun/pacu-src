@@ -86,8 +86,9 @@ export default Ember.Object.extend({
       this.requestFrame(0);
     }).then(() => {
       this.addObserver('channelNumber', this.channelChanged);
-      this.invoke('session.roi.values').then(rois => {
       // this.invoke('session.load_rois').then(rois => {
+      // this.invoke('session.roi.values').then(rois => {
+      this.invoke('session.get_rois_json_safe').then(rois => {
         const roiObjects = rois.map(roi => {
           const newroi = ROI.create(roi);
           newroi.set('guessParams', newroi.guess_params);

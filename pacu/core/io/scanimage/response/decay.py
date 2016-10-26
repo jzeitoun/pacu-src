@@ -38,7 +38,11 @@ class DecayResponse(object):
         return self
     @memoized_property
     def traces(self):
-        return np.vstack([trace.array for trace in self.orientation.offtimes])
+        try:
+            return np.vstack([trace.array for trace in self.orientation.offtimes])
+        except Exception as e:
+            print 'Decay response trace error', e
+            return []
     @memoized_property
     def mean(self):
         return np.array(self.traces).mean(axis=0)

@@ -60,6 +60,23 @@ class ScanimageSession(object):
     def remove(self):
         print 'remove session, rmtree', self.path
         shutil.rmtree(self.path.str)
+    def get_rois_json_safe(self):
+        rois = []
+        total = len(self.roi)
+        for index, rv in enumerate(self.roi.values()):
+            print  'Check {}/{} ROI...'.format(index + 1, total)
+            try:
+                ujson.loads(ujson.dumps(rv)) # verify
+            except Exception as e:
+                print 'ROI #{} has problem, "{}", SKIP LOADING!'.format(rv.id, e)
+                rv.error = str(e)
+                rv.blank = None
+                rv.flicker = None
+                rv.responses = {}
+                rois.append(rv)
+            else:
+                rois.append(rv)
+        return rois
 #     def load_rois(self):
 #         rois = self.roi.values()
 #         total = len(rois)
