@@ -6,7 +6,8 @@ from pacu.util.path import Path
 from pacu.profile import manager
 from pacu.core.model import Base
 
-import ipdb
+# import ipdb # will cause shell prompt change
+# this can lead to broken tab-completion
 
 def get_scoped(engine):
     from pacu.ext.sqlalchemy.orm import session
