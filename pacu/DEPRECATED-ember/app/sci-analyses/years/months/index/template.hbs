@@ -1,9 +1,0 @@
-<h2>Year {{model.year}}</h2>
-<h2>Month {{model.month}}</h2>
-<h2>Days</h2>
-{{#each model.days as |day|}}
-  {{link-to day "sci-analyses.years.months.days" day}}
-{{else}}
-  no...
-{{/each}}
-{{outlet}}
