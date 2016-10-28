@@ -1,13 +1,13 @@
 import importlib
 
-import ujson
 from flask import json
 from flask import Flask
 from flask import request
 from flask_restless import APIManager
 from flask_restless.serialization import DefaultRelationshipDeserializer
-from sqlalchemy import event
+from pandas import json as ujson
 from flask_restless.views.base import APIBase
+from sqlalchemy import event
 
 from pacu.core.io.scanbox.model import db as schema
 
@@ -26,7 +26,6 @@ APIBase._serialize_many = smany
 def mydumps(payload, **kwargs):
     return ujson.dumps(payload, double_precision=4)
 json._json.dumps = mydumps
-
 
 class nmspc:
     # '' <- memory
