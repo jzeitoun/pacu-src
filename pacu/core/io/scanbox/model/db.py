@@ -37,7 +37,7 @@ def fix_incremental(meta, bind):
                     column_sql = CreateColumn(col).compile(bind).string
                     sql = 'ALTER TABLE {} ADD COLUMN {}'.format(table.name, column_sql)
                     if col.default:
-                        sql += ' DEFAULT {!r}'.format(col.default.arg)
+                        sql += ' DEFAULT {!r}'.format(col.default.arg) # can break when a pickle type has callable default.
                     if not col.nullable:
                         sql += ' NOT NULL'
                     print 'executing sql: ' + sql

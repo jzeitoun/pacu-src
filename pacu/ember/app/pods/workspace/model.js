@@ -8,6 +8,7 @@ export default Model.extend({
   name: attr('string'),
   cur_sfreq: attr(),
   baseline_duration: attr(),
+  sog_initial_guess: attr(),
   // iopath: attr('string'),
   rois: hasMany('roi'),
   dtoverallmeans: hasMany('dtoverallmean'),

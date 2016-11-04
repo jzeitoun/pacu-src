@@ -6,6 +6,13 @@ import computed, { on, observes } from 'ember-computed-decorators';
 import { getCentroid } from 'pacu/pods/components/x-layer/roi/centroid';
 import { outerPointsByRatio } from 'pacu/pods/components/x-layer/roi/neuropil';
 
+const SOG_INITIAL_GUESS = {
+  a1min:0  , a1max:1,
+  a2min:0  , a2max:1,
+  sigmin:15, sigmax:60,
+  offmin:0 , offmax:0.01
+}
+
 export default Model.extend({
   toast: Ember.inject.service(),
   created_at: attr('epoch'),
@@ -15,6 +22,7 @@ export default Model.extend({
   neuropil_factor: attr({ defaultValue: 0.7 }),
   neuropil_polygon: attr({ defaultValue: () => { return []; } }),
   neuropil_enabled: attr({ defaultValue: false }),
+  sog_initial_guess: attr(),
   draw_dtoverallmean: attr({ defaultValue: false }),
   centroid: attr({ defaultValue: () => { return {x: -1, y: -1}; } }),
   workspace: belongsTo('workspace'),
@@ -91,7 +99,6 @@ export default Model.extend({
     this.destroyRecord();
   },
   refreshAll() {
-    const self = this;
     if (this.get('inAction')) { return; }
     this.set('inAction', true);
     this.save().then(() => {
@@ -110,9 +117,7 @@ export default Model.extend({
       });
     });
   },
-  // on('didCreate')
   synchronizeDatatags() {
-    // console.log('SYNC RELATIONSHIP');
     if (this.get('workspace.condition.imported')) {
       this.get('dtorientationsmeans').reload();
       this.get('dtorientationsfits').reload();
@@ -123,6 +128,49 @@ export default Model.extend({
     } else {
       this.get('workspace.dtoverallmeans').reload();
     }
+  },
+  clearSoGParam() {
+    this.set('sog_initial_guess', null);
+    this.save();
+  },
+  overrideSoGParam() {
+    const p = this.get('sog_initial_guess') || SOG_INITIAL_GUESS;
+    const current = `${p.a1min}, ${p.a1max}, ${p.a2min}, ${p.a2max}, ${p.sigmin}, ${p.sigmax}, ${p.offmin}, ${p.offmax}`;
+    const params = prompt('Please type new parameters', current);
+    if (Ember.isNone(params)) { return; }
+    try {
+      const [a1min, a1max, a2min, a2max, sigmin, sigmax, offmin, offmax] = params.split(',').map(parseFloat);
+      const newParams = { a1min, a1max, a2min, a2max, sigmin, sigmax, offmin, offmax };
+      for (let p in newParams) {
+        if (isNaN(newParams[p])) {
+          throw 'Parameter error';
+        }
+      }
+      this.set('sog_initial_guess', newParams);
+      this.save();
+    } catch(e) {
+      this.get('toast').warning(e);
+    }
+  },
+  computeSoG() {
+    this.get('toast').info('Recompute SoG fit...');
+    if (this.get('inAction')) { return; }
+    this.set('inAction', true);
+    this.store.createRecord('action', {
+      model_name: 'ROI',
+      model_id: this.id,
+      action_name: 'refresh_orientations_fit'
+    }).save().then((action) => {
+      if (action.get('status_code') === 500) {
+        this.get('toast').error(action.get('status_text'));
+      } else {
+        Ember.run.next(() => {
+          this.get('dtorientationsfits').reload();
+        });
+      }
+    }).finally(() => {
+      this.set('inAction', false);
+    });
   },
   @computed('workspace.cur_sfreq', 'dtorientationsmeans') dtorientationsmeanBySF(sfreq, dts) {
     return dts.findBy('trial_sf', sfreq);

@@ -23,6 +23,7 @@ class ROI(SQLite3Base):
     active = Column(Boolean, default=False) # do not use for a while
     draw_dtoverallmean = Column(Boolean, default=False)
     object_session = property(object_session)
+    sog_initial_guess = Column(PickleType)
     @property
     def contours(self):
         return np.array([[p['x'], p['y']] for p in self.polygon])
@@ -104,6 +105,9 @@ class ROI(SQLite3Base):
         if not self.dtanovaall:
             print 'Initialize Anova All'
             DTAnovaAll(roi=self)
+    def refresh_orientations_fit(self):
+        print 'REFRESH OriFit'
+        for tag in self.dtorientationsfits: tag.refresh()
     def refresh_all(self):
         print 'REFRESH TRACE'
         self.dtoverallmean.refresh()
@@ -114,8 +118,7 @@ class ROI(SQLite3Base):
         print 'REFRESH BEST PREF'
         if self.dtorientationbestpref:
             self.dtorientationbestpref.refresh()
-        print 'REFRESH OriFit'
-        for tag in self.dtorientationsfits: tag.refresh()
+        self.refresh_orientations_fit()
         print 'REFRESH SFreqFit'
         if self.dtsfreqfit:
             self.dtsfreqfit.refresh()

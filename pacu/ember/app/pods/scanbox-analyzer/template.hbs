@@ -35,6 +35,23 @@
     </div>
   </div>
 
+  <div class="ui simple dropdown item">
+    Global SoG Initial Guess
+    <i class="dropdown icon"></i>
+    <div class="menu">
+      {{#with model.workspace.sog_initial_guess as |p|}}
+      <div class="header">A1: {{p.a1min}} ~ {{p.a1max}}</div>
+      <div class="header">A2: {{p.a2min}} ~ {{p.a2max}}</div>
+      <div class="header">Sigma: {{p.sigmin}} ~ {{p.sigmax}}</div>
+      <div class="header">Offset: {{p.offmin}} ~ {{p.offmax}}</div>
+      {{!--
+      <div class="divider"></div>
+      <div class="item" {{action "overlayMPI"}}>Change...</div>
+      --}}
+      {{/with}}
+    </div>
+  </div>
+
 </div>
 {{/x-sui-sticky}}
 

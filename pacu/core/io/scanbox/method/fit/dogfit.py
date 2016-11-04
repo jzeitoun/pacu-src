@@ -8,9 +8,9 @@ import numpy as np
 
 from pacu.core.io.scanimage import util
 
-print 'svg fonttype', plt.rcParams['svg.fonttype']
+# print 'svg fonttype', plt.rcParams['svg.fonttype']
 plt.rcParams['svg.fonttype'] = 'path'
-print 'change to none'
+# print 'change to none'
 
 #svg.fonttype : 'path'         # How to handle SVG fonts:
 #    'none': Assume fonts are installed on the machine where the SVG will be viewed.
@@ -167,7 +167,15 @@ class SpatialFrequencyDogFit(object):
         return getattr(self, _name)
 
 
+    @property
+    def dog_xy_ext(self): # to cpd 1.0
+        x = np.append(self.stretched.x, 1.0)
+        xstim = np.array(map(self.stimulus, x))
+        y = (xstim * self.get_dog(*self.dog_param)).sum(axis=1)
+        return x, y
+
     def toDict(self):
+        dog_x_ext, dog_y_ext = self.dog_xy_ext
         pref = self.preferred_sfreq.x
         peak = self.peak_sfreq.x
         ratio = self.bandwidth_ratio
@@ -190,6 +198,8 @@ class SpatialFrequencyDogFit(object):
             ratio = ratio,
             dog_x = dog_x,
             dog_y = dog_y,
+            dog_x_ext = dog_x_ext.tolist(),
+            dog_y_ext = dog_y_ext.tolist(),
             blank = blank,
             flicker = flicker,
             sfx = sfx,
@@ -208,7 +218,7 @@ class SpatialFrequencyDogFit(object):
         ax = fig.add_subplot(111)
         ax.set_title('SF Tuning Curve')
         ax.plot(self.xfreq, self.ymeas, label='original')
-        x, y = self.dog_xy
+        x, y = self.dog_xy_ext
         ax.plot(x, y, label='fit')
         px, py = self.preferred_sfreq
         ax.plot(px, py, 'o', label='pref-sf')

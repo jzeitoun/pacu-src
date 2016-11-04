@@ -121,7 +121,12 @@ class ScanboxIO(object):
     @classmethod
     def iter_every_io(cls):
         return (cls(path) for path in userenv.joinpath('scanbox').rglob('*.io'))
-
+    @classmethod
+    def fix_db_schema_all(cls):
+        meta = schema.SQLite3Base.metadata
+        for io in ScanboxIO.iter_every_io():
+            bind = io.condition.object_session.bind
+            schema.fix_incremental(meta, bind)
 
 import re
 import numpy as np
@@ -150,6 +155,13 @@ def plot_timing_diff(id=1087):
         pyplot.ylabel('psychopy - labjack in second')
         pyplot.xlabel('trials in order')
 
+# for io in ScanboxIO.iter_every_io():
+#     for ws in io.condition.workspaces:
+#         print ws.sog_initial_guess
+        # ws.sog_initial_guess = ws.SOG_INITIAL_GUESS
+#         print ws.sog_initial_guess
+    # io.condition.object_session.begin()
+
 # w = q.condition.workspaces.first
 # r = q.condition.workspaces.first.rois.first
 # a = r.dtorientationsmeans.first
@@ -163,11 +175,11 @@ def plot_timing_diff(id=1087):
 # import time
 # print 'purge disk cache', os.system('sudo purge')
 # q = ScanboxIO('Kirstie/ka28/day1/day1_000_002.io')
-# q = ScanboxIO('day_ht/Aligned_day1_000_001.io').echo_off()
 # q = ScanboxIO('day_ht/Aligned_day3_000_006.io').echo_off()
 # q = ScanboxIO('day_ht/my4r_1_3_000_007.io').echo_off()
-
+# q = ScanboxIO('day_ht/Aligned_day1_000_001.io').echo_off()
 # r = q.condition.workspaces.first.rois.first
+# fit = r.dtsfreqfit.refresh()
 # cnt = r.contours
 # frames = q.condition.io.ch0.mmap # going 8bit does not help
 # shape = frames.shape[1:]

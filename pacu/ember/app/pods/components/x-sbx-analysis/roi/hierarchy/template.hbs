@@ -38,6 +38,42 @@
     <div class="item" {{action roi.setNeuropilRatio target=roi}}>
       Set amount ({{roi.neuropil_ratio}})
     </div>
+
+    <div class="divider"></div>
+    <div class="header">
+      SoG Initial Guess
+    </div>
+
+    {{#with roi.sog_initial_guess as |p|}}
+      <div class="item">
+        Current
+        <div class="menu">
+          <div class="header">
+            <span class="ui mini label">1</span>{{p.a1min}} ~ {{p.a1max}}
+          </div>
+          <div class="header">
+            <span class="ui mini label">2</span>{{p.a2min}} ~ {{p.a2max}}
+          </div>
+          <div class="header">
+            <span class="ui mini label">S</span>{{p.sigmin}} ~ {{p.sigmax}}
+          </div>
+          <div class="header">
+            <span class="ui mini label">O</span>{{p.offmin}} ~ {{p.offmax}}
+          </div>
+        </div>
+      </div>
+    {{/with}}
+
+    <div class="item" {{action roi.clearSoGParam target=roi}}>
+      Default
+    </div>
+    <div class="item" {{action roi.overrideSoGParam target=roi}}>
+      Override
+    </div>
+    <div class="item" {{action roi.computeSoG target=roi}}>
+      Compute
+    </div>
+
   </div>
 </div>
 <div class="menu" {{action roi.focus target=roi}}>
