@@ -166,10 +166,11 @@ class SpatialFrequencyDogFit(object):
                     guess = guess + step_factor
         return getattr(self, _name)
 
-
     @property
     def dog_xy_ext(self): # to cpd 1.0
-        x = np.append(self.stretched.x, 1.0)
+        func = interpolate.interp1d(self.xfreq, self.ymeas, bounds_error=False)
+        stretched = np.linspace(self.xfreq[0], 1.0, 100)
+        x = Stretched(stretched, func(stretched)).x
         xstim = np.array(map(self.stimulus, x))
         y = (xstim * self.get_dog(*self.dog_param)).sum(axis=1)
         return x, y
