@@ -1,5 +1,8 @@
 from __future__ import division
+
 import shutil
+from scipy import io
+from cStringIO import StringIO
 
 import tifffile
 import numpy as np
@@ -157,7 +160,12 @@ class ScanimageIO(object):
             roi.blank = None
             roi.flicker = None
             roi.responses = {}
-        self.session.roi.save()
+    def export_sfreqfit_data_as_mat(self, rid):
+        roi = self.session.roi[rid]
+        sio = StringIO()
+        value = roi.sfreqfit.toDict()
+        io.savemat(sio, value)
+        return sio.getvalue()
     def update_responses(self, id, heavy=False):
         roi = self.session.roi[id]
         trace = self.make_trace(roi)

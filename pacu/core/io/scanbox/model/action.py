@@ -26,7 +26,7 @@ class Action(SQLite3Base):
             result = getattr(model, self.action_name)(
                 *self.action_args or [], **self.action_kwargs or {})
             self.status_code = 200
-            if result:
+            if result is not None:
                 self.meta = result
         except Exception as e:
             reason = '<br/>'.join(traceback.format_exception(*sys.exc_info()))

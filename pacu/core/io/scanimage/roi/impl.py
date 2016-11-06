@@ -208,3 +208,4 @@ class ROI(object):
             encoded='base64',
             data=base64.b64encode(self.export_plots_as_zip()),
         )
+

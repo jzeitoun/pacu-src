@@ -11,9 +11,11 @@ const Image = Ember.Object.extend({
 });
 
 export default Ember.Object.extend({
+  print(...fields) { return this.get('wsx').print(...fields); },
   access(...fields) { return this.get('wsx').access(...fields); },
   mirror(...fields) { return this.get('wsx').mirrorTo(this, ...fields); },
   invoke(func, ...args) { return this.get('wsx').invoke(func, ...args); },
+  invokeAsBinary(func, ...args) { return this.get('wsx').invokeAsBinary(func, ...args); },
   @computed('ch0Dimension') img(ch) { return Image.create(ch); },
   @on('init') initialize() {
     this.mirror('ch0.dimension', 'ch0.has_maxp');

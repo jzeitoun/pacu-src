@@ -1,7 +1,11 @@
-import cv2
+import base64
 import operator
-import numpy as np
+import cStringIO
 from collections import OrderedDict
+
+import cv2
+import numpy as np
+from scipy import io
 from sqlalchemy import Column, Integer, Boolean, Float, UnicodeText
 from sqlalchemy.types import PickleType
 from sqlalchemy.orm import object_session
@@ -134,6 +138,11 @@ class ROI(SQLite3Base):
             'neuropil_enabled', 'neuropil_factor', 'neuropil_polygon')
         attrs = {f: getattr(self, f) for f in fields}
         return dict(id=self.id, attrs=attrs)
+    def export_sfreqfit_data_as_mat(self):
+        sio = cStringIO.StringIO()
+        io.savemat(sio, self.dtsfreqfit.value)
+        return sio.getvalue()
+        # return base64.b64encode(sio.getvalue())
 
 
 

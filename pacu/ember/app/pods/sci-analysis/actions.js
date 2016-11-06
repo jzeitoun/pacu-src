@@ -186,5 +186,25 @@ export default {
     }).finally(() => {
       roi.set('busy', false);
     });
+  },
+  exportSFreqFitDataAsMat(roi) {
+    this.currentModel.wsx.invokeAsBinary('export_sfreqfit_data_as_mat', roi.id
+    ).then(data => {
+      const ts = +(new Date);
+      download.fromArrayBuffer(data,
+        `${ts}-${roi.id}-sfreqfit.mat`, 'application/json');
+    });
+
+// this.currentModel.wsx.invokeAsBinary
+
+    // debugger
+    // const wid = this.currentModel.workspace.id;
+    // const rid = roi.id;
+    // this.currentModel.stream.invokeAsBinary(
+    // 'export_sfreqfit_data_as_mat', wid, rid
+    // ).then(data => {
+    //   const ts = +(new Date);
+    //   download.fromArrayBuffer(data, `${ts}-${wid}-${rid}-sfreqfit.mat`, 'application/json');
+    // });
   }
 }

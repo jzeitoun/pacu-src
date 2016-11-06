@@ -127,6 +127,10 @@ class ScanboxIO(object):
         for io in ScanboxIO.iter_every_io():
             bind = io.condition.object_session.bind
             schema.fix_incremental(meta, bind)
+    def export_sfreqfit_data_as_mat(self, wid, rid):
+        roi = self.db_session.query(schema.ROI
+            ).filter_by(id=rid, workspace_id=wid).one()
+        return roi.export_sfreqfit_data_as_mat()
 
 import re
 import numpy as np
