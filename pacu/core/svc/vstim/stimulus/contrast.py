@@ -4,7 +4,7 @@ from pacu.core.svc.impl.ember_attr import EmberAttr
 
 class Contrast(PacuAttr, PositiveFloatSpec):
     component = 'x-svc-comp-input-text'
-    description = EmberAttr('description for contrast')
-    placeholder = EmberAttr('place for contrast')
-    title = EmberAttr('Contrast')
-    tip = EmberAttr('tooltip for contrast')
+    description = EmberAttr('NO LONGER USED')
+    placeholder = EmberAttr('')
+    title = EmberAttr('Contrast (DEPRECATED)')
+    tooltip = EmberAttr('Please use `Contrasts` field instead.')

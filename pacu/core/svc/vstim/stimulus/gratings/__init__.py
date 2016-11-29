@@ -16,6 +16,7 @@ from pacu.core.svc.vstim.stimulus.repetition import Repetition
 from pacu.core.svc.vstim.stimulus.orientations import Orientations
 from pacu.core.svc.vstim.stimulus.sfrequencies import SFrequencies
 from pacu.core.svc.vstim.stimulus.tfrequencies import TFrequencies
+from pacu.core.svc.vstim.stimulus.contrasts import Contrasts
 from pacu.core.svc.vstim.stimulus.duration import OnDuration
 from pacu.core.svc.vstim.stimulus.duration import OffDuration
 from pacu.core.svc.vstim.stimulus.blank import Blank
@@ -35,7 +36,7 @@ class StimulusResource(Resource):
         win = self.window.instance
         self.textstim = TextStim(win, text='')
         self.instance = GratingStim(win=win, units='deg', tex='sin',
-            contrast = self.component.contrast,
+            contrast = self.component.contrast, # maybe this still could be used for initial contrast setup.
             size = misc.pix2deg(win.size, win.monitor)*2)
         try:
             self.interval = self.window.get_isi()
@@ -48,10 +49,11 @@ class StimulusResource(Resource):
         from psychopy.data import TrialHandler # eats some time
         # blank comes first
         # flicker comes later
-        conditions = [Condition(ori, sf, tf) for ori, sf, tf in product(
+        conditions = [Condition(ori, sf, tf, cnt) for ori, sf, tf, cnt in product(
             self.component.orientations,
             self.component.sfrequencies,
             self.component.tfrequencies,
+            self.component.contrasts,
         )]
         if self.component.blank:
             logging.msg('has blank condition...')
@@ -105,6 +107,7 @@ class GratingsStimulus(Component):
     orientations = Orientations([0, 120, 240])
     sfrequencies = SFrequencies([0.01, 0.05, 0.1])
     tfrequencies = TFrequencies([1.0])
+    contrasts = Contrasts([1.0])
     blank = Blank(True)
     flicker = Flicker(True)
     on_duration = OnDuration(0.1)

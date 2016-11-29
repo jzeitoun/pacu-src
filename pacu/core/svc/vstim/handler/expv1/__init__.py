@@ -13,7 +13,7 @@ class ExpV1HandlerResource(HandlerResource):
     def __enter__(self):
         super(ExpV1HandlerResource, self).__enter__()
         if not self.component.keyword:
-            raise Exception('Keyword (Scanbox filename) can not be empty.')
+            raise Exception('Keyword (filename of the recording) can not be empty.')
         return self
     def service_done(self, service):
         result = super(ExpV1HandlerResource, self).service_done(service)
@@ -54,6 +54,6 @@ class ExpV1HandlerResource(HandlerResource):
 class ExpV1Handler(HandlerBase):
     sui_icon = 'database'
     package = __package__
-    description = 'Scanbox users must provide correct information to take sbx recordings to analysis session.'
+    description = 'Users must provide a correct information (filename, path, etc...) of recordings to be used for search later in analysis session.'
     __call__ = ExpV1HandlerResource.bind('stimulus', 'result')
     keyword = Keyword('')

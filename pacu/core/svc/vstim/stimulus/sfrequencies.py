@@ -4,7 +4,7 @@ from pacu.core.svc.impl.ember_attr import EmberAttr
 
 class SFrequencies(PacuAttr, PositiveFloatListSpec):
     component = 'x-svc-comp-input-array'
-    description = EmberAttr('description for sfreq')
+    description = EmberAttr('floating numbers')
     placeholder = EmberAttr('place for sfreq')
     title = EmberAttr('Spatial Frequencies')
     tooltip = EmberAttr('tooltip for sfreq')

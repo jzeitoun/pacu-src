@@ -7,7 +7,8 @@ gears = [
     EnumItem('pilot', name='Pilot', sui_icon='plane'),
     EnumItem('2p', name='2P', sui_icon='database'),
     EnumItem('intrinsic', name='Intrinsic', sui_icon='database'),
-    EnumItem('scanbox', name='Scanbox', sui_icon='database')
+    EnumItem('scanbox', name='Scanbox', sui_icon='database'),
+    EnumItem('miniscope', name='Miniscope', sui_icon='database')
 ]
 
 class ExpOn(EnumSpec, PacuAttr):
