@@ -1,14 +1,23 @@
 pathlib
-tornado
-sqlalchemy
-psychopy
 futures
+tornado
+flask
+sqlalchemy
+pyreadline
+ipdb
+flask_restless==1.0.0b1
+ipython==4
+
+pyglet
+psychopy
+pillow
 ujson
 numpy
-pillow
 scipy
-pyglet # only using for python window64 distributino website
-# pyopengl
-# pyopengl accelerate
-# vlc?
 pandas
+matplotlib
+opencv
+opengl
+opengl-acc
+
+# download = avbin / freetype 64

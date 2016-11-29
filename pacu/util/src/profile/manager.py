@@ -8,6 +8,13 @@ from ..path import Path
 from ..inspect import repr
 
 class ProfileManager(object):
+    """
+    from pacu.profile import manager
+    print list(manager.get('db'))
+    db = manager.get('db').section('memory')
+    session = db()
+    memory_session = manager.instance('db') # an instance of primary profile
+    """
     def __init__(self, path, package):
         self.path = Path.absdir(path)
         self.package = package
