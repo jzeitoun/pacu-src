@@ -34,5 +34,5 @@ class HandlerResource(Resource):
 class HandlerBase(Component):
     exp_on = ExpOn()
     exp_by = ExpBy('anonymous')
-    exp_note = ExpNote('')
+    # exp_note = ExpNote('')
     __call__ = HandlerResource.bind('stimulus', 'result')

@@ -5,5 +5,5 @@ from pacu.core.svc.impl.ember_attr import EmberAttr
 class ExpNote(PacuAttr, StringSpec):
     component = 'x-svc-comp-input-text'
     description = EmberAttr('string')
-    placeholder = EmberAttr('Short description')
+    placeholder = EmberAttr('Shortdescription')
     title = EmberAttr('Experiment Note')

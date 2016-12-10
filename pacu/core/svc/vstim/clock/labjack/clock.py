@@ -1,9 +1,4 @@
 from pacu.ext.labjack.u3 import U3Proxy
-# from pacu.ext.labjack import u3
-# t0 = u3.u3.Timer0(UpdateReset=True)
-# t1 = u3.u3.Timer1(UpdateReset=True)
-# c0 = u3.u3.Counter0(Reset=True)
-# c1 = u3.u3.Counter1(Reset=True)
 from pacu.ext.psychopy import logging
 from pacu.core.svc.impl.exc import TimeoutException
 from pacu.core.svc.impl.exc import UserAbortException
@@ -18,15 +13,16 @@ class LabJackClockResource(ClockResource):
     def __enter__(self):
         try:
             self.proxy = U3Proxy()
-            u3 = self.proxy.__enter__()
+            self.u3 = self.proxy.__enter__()
         except Exception as e:
             raise ComponentNotFoundError(
                 'Could not initialize LabJack Device: ' + str(e))
-        self.started_at = u3.get_time()
-        self.instance = u3
-        return self
-    def getTime(self):
-        return self.instance.get_time()
+        return super(LabJackClockResource, self).__enter__()
+#         self.started_at = u3.get_time()
+#         self.instance = u3
+#         return self
+#     def getTime(self):
+#         return self.instance.get_time()
     def __exit__(self, type, value, traceback):
         self.finished_at = self.getTime() - self.started_at
         self.proxy.__exit__(type, value, traceback)
@@ -41,10 +37,10 @@ class LabJackClockResource(ClockResource):
             while timer.getTime() > 0:
                 if event.getKeys('escape'):
                     raise UserAbortException()
-                if self.instance.get_counter():
+                if self.u3.get_counter():
                     logging.msg('counter increased')
                     logging.flush()
-                    self.instance.reset_timer()
+                    # self.instance.reset_timer()
                     return
         else: # timeout...
             raise TimeoutException('Could not catch any signal from LabJack.')

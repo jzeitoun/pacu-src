@@ -7,7 +7,8 @@ from pacu.core.svc.vstim.clock.wait_time import WaitTime
 
 class ClockResource(Resource):
     def __enter__(self):
-        clock = logging.defaultClock
+        clock = core.Clock()
+        logging.setDefaultClock(clock)
         self.started_at = clock.getTime()
         self.instance = clock
         return self
@@ -27,6 +28,8 @@ class ClockResource(Resource):
         self.wait(stimulus)
     # this method should do nothing without obvious resaon.
     # refer pacu/core/svc/vstim/clock/labjack/driver.py 
+    def reset(self):
+        self.instance.reset()
     def flipped(self):
         pass
 class ClockBase(Component):

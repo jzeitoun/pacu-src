@@ -5,7 +5,7 @@ from pacu.core.svc.impl.ember_attr import EmberAttr
 
 gears = [
     EnumItem('pilot', name='Pilot', sui_icon='plane'),
-    EnumItem('2p', name='2P', sui_icon='database'),
+    # EnumItem('2p', name='2P', sui_icon='database'),
     EnumItem('intrinsic', name='Intrinsic', sui_icon='database'),
     EnumItem('scanbox', name='Scanbox', sui_icon='database'),
     EnumItem('miniscope', name='Miniscope', sui_icon='database')
@@ -13,8 +13,8 @@ gears = [
 
 class ExpOn(EnumSpec, PacuAttr):
     component = 'x-svc-comp-input-select'
-    description = EmberAttr('description for exp for')
-    placeholder = EmberAttr('choose 1')
+    description = EmberAttr('string')
+    placeholder = EmberAttr('select...')
     title = EmberAttr('Gear')
     items = EmberAttr(gears)
-    tooltip = EmberAttr('tooltip for expfor')
+    tooltip = EmberAttr('')

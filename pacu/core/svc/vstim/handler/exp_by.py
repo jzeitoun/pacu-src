@@ -9,13 +9,15 @@ people = [
     EnumItem('melissa', name='Melissa', sui_icon='user'),
     EnumItem('kirstie', name='Kirstie', sui_icon='user'),
     EnumItem('jack', name='Jack', sui_icon='user'),
-    EnumItem('xiao', name='Xiao', sui_icon='user')
+    EnumItem('xiao', name='Xiao', sui_icon='user'),
+    EnumItem('carey', name='Carey', sui_icon='user'),
+    EnumItem('xulab', name='Xu Lab', sui_icon='user'),
 ]
 
 class ExpBy(EnumSpec, PacuAttr):
     component = 'x-svc-comp-input-select'
-    description = EmberAttr('description for exp_by')
-    placeholder = EmberAttr('choose 1')
+    description = EmberAttr('string')
+    placeholder = EmberAttr('')
     title = EmberAttr('Experimenter')
     items = EmberAttr(people)
-    tooltip = EmberAttr('tooltip for exp_by')
+    tooltip = EmberAttr('Who is arranging this session?')

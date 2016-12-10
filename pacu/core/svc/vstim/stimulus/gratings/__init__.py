@@ -70,13 +70,15 @@ class StimulusResource(Resource):
         self.clock.synchronize(self)
         return iter(self)
     def __iter__(self):
-        for trial in self.trials:
-            index = self.trials.thisN
-            logging.msg('Entering trial #%s...' % index)
+        trials = self.trials
+        clock = self.clock.instance
+        clock.reset()
+        for trial in trials:
             self.update_trial(trial)
-            self.trials.addData('on_time', self.clock.getTime())
+            logging.msg('Entering trial #%s...' % trials.thisN)
+            trials.addData('on_time', clock.getTime())
             yield trial.start()
-            self.trials.addData('off_time', self.clock.getTime())
+            trials.addData('off_time', clock.getTime())
             self.flip_blank()
             core.wait(self.component.off_duration)
             self.instance.opacity = 1.0

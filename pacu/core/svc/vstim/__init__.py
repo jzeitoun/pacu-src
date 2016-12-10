@@ -62,6 +62,7 @@ __all__ = specs([
         ('kirsties', 'KirstiesRegularMonitor'),
         ('kirsties', 'KirstiesLargeMonitor'),
         ('jacks', 'JacksRegularMonitor'),
+        ('xulab', 'XuLabsPrimaryMonitor'),
         # ('example', 'ExampleComponent'),
     ]),
     spec('window', 'windows', [
@@ -85,6 +86,7 @@ __all__ = specs([
         ('tcp', 'TwowayTCPClock'),
         ('labjack', 'LabJackClock'),
         ('labjack', 'LabJackDriver'),
+        ('labjack.miniscope', 'LabJackMiniscopeDriver'),
     ]),
     spec('handler', 'handlers', [
         ('dryrun', 'DryrunHandler'),

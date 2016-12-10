@@ -12,7 +12,7 @@ class Trial(object):
     def start(self):
         self.getTime = CountdownTimer(self.duration).getTime
         return self
-    def __nonzero__(self):
+    def __nonzero__(self): # used in while statement as an ISI
         if event.getKeys('escape'):
             self.stimulus.should_stop = True
         return self.getTime() > 0
