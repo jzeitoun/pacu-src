@@ -246,9 +246,9 @@ class ScanimageIO(object):
 # import pandas as pd
 # from pacu.core.io.scanimage.response.orientation import Orientation
 
-# path = 'tmp/Dario/2016.05.06/r.160309.1/DM24_RbV1_Contra_005'
-# qwe = ScanimageIO(path).set_session('main')
-
+# path = 'tmp/Dario/2016.12.05/r.160722.10/Contra_001'
+# qwe = ScanimageIO(path).set_session('xiao')
+# asd = qwe.session.roi.values()[0]
 
 
 # from scipy import stats

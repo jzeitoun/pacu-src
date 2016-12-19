@@ -156,13 +156,15 @@ class ROI(object):
         Maybe default it to use all frames for meantrace and 1/4 of the baseline.
         """
         cfreq = adaptor.capture_frequency
-        return np.array([
+        arr = np.array([
             resp.orientations.ons[
                 # ..., int(1*cfreq):int(2*cfreq)
                 :
             ].mean(axis=(1, 2))
             for sf, resp in self.sorted_responses
-        ]).mean(axis=0)
+        ])
+        return np.nanmean(arr, axis=0)
+
     def update_with_adaptor(self, adaptor):
         gaussian = SumOfGaussianFit(
             adaptor.orientations,

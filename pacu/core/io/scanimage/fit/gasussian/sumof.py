@@ -137,8 +137,8 @@ class SumOfGaussianFit(object):
             # print 'using global OPref', self.global_o_pref
             return self.global_o_pref
         x_rad = np.deg2rad(self.xoris)
-        numerator = sum(self.ymeas*np.exp(2j*x_rad))
-        o_pref = np.angle(numerator/sum(self.ymeas), deg=True)
+        numerator = np.nansum(self.ymeas*np.exp(2j*x_rad))
+        o_pref = np.angle(numerator/np.nansum(self.ymeas), deg=True)
         if o_pref < 0:
             o_pref += 360
         half_phase = o_pref/2
@@ -160,12 +160,12 @@ class SumOfGaussianFit(object):
         x = np.append(self.xoris, 360)
         y = np.append(self.ymeas, self.ymeas[0])
         x_new = np.arange(0, 360, 1)
-        return Fit(interp1d(x, y)(x_new), x_new) # y comes first
+        return Fit(interp1d(x, y, bounds_error=False)(x_new), x_new) # y comes first
     @memoized_property
     def brute_fit(self):
         def get_residuals(params, y_meas_stretch, x_stretch):
             err = y_meas_stretch - self.function(x_stretch, params)
-            return sum(err**2)
+            return np.nansum(err**2)
         fit_params, _, _, _ = optimize.brute(
             get_residuals,
             self.initial_guess,
@@ -174,7 +174,7 @@ class SumOfGaussianFit(object):
         return fit_params
     @memoized_property
     def leastsq_fit(self):
-        fit_params, _, _, _, _ =optimize.leastsq(
+        fit_params, _, _, _, _ = optimize.leastsq(
             self.get_residuals_leastsq,
             self.brute_fit,
             args = self.stretched,

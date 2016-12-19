@@ -6,7 +6,7 @@ import traceback
 
 import numpy as np
 
-import ujson as json
+from pandas import json
 from pacu.ext.tornado import websocket
 
 @contextlib.contextmanager

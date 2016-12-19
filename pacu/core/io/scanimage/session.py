@@ -1,7 +1,7 @@
 from datetime import datetime
 import shutil
 
-import ujson
+from pandas import json
 
 from pacu.util.path import Path
 from pacu.util.inspect import repr
@@ -66,7 +66,7 @@ class ScanimageSession(object):
         for index, rv in enumerate(self.roi.values()):
             print  'Check {}/{} ROI...'.format(index + 1, total)
             try:
-                ujson.loads(ujson.dumps(rv)) # verify
+                json.loads(json.dumps(rv)) # verify
             except Exception as e:
                 print 'ROI #{} has problem, "{}", SKIP LOADING!'.format(rv.id, e)
                 rv.error = str(e)

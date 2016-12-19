@@ -15,10 +15,33 @@ class Orientation(object):
         ontimes = trace.zip_slice(adt.indice.ontimes)
         baselines = trace.zip_slice(adt.indice.baselines)
         offtimes = trace.zip_slice(adt.indice.offtimes)
+        nframes_on = int(round(adt.rec.duration_F))
+        nframes_off = int(round(adt.rec.waitinterval_F))
         for ontime, baseline in zip(ontimes, baselines):
             ontime.compensate(baseline, adt.frame.baseline)
+
+        print 'Verifying recording duration of orientation {}'.format(value)
+        for index, ontime in enumerate(ontimes):
+            length_on = len(ontime.array)
+            if nframes_on != length_on:
+                ontime.array = np.concatenate([ontime.array,
+                    np.full(nframes_on-length_on, np.nan)])
+                print ('Trial #{} has ontime duration mismatch ({}/{}), '
+                       'fixed with NaNs').format(index, length_on, nframes_on)
+        for index, offtime in enumerate(offtimes):
+            length_off = len(offtime.array)
+            if nframes_off != length_off:
+                offtime.array = np.concatenate([offtime.array,
+                    np.full(nframes_off-length_off, np.nan)])
+                print ('Trial #{} has offtime duration mismatch ({}/{}), '
+                       'fixed with NaNs').format(index, length_off, nframes_off)
+
         self = cls(value, ontimes, offtimes, baselines)
         self.capture_frequency = adt.capture_frequency
+        self.nframes_on = nframes_on
+        self.nframes_off = nframes_off
+
+        # print 'len base', [len(t.array) for t in baselines]
         return self
     def __repr__(self):
         return '{}({})'.format(type(self).__name__, self.value)
