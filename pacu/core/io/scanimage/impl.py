@@ -250,6 +250,10 @@ class ScanimageIO(object):
 # qwe = ScanimageIO(path).set_session('xiao')
 # asd = qwe.session.roi.values()[0]
 
+# path = 'tmp/Dario/2015.04.18/x.150322.1/Contra_001'
+# qwe = ScanimageIO(path).set_session('ht')
+# asd = qwe.session.roi.values()[0]
+
 
 # from scipy import stats
 

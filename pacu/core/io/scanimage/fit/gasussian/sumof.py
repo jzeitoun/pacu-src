@@ -51,7 +51,7 @@ def get_residuals_leastsq(p,y,x):
 def stretch(x,y):
     x=np.append(x,360)
     y=np.append(y,y[0])
-    f=interp1d(x,y)
+    f=interp1d(x,y,bounds_error=False)
     x_new=np.arange(0,360,1)
     return x_new, f(x_new)
 

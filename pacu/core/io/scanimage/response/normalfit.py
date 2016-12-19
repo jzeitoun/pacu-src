@@ -16,7 +16,7 @@ class NormalfitResponse(object):
     def toDict(self):
         return dict(
             measure = self.measure,
-            # stretched = self.measure_stretch,
+            stretched = self.measure_stretch,
             names = self.names,
             fit = self.fit._asdict(),
         )
@@ -32,12 +32,12 @@ class NormalfitResponse(object):
         # ].mean(axis=(1, 2))
         self.measure = response.orientations.windowed_ontimes.mean(1)
 
-        # self.meanresponses_p   ,\
-        # self.residual          ,\
-        # self.meanresponses_fit ,\
-        # self.o_peaks           ,\
-        # self.measure_stretch   = sum_of_gaussians.fit(self.names, self.measure)
-        # self.fit = Fit(*self.meanresponses_fit)
+        self.meanresponses_p   ,\
+        self.residual          ,\
+        self.meanresponses_fit ,\
+        self.o_peaks           ,\
+        self.measure_stretch   = sum_of_gaussians.fit(self.names, self.measure)
+        self.fit = Fit(*self.meanresponses_fit)
         self.gaussian = SumOfGaussianFit(self.names, self.measure,
             best_o_pref, response.sog_initial_guess)
         self.fit = Fit(self.gaussian.stretched.x, self.gaussian.y_fit)
