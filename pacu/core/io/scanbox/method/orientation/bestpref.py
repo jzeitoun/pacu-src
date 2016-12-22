@@ -16,10 +16,10 @@ def main(workspace, condition, roi, datatag):
             arr = np.array([
                 rep.value['on'][int(1*cfreq):int(2*cfreq)]
             for rep in reps_by_ori])
-            meantrace_for_ori = arr.mean(0)
+            meantrace_for_ori = np.nanmean(arr, axis=0)
             oris.append(meantrace_for_ori)
         sfs.append(np.array(oris))
-    mat = np.array(sfs).mean(axis=(0,2))
+    mat = np.nanmean(np.array(sfs), axis=(0,2))
     fit = SumOfGaussianFit(condition.orientations, mat)
     return fit.o_pref
 

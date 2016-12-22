@@ -8,13 +8,13 @@ from pacu.core.io.scanimage import util
 def main(workspace, condition, roi, datatag):
     oris = roi.dttrialdff0s.filter_by(trial_sf=datatag.trial_sf)
     oris = [
-        [np.array(rep.value['on']).mean()
+        [np.nanmean(np.array(rep.value['on']))
         for rep in oris.filter_by(trial_ori=ori)]
     for ori in condition.orientations]
     bls = roi.dttrialdff0s.filter_by(trial_blank=True)
     fls = roi.dttrialdff0s.filter_by(trial_flicker=True)
-    flicker = [np.array(f.value['on']).mean() for f in fls]
-    blank = [np.array(b.value['on']).mean() for b in bls]
+    flicker = [np.nanmean(np.array(f.value['on'])) for f in fls]
+    blank = [np.nanmean(np.array(b.value['on'])) for b in bls]
     try:
         return stats.f_oneway(blank, flicker, *oris)
     except Exception as e:

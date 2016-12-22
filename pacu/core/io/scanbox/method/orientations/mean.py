@@ -26,7 +26,7 @@ def main(workspace, condition, roi, datatag):
     matrix = np.array(oris).transpose(1,0,2)
     # first axis is each trial, second is baseline ~ ontime over all orientations
     matrix = np.array(map(np.concatenate, matrix))
-    meantrace = matrix.mean(0)
+    meantrace = np.nanmean(matrix, axis=0)
     indices = dict(zip(indice, condition.orientations))
     return matrix, meantrace, indices, on_frames, bs_frames
 

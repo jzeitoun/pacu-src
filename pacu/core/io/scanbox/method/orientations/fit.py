@@ -22,9 +22,9 @@ def main(workspace, condition, roi, datatag):
     for ori in condition.orientations:
         reps_by_ori = trials.filter_by(trial_ori=ori)
         arr = np.array([rep.value['on'] for rep in reps_by_ori])
-        meantrace_for_ori = arr.mean(0)
+        meantrace_for_ori = np.nanmean(arr, axis=0)
         oris.append(meantrace_for_ori)
-    mat = np.array(oris).mean(1)
+    mat = np.nanmean(np.array(oris), axis=1)
     p = roi.sog_initial_guess or workspace.sog_initial_guess
     a1m, a1M, a2m, a2M, sm, sM, om, oM = [p[attr] for attr in PATTRS]
     fit = SumOfGaussianFit(condition.orientations, mat, best_pref_ori, (

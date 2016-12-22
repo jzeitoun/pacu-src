@@ -8,10 +8,10 @@ from pacu.core.io.scanimage import util
 def main(workspace, condition, roi, datatag):
     bls = roi.dttrialdff0s.filter_by(trial_blank=True)
     fls = roi.dttrialdff0s.filter_by(trial_flicker=True)
-    flicker = [np.array(f.value['on']).mean() for f in fls]
-    blank = [np.array(b.value['on']).mean() for b in bls]
+    flicker = [np.nanmean(np.array(f.value['on'])) for f in fls]
+    blank = [np.nanmean(np.array(b.value['on'])) for b in bls]
     all_oris = [
-        [np.array(rep.value['on']).mean() for rep in reps]
+        [np.nanmean(np.array(rep.value['on'])) for rep in reps]
         for sf, oris in roi.dt_ori_by_sf.items()
         for ori, reps in oris.items()
     ]
