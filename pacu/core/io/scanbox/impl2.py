@@ -178,11 +178,13 @@ def plot_timing_diff(id=1087):
 # import os
 # import time
 # print 'purge disk cache', os.system('sudo purge')
+# q = ScanboxIO('Kirstie/ka28/day1/Aligned_day1_000_002.io')
 # q = ScanboxIO('Kirstie/ka28/day1/day1_000_002.io')
 # q = ScanboxIO('day_ht/Aligned_day3_000_006.io').echo_off()
 # q = ScanboxIO('day_ht/my4r_1_3_000_007.io').echo_off()
 # q = ScanboxIO('day_ht/Aligned_day1_000_001.io').echo_off()
 # r = q.condition.workspaces.first.rois.first
+# r = q.condition.workspaces.last.rois.first
 # fit = r.dtsfreqfit.refresh()
 # cnt = r.contours
 # frames = q.condition.io.ch0.mmap # going 8bit does not help

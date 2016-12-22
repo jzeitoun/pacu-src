@@ -36,6 +36,6 @@ export default [
   },
   {
     name: 'SF Global OPref',
-    valuePath: '',
+    valuePath: 'dtorientationbestpref.value',
   }
 ].map(e => Ember.Object.create(e));
