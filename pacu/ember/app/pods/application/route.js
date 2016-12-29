@@ -27,10 +27,17 @@ export default Ember.Route.extend({
         color: 'white',
       },
       {
+        content: 'PsychoPy Controller',
+        linkTo: 'psychopy',
+        icon: 'unhide',
+        color: 'white',
+      },
+
+      {
         content: 'Scanimage Data Controller',
         linkTo: 'sci-analyses',
         icon: 'crosshairs',
-        color: 'white',
+        color: 'black',
       },
       // {
       //   content: 'Scanbox V1 Data Controller',
@@ -43,19 +50,18 @@ export default Ember.Route.extend({
         linkTo: 'scanbox-manager',
         icon: 'cube',
         color: 'black',
-        featureName: 'aergarg',
       },
+      // {
+      //   content: 'Trajectory Data Controller',
+      //   linkTo: 'trj-analyses',
+      //   icon: 'paw',
+      //   color: 'black',
+      // },
       {
-        content: 'Trajectory Data Controller',
-        linkTo: 'trj-analyses',
-        icon: 'paw',
-        color: 'white',
-      },
-      {
-        content: 'PsychoPy Controller',
-        linkTo: 'psychopy',
-        icon: 'unhide',
-        color: 'white',
+        content: 'Miniscope Manager',
+        linkTo: 'miniscope-manager',
+        icon: 'circle notched',
+        color: 'black',
       },
     ];
     // })

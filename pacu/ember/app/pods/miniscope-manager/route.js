@@ -41,9 +41,9 @@ function removeWorkspace(io, name) {
 export default Ember.Route.extend({
   model() {
     return Ember.RSVP.hash({
-      path: Ember.$.getJSON('/api/json/scanbox_manager/path'),
-      conditions: Ember.$.getJSON('/api/json/scanbox_manager/conditions'),
-      ios: Ember.$.getJSON('/api/json/scanbox_manager/ios'),
+      path: Ember.$.getJSON('/api/json/miniscope_manager/path'),
+      conditions: Ember.$.getJSON('/api/json/miniscope_manager/conditions'),
+      ios: Ember.$.getJSON('/api/json/miniscope_manager/ios'),
     });
   },
   actions: {

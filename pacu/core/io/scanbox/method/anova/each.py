@@ -16,7 +16,10 @@ def main(workspace, condition, roi, datatag):
     flicker = [np.nanmean(np.array(f.value['on'])) for f in fls]
     blank = [np.nanmean(np.array(b.value['on'])) for b in bls]
     try:
-        return stats.f_oneway(blank, flicker, *oris)
+        flicker_non_nans = list(filter(np.isfinite, flicker))
+        blank_non_nans = list(filter(np.isfinite, blank))
+        oris_non_nans = [list(filter(np.isfinite, trial)) for trial in oris]
+        return stats.f_oneway(blank_non_nans, flicker_non_nans, *oris_non_nans)
     except Exception as e:
         print 'Error on making Anova Each', str(e)
         return None, None

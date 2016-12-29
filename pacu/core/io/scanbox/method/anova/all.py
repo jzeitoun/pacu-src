@@ -16,7 +16,10 @@ def main(workspace, condition, roi, datatag):
         for ori, reps in oris.items()
     ]
     matrix = np.array([blank, flicker] + all_oris).T
-    f, p = stats.f_oneway(flicker, blank, *all_oris)
+    flicker_non_nans = list(filter(np.isfinite, flicker))
+    blank_non_nans = list(filter(np.isfinite, blank))
+    all_oris_non_nans = [list(filter(np.isfinite, trial)) for trial in all_oris]
+    f, p = stats.f_oneway(flicker_non_nans, blank_non_nans, *all_oris_non_nans)
     return util.nan_for_json(dict(f=f, p=p, matrix=matrix.tolist()))
 
 if __name__ == '__sbx_main__':
