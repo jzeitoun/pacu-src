@@ -8,7 +8,7 @@
     "toastr": "^2.1.2",
     "semantic-ui": "^2.1.8",
     "screenfull": "^3.0.0",
-    "Chart.js": "v2.0-dev",
+    "Chart.js": "v2.4.0",
     "sweetalert": "^1.1.3"
   }
 }
