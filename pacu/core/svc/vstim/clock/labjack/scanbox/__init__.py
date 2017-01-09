@@ -1,5 +1,8 @@
 import socket
 
+from psychopy import event
+from psychopy.core import CountdownTimer
+
 from pacu.ext.labjack.u3 import U3Proxy
 from pacu.ext.psychopy import logging
 from pacu.core.svc.impl.exc import ComponentNotFoundError
