@@ -1,11 +1,14 @@
 import socket
 
 from pacu.ext.labjack.u3 import U3Proxy
+from pacu.ext.psychopy import logging
+from pacu.core.svc.impl.exc import ComponentNotFoundError
+from pacu.core.svc.impl.exc import TimeoutException
+from pacu.core.svc.impl.exc import UserAbortException
 from pacu.core.svc.impl.exc import ComponentNotFoundError
 from pacu.core.svc.vstim.clock.base import ClockResource
 from pacu.core.svc.vstim.clock.base import ClockBase
 from pacu.core.svc.vstim.clock.timeout import Timeout
-from pacu.core.svc.vstim.clock.pin import Pin
 from pacu.core.svc.vstim.clock.port import Port
 from pacu.core.svc.vstim.clock.dest_ip import DestIP
 from pacu.core.svc.vstim.clock.text import Text
