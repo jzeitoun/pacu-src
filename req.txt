@@ -1,3 +1,5 @@
+psutil
+pathlib
 pathlib2
 futures
 tornado
@@ -7,6 +9,9 @@ pyreadline
 ipdb
 flask_restless==1.0.0b1
 ipython==4
+
+# download whl files from at
+# http://www.lfd.uci.edu/~gohlke/pythonlibs/
 
 pyglet
 psychopy
@@ -19,5 +24,9 @@ matplotlib
 opencv
 opengl
 opengl-acc
+mysql-python
 
-# download = avbin / freetype 64
+# download avbin and install
+# freetype 64
+# https://www.dropbox.com/s/tawazeadf6cge6i/freetype.dll?dl=0
+# copy dll into windows/system32

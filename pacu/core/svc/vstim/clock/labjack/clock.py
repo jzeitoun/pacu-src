@@ -50,4 +50,5 @@ class LabJackClock(ClockBase):
     wait_time = 0
     timeout = Timeout(15)
     __call__ = LabJackClockResource.bind()
-    description = 'This LabJack clock is supposed to work with ScanBox gear. This clock does not control ScanBox recording. So it is user\'s responsibility to stop the recording session.'
+    description = 'DEPRECATED: Use "LabJackScanboxDriver".'
+    # description = 'This LabJack clock is supposed to work with ScanBox gear. This clock does not control ScanBox recording. So it is user\'s responsibility to stop the recording session.'

@@ -5,7 +5,6 @@ from scipy import io
 from scipy import signal
 from scipy import special
 import matplotlib.cm as cm
-from ipdb import set_trace
 
 from pacu.core.svc.vstim.stimulus.sweeping_noise.unitconv import UnitConverter
 

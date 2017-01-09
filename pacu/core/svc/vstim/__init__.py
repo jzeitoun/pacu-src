@@ -88,6 +88,7 @@ __all__ = specs([
         ('labjack', 'LabJackClock'),
         ('labjack', 'LabJackDriver'),
         ('labjack.miniscope', 'LabJackMiniscopeDriver'),
+        ('labjack.scanbox', 'LabJackScanboxDriver'),
     ]),
     spec('handler', 'handlers', [
         ('dryrun', 'DryrunHandler'),
