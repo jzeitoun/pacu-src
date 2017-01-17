@@ -156,7 +156,7 @@ def fix_contrasts_schema(Session):
     session = Session()
     condition = session.query(schema.Condition).options(load_only('id')).one()
     contrast = condition.contrast
-    condition.contrasts = contrast
+    condition.contrasts = [contrast]
     for ws in session.query(schema.Workspace):
         ws.cur_contrast = contrast
         for roi in ws.rois:
