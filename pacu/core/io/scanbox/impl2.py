@@ -234,7 +234,8 @@ def plot_timing_diff(id=1087):
 # import time
 # print 'purge disk cache', os.system('sudo purge')
 # q = ScanboxIO('test_ka50_lit_day1/day1_000_003.io')
-# r = q.condition.workspaces.first.rois.first
+# w = q.condition.workspaces.first
+# r = w.rois.first
 # id_multiple_category = 1475 #1193 previous, single contrast
 # session = glab()
 # exp = session.query(ExperimentV1).get(id_multiple_category)

@@ -18,6 +18,7 @@ from pacu.core.svc.impl.component import Component
 from pacu.core.svc.vstim.stimulus.base import StimulusBase
 from pacu.core.svc.vstim.stimulus.orientation import Orientation
 from pacu.core.svc.vstim.stimulus.sfrequency import SFrequency
+from pacu.core.svc.vstim.stimulus.max_contrast import MaxContrast
 from pacu.core.svc.vstim.stimulus.tfrequency import TFrequency
 from pacu.core.svc.vstim.stimulus.width import Width
 from pacu.core.svc.vstim.stimulus.duration import OnDuration
@@ -95,8 +96,11 @@ class StimulusResource(Resource):
         opa = np.cos(now*self.opacity_factor)
 
         self.instance.contrast = signal.square(cont)
-        self.instance.opacity = (opa + 1) / 2
-
+        opacity = (opa + 1) / 2
+        max_contrast = self.component.max_contrast
+        opacity = min(opacity, max_contrast)
+        self.instance.opacity = opacity
+        print self.instance.opacity
 
         self.instance.draw()
         self.window.flip()
@@ -114,10 +118,11 @@ class RevContModGratingsStimulus(Component):
     sui_icon = 'align justify'
     package = __package__
     orientation = 270 # Orientation(270)
-    sfrequency = SFrequency(0.5)
+    sfrequency = SFrequency(0.05)
     tfrequency = TFrequency(1)
-    on_duration = OnDuration(30)
+    on_duration = OnDuration(300)
     ct_period = ContrastPeriod(1)
-    op_period = OpacityPeriod(1)
+    op_period = OpacityPeriod(10)
+    max_contrast = MaxContrast(1.0)
     width = Width(0)
     __call__ = StimulusResource.bind('window', 'clock', 'projection')
