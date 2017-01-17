@@ -12,6 +12,7 @@ class Trial(SQLite3Base):
     ori = Column(Float)
     sf = Column(Float)
     tf = Column(Float)
+    contrast = Column(Float)
     sequence = Column(Integer)
     order = Column(Integer)
     ran = Column(Integer)

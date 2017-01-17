@@ -12,7 +12,7 @@ def main(workspace, condition, roi, datatag):
     blank = [np.nanmean(np.array(b.value['on'])) for b in bls]
     all_oris = [
         [np.nanmean(np.array(rep.value['on'])) for rep in reps]
-        for sf, oris in roi.dt_ori_by_sf.items()
+        for sf, oris in roi.dt_ori_by_sf(datatag.trial_contrast).items()
         for ori, reps in oris.items()
     ]
     matrix = np.array([blank, flicker] + all_oris).T

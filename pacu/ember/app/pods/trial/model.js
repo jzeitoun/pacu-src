@@ -9,6 +9,7 @@ export default Model.extend({
   ori: attr(),
   sf: attr(),
   tf: attr(),
+  contrast: attr(),
   sequence: attr(),
   order: attr(),
   ran: attr(),

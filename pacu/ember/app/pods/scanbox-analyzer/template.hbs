@@ -16,10 +16,21 @@
   </a>
   --}}
   <a class="item">
-    Current SF: {{x-dropdown-value
+    SF: {{x-dropdown-value
       items=model.condition.sfrequencies
       value=model.workspace.cur_sfreq}}
   </a>
+  {{#if model.condition.contrasts}}
+  <a class="item">
+    Contrast: {{x-dropdown-value
+      items=model.condition.contrasts
+      value=model.workspace.cur_contrast}}
+  </a>
+  {{else}}
+    <a class="item" {{action "noop"}}>
+      Contrast: {{model.condition.contrast}}
+    </a>
+  {{/if}}
   <a class="item" {{action "noop"}}>
     Baseline Duration: {{model.workspace.baseline_duration}}
   </a>
@@ -128,7 +139,7 @@
   {{#if model.workspace.activeROI}}
   <section class="ui clearing divider"></section>
   <img class="ui fluid image" alt="SF Tuning Curve"
-    src="data:image/png;base64,{{model.workspace.activeROI.dtsfreqfit.value.plot}}" />
+    src="data:image/png;base64,{{model.workspace.activeROI.dtsfreqfitByCT.value.plot}}" />
   {{/if}}
 
   <section class="ui clearing divider"></section>

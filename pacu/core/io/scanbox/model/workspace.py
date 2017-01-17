@@ -19,6 +19,7 @@ class Workspace(SQLite3Base):
     __tablename__ = 'workspaces'
     name = Column(UnicodeText, unique=True)
     cur_sfreq = Column(Float)
+    cur_contrast = Column(Float)
     cur_chan = Column(Integer, default=0)
     baseline_duration = Column(Float, default=0.5)
     sog_initial_guess = Column(PickleType, default=lambda: SOG_INITIAL_GUESS)

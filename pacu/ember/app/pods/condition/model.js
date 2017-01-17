@@ -20,6 +20,7 @@ export default Model.extend({
   orientations: attr(),
   sfrequencies: attr(),
   tfrequencies: attr(),
+  contrasts: attr(),
   repetition: attr(),
   projection: attr(),
   keyword: attr(),

@@ -8,34 +8,34 @@ export default [
   },
   {
     name: 'Anova All F',
-    valuePath: 'dtanovaall.value.f',
+    valuePath: 'dtanovaallByCT.value.f',
   },
   {
     name: 'Anova All P',
-    valuePath: 'dtanovaall.value.p',
+    valuePath: 'dtanovaallByCT.value.p',
   },
   {
     name: 'SF Cutoff Rel33',
-    valuePath: 'dtsfreqfit.value.rc33.0',
+    valuePath: 'dtsfreqfitByCT.value.rc33.0',
   },
   {
     name: 'SF Cutoff Rel33',
-    valuePath: 'dtsfreqfit.value.rc33.1',
+    valuePath: 'dtsfreqfitByCT.value.rc33.1',
   },
   {
     name: 'SF Peak',
-    valuePath: 'dtsfreqfit.value.peak',
+    valuePath: 'dtsfreqfitByCT.value.peak',
   },
   {
     name: 'SF Pref',
-    valuePath: 'dtsfreqfit.value.pref',
+    valuePath: 'dtsfreqfitByCT.value.pref',
   },
   {
     name: 'SF Bandwidth',
-    valuePath: 'dtsfreqfit.value.ratio',
+    valuePath: 'dtsfreqfitByCT.value.ratio',
   },
   {
     name: 'SF Global OPref',
-    valuePath: 'dtorientationbestpref.value',
+    valuePath: 'dtorientationbestprefByCT.value',
   }
 ].map(e => Ember.Object.create(e));

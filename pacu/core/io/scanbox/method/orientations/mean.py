@@ -5,7 +5,9 @@ import numpy as np
 
 def main(workspace, condition, roi, datatag):
     trials_by_sf = roi.dttrialdff0s.filter_by(
-        trial_sf=datatag.trial_sf, trial_flicker=False, trial_blank=False)
+        trial_sf=datatag.trial_sf,
+        trial_contrast=datatag.trial_contrast,
+        trial_flicker=False, trial_blank=False)
 
     framerate = condition.info['framerate']
     on_frames = int(condition.on_duration * framerate)
@@ -37,4 +39,3 @@ if __name__ == '__sbx_main__':
     datatag.indices = indices
     datatag.on_frames = on_frames
     datatag.bs_frames = bs_frames
-

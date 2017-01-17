@@ -132,6 +132,50 @@ class ScanboxIO(object):
             ).filter_by(id=rid, workspace_id=wid).one()
         return roi.export_sfreqfit_data_as_mat()
 
+"""
+for io in ScanboxIO.iter_every_io():
+    print io.db_path
+    fix_contrasts_schema(upgrade_sqlite(io.db_path))
+"""
+
+def open_sqlite(path):
+    return schema.get_sessionmaker(path, echo=False)
+
+def upgrade_sqlite(path):
+    import shutil
+    path = Path(path)
+    Session = open_sqlite(path.str)
+    meta = schema.SQLite3Base.metadata
+    bind = Session.kw.get('bind')
+    shutil.copy2(path.str, path.with_suffix('.backup.sqlite3').str)
+    schema.fix_incremental(meta, bind)
+    return Session
+
+def fix_contrasts_schema(Session):
+    from sqlalchemy.orm import load_only
+    session = Session()
+    condition = session.query(schema.Condition).options(load_only('id')).one()
+    contrast = condition.contrast
+    condition.contrasts = contrast
+    for ws in session.query(schema.Workspace):
+        ws.cur_contrast = contrast
+        for roi in ws.rois:
+            for dt in roi.dtorientationsmeans:
+                dt.trial_contrast = contrast
+            for dt in roi.dtorientationbestprefs:
+                dt.trial_contrast = contrast
+            for dt in roi.dtorientationsfits:
+                dt.trial_contrast = contrast
+            for dt in roi.dtanovaeachs:
+                dt.trial_contrast = contrast
+            for dt in roi.dtsfreqfits:
+                dt.trial_contrast = contrast
+            for dt in roi.dtanovaalls:
+                dt.trial_contrast = contrast
+    for t in session.query(schema.Trial):
+        t.contrast = condition.contrast
+    condition.object_session.begin()
+
 import re
 import numpy as np
 from matplotlib import pyplot
@@ -178,6 +222,12 @@ def plot_timing_diff(id=1087):
 # import os
 # import time
 # print 'purge disk cache', os.system('sudo purge')
+# q = ScanboxIO('test_ka50_lit_day1/day1_000_003.io')
+# r = q.condition.workspaces.first.rois.first
+# id_multiple_category = 1475 #1193 previous, single contrast
+# session = glab()
+# exp = session.query(ExperimentV1).get(id_multiple_category)
+
 # q = ScanboxIO('Kirstie/ka28/day1/Aligned_day1_000_002.io')
 # q = ScanboxIO('Kirstie/ka28/day1/day1_000_002.io')
 # q = ScanboxIO('day_ht/Aligned_day3_000_006.io').echo_off()
@@ -236,8 +286,8 @@ def redump(filename):
     result = data['result']
     keyword = data['keyword']
     payload = data['payload']
-    errormsg = result.pop('errormsg')
-    errortype = result.pop('errortype')
+    errormsg = result.pop('errormsg', None)
+    errortype = result.pop('errortype', None)
     model = ExperimentV1(**result)
     model.duration = max(t for ts in model.off_time for t in ts)
     model.keyword = keyword
@@ -251,8 +301,38 @@ def redump(filename):
     session.commit()
     return model
 
+# id_multiple_category = 1475
 # session = glab()
-# exp = session.query(ExperimentV1).get(1073)
+# # exp = session.query(ExperimentV1).get(1622)
+# exp = session.query(ExperimentV1).get(1097)
+# c = schema.Condition()
+# c.from_expv1(exp)
+# c.trials.extend([
+#     schema.Trial.init_and_update(**trial)
+#     for trial in exp])
+# c.imported = True
+
+# 
+# 
+#     def initialize_db(self, condition_id=None):
+#         # requires original location...
+#         schema.recreate(self.db_path, echo=False)
+#         session = self.db_session
+#         with session.begin():
+#             condition = schema.Condition(info=self.mat.toDict())
+#             session.add(condition)
+#         if condition_id:
+#             self.import_condition(condition_id)
+
+# condition = session.query(schema.Condition).one()
+# condition.from_expv1(exp)
+# condition.trials.extend([
+#     schema.Trial.init_and_update(**trial)
+#     for trial in exp])
+# condition.imported = True
+# condition.exp_id = int(id)
+# session.add(condition)
+
 # condition = schema.Condition()
 # condition.from_expv1(exp)
 # try:

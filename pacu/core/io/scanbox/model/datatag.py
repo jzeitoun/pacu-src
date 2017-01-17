@@ -24,6 +24,7 @@ class Datatag(object):
     trial_ori = Column(Float)
     trial_sf = Column(Float)
     trial_tf = Column(Float)
+    trial_contrast = Column(Float)
     trial_sequence = Column(Integer)
     trial_order = Column(Integer)
     trial_ran = Column(Integer)

@@ -4,7 +4,7 @@ from collections import OrderedDict
 from sqlalchemy.ext.declarative import declared_attr
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import Column, Integer, DateTime
-from sqlalchemy import inspect
+from sqlalchemy import inspect, DateTime
 
 def parallelize(iterable, func):
     for i in iterable:

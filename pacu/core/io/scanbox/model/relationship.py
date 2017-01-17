@@ -54,9 +54,9 @@ ROI.dtorientationsmeans = relationship(DTOrientationsMean, order_by=DTOrientatio
     lazy='select')
 from pacu.core.io.scanbox.model.datatag import DTOrientationBestPref
 DTOrientationBestPref.roi_id = Column(Integer, ForeignKey(ROI.id))
-ROI.dtorientationbestpref = relationship(DTOrientationBestPref, order_by=DTOrientationBestPref.id,
-    uselist=False,
+ROI.dtorientationbestprefs = relationship(DTOrientationBestPref, order_by=DTOrientationBestPref.id,
     cascade='all, delete-orphan',
+    collection_class=flist,
     backref='roi',
     lazy='select')
 from pacu.core.io.scanbox.model.datatag import DTOrientationsFit
@@ -68,16 +68,16 @@ ROI.dtorientationsfits = relationship(DTOrientationsFit, order_by=DTOrientations
     lazy='select')
 from pacu.core.io.scanbox.model.datatag import DTSFreqFit
 DTSFreqFit.roi_id = Column(Integer, ForeignKey(ROI.id))
-ROI.dtsfreqfit = relationship(DTSFreqFit, order_by=DTSFreqFit.id,
+ROI.dtsfreqfits = relationship(DTSFreqFit, order_by=DTSFreqFit.id,
     cascade='all, delete-orphan',
-    uselist=False,
+    collection_class=flist,
     backref='roi',
     lazy='select')
 from pacu.core.io.scanbox.model.datatag import DTAnovaAll
 DTAnovaAll.roi_id = Column(Integer, ForeignKey(ROI.id))
-ROI.dtanovaall = relationship(DTAnovaAll, order_by=DTAnovaAll.id,
-    uselist=False,
+ROI.dtanovaalls = relationship(DTAnovaAll, order_by=DTAnovaAll.id,
     cascade='all, delete-orphan',
+    collection_class=flist,
     backref='roi',
     lazy='select')
 from pacu.core.io.scanbox.model.datatag import DTAnovaEach

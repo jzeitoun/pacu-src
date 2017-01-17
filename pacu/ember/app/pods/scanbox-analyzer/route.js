@@ -6,8 +6,7 @@ const modname = 'pacu.core.io.scanbox.impl2';
 const clsname = 'ScanboxIOStream';
 const moduleName = 'pacu.core.io.scanbox.model.db';
 const baseName = 'SQLite3Base';
-// const include = 'condition,rois,rois.dtorientationsmeans,rois.dtorientationbestpref,rois.dtorientationsfits,rois.dtanovaeachs,rois.dtsfreqfit,rois.dtanovaall';
-const include = 'condition,dtoverallmeans,rois,rois.dtorientationsmeans,rois.dtorientationbestpref,rois.dtorientationsfits,rois.dtanovaeachs,rois.dtsfreqfit,rois.dtanovaall';
+const include = 'condition,dtoverallmeans,rois,rois.dtorientationsmeans,rois.dtorientationbestprefs,rois.dtorientationsfits,rois.dtanovaeachs,rois.dtsfreqfits,rois.dtanovaalls';
 const queryParam = { include };
 
 export default Ember.Route.extend({
@@ -49,11 +48,11 @@ export default Ember.Route.extend({
   },
   afterModel(model /*, transition */) {
     this._super(...arguments);
-    window.M = model; window.S = this.store; window.R = this;
-    if (Ember.isEmpty(model.rois)) {
-      this.toast.info(`Hey buddy, you have no ROIs in this workspace. 
-        How about drawing some?`);
-    }
+    // window.M = model; window.S = this.store; window.R = this;
+    // if (Ember.isEmpty(model.rois)) {
+    //   this.toast.info(`Hey buddy, you have no ROIs in this workspace. 
+    //     How about drawing some?`);
+    // }
   },
   setupController(controller, model) {
     this._super(...arguments);

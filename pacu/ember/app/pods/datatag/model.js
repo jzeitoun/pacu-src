@@ -14,6 +14,7 @@ export default Model.extend({
   trial_ori: attr(),
   trial_sf: attr(),
   trial_tf: attr(),
+  trial_contrast: attr(),
   trial_sequence: attr(),
   trial_order: attr(),
   trial_ran: attr(),

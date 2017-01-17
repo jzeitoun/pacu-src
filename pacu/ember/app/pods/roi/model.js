@@ -30,9 +30,9 @@ export default Model.extend({
   dtorientationsmeans: hasMany('dtorientationsmean'),
   dtorientationsfits: hasMany('dtorientationsfit'),
   dtanovaeachs: hasMany('dtanovaeach'),
-  dtsfreqfit: belongsTo('dtsfreqfit'),
-  dtorientationbestpref: belongsTo('dtorientationbestpref'),
-  dtanovaall: belongsTo('dtanovaall'),
+  dtsfreqfits: hasMany('dtsfreqfit'),
+  dtorientationbestprefs: hasMany('dtorientationbestpref'),
+  dtanovaalls: hasMany('dtanovaall'),
   dtoverallmean: belongsTo('dtoverallmean'),
   // @computed() anova_all() {
   //   const promise = this.get('dtanovaall.promise');
@@ -122,9 +122,9 @@ export default Model.extend({
       this.get('dtorientationsmeans').reload();
       this.get('dtorientationsfits').reload();
       this.get('dtanovaeachs').reload();
-      this.store.findRecord('dtsfreqfit', this.get('dtsfreqfit.id'));
-      this.store.findRecord('dtorientationbestpref', this.get('dtorientationbestpref.id'));
-      this.store.findRecord('dtanovaall', this.get('dtanovaall.id'));
+      this.get('dtsfreqfits').reload();
+      this.get('dtorientationbestprefs').reload();
+      this.get('dtanovaalls').reload();
     } else {
       this.get('workspace.dtoverallmeans').reload();
     }
@@ -172,43 +172,25 @@ export default Model.extend({
       this.set('inAction', false);
     });
   },
-  @computed('workspace.cur_sfreq', 'dtorientationsmeans') dtorientationsmeanBySF(sfreq, dts) {
-    return dts.findBy('trial_sf', sfreq);
+  @computed('workspace.cur_sfreq', 'workspace.cur_contrast', 'dtorientationsmeans') dtorientationsmeanBySF(sfreq, cont, dts) {
+    return dts.filterBy('trial_sf', sfreq).findBy('trial_contrast', cont);
   },
-  @computed('workspace.cur_sfreq', 'dtorientationsfits') dtorientationsfitBySF(sfreq, dts) {
-    return dts.findBy('trial_sf', sfreq);
+  @computed('workspace.cur_sfreq', 'workspace.cur_contrast', 'dtorientationsfits') dtorientationsfitBySF(sfreq, cont, dts) {
+    return dts.filterBy('trial_sf', sfreq).findBy('trial_contrast', cont);
   },
-  // @computed('dtsfreqfit.value.plot') sfreqfitplot(plot) {
-  //   console.log('UP', plot);
-  //   return plot;
-  // },
-  // @computed('workspace.cur_sfreq') sumofgaussiansBySF(sfreq) {
-  //   return this.store.query('datatag', { filter: {
-  //     roi_id: this.get('id'),
-  //     category: 'fit',
-  //     method: 'sumof',
-  //     trial_sf: sfreq
-  //   } });
-  // },
-  // @computed() sfTuningCurve() {
-  //   return this.store.query('datatag', { filter: {
-  //     roi_id: this.get('id'),
-  //     category: 'fit',
-  //     method: 'diffof',
-  //   } });
-  // },
-  // @computed() anovaAll() {
-  //   return this.store.query('datatag', { filter: {
-  //     roi_id: this.get('id'),
-  //     category: 'anova',
-  //     method: 'all',
-  //   } });
-  // },
-  // @computed() bootstrapSF() {
-  //   return this.store.query('datatag', { filter: {
-  //     roi_id: this.get('id'),
-  //     category: 'bootstrap',
-  //     method: 'sf',
-  //   } });
-  // },
+  @computed('workspace.cur_contrast', 'dtsfreqfits') dtsfreqfitByCT(cont, dts) {
+    return dts.findBy('trial_contrast', cont);
+  },
+  @computed('workspace.cur_contrast', 'dtorientationbestprefs') dtorientationbestprefByCT(cont, dts) {
+    return dts.findBy('trial_contrast', cont);
+  },
+  @computed('workspace.cur_contrast', 'dtanovaalls') dtanovaallByCT(cont, dts) {
+    return dts.findBy('trial_contrast', cont);
+  },
+  @computed('workspace.cur_contrast', 'dtanovaeachs') dtanovaeachsByCT(cont, dts) {
+    return dts.filterBy('trial_contrast', cont);
+  },
+  @computed('workspace.cur_contrast', 'dtorientationsfits') dtorientationsfitsByCT(cont, dts) {
+    return dts.filterBy('trial_contrast', cont);
+  },
 });

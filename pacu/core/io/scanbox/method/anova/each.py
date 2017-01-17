@@ -6,7 +6,10 @@ from scipy import stats
 from pacu.core.io.scanimage import util
 
 def main(workspace, condition, roi, datatag):
-    oris = roi.dttrialdff0s.filter_by(trial_sf=datatag.trial_sf)
+    oris = roi.dttrialdff0s.filter_by(
+        trial_sf=datatag.trial_sf,
+        trial_contrast=datatag.trial_contrast
+    )
     oris = [
         [np.nanmean(np.array(rep.value['on']))
         for rep in oris.filter_by(trial_ori=ori)]
@@ -28,3 +31,5 @@ if __name__ == '__sbx_main__':
     f, p = main(workspace, condition, roi, datatag)
     datatag.f = 'nan' if np.isnan(f) else f
     datatag.p = 'nan' if np.isnan(p) else p
+    print datatag.f, datatag.p, datatag.trial_sf, datatag.trial_contrast
+

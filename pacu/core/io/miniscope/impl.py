@@ -188,4 +188,4 @@ class MiniscopeIO(object):
 #         roi = self.db_session.query(schema.ROI
 #             ).filter_by(id=rid, workspace_id=wid).one()
 #         return roi.export_sfreqfit_data_as_mat()
-qwe = MiniscopeIO('ht/trial1.io')
+# qwe = MiniscopeIO('ht/trial1.io')

@@ -4,52 +4,52 @@ import computed, { on } from 'ember-computed-decorators';
 export default [
   {
     name: 'OSI',
-    relPath: 'dtorientationsfits',
+    relPath: 'dtorientationsfitsByCT',
     valuePath: 'value.osi',
   },
   {
     name: 'CV',
-    relPath: 'dtorientationsfits',
+    relPath: 'dtorientationsfitsByCT',
     valuePath: 'value.cv',
   },
   {
     name: 'DSI',
-    relPath: 'dtorientationsfits',
+    relPath: 'dtorientationsfitsByCT',
     valuePath: 'value.dsi',
   },
   {
     name: 'Sigma',
-    relPath: 'dtorientationsfits',
+    relPath: 'dtorientationsfitsByCT',
     valuePath: 'value.sigma',
   },
   {
     name: 'OPref',
-    relPath: 'dtorientationsfits',
+    relPath: 'dtorientationsfitsByCT',
     valuePath: 'value.o_pref',
   },
 //   {
 //     name: 'Tau',
-//     relPath: 'dtorientationsfits',
+//     relPath: 'dtorientationsfitsByCT',
 //     valuePath: 'value.tau',
 //   },
   {
     name: 'RMax',
-    relPath: 'dtorientationsfits',
+    relPath: 'dtorientationsfitsByCT',
     valuePath: 'value.r_max',
   },
   {
     name: 'Residual',
-    relPath: 'dtorientationsfits',
+    relPath: 'dtorientationsfitsByCT',
     valuePath: 'value.residual',
   },
   {
     name: 'Anova F',
-    relPath: 'dtanovaeachs',
+    relPath: 'dtanovaeachsByCT',
     valuePath: 'f',
   },
   {
     name: 'Anova P',
-    relPath: 'dtanovaeachs',
+    relPath: 'dtanovaeachsByCT',
     valuePath: 'p',
   }
 ].map(e => Ember.Object.create(e));

@@ -14,13 +14,17 @@ PATTRS = 'a1min a1max a2min a2max sigmin sigmax offmin offmax'.split()
 def main(workspace, condition, roi, datatag):
     trials = roi.dttrialdff0s.filter_by(
         trial_sf=datatag.trial_sf,
+        trial_contrast=datatag.trial_contrast,
         trial_blank=False,
         trial_flicker=False,
     )
-    best_pref_ori = roi.dtorientationbestpref.value
+    best_pref_ori = roi.dtorientationbestprefs.filter_by(
+        trial_contrast=datatag.trial_contrast).first.value
     oris = []
     for ori in condition.orientations:
-        reps_by_ori = trials.filter_by(trial_ori=ori)
+        reps_by_ori = trials.filter_by(
+            trial_ori=ori
+        )
         arr = np.array([rep.value['on'] for rep in reps_by_ori])
         meantrace_for_ori = np.nanmean(arr, axis=0)
         oris.append(meantrace_for_ori)

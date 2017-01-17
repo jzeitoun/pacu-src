@@ -14,7 +14,7 @@ from pacu.core.io.scanbox.model.base import SQLite3Base
 from sqlalchemy import inspect
 
 origet = operator.attrgetter('ori')
-TRIAL_ATTRS = 'on_time off_time ori sf tf sequence order ran flicker blank'.split()
+TRIAL_ATTRS = 'on_time off_time ori sf tf contrast sequence order ran flicker blank'.split()
 
 class ROI(SQLite3Base):
     __tablename__ = 'rois'
@@ -34,11 +34,11 @@ class ROI(SQLite3Base):
     @property
     def neuropil_contours(self):
         return np.array([[p['x'], p['y']] for p in self.neuropil_polygon])
-    @property
-    def dt_ori_by_sf(self):
+    def dt_ori_by_sf(self, contrast):
         sfs = self.workspace.condition.sfrequencies
         oris = self.workspace.condition.orientations
-        trials = self.dttrialdff0s.filter_by(trial_flicker=False, trial_blank=False)
+        trials = self.dttrialdff0s.filter_by(
+            trial_contrast=contrast, trial_flicker=False, trial_blank=False)
         return OrderedDict([
             (
                 sf,
@@ -90,28 +90,34 @@ class ROI(SQLite3Base):
                         setattr(dt, u'trial_' + attr, getattr(trial, attr))
         if not self.dtorientationsmeans:
             print 'Initialize Orientations Mean'
-            for sf in self.workspace.condition.sfrequencies:
-                DTOrientationsMean(roi=self, trial_sf=sf)
-        if not self.dtorientationbestpref:
+            for sf in condition.sfrequencies:
+                for ct in condition.contrasts:
+                    DTOrientationsMean(roi=self, trial_sf=sf, trial_contrast=ct)
+        if not self.dtorientationbestprefs:
             print 'Initialize Orientation Best Pref'
-            DTOrientationBestPref(roi=self)
+            for ct in condition.contrasts:
+                DTOrientationBestPref(roi=self, trial_contrast=ct)
         if not self.dtorientationsfits:
             print 'Initialize Orientations Fit'
             for sf in condition.sfrequencies:
-                DTOrientationsFit(roi=self, trial_sf=sf)
+                for ct in condition.contrasts:
+                    DTOrientationsFit(roi=self, trial_sf=sf, trial_contrast=ct)
         if not self.dtanovaeachs:
             print 'Initialize Anova Each'
             for sf in condition.sfrequencies:
-                DTAnovaEach(roi=self, trial_sf=sf)
-        if not self.dtsfreqfit:
+                for ct in condition.contrasts:
+                    DTAnovaEach(roi=self, trial_sf=sf, trial_contrast=ct)
+        if not self.dtsfreqfits:
             print 'Initialize SFreq Fit'
-            DTSFreqFit(roi=self)
-        if not self.dtanovaall:
+            for ct in condition.contrasts:
+                DTSFreqFit(roi=self, trial_contrast=ct)
+        if not self.dtanovaalls:
             print 'Initialize Anova All'
-            DTAnovaAll(roi=self)
+            for ct in condition.contrasts:
+                DTAnovaAll(roi=self, trial_contrast=ct)
     def refresh_orientations_fit(self):
-        print 'REFRESH OriFit'
-        for tag in self.dtorientationsfits: tag.refresh()
+       print 'REFRESH OriFit' # used in ember/app/pods/roi/model.js
+       for tag in self.dtorientationsfits: tag.refresh()
     def refresh_all(self):
         print 'REFRESH TRACE'
         self.dtoverallmean.refresh()
@@ -120,15 +126,12 @@ class ROI(SQLite3Base):
         print 'REFRESH Orientations'
         for tag in self.dtorientationsmeans: tag.refresh()
         print 'REFRESH BEST PREF'
-        if self.dtorientationbestpref:
-            self.dtorientationbestpref.refresh()
+        for tag in self.dtorientationbestprefs: tag.refresh()
         self.refresh_orientations_fit()
         print 'REFRESH SFreqFit'
-        if self.dtsfreqfit:
-            self.dtsfreqfit.refresh()
+        for tag in self.dtsfreqfits: tag.refresh()
         print 'REFRESH Anova All'
-        if self.dtanovaall:
-            self.dtanovaall.refresh()
+        for tag in self.dtanovaalls: tag.refresh()
         print 'REFRESH Anova Each'
         for tag in self.dtanovaeachs: tag.refresh()
         # print 'Bootstrap SF'
