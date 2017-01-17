@@ -127,10 +127,10 @@ class ScanboxIO(object):
         for io in ScanboxIO.iter_every_io():
             bind = io.condition.object_session.bind
             schema.fix_incremental(meta, bind)
-    def export_sfreqfit_data_as_mat(self, wid, rid):
+    def export_sfreqfit_data_as_mat(self, wid, rid, contrast):
         roi = self.db_session.query(schema.ROI
             ).filter_by(id=rid, workspace_id=wid).one()
-        return roi.export_sfreqfit_data_as_mat()
+        return roi.export_sfreqfit_data_as_mat(contrast)
 
 """
 for io in ScanboxIO.iter_every_io():
@@ -156,7 +156,18 @@ def fix_contrasts_schema(Session):
     session = Session()
     condition = session.query(schema.Condition).options(load_only('id')).one()
     contrast = condition.contrast
-    condition.contrasts = [contrast]
+    if not condition.exp_id:
+        print 'no cond, return'
+        return
+    exp = glab().query(ExperimentV1).get(condition.exp_id)
+    ct = exp.stimulus_kwargs.get('contrast')
+    cts = exp.stimulus_kwargs.get('contrasts')
+    print ct, cts
+    if ct:
+        condition.contrast = ct
+        condition.contrasts = [ct]
+    if cts:
+        condition.contrasts = cts
     for ws in session.query(schema.Workspace):
         ws.cur_contrast = contrast
         for roi in ws.rois:

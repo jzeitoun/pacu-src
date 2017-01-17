@@ -141,9 +141,10 @@ class ROI(SQLite3Base):
             'neuropil_enabled', 'neuropil_factor', 'neuropil_polygon')
         attrs = {f: getattr(self, f) for f in fields}
         return dict(id=self.id, attrs=attrs)
-    def export_sfreqfit_data_as_mat(self):
+    def export_sfreqfit_data_as_mat(self, contrast):
         sio = cStringIO.StringIO()
-        io.savemat(sio, self.dtsfreqfit.value)
+        value = self.dtsfreqfits.filter_by(trial_contrast=contrast).first.value
+        io.savemat(sio, value)
         return sio.getvalue()
         # return base64.b64encode(sio.getvalue())
 

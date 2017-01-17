@@ -86,8 +86,9 @@ export default {
   exportSFreqFitDataAsMat(roi) {
     const wid = this.currentModel.workspace.id;
     const rid = roi.id;
+    const contrast = this.currentModel.workspace.get('cur_contrast');
     this.currentModel.stream.invokeAsBinary(
-    'export_sfreqfit_data_as_mat', wid, rid
+    'export_sfreqfit_data_as_mat', wid, rid, contrast
     ).then(data => {
       const ts = +(new Date);
       download.fromArrayBuffer(data, `${ts}-${wid}-${rid}-sfreqfit.mat`, 'application/json');

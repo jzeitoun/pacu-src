@@ -108,6 +108,12 @@ class ScanboxChannel(object):
         frame = self.mmap.max(0)
         np.save(self.maxppath.str, frame)
         print 'done!'
+    @maxp.invalidator
+    def create_maxp_non_greedy(self):
+        print 'Create max projection image...could take up from a few minutes to hours.'
+        frame = np.maximum.reduce(self.mmap)
+        np.save(self.maxppath.str, frame)
+        print 'done!'
     @memoized_property
     def stat(self):
         stat = np.load(self.statpath.str)
