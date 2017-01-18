@@ -143,6 +143,7 @@ class LegacyWidefieldHandler(HandlerBase):
     sync_host = SyncHost('128.200.21.73')
     sync_port = SyncPort('8761')
     exp_by = ExpBy('kirstie')
+    keyword = '__legacy_widefield_handler__'
 
 # d = dict(
 # Duration = np.array([[10]], dtype='double'),

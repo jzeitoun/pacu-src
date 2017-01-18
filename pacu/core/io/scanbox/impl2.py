@@ -171,6 +171,8 @@ def fix_contrasts_schema(Session):
     for ws in session.query(schema.Workspace):
         ws.cur_contrast = contrast
         for roi in ws.rois:
+            for dt in roi.dttrialdff0s:
+                dt.trial_contrast = contrast
             for dt in roi.dtorientationsmeans:
                 dt.trial_contrast = contrast
             for dt in roi.dtorientationbestprefs:
@@ -238,7 +240,7 @@ def plot_timing_diff(id=1087):
 # r = w.rois.first
 # id_multiple_category = 1475 #1193 previous, single contrast
 # session = glab()
-# exp = session.query(ExperimentV1).get(id_multiple_category)
+# exp = session.query(ExperimentV1).get(1096)
 
 # q = ScanboxIO('Kirstie/ka28/day1/Aligned_day1_000_002.io')
 # q = ScanboxIO('Kirstie/ka28/day1/day1_000_002.io')
