@@ -22,6 +22,7 @@ from pacu.core.svc.vstim.stimulus.duration import OnDuration
 from pacu.core.svc.vstim.stimulus.duration import OffDuration
 from pacu.core.svc.vstim.stimulus.blank import Blank
 from pacu.core.svc.vstim.stimulus.flicker import Flicker
+from pacu.core.svc.vstim.stimulus.randomize import Randomize
 from pacu.core.svc.vstim.stimulus.gratings.condition import Condition
 from pacu.core.svc.vstim.stimulus.contrast import Contrast
 from pacu.core.svc.vstim.stimulus.gratings.condition import BlankCondition
@@ -66,7 +67,9 @@ class StimulusResource(Resource):
         ts = [Trial(self, cond, self.component.on_duration, self.interval)
             for cond in conditions]
         return TrialHandler(ts,
-            nReps=self.component.repetition, method='random')
+            nReps=self.component.repetition,
+            method=('random' if self.component.randomize else 'sequential')
+        )
     @property
     def synced(self):
         self.clock.synchronize(self)
@@ -114,6 +117,7 @@ class GratingsStimulus(Component):
     contrasts = Contrasts([1.0])
     blank = Blank(True)
     flicker = Flicker(True)
+    randomize = Randomize(True)
     on_duration = OnDuration(0.1)
     off_duration = OffDuration(0)
     contrast = Contrast(1.0)

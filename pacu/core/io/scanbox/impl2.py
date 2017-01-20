@@ -246,12 +246,13 @@ def plot_timing_diff(id=1087):
 # exp = session.query(ExperimentV1).get(1475)
 # exp = session.query(ExperimentV1).get(debugger_condition_id)
 
-q = ScanboxIO('debugger/debugger_movie.io')
+# q = ScanboxIO('debugger/debugger_movie.io')
 # q = ScanboxIO('Kirstie/ka28/day1/day1_000_002.io')
 # q = ScanboxIO('day_ht/Aligned_day3_000_006.io').echo_off()
 # q = ScanboxIO('day_ht/my4r_1_3_000_007.io').echo_off()
 # q = ScanboxIO('day_ht/Aligned_day1_000_001.io').echo_off()
-r = q.condition.workspaces.first.rois.first
+# r = q.condition.workspaces.first.rois.first
+
 # r = q.condition.workspaces.last.rois.first
 # fit = r.dtsfreqfit.refresh()
 # cnt = r.contours

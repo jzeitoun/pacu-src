@@ -27,15 +27,17 @@ def main(workspace, condition, roi, datatag):
     else:
         baseline_last_frame = on_first_frame - 1
 
-    print baseline_first_frame
-    print baseline_last_frame
-
     off_first_frame = min(on_last_frame, nframes)
     off_last_frame = min(off_first_frame + off_frames, nframes)
 
-    # print (baseline_first_frame, baseline_last_frame,
-    #         on_first_frame, on_last_frame,
-    #         off_first_frame, off_last_frame)
+    print ('\ntrial #{}'
+           '\nbase -> [{}:{}]'
+           '\non   -> [{}:{}]'
+           '\noff  -> [{}:{}]').format(
+            datatag.trial_order,
+            baseline_first_frame, baseline_last_frame,
+            on_first_frame, on_last_frame,
+            off_first_frame, off_last_frame)
 
     trace = np.array(roi.dtoverallmean.value)
     on_trace = trace[on_first_frame:on_last_frame]
