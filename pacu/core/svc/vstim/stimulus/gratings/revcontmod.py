@@ -100,7 +100,6 @@ class StimulusResource(Resource):
         max_contrast = self.component.max_contrast
         opacity = min(opacity, max_contrast)
         self.instance.opacity = opacity
-        print self.instance.opacity
 
         self.instance.draw()
         self.window.flip()

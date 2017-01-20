@@ -21,9 +21,14 @@ def main(workspace, condition, roi, datatag):
     baseline_first_frame = on_first_frame - off_frames
     if baseline_first_frame < 0:
         baseline_first_frame = 0
-        baseline_last_frame = off_frames - 1
+        # ht fri jan 20 2017
+        baseline_last_frame = 0
+        # baseline_last_frame = off_frames - 1
     else:
         baseline_last_frame = on_first_frame - 1
+
+    print baseline_first_frame
+    print baseline_last_frame
 
     off_first_frame = min(on_last_frame, nframes)
     off_last_frame = min(off_first_frame + off_frames, nframes)

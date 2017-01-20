@@ -8,6 +8,7 @@ from sqlalchemy import Column, Unicode, Float, Boolean, Integer, DateTime
 from sqlalchemy.types import PickleType
 
 from pacu.core.io.scanbox.model.base import SQLite3Base
+from pacu.core.io.scanbox.model.variant.dtorientationsfit import VTSoGParams
 
 basemodule = 'pacu.core.io.scanbox.method'
 
@@ -86,6 +87,7 @@ class DTOrientationsFit(Datatag, SQLite3Base):
     category = 'orientations'
     method = 'fit'
     value = Column(PickleType, default={})
+    # sog_params = Column(VTSoGParams.as_mutable())
 class DTSFreqFit(Datatag, SQLite3Base):
     __tablename__ = 'dtsfreqfits'
     category = 'sfreq'

@@ -1,3 +1,4 @@
+import shutil
 import ujson
 from sqlalchemy import event
 from sqlalchemy.orm import object_session
@@ -103,15 +104,11 @@ class ScanboxIO(object):
             err = dict(type=str(type(e)), detail=str(e))
             return dict(err=err, info=self.mat.toDict())
     def fix_db_schema(self):
+        path = self.db_path
+        shutil.copy2(path.str, path.with_suffix('.backup.sqlite3').str)
         meta = schema.SQLite3Base.metadata
         bind = self.db_session.bind
         schema.fix_incremental(meta, bind)
-#        session = self.condition.object_session
-#         session.begin()
-#         for ws in self.condition.workspaces:
-#             for roi in ws.rois:
-#                 print roi.initialize_datatags()
-#        session.commit()
     def echo_on(self):
         self.db_session.bind.engine.echo=True
         return self
@@ -125,8 +122,9 @@ class ScanboxIO(object):
     def fix_db_schema_all(cls):
         meta = schema.SQLite3Base.metadata
         for io in ScanboxIO.iter_every_io():
-            bind = io.condition.object_session.bind
-            schema.fix_incremental(meta, bind)
+            io.fix_db_schema()
+            # bind = io.condition.object_session.bind
+            # schema.fix_incremental(meta, bind)
     def export_sfreqfit_data_as_mat(self, wid, rid, contrast):
         roi = self.db_session.query(schema.ROI
             ).filter_by(id=rid, workspace_id=wid).one()
@@ -235,20 +233,25 @@ def plot_timing_diff(id=1087):
 # import os
 # import time
 # print 'purge disk cache', os.system('sudo purge')
+
+
 # q = ScanboxIO('test_ka50_lit_day1/day1_000_003.io')
 # w = q.condition.workspaces.first
-# r = w.rois.first
-# id_multiple_category = 1475 #1193 previous, single contrast
 
+# r = w.rois.first
+
+# id_multiple_category = 1475 #1193 previous, single contrast
+# debugger_condition_id = 1671
 # session = glab()
 # exp = session.query(ExperimentV1).get(1475)
+# exp = session.query(ExperimentV1).get(debugger_condition_id)
 
-# q = ScanboxIO('Kirstie/ka28/day1/Aligned_day1_000_002.io')
+q = ScanboxIO('debugger/debugger_movie.io')
 # q = ScanboxIO('Kirstie/ka28/day1/day1_000_002.io')
 # q = ScanboxIO('day_ht/Aligned_day3_000_006.io').echo_off()
 # q = ScanboxIO('day_ht/my4r_1_3_000_007.io').echo_off()
 # q = ScanboxIO('day_ht/Aligned_day1_000_001.io').echo_off()
-# r = q.condition.workspaces.first.rois.first
+r = q.condition.workspaces.first.rois.first
 # r = q.condition.workspaces.last.rois.first
 # fit = r.dtsfreqfit.refresh()
 # cnt = r.contours
