@@ -239,8 +239,9 @@ def plot_timing_diff(id=1087):
 # w = q.condition.workspaces.first
 # r = w.rois.first
 # id_multiple_category = 1475 #1193 previous, single contrast
+
 # session = glab()
-# exp = session.query(ExperimentV1).get(1096)
+# exp = session.query(ExperimentV1).get(1475)
 
 # q = ScanboxIO('Kirstie/ka28/day1/Aligned_day1_000_002.io')
 # q = ScanboxIO('Kirstie/ka28/day1/day1_000_002.io')

@@ -53,6 +53,11 @@ class ExperimentV1(Base):
     def ordered_trials(self):
         seq = np.array(self.sequence)
         trials = self.trial_list[seq].T.flatten()
+        default_contrast = self.stimulus_kwargs.get('contrast')
+        for index, trial in enumerate(trials):
+            if 'contrast' not in trial:
+                trial['contrast'] = default_contrast
+                print 'trial #', index, 'default contrast was assigned', default_contrast
         on_time, off_time , sequence, ran, order = [
             np.concatenate([
                 data[indice]
