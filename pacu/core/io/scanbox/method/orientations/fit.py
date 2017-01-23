@@ -29,10 +29,14 @@ def main(workspace, condition, roi, datatag):
         meantrace_for_ori = np.nanmean(arr, axis=0)
         oris.append(meantrace_for_ori)
     mat = np.nanmean(np.array(oris), axis=1)
-    p = roi.sog_initial_guess or workspace.sog_initial_guess
-    a1m, a1M, a2m, a2M, sm, sM, om, oM = [p[attr] for attr in PATTRS]
+    params = datatag.sog_params
+    # p = roi.sog_initial_guess or workspace.sog_initial_guess
+    # a1m, a1M, a2m, a2M, sm, sM, om, oM = [p[attr] for attr in PATTRS]
     fit = SumOfGaussianFit(condition.orientations, mat, best_pref_ori, (
-        (a1m, a1M), (a2m, a2M), (sm, sM), (om, oM)
+        (params['a1_min']   , params['a1_max']),
+        (params['a2_min']   , params['a2_max']),
+        (params['sigma_min'], params['sigma_max']),
+        (params['offset_min'], params['offset_max'])
     ))
     return util.nan_for_json(dict(
         orientations = condition.orientations,

@@ -42,7 +42,12 @@ def main(workspace, condition, roi, datatag):
     trace = np.array(roi.dtoverallmean.value)
     on_trace = trace[on_first_frame:on_last_frame]
     baseline_trace = trace[baseline_first_frame:baseline_last_frame]
-    # print len(baseline_trace), len(on_trace), 
+    # print len(baseline_trace), len(on_trace),
+
+    # consider below 1 frame shift down might be necessary
+    later_part = 1 + int(workspace.baseline_duration * framerate)
+    later_baseline_trace = baseline_trace[-later_part:-1]
+
     later_part = int(workspace.baseline_duration * framerate)
     later_baseline_trace = baseline_trace[-later_part:]
 

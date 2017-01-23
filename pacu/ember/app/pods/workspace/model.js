@@ -17,7 +17,7 @@ export default Model.extend({
   condition: belongsTo('condition'),
   // ecorrs: hasMany('ephys-correlation'),
   activeROIs: Ember.computed.filterBy('rois', 'active', true),
-  activeROIBinding: 'activeROIs.firstObject',
+  activeROI: Ember.computed.alias('activeROIs.firstObject'),
   savingROIs: Ember.computed.filterBy('rois', 'isSaving', true),
   loadingROIs: Ember.computed.filterBy('rois', 'isLoading', true),
   busyROIs: Ember.computed.uniq('savingROIs', 'loadingROIs'),

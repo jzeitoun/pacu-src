@@ -141,7 +141,11 @@
   <img class="ui fluid image" alt="SF Tuning Curve"
     src="data:image/png;base64,{{model.workspace.activeROI.dtsfreqfitByCT.value.plot}}" />
   {{/if}}
-
+  <section class="ui clearing divider"></section>
+  <h4 class="ui header">
+    <span class="ui label">SF: {{model.workspace.cur_sfreq}}</span>
+    <span class="ui label">Contrast: {{model.workspace.cur_contrast}}</span>
+  </h4>
   <section class="ui clearing divider"></section>
   <div class="ui" style="overflow-x: scroll; font-family: monospace;">
     {{x-scanbox-analyzer/stats/wide-table

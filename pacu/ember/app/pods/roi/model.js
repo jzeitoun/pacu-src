@@ -130,24 +130,26 @@ export default Model.extend({
     }
   },
   clearSoGParam() {
-    this.set('sog_initial_guess', null);
-    this.save();
+    const dt = this.get('cur_dtorientationsfit');
+    dt.set('sog_params', null);
+    dt.save();
   },
   overrideSoGParam() {
-    const p = this.get('sog_initial_guess') || SOG_INITIAL_GUESS;
-    const current = `${p.a1min}, ${p.a1max}, ${p.a2min}, ${p.a2max}, ${p.sigmin}, ${p.sigmax}, ${p.offmin}, ${p.offmax}`;
+    const dt = this.get('cur_dtorientationsfit');
+    const p = dt.get('sog_params');
+    const current = `${p.a1_min}, ${p.a1_max}, ${p.a2_min}, ${p.a2_max}, ${p.sigma_min}, ${p.sigma_max}, ${p.offset_min}, ${p.offset_max}`;
     const params = prompt('Please type new parameters', current);
     if (Ember.isNone(params)) { return; }
     try {
-      const [a1min, a1max, a2min, a2max, sigmin, sigmax, offmin, offmax] = params.split(',').map(parseFloat);
-      const newParams = { a1min, a1max, a2min, a2max, sigmin, sigmax, offmin, offmax };
+      const [a1_min, a1_max, a2_min, a2_max, sigma_min, sigma_max, offset_min, offset_max] = params.split(',').map(parseFloat);
+      const newParams = { a1_min, a1_max, a2_min, a2_max, sigma_min, sigma_max, offset_min, offset_max };
       for (let p in newParams) {
         if (isNaN(newParams[p])) {
           throw 'Parameter error';
         }
       }
-      this.set('sog_initial_guess', newParams);
-      this.save();
+      dt.set('sog_params', newParams);
+      dt.save();
     } catch(e) {
       this.get('toast').warning(e);
     }
@@ -193,4 +195,7 @@ export default Model.extend({
   @computed('workspace.cur_contrast', 'dtorientationsfits') dtorientationsfitsByCT(cont, dts) {
     return dts.filterBy('trial_contrast', cont);
   },
+  @computed('workspace.cur_contrast', 'workspace.cur_sfreq', 'dtorientationsfits') cur_dtorientationsfit(ct, sf, dts) {
+    return dts.filterBy('trial_contrast', ct).filterBy('trial_sf', sf).get('firstObject');
+  }
 });

@@ -87,7 +87,7 @@ class DTOrientationsFit(Datatag, SQLite3Base):
     category = 'orientations'
     method = 'fit'
     value = Column(PickleType, default={})
-    # sog_params = Column(VTSoGParams.as_mutable())
+    sog_params = Column(VTSoGParams.as_mutable())
 class DTSFreqFit(Datatag, SQLite3Base):
     __tablename__ = 'dtsfreqfits'
     category = 'sfreq'

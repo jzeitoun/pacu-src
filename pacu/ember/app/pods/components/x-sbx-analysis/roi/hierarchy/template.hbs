@@ -41,24 +41,24 @@
 
     <div class="divider"></div>
     <div class="header">
-      SoG Initial Guess
+      SoG Guess for {{roi.workspace.cur_sfreq}} / {{roi.workspace.cur_contrast}}
     </div>
 
-    {{#with roi.sog_initial_guess as |p|}}
+    {{#with roi.cur_dtorientationsfit.sog_params as |p|}}
       <div class="item">
         Current
         <div class="menu">
           <div class="header">
-            <span class="ui mini label">1</span>{{p.a1min}} ~ {{p.a1max}}
+            <span class="ui mini label">1</span>{{p.a1_min}} ~ {{p.a1_max}}
           </div>
           <div class="header">
-            <span class="ui mini label">2</span>{{p.a2min}} ~ {{p.a2max}}
+            <span class="ui mini label">2</span>{{p.a2_min}} ~ {{p.a2_max}}
           </div>
           <div class="header">
-            <span class="ui mini label">S</span>{{p.sigmin}} ~ {{p.sigmax}}
+            <span class="ui mini label">S</span>{{p.sigma_min}} ~ {{p.sigma_max}}
           </div>
           <div class="header">
-            <span class="ui mini label">O</span>{{p.offmin}} ~ {{p.offmax}}
+            <span class="ui mini label">O</span>{{p.offset_min}} ~ {{p.offset_max}}
           </div>
         </div>
       </div>

@@ -237,13 +237,13 @@ def plot_timing_diff(id=1087):
 
 # q = ScanboxIO('test_ka50_lit_day1/day1_000_003.io')
 # w = q.condition.workspaces.first
-
 # r = w.rois.first
+# d = r.dttrialdff0s.filter_by(trial_contrast=1.0, trial_sf=0.96) #, trial_ori=90.0)
 
 # id_multiple_category = 1475 #1193 previous, single contrast
 # debugger_condition_id = 1671
 # session = glab()
-# exp = session.query(ExperimentV1).get(1475)
+# exp = session.query(ExperimentV1).get(1718)
 # exp = session.query(ExperimentV1).get(debugger_condition_id)
 
 # q = ScanboxIO('debugger/debugger_movie.io')

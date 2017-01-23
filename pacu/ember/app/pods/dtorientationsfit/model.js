@@ -6,4 +6,5 @@ import Datatag from 'pacu/pods/datatag/model';
 export default Datatag.extend({
   value: attr(),
   roi: belongsTo('roi'),
+  sog_params: attr()
 });

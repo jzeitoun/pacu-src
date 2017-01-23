@@ -28,6 +28,7 @@ export default Ember.Component.extend({ //TODO: Simplify
   attributeBindings: ['style'],
   @computed('child.aspectRatio') style(ratio) {
     if (Ember.isNone(this.element)) { return ''; }
+    if (Ember.isNone(this.$())) { return ''; }
     const pTop = this.$().css('padding-top');
     const pBtm = this.$().css('padding-bottom');
     const containerWidth = this.$().width();
@@ -41,7 +42,9 @@ export default Ember.Component.extend({ //TODO: Simplify
     this.element.firstElementChild.style.transform = `scale(${scale})`;
     this.element.firstElementChild.style.transformOrigin = 'left top';
     const d = { height, pTop, pBtm, scale, heightPadded, parallelContainerStyle };
-    this.set('dimension', d);
+    Ember.run.scheduleOnce('afterRender', this, () => {
+      this.set('dimension', d);
+    });
     const style = Ember.String.htmlSafe(
       `height: calc(${d.height}px + ${d.pTop} + ${d.pBtm});`
     );

@@ -32,6 +32,5 @@ class VariantBaseType(TypeDecorator):
             value = '{}' # taking care of null column
         data = json.loads(value)
         # taking care of empty data to default variants
-        return data if data else dict(self.variants.items())
-        # but above does not take care incrementally
+        return dict(dict(self.variants.items()), **data)
     variants = Variant.descriptor_set()

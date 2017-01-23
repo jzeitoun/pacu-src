@@ -10,6 +10,32 @@ const include = 'condition,dtoverallmeans,rois,rois.dtorientationsmeans,rois.dto
 const queryParam = { include };
 
 export default Ember.Route.extend({
+  activate() {
+    Ember.$(document).on('keyup.conditions', e => {
+      const ws = this.currentModel.workspace;
+      const cd = this.currentModel.condition;
+      switch (e.keyCode) {
+        case 83: // s
+          var esName = 'sfrequencies';
+          var eName = 'cur_sfreq';
+          break;
+        case 67: // c
+          var esName = 'contrasts';
+          var eName = 'cur_contrast';
+          break;
+        default:
+          return false;
+      }
+      var elements = cd.get(esName);
+      var element = ws.get(eName);
+      var index = elements.indexOf(element);
+      var next = elements[(index+1)%elements.length];
+      ws.set(eName, next);
+    });
+  },
+  deactivate() {
+    Ember.$(document).off('keyup.conditions');
+  },
   socket: Ember.inject.service(),
   session: Ember.inject.service(),
   actions: actions,

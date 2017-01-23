@@ -26,6 +26,10 @@ function importROIFileChanged(e) { // `this` is the current route
 }
 
 export default {
+  do(action, ...args) {
+    alert('not supported');
+    // return this.actions[action].apply(this, args);
+  },
   willTransition: function(transition) {
     this.store.unloadAll(); // releasing all data resources. important.
     this.wsx.dnit();
