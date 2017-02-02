@@ -53,7 +53,7 @@ class ExperimentV1(Base):
     def ordered_trials(self):
         seq = np.array(self.sequence)
         trials = self.trial_list[seq].T.flatten()
-        default_contrast = self.stimulus_kwargs.get('contrast')
+        default_contrast = self.stimulus_kwargs.get('contrast', 1)
         for index, trial in enumerate(trials):
             if 'contrast' not in trial:
                 trial['contrast'] = default_contrast
