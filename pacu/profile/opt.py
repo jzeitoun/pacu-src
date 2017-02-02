@@ -10,6 +10,9 @@ def xform_with_path(profile, strict):
     for key, path in pdict.items():
         if not path.is_dir():
             warn_existence(key, path)
+            cwd = Path.cwd()
+            print 'replaced with', cwd
+            setattr(profile, key, cwd)
             # raise_existence(key, path) if strict else warn_existence(key, path)
         else:
             setattr(profile, key, path.resolve())
