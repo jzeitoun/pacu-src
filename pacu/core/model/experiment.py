@@ -11,7 +11,14 @@ from sqlalchemy.types import UnicodeText
 
 from . import Base
 
+from pacu.profile import manager
+glab = manager.get('db').section('glab')
+
 class ExperimentV1(Base):
+    @classmethod
+    def query(cls):
+        return glab().query(cls)
+
     __tablename__ = 'experiment_v1'
     id = Column(Integer, primary_key=True)
     created_at = Column(DateTime, default=datetime.utcnow)
