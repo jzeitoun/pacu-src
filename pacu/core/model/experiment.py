@@ -20,6 +20,9 @@ class ExperimentV1(Base):
     def query(cls):
         return glab().query(cls)
     @classmethod
+    def get_by_id(cls, id):
+        return cls.query().get(id)
+    @classmethod
     def find_keyword(cls, keyword):
         return glab().query(
             ExperimentV1.id, func.date(ExperimentV1.created_at), ExperimentV1.keyword
