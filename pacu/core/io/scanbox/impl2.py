@@ -131,8 +131,8 @@ class ScanboxIO(object):
             ).filter_by(id=rid, workspace_id=wid).one()
         return roi.export_sfreqfit_data_as_mat(contrast)
     @staticmethod
-    def condition_by_file(filename):
-        Session = schema.get_sessionmaker('db.sqlite3')
+    def condition_by_file(filename='db.sqlite3'):
+        Session = schema.get_sessionmaker(filename)
         s = Session()
         condition = s.query(schema.Condition).one()
         return s, condition
