@@ -1,6 +1,7 @@
 from datetime import datetime
 
 import numpy as np
+from sqlalchemy.sql import func
 from sqlalchemy import Column
 from sqlalchemy import Integer
 from sqlalchemy import Float
@@ -21,7 +22,7 @@ class ExperimentV1(Base):
     @classmethod
     def find_keyword(cls, keyword):
         return glab().query(
-            ExperimentV1.id, ExperimentV1.created_at, ExperimentV1.keyword
+            ExperimentV1.id, func.date(ExperimentV1.created_at), ExperimentV1.keyword
         ).filter(ExperimentV1.keyword.contains(keyword)).all()
 
     __tablename__ = 'experiment_v1'
