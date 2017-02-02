@@ -133,7 +133,9 @@ class ScanboxIO(object):
     @staticmethod
     def condition_by_file(filename):
         Session = schema.get_sessionmaker('db.sqlite3')
-        return Session().query(schema.Condition).one()
+        s = Session()
+        condition = s.query(schema.Condition).one()
+        return s, condition
 
 """
 for io in ScanboxIO.iter_every_io():
