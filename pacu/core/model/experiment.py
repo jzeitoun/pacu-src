@@ -18,6 +18,9 @@ class ExperimentV1(Base):
     @classmethod
     def query(cls):
         return glab().query(cls)
+    @classmethod
+    def find_keyword(cls, keyword):
+        return glab().query(ExperimentV1.id, ExperimentV1.keyword).filter(ExperimentV1.keyword.contains(keyword)).all()
 
     __tablename__ = 'experiment_v1'
     id = Column(Integer, primary_key=True)
