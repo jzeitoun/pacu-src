@@ -105,6 +105,7 @@ class ScanboxIO(object):
             return dict(err=err, info=self.mat.toDict())
     def fix_db_schema(self):
         path = self.db_path
+        print 'fix', path
         shutil.copy2(path.str, path.with_suffix('.backup.sqlite3').str)
         meta = schema.SQLite3Base.metadata
         bind = self.db_session.bind
@@ -129,6 +130,10 @@ class ScanboxIO(object):
         roi = self.db_session.query(schema.ROI
             ).filter_by(id=rid, workspace_id=wid).one()
         return roi.export_sfreqfit_data_as_mat(contrast)
+    @staticmethod
+    def condition_by_file(filename):
+        Session = schema.get_sessionmaker('db.sqlite3')
+        return Session().query(schema.Condition).one()
 
 """
 for io in ScanboxIO.iter_every_io():
@@ -234,24 +239,30 @@ def plot_timing_diff(id=1087):
 # import time
 # print 'purge disk cache', os.system('sudo purge')
 
-
 # q = ScanboxIO('test_ka50_lit_day1/day1_000_003.io')
 # w = q.condition.workspaces.first
 # r = w.rois.first
-# d = r.dttrialdff0s.filter_by(trial_contrast=1.0, trial_sf=0.96) #, trial_ori=90.0)
+# dt = r.dtorientationsmeans.filter_by(trial_sf=0.12,trial_contrast=1).first
+# for ct in q.condition.contrasts:
+#     for sf in q.condition.sfrequencies:
+#         print sf, ct
+#         dt = r.dttrialdff0s.filter_by(
+#             trial_sf=sf, trial_contrast=ct,
+#             trial_blank=False, trial_flicker=False) #, trial_ori=90.0)
+#         print sorted(set([d.trial_sequence for d in dt]))
+#         print len(dt)
 
+# dt = r.dttrialdff0s.filter_by(
+#     trial_sf=0.12, trial_contrast=1.0,
+#     trial_blank=False, trial_flicker=False) #, trial_ori=90.0)
 # id_multiple_category = 1475 #1193 previous, single contrast
 # debugger_condition_id = 1671
 # session = glab()
-# exp = session.query(ExperimentV1).get(1718)
+# exp = session.query(ExperimentV1).get(1811)
 # exp = session.query(ExperimentV1).get(debugger_condition_id)
 
 # q = ScanboxIO('debugger/debugger_movie.io')
 # q = ScanboxIO('Kirstie/ka28/day1/day1_000_002.io')
-# q = ScanboxIO('day_ht/Aligned_day3_000_006.io').echo_off()
-# q = ScanboxIO('day_ht/my4r_1_3_000_007.io').echo_off()
-# q = ScanboxIO('day_ht/Aligned_day1_000_001.io').echo_off()
-# r = q.condition.workspaces.first.rois.first
 
 # r = q.condition.workspaces.last.rois.first
 # fit = r.dtsfreqfit.refresh()
@@ -320,10 +331,8 @@ def redump(filename):
     session.commit()
     return model
 
-# id_multiple_category = 1475
 # session = glab()
-# # exp = session.query(ExperimentV1).get(1622)
-# exp = session.query(ExperimentV1).get(1097)
+# exp = session.query(ExperimentV1).get(1836)
 # c = schema.Condition()
 # c.from_expv1(exp)
 # c.trials.extend([
@@ -331,8 +340,6 @@ def redump(filename):
 #     for trial in exp])
 # c.imported = True
 
-# 
-# 
 #     def initialize_db(self, condition_id=None):
 #         # requires original location...
 #         schema.recreate(self.db_path, echo=False)
