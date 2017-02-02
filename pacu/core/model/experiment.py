@@ -57,7 +57,7 @@ class ExperimentV1(Base):
         for index, trial in enumerate(trials):
             if 'contrast' not in trial:
                 trial['contrast'] = default_contrast
-                print 'trial #', index, 'default contrast was assigned', default_contrast
+                # print 'trial #', index, 'default contrast was assigned', default_contrast
         on_time, off_time , sequence, ran, order = [
             np.concatenate([
                 data[indice]
