@@ -22,6 +22,7 @@ from pacu.core.svc.vstim.stimulus.duration import OnDuration
 from pacu.core.svc.vstim.stimulus.duration import OffDuration
 from pacu.core.svc.vstim.stimulus.sparse_noise.condition import Condition
 from pacu.core.svc.vstim.stimulus.sparse_noise.trial import Trial
+from pacu.core.svc.vstim.stimulus.randomize import Randomize
 
 class StimulusResource(Resource):
     should_stop = False
@@ -53,7 +54,9 @@ class StimulusResource(Resource):
         ts = [Trial(self, cond, self.component.on_duration, self.interval)
             for cond in conditions]
         return TrialHandler(ts,
-            nReps=self.component.repetition, method='random')
+            nReps=self.component.repetition,
+            method=('random' if self.component.randomize else 'sequential')
+        )
     @property
     def synced(self):
         self.clock.synchronize(self)
@@ -103,4 +106,5 @@ class SparseNoiseStimulus(Component):
     size = Size(30)
     on_duration = OnDuration(1)
     off_duration = OffDuration(0.5)
+    randomize = Randomize(True)
     __call__ = StimulusResource.bind('window', 'clock', 'projection')
