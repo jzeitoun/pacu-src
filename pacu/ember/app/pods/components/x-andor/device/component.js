@@ -90,7 +90,7 @@ export default Ember.Component.extend({
       const args = feats.getEach('value');
       this.wsx.invoke('set_handler', name, ...args).then(() => {
         this.toast.info(`${name.capitalize()} handler setup properly.`);
-        if (Em.isEqual('writer_by_ttl', name)) {
+        if (Ember.isEqual('writer_by_ttl', name)) {
           self.set('bypass', true);
         }
       }).catch(this.handleError.bind(this));
@@ -179,7 +179,7 @@ export default Ember.Component.extend({
   initSUI: function() {
     const self = this;
     this.$('.tabular.menu .item').tab({
-      onLoad: function(tabPath, parameterArray, historyEvent) {
+      onLoad: function(tabPath, parameterArray /*, historyEvent*/) {
         if (Ember.isEqual(tabPath, 'on-air')) {
           self.wsx.invoke('enter_on_air').then(function(msg) {
             if (Ember.isPresent(msg)) {

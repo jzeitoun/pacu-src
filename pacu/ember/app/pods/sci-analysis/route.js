@@ -8,12 +8,12 @@ const clsname = 'ScanimageIOFetcher'
 export default Ember.Route.extend({
   socket: Ember.inject.service(),
   actions: actions,
-  model(param, transition) {
-    return new Promise((resolve, reject) => {
+  model(param/*, transition*/) {
+    return new Ember.RSVP.Promise((resolve, /*reject*/) => {
       return this.get('socket').create(
         this, modname, clsname, param
       ).then((wsx) => {
-        wsx.socket.onclose = (wsx) => {
+        wsx.socket.onclose = (/*wsx*/) => {
           this.toast.warning('WebSocket connection closed.');
         };
         this.set('wsx', wsx);
@@ -22,11 +22,11 @@ export default Ember.Route.extend({
       });
     });
   },
-  afterModel(model, transition) {
+  afterModel(model/*, transition*/) {
     model.initialize(this);
     model.get('logs').pushObject(Ember.Object.create({body: 'Log ready.'}));
   },
-  on_sse_print(msg, err) {
+  on_sse_print(msg, /*err*/) {
     if (10 == msg.charCodeAt() || 32 == msg.charCodeAt()) { return; }
     const lastMsg = this.get('currentModel.logs.lastObject') || {};
     if (lastMsg.body === msg) {

@@ -1,5 +1,6 @@
 import Ember from 'ember';
-import computed from 'ember-computed-decorators';
+
+/* global ArrayBuffer DataView */
 
 function log(...msgs) { console.log(...msgs); }
 
@@ -146,8 +147,8 @@ class WebSocketEx {
   invokeAsBinary(route, ...args) {
     return this.makeRequest('invoke', route, {args, as_binary: true});
   }
-  oncloseFunc(buf) {}
-  onbinaryFunc(buf) {}
+  oncloseFunc(/*buf*/) {}
+  onbinaryFunc(/*buf*/) {}
   onclose(func) { this.oncloseFunc = func.bind(this.context); return this; }
   onbinary(func) { this.onbinaryFunc = func.bind(this.context); return this; }
   makeRequest(type, route, payload={as_binary: false}) {
@@ -203,13 +204,14 @@ class WebSocketEx {
 export default Ember.Service.extend({
   create(context, modname, clsname, src) {
     if (Ember.isNone(src)) {
-      var url = `ws://${location.host}/ws/${modname}/${clsname}`;
+      var url;
+      url = `ws://${location.host}/ws/${modname}/${clsname}`;
     } else {
       if (Ember.$.isPlainObject(src)) {
         var qs = Ember.$.param(src);
-        var url = `ws://${location.host}/ws/${modname}/${clsname}?${qs}`;
+        url = `ws://${location.host}/ws/${modname}/${clsname}?${qs}`;
       } else {
-        var url = `ws://${location.host}/ws/${modname}/${clsname}?files=${src}`;
+        url = `ws://${location.host}/ws/${modname}/${clsname}?files=${src}`;
       }
     }
     return new WebSocketEx.asBufBased(context, url);

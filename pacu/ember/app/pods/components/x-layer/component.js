@@ -7,7 +7,7 @@ export default Ember.Component.extend({
     return Ember.String.htmlSafe(`width: ${w}px; height: ${h}px;`);
   },
   initialize: function() {
-    $(document).on('keydown.x-layer', (e) => {
+    Ember.$(document).on('keydown.x-layer', (e) => {
       // check if event sender is valid.
       const keyCode = e.keyCode || e.which;
       // 13 enter
@@ -25,7 +25,7 @@ export default Ember.Component.extend({
     });
   }.on('didInsertElement'),
   dnitialize: function() {
-    $(document).off('keydown.x-layer');
+    Ember.$(document).off('keydown.x-layer');
   }.on('willDestroyElement'),
   click() {
     // this.get('do')('revokeFocus');

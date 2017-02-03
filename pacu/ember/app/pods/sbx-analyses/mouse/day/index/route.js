@@ -1,5 +1,7 @@
 import Ember from 'ember';
 
+/* global swal */
+
 function cat(error) {
   swal({
     title: 'Request Failed',
@@ -112,7 +114,7 @@ export default Ember.Route.extend({
       }, () => {
         this.get('socket').create(
           this, modname, clsname, {path: io.path}).then(wsx => {
-          wsx.invoke('session.Workspace.delete', {id: ws.id}).then(id => {
+          wsx.invoke('session.Workspace.delete', {id: ws.id}).then(/*id*/ ()=> {
             io.workspaces.removeObject(ws);
             swal.close();
           }).catch(cat).finally(() => { wsx.dnit(); });
@@ -127,7 +129,7 @@ export default Ember.Route.extend({
     this._super(controller, model);
     controller.set('messages', []);
   },
-  on_sse_print(msg, err) {
+  on_sse_print(msg/*, err*/) {
     if (10 == msg.charCodeAt() || 32 == msg.charCodeAt()) { return; }
     this.controller.messages.pushObject({body: msg});
   },

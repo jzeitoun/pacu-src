@@ -1,6 +1,8 @@
 import Ember from 'ember';
 import computed from 'ember-computed-decorators';
 
+/* global Uint8ClampedArray */
+
 export default Ember.Component.extend({
   tagName: 'canvas',
   @computed('ctx', 'width', 'height') img(c, w, h) {

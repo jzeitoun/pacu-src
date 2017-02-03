@@ -4,7 +4,7 @@ import functools
 import numpy as np
 
 def main(workspace, condition, roi, datatag):
-    trials_by_sf = roi.dttrialdff0s.filter_by(
+    trials = roi.dttrialdff0s.filter_by(
         trial_sf=datatag.trial_sf,
         trial_contrast=datatag.trial_contrast,
         trial_flicker=False, trial_blank=False)
@@ -19,10 +19,18 @@ def main(workspace, condition, roi, datatag):
         cursor = cursor + bs_frames
         indice.append(cursor)
         cursor = cursor + on_frames
+
+#     for ori in condition.orientations: # for each ori
+#         print ori
+#         for trial in trials.filter_by(trial_ori=ori): # for each rep
+#             # import ipdb; ipdb.set_trace()
+#             print trial.trial_sequence,
+#             # trial.value['baseline'] + trial.value['on']
+#         print
     # first axis is orientation, second is each trial
     oris = [[
         trial.value['baseline'] + trial.value['on']
-        for trial in trials_by_sf.filter_by(trial_ori=ori)
+        for trial in trials.filter_by(trial_ori=ori)
     ] for ori in condition.orientations]
     # first axis is each trial, second is orientations, third is baseline ~ ontime
     matrix = np.array(oris).transpose(1,0,2)

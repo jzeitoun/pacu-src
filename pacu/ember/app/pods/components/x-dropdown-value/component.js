@@ -6,7 +6,7 @@ export default Ember.Component.extend({
   @on('didInsertElement') initialize() {
     const self = this;
     this.$().dropdown({
-      onChange(value, text, $choice) {
+      onChange(value, text, /*$choice*/) {
         self.attrs.value.update(parseFloat(value));
       }
     });

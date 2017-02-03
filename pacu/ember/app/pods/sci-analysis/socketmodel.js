@@ -66,7 +66,7 @@ export default Ember.Object.extend({
     } else {
       return main;
     }
-    return cur || main;
+    // return cur || main;
   },
   @computed('channel', 'channelNumber') img(ch) { return Image.create(ch); },
   @computed('roiFetching') socketStatusClass(rf) {
@@ -82,7 +82,7 @@ export default Ember.Object.extend({
       'sfrequencies', 'sfrequency_index',
       'r_value', 'has_blank_and_flicker',
       'orientations', 'sog_initial_guess'
-    ).then((x) => {
+    ).then(() => {
       this.requestFrame(0);
     }).then(() => {
       this.addObserver('channelNumber', this.channelChanged);
@@ -95,7 +95,7 @@ export default Ember.Object.extend({
           return newroi.notifyPropertyChange('polygon');
         });
         window.rs = roiObjects;
-        const news = this.get('rois').setObjects(roiObjects);
+        /*const news = */ this.get('rois').setObjects(roiObjects);
         // news[0].set('active', true);
         // this.set('sfrequency_index', 1);
         if (Ember.isEmpty(rois)) {

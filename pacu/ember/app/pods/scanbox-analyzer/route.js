@@ -12,16 +12,17 @@ const queryParam = { include };
 export default Ember.Route.extend({
   activate() {
     Ember.$(document).on('keyup.conditions', e => {
+      var esName, eName;
       const ws = this.currentModel.workspace;
       const cd = this.currentModel.condition;
       switch (e.keyCode) {
         case 83: // s
-          var esName = 'sfrequencies';
-          var eName = 'cur_sfreq';
+          esName = 'sfrequencies';
+          eName = 'cur_sfreq';
           break;
         case 67: // c
-          var esName = 'contrasts';
-          var eName = 'cur_contrast';
+          esName = 'contrasts';
+          eName = 'cur_contrast';
           break;
         default:
           return false;
@@ -47,7 +48,7 @@ export default Ember.Route.extend({
       sessionArgs: [ioName]
     });
     const kw = {iopath:ioName, wsname: wsName};
-    const workspace = new Ember.RSVP.Promise((resolve, reject) => {
+    const workspace = new Ember.RSVP.Promise((resolve/*, reject*/) => {
       Ember.$.getJSON('/api/json/scanbox_manager/workspace_id', kw).then(id => {
         resolve(this.store.findRecord('workspace', id, queryParam));
       });
@@ -72,7 +73,7 @@ export default Ember.Route.extend({
     const name = { io: ioName, ws: wsName };
     return Ember.RSVP.hash({ condition, workspace, stream, name });
   },
-  afterModel(model /*, transition */) {
+  afterModel(/*model, transition */) {
     this._super(...arguments);
     // window.M = model; window.S = this.store; window.R = this;
     // if (Ember.isEmpty(model.rois)) {

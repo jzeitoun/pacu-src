@@ -1,4 +1,4 @@
-import Ember from 'ember';
+// import Ember from 'ember';
 
 /* global Chart */
 
@@ -6,7 +6,7 @@ export function initialize(/* application */) {
   // application.inject('route', 'foo', 'service:foo');
   const LC = Chart.controllers.line;
   Chart.controllers.lineEx = LC.extend({
-    initialize(chart, datasetIndex) {
+    initialize(/*chart, datasetIndex*/) {
       LC.prototype.initialize.apply(this, arguments);
       if (this.chart.anon) { return; }
       const main = this.chart.chart.canvas;

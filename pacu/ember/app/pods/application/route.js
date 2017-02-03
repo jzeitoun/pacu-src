@@ -12,8 +12,8 @@ export default Ember.Route.extend({
     toastWarning(title, detail) {
       this.toast.warning(detail, title);
     },
-    willTransition(transition) {
-    }
+    // willTransition(transition) {
+    // }
   },
   model() {
 

@@ -40,6 +40,9 @@ class Condition(SQLite3Base):
     exp_created_at = Column(DateTime)
     object_session = property(object_session)
     @property
+    def framerate(self):
+        return self.info.get('framerate')
+    @property
     def has_better_timing(self):
         return self.exp_created_at and \
             self.exp_created_at > datetime(2017, 1, 1)

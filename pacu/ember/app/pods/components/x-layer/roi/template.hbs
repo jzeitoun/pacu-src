@@ -1,13 +1,13 @@
 {{#if hasBlock}}
   {{yield}}
 {{else}}
-  {{x-layer/roi/polygon attrs.roi.polygon
-    active=attrs.roi.active
-    busy=attrs.roi.busy
-    error=attrs.roi.error
-    invalidated=attrs.roi.invalidated
+  {{x-layer/roi/polygon roi.polygon
+    active=roi.active
+    busy=roi.busy
+    error=roi.error
+    invalidated=roi.invalidated
   }}
-  {{#each attrs.roi.polygon as |pg|}}
+  {{#each roi.polygon as |pg|}}
     {{x-layer/roi/circle pg}}
   {{/each}}
 {{/if}}

@@ -1,5 +1,7 @@
 import Ember from 'ember';
 
+/* global swal */
+
 const modname = 'pacu.core.io.scanimage.impl';
 const clsname = 'ScanimageIO'
 
@@ -149,7 +151,7 @@ export default Ember.Route.extend({
       );
     }
   },
-  on_sse_print: function(msg, err) {
+  on_sse_print: function(msg /*, err*/) {
     if (10 == msg.charCodeAt() || 32 == msg.charCodeAt()) { return; }
     this.controller.messages.pushObject({body: msg});
   },

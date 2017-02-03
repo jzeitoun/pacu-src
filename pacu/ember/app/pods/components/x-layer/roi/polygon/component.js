@@ -7,8 +7,8 @@ export default Ember.Component.extend({
   classNameBindings: [
     'attrs.active', 'attrs.busy', 'attrs.error:error', 'attrs.invalidated'],
   @computed('attrs.polygon.@each.{x,y}') points(pg) {
-    if (Ember.isNone(pg)) { return; }
-    return pg.map(point => { return `${point.x},${point.y}`; }).join(' ');
+    if (Ember.isNone(pg.value)) { return; }
+    return pg.value.map(point => { return `${point.x},${point.y}`; }).join(' ');
   },
   mouseDown({offsetX, offsetY, altKey}) {
     const [originX, originY] = [offsetX, offsetY];

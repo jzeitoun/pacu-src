@@ -265,9 +265,10 @@ class ScanimageIO(object):
 # import ujson
 # path = 'tmp/Dario/2014.06.13/x.140513.3/field2001'
 
-# path = 'tmp/Dario/2014.07.07/a.20140124.wt_for_transplant.1/field002'
-# path = 'tmp/Dario/2014.06.15/x.140513.4/Syn-flexGCaMP6s002'
+# path = 'tmp/Dario/2016.05.06/r.160309.1/DM24_RbV1_Contra_005'
 # qwe = ScanimageIO(path).set_session('main')
+# r = qwe.session.roi.items()[0][1]
+
 # r = qwe.session.roi.values()[0]
 # r = qwe.session.roi['1477437377.839845']
 

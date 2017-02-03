@@ -9,7 +9,7 @@ export default Ember.Component.extend({
   classNameBindings: ['meta.readonly:readonly:action'],
   debug: function() {
   }.on('didInsertElement'),
-  @computed('meta.something') something(thing) {},
+  @computed('meta.something') something(/*thing*/) {},
   initSUI: function() {
     this.$('input').popup({
       on: 'focus',
@@ -19,10 +19,10 @@ export default Ember.Component.extend({
   dnitSUI: function() {
     this.$('input').popup('destroy');
   }.on('willDestroyElement'),
-  submit: function(e) {
+  submit: function(/*e*/) {
     if (this.getAttr('nosubmit')) return false;
     const meta = this.getAttr('meta');
-    this.attrs.onUpdate(meta).then((data) => {
+    this.attrs.onUpdate(meta).then((/*data*/) => {
       this.toast.info(`"${meta.feature}" updated successfully.`);
     });
     return false;

@@ -1,5 +1,7 @@
 // const mimetype = 'application/octet-stream';
 
+/* global Uint8Array DataView */
+
 export function fromByteString(byteString, filename, mimetype) {
   const a = document.createElement('a');
   a.style = "display: none";

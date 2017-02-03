@@ -5,7 +5,7 @@ module.exports = function(environment) {
     modulePrefix: 'pacu',
     environment: environment,
     podModulePrefix: 'pacu/pods',
-    baseURL: '/',
+    rootURL: '/',
     locationType: 'auto',
     EmberENV: {
       FEATURES: {

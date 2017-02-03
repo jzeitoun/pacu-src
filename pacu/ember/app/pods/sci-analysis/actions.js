@@ -1,6 +1,8 @@
 import Ember from 'ember';
 import download from 'pacu/utils/download';
 
+/* global swal */
+
 function upsertROI(roi) {
   const data = roi.getProperties('guessParams', 'centroid',
     'bootstrap_sf',
@@ -16,7 +18,7 @@ export default {
     this.controllerFor('application').set(
       'current-feature', 'Scanimage Data Analysis');
   },
-  willTransition: function(transition) {
+  willTransition: function(/*transition*/) {
     this.wsx.dnit();
     this.wsx = null;
   },
@@ -65,7 +67,7 @@ export default {
   },
   exclToggleROI(rois, roi) {
     for (let one of rois) {
-      if (Em.isEqual(one, roi)) {
+      if (Ember.isEqual(one, roi)) {
         if (roi.toggleProperty('active')) {
           if (one.get('invalidated')) {
             this.send('fetchROI', roi);
@@ -78,7 +80,7 @@ export default {
   },
   exclActivateROI(rois, roi) {
     for (let one of rois) {
-      if (Em.isEqual(one, roi)) {
+      if (Ember.isEqual(one, roi)) {
         roi.set('active', true);
         if (roi.get('invalidated')) {
           this.send('fetchROI', roi);
@@ -109,7 +111,7 @@ export default {
     this.currentModel.set('objectForModal', genericObject);
   },
   sfrequencyIndexChanged(index) {
-    this.get('wsx').invoke('set_sfrequency_index', index).then(data => {
+    this.get('wsx').invoke('set_sfrequency_index', index).then(/*data*/ () => {
       const roi = this.currentModel.get('curROI');
       // this.currentModel.get('rois').forEach(roi => roi.invalidate());
       if (Ember.isPresent(roi)) {
@@ -142,7 +144,7 @@ export default {
   },
   updateColormap(mapName, xmid, ymid) {
     const p = this.get('wsx').invoke('channel.update_colormap', mapName, xmid, ymid);
-    return p.then(data => {
+    return p.then(/*data*/() => {
       this.currentModel.indexChanged();
     }).catch(err => {
       this.toast.error(err.detail);
