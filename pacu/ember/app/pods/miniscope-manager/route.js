@@ -1,5 +1,7 @@
 import Ember from 'ember';
 
+/* global swal */
+
 function newWorkspace(io, name) {
   const payload = {iopath: io.info.iopath, name};
   Ember.$.ajax('/api/json/scanbox_manager/workspace', {
@@ -9,7 +11,7 @@ function newWorkspace(io, name) {
   }).then(data => {
     io.workspaces.pushObject(data.name);
     swal.close();
-  }).fail((err, text, statusText) => {
+  }).fail((err/*, text, statusText*/) => {
     this.toast.error(err.responseText, err.statusText);
   });
 }
@@ -19,9 +21,9 @@ function removeImported(io) {
     type: 'DELETE',
     data: { iopath: io.info.iopath },
     dataType: 'json',
-  }).then(data => {
+  }).then((/*data*/) => {
     this.currentModel.ios.removeObject(io);
-  }).fail((err, text, statusText) => {
+  }).fail((err/*, text, statusText*/) => {
     this.toast.error(err.responseText, err.statusText);
   });
 }
@@ -33,7 +35,7 @@ function removeWorkspace(io, name) {
     dataType: 'json',
   }).then(() => {
     io.workspaces.removeObject(name);
-  }).fail((err, text, statusText) => {
+  }).fail((err/*, text, statusText*/) => {
     this.toast.error(err.responseText, err.statusText);
   });
 }

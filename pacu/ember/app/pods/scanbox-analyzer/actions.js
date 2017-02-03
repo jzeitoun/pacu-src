@@ -6,7 +6,7 @@ function importROIFileChanged(e) { // `this` is the current route
   const route = this;
   const file = e.target.files[0];
   const fr = new FileReader();
-  fr.onload = (e) => {
+  fr.onload = (/*e*/) => {
     const data = JSON.parse(fr.result);
     try {
       data.rois.forEach(r => {
@@ -19,26 +19,26 @@ function importROIFileChanged(e) { // `this` is the current route
       this.toast.warning('Invalid file');
     } finally {
       this.toast.info(`${data.rois.length} ROI(s) imported.`);
-      $(input).val(null);
+      Ember.$(input).val(null);
     }
   }
   fr.readAsText(file);
 }
 
 export default {
-  do(action, ...args) {
+  do(/*action, ...args*/) {
     alert('not supported');
     // return this.actions[action].apply(this, args);
   },
-  willTransition: function(transition) {
+  willTransition: function(/*transition*/) {
     this.store.unloadAll(); // releasing all data resources. important.
     this.wsx.dnit();
     this.wsx = null;
-    $('#roi-import-file').off('change.pacu-roi-import');
+    Ember.$('#roi-import-file').off('change.pacu-roi-import');
   },
   didTransition() {
     Ember.run.schedule('afterRender', () => {
-      $('#roi-import-file').on('change.pacu-roi-import', importROIFileChanged.bind(this));
+      Ember.$('#roi-import-file').on('change.pacu-roi-import', importROIFileChanged.bind(this));
     });
   },
   updateModel(model) {
@@ -69,7 +69,7 @@ export default {
     });
   },
   importROIs() {
-    $('#roi-import-file').click();
+    Ember.$('#roi-import-file').click();
   },
   reloadTracePlot() {
     this.toast.info('Update traces...');

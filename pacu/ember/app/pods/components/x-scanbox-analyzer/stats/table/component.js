@@ -1,5 +1,5 @@
 import Ember from 'ember';
-import computed, { on, observes } from 'ember-computed-decorators';
+import computed, { observes } from 'ember-computed-decorators';
 import Table from 'ember-light-table';
 
 const model = [

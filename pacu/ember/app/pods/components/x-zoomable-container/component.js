@@ -64,13 +64,13 @@ export default Ember.Component.extend({ //TODO: Simplify
     window.ASD = this;
     const child = this.element.firstElementChild;
     if (Ember.isNone(child)) { return; }
-    $(window).on(`resize.${this.elementId}`, e => {
+    Ember.$(window).on(`resize.${this.elementId}`, (/*e*/) => {
       this.notifyPropertyChange('style');
     });
     this.get('observer').observe(child, observeConfig);
   }.on('didInsertElement'),
   dnitialize: function() {
-    $(window).off(`resize.${this.elementId}`);
+    Ember.$(window).off(`resize.${this.elementId}`);
     this.get('observer').disconnect();
   }.on('willDesroyElement')
 });

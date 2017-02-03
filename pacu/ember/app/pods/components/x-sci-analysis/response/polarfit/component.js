@@ -1,6 +1,8 @@
 import Ember from 'ember';
 import computed from 'ember-computed-decorators';
 
+/* global Chart */
+
 const rAxes = {
   type: 'radialLinear',
   lineArc: true,
@@ -75,8 +77,8 @@ export default Ember.Component.extend({
     return new Chart(ctx, cfg);
   },
   draw: function() {
-    const {chart, labels, datasets, names
-    } = this.getProperties('chart', 'labels', 'datasets', 'names');
+    const {chart, labels, datasets
+    } = this.getProperties('chart', 'labels', 'datasets');
     // const ticks = chart.config.options.scale.ticks;
     // ticks.callback = (value, index, values) => {
     //   console.log(value, index);

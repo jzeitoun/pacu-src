@@ -1,6 +1,6 @@
 import Ember from 'ember';
 
-/*global swal*/
+/*global swal, ArrayBuffer */
 
 export default Ember.Route.extend({
   addMessage(message) {

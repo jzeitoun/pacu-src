@@ -1,6 +1,8 @@
 import Ember from 'ember';
 import computed from 'ember-computed-decorators';
 
+/* global Chart */
+
 const yAxes = {
   type: 'linear',
   position: 'left',
@@ -117,7 +119,7 @@ export default Ember.Component.extend({
     } = this.getProperties('chart', 'labels', 'datasets', 'indices', 'text');
     const ticks = chart.config.options.scales.xAxes[0].ticks;
     chart.titleBlock.options.text = text;
-    ticks.userCallback = (value, index, values) => indices[index];
+    ticks.userCallback = (value, index /*, values */) => indices[index];
     chart.data.labels = labels;
     chart.data.datasets = datasets;
     chart.update();

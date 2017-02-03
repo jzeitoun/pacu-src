@@ -2,6 +2,8 @@ import Ember from 'ember';
 import computed, { on, observes } from 'ember-computed-decorators';
 import Manager from 'pacu/pods/components/x-sbx-analysis/plot/multi-trace/chart';
 
+/* global Chart */
+
 export default Ember.Component.extend({
   tagName: 'canvas',
   classNames: 'noselect',

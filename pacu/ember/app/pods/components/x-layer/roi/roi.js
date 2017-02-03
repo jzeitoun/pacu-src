@@ -4,7 +4,7 @@ import Centroid from 'pacu/pods/components/x-layer/roi/centroid';
 import Neuropil from 'pacu/pods/components/x-layer/roi/neuropil';
 import Trajectory from 'pacu/pods/components/x-layer/roi/trajectory';
 
-const ROI = Ember.Object.extend(Em.Copyable, Centroid, Neuropil, Trajectory, {
+const ROI = Ember.Object.extend(Ember.Copyable, Centroid, Neuropil, Trajectory, {
   @computed() invalidated() { return true; },
   @computed() responses() { return {}; },
   @computed() traces() { return []; },

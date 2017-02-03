@@ -1,6 +1,8 @@
 import Ember from 'ember';
 import computed, { on, observes } from 'ember-computed-decorators';
 
+/* global Chart */
+
 const yAxes = {
   type: 'linear',
   position: 'left',
@@ -120,7 +122,7 @@ export default Ember.Component.extend({
   //   this.get('chart').update();
   // },
   @observes('datatag') draw() {
-    const {chart, fetcher, roiID} = this.getProperties('chart', 'fetcher', 'roiID');
+    const {chart, fetcher} = this.getProperties('chart', 'fetcher');
     // if (Ember.$.isEmptyObject(this.get('datatag'))) {
     //   chart.data.datasets = datasets;
     //   chart.update();
@@ -130,7 +132,7 @@ export default Ember.Component.extend({
     const datasets = fetcher.get('datasets');
     const orientations = fetcher.get('orientations');
     const ticks = chart.config.options.scales.xAxes[0].ticks;
-    ticks.callback = (value, index, values) => {
+    ticks.callback = (value /*, index, values */) => {
       if (orientations.includes(value)) {
         return value;
       }

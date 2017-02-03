@@ -1,6 +1,8 @@
 import Ember from 'ember';
-import computed, { on, observes } from 'ember-computed-decorators';
+import computed, { observes } from 'ember-computed-decorators';
 import Manager from 'pacu/pods/components/x-sbx-analysis/plot/ephys-trace/chart';
+
+/* global Chart */
 
 export default Ember.Component.extend({
   tagName: 'canvas',

@@ -1,6 +1,8 @@
 import Ember from 'ember';
 import computed, { observes } from 'ember-computed-decorators';
 
+/* global Chart */
+
 const yAxes = {
   type: 'linear',
   position: 'left',

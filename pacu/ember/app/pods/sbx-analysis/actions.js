@@ -1,7 +1,7 @@
-import Ember from 'ember';
+// import Ember from 'ember';
 
 export default {
-  willTransition: function(transition) {
+  willTransition: function(/*transition*/) {
     this.store.unloadAll(); // releasing all data resources. important
     this.wsx.dnit();
     this.wsx = null;

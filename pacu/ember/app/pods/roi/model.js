@@ -1,17 +1,17 @@
-import DS from 'ember-data';
+import Ember from 'ember';
 import Model from 'ember-data/model';
 import attr from 'ember-data/attr';
 import { belongsTo, hasMany } from 'ember-data/relationships';
-import computed, { on, observes } from 'ember-computed-decorators';
+import computed, { observes } from 'ember-computed-decorators';
 import { getCentroid } from 'pacu/pods/components/x-layer/roi/centroid';
 import { outerPointsByRatio } from 'pacu/pods/components/x-layer/roi/neuropil';
 
-const SOG_INITIAL_GUESS = {
-  a1min:0  , a1max:1,
-  a2min:0  , a2max:1,
-  sigmin:15, sigmax:60,
-  offmin:0 , offmax:0.01
-}
+// const SOG_INITIAL_GUESS = {
+//   a1min:0  , a1max:1,
+//   a2min:0  , a2max:1,
+//   sigmin:15, sigmax:60,
+//   offmin:0 , offmax:0.01
+// }
 
 export default Model.extend({
   toast: Ember.inject.service(),
@@ -39,7 +39,7 @@ export default Model.extend({
   //   console.log('getting anoval all with ', promise);
   //   return DS.PromiseObject.create({ promise });
   // },
-  @observes('polygon.@each.{x,y}') updateCentroid(polygon) {
+  @observes('polygon.@each.{x,y}') updateCentroid(/*polygon*/) {
     const old = this.get('centroid');
     const nue = getCentroid(this.get('polygon'));
     const isSame = old.x === nue.x && old.y === nue.y;

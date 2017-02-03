@@ -1,6 +1,5 @@
 import Ember from 'ember';
 import computed from 'ember-computed-decorators';
-import Routed from 'pacu/mixins/routed';
 import interaction from 'pacu/utils/interaction';
 
 export default Ember.Component.extend({

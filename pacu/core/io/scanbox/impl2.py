@@ -136,6 +136,13 @@ class ScanboxIO(object):
         s = Session()
         condition = s.query(schema.Condition).one()
         return s, condition
+    def compute_all_rois_of_all_workspaces(self):
+        for ws in self.condition.workspaces:
+            for roi in ws.rois:
+                try:
+                    roi.refresh_all()
+                except Exception as e:
+                    print 'ERROR', e
 
 """
 for io in ScanboxIO.iter_every_io():

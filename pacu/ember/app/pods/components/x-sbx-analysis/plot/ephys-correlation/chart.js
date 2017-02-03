@@ -72,7 +72,7 @@ const options = {
 };
 
 export default Ember.Object.extend({
-  @computed('meantrace', 'rmeantrace') labels(meantrace=[], rmeantrace=[]) {
+  @computed('meantrace', 'rmeantrace') labels(meantrace=[]/*, rmeantrace=[] */) {
     return meantrace.map((e, i) => i);
   },
   @computed('meantrace', 'rmeantrace') datasets(meantrace=[], rmeantrace=[]) {

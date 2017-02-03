@@ -1,6 +1,8 @@
 import Ember from 'ember';
 import computed from 'ember-computed-decorators';
 
+/* global Chart */
+
 const yFAxes = {
   type: 'linear',
   position: 'left',
@@ -75,7 +77,7 @@ const xMAxes = {
   ticks: {
     display: false,
     autoSkip: false,
-    userCallback: function(value, index, values) {
+    userCallback: function(value, index /*, values*/) {
       return index == 0 ? 'F': value;
     }
   },
@@ -147,10 +149,10 @@ const Data = Ember.Object.extend({
    dog_x: [],
    dog_y: [],
    @computed('dog_x') FLabels(x) {
-     return x.map((e, i) => e);
+     return x.map(e => e);
    },
    @computed('sfx') MLabels(x) {
-     return x.map((e, i) => e);
+     return x.map(e => e);
    },
    @computed('dog_y') FDatasets(y) {
      return [

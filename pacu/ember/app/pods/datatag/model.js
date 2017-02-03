@@ -1,7 +1,6 @@
 import Ember from 'ember';
 import Model from 'ember-data/model';
 import attr from 'ember-data/attr';
-import { belongsTo, hasMany } from 'ember-data/relationships';
 import { observes } from 'ember-computed-decorators';
 
 export default Model.extend({
@@ -34,7 +33,7 @@ export default Model.extend({
   action(name, ...args) {
     if (this.get('inAction')) { return; }
     this.set('inAction', true);
-    const prom = this.actions[name].apply(this, args).finally(() => {
+    this.actions[name].apply(this, args).finally(() => {
       this.set('inAction', false);
     });
   },
@@ -44,7 +43,7 @@ export default Model.extend({
         model_name: 'Datatag',
         model_id: this.id,
         action_name: 'refresh',
-      }).save().then((data) => {
+      }).save().then((/*data*/) => {
         this.reload();
       });
     }

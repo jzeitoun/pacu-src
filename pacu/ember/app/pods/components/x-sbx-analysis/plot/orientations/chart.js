@@ -1,5 +1,5 @@
 import Ember from 'ember';
-import computed from 'ember-computed-decorators';
+// import computed from 'ember-computed-decorators';
 
 // const yAxes = {
 //   type: 'linear',

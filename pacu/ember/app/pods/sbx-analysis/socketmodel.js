@@ -39,7 +39,7 @@ export default Ember.Object.extend({
     const cmap = this.get('colorMap').toJSON();
     this.invoke('channel.update_colormap',
       cmap.basename, cmap.xmid1, cmap.ymid1, cmap.xmid2, cmap.ymid2
-    ).then((data) => {
+    ).then((/*data*/) => {
       this.indexChanged();
     });
   }.observes('colorMap.{basename,xmid1,ymid1,xmid2,ymid2}'),

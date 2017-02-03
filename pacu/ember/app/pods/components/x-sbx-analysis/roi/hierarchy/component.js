@@ -17,7 +17,7 @@ export default Ember.Component.extend({
       }
     });
   },
-  @observes('roi.active') activityChanged(active) {
+  @observes('roi.active') activityChanged(/*active*/) {
     if (this.get('roi.active')) {
       this.element.scrollIntoViewIfNeeded();
     }

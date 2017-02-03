@@ -1,5 +1,5 @@
 import Ember from 'ember';
-import ModalSupport from 'pacu/pods/components/x-modal-for-generic-object/modal-support';
+// import ModalSupport from 'pacu/pods/components/x-modal-for-generic-object/modal-support';
 
 export default Ember.Component.extend({
   classNames: 'ui basic modal',

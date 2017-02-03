@@ -1,6 +1,6 @@
 import Ember from 'ember';
 import computed from 'ember-computed-decorators';
-import mat from 'pacu/utils/matrix';
+// import mat from 'pacu/utils/matrix';
 
 export function outerPointsByRatio(polygon, centroid, m, n=2) {
   const pointXs = polygon.getEach('x').map(x => (x*m - n*centroid.x) / (m - n));
@@ -25,6 +25,6 @@ export default Ember.Mixin.create({
         return [];
       }
     },
-    set(value, centroid, ratio, enabled) { return value; }
+    set(value /*, centroid, ratio, enabled */) { return value; }
   },
 });

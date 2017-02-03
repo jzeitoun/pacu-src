@@ -4,7 +4,7 @@ export default Ember.Component.extend({
   xmid: 25,
   ymid: 25,
   actions: {
-    updateMidPoint(cx, cy, altKey) {
+    updateMidPoint(cx, cy/* , altKey */) {
       const cxOK = 0 <= cx && cx <= 100;
       const cyOK = 0 <= cy && cy <= 100;
       return cxOK && cyOK;

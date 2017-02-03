@@ -15,7 +15,7 @@ export default Ember.Component.extend({
     const $target = this.parentView.$();
     return interaction.bindOnce.call(this, $target, e);
   },
-  leaving(origin, offset, offsetY) {
+  leaving(origin, offset /*, offsetY */) {
     return this.get('workspace').appendROI({polygon: [
       {x: origin.x, y: origin.y},
       {x: offset.x, y: origin.y},
@@ -65,7 +65,7 @@ export default Ember.Component.extend({
       this.send('unfocus');
       roi.set('active', true);
     },
-    dupe(roi) {
+    dupe(/*roi*/) {
       // return this.get('workspace').appendROI({
       //   polygon: roi.get('polygon')
       // });

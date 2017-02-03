@@ -48,10 +48,10 @@ export default Ember.Component.extend({
   @observes(...params) query() {
     this.set('busy', true);
     const { hops, src, glob, days } = this.getProperties(params);
-    const promise = Ember.$.getJSON(src, { hops, glob, days }).then(data => {
+    Ember.$.getJSON(src, { hops, glob, days }).then(data => {
       this.set('dirs', data.dirs);
       this.set('items', data.items);
-    }).fail((err, text, statusText) => {
+    }).fail((err /*, text, statusText*/) => {
       this.set('err', err);
     }).done(() => {
       this.set('err', null);
@@ -86,18 +86,18 @@ export default Ember.Component.extend({
     openImportModal(item) {
       this.set('activeItem', item);
       this.toast.info('Search conditions and click to import with the recording.');
-      $('.sbx.conditions.modal').modal('show');
+      Ember.$('.sbx.conditions.modal').modal('show');
     },
     importRawWithCondition(cond) {
-      $('.sbx.conditions.modal').modal('hide');
+      Ember.$('.sbx.conditions.modal').modal('hide');
       importRaw.call(this, cond);
     },
-    importRawWithoutCondition(cond) {
-      $('.sbx.conditions.modal').modal('hide');
+    importRawWithoutCondition(/*cond*/) {
+      Ember.$('.sbx.conditions.modal').modal('hide');
       importRaw.call(this);
     }
   },
-  on_sse_print(msg, err) {
+  on_sse_print(msg/*, err*/) {
     if (10 == msg.charCodeAt() || 32 == msg.charCodeAt()) { return; }
     this.get('messages').pushObject({body: msg});
   },

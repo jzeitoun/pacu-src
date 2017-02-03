@@ -1,7 +1,9 @@
 import Model from 'ember-data/model';
 import attr from 'ember-data/attr';
-import { belongsTo, hasMany } from 'ember-data/relationships';
+import { belongsTo } from 'ember-data/relationships';
 import download from 'pacu/utils/download';
+
+/* global toastr */
 
 export default Model.extend({
   traces: attr({defaultValue: () => [[]]}),
@@ -46,7 +48,7 @@ export default Model.extend({
         model_name: 'EphysCorrelation',
         model_id: this.id,
         action_name: 'refresh',
-      }).save().then((data) => {
+      }).save().then((/*data*/) => {
         this.reload();
       });
     }

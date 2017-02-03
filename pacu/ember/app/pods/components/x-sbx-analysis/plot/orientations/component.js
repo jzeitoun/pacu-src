@@ -1,6 +1,8 @@
 import Ember from 'ember';
 import computed, { on, observes } from 'ember-computed-decorators';
 
+/* global Chart */
+
 const yAxes = {
   type: 'linear',
   position: 'left',
@@ -180,18 +182,18 @@ export default Ember.Component.extend({
     return DataFetcher.create({ datatag });
   },
   @observes('datatag') draw() {
-    const {chart, fetcher, roiID} = this.getProperties('chart', 'fetcher', 'roiID');
+    const {chart, fetcher} = this.getProperties('chart', 'fetcher');
     const indices = fetcher.get('indices');
     //   chart.boxes[2].options.text = 'Orientation of Stimulus - No selection'
     const ticks = chart.config.options.scales.xAxes[0].ticks;
-    ticks.userCallback = (value, index, values) => indices[index];
+    ticks.userCallback = (value, index /*, values*/) => indices[index];
     chart.data.labels = fetcher.get('labels');
     chart.data.datasets = fetcher.get('datasets');
     chart.update();
-    try {
-    } catch (err) {
-      console.log('ERROR on Orientations plot', err);
-    }
+    // try {
+    // } catch (err) {
+    //   console.log('ERROR on Orientations plot', err);
+    // }
   },
   chartDidDraw(chart) {
     const fetcher = this.get('fetcher');

@@ -23,7 +23,7 @@ export default Ember.Component.extend({
   @computed('centroid') display(c) {
     return c ? 1 : 0;
     // return 'inherit';
-    return c ? 'inherit' : 'hidden';
+    // return c ? 'inherit' : 'hidden';
   },
   x: Ember.computed.alias('centroid.x'),
   y: Ember.computed.alias('centroid.y'),

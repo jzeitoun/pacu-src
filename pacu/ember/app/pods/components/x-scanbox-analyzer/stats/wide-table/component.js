@@ -1,5 +1,5 @@
 import Ember from 'ember';
-import computed, { on } from 'ember-computed-decorators';
+import { on } from 'ember-computed-decorators';
 import singleCols from './single-columns';
 import multipleCols from './multiple-columns';
 

@@ -179,7 +179,7 @@ export default Ember.Component.extend({
   initSUI: function() {
     const self = this;
     this.$('.tabular.menu .item').tab({
-      onLoad: function(tabPath, parameterArray /*, historyEvent*/) {
+      onLoad: function(tabPath /*, parameterArray, historyEvent*/) {
         if (Ember.isEqual(tabPath, 'on-air')) {
           self.wsx.invoke('enter_on_air').then(function(msg) {
             if (Ember.isPresent(msg)) {

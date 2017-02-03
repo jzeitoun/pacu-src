@@ -22,6 +22,6 @@ export default Ember.Mixin.create({
       if (Ember.isNone(polygon)) { return; }
       return getCentroid(polygon);
     },
-    set(value, polygon) {}
+    set(/* value, polygon */) {}
   }
 });
