@@ -1,5 +1,6 @@
 import shutil
 import ujson
+import numpy as np
 from sqlalchemy import event
 from sqlalchemy.orm import object_session
 
@@ -136,6 +137,14 @@ class ScanboxIO(object):
         s = Session()
         condition = s.query(schema.Condition).one()
         return s, condition
+    def export_trace_of_all_rois_of_all_workspaces(self):
+        for ws in self.condition.workspaces:
+            wspath = self.path.joinpath('EXPORT-TRACE-' + self.condition.workspaces.first.name)
+            wspath.mkdir_if_none()
+            for roi in ws.rois:
+                path = wspath.joinpath('ROI_{}_trace'.format(roi.id))
+                np.save(path.str, roi.dtoverallmean.value)
+                path.with_suffix('.npy').rename(path.str)
     def compute_all_rois_of_all_workspaces(self):
         for ws in self.condition.workspaces:
             for roi in ws.rois:
