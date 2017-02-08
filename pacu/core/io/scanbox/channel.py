@@ -102,18 +102,27 @@ class ScanboxChannel(object):
     @memoized_property
     def maxp(self):
         return np.load(self.maxppath.str) if self.maxppath.is_file() else None
+#     @maxp.invalidator
+#     def create_maxp(self):
+#         print 'Create max projection image...could take up from a few minutes to hours.'
+#         frame = self.mmap.max(0)
+#         np.save(self.maxppath.str, frame)
+#         print 'done!'
     @maxp.invalidator
     def create_maxp(self):
         print 'Create max projection image...could take up from a few minutes to hours.'
-        frame = self.mmap.max(0)
-        np.save(self.maxppath.str, frame)
-        print 'done!'
-    @maxp.invalidator
-    def create_maxp_non_greedy(self):
-        # this still greedy
-        print 'Create max projection image...could take up from a few minutes to hours.'
-        frame = np.maximum.reduce(self.mmap)
-        np.save(self.maxppath.str, frame)
+        chan = self.mmap
+        depth = len(chan)
+        image = np.zeros_like(chan[0])
+        for i, frame in enumerate(chan):
+            if (i % 500) == 0:
+                used_pct = psutil.virtual_memory().percent
+                if used_pct > 90:
+                    raise MemoryError('Too much memory used.')
+                print ('Processing frames at ({}/{}). '
+                        'Memory usage {}%').format(i, depth, used_pct)
+            image = np.maximum(image, frame)
+        np.save(self.maxppath.str, image)
         print 'done!'
     @memoized_property
     def stat(self):

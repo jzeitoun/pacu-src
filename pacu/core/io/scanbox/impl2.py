@@ -258,6 +258,8 @@ def plot_timing_diff(id=1087):
 # print 'purge disk cache', os.system('sudo purge')
 
 # q = ScanboxIO('test_ka50_lit_day1/day1_000_003.io')
+# q.ch0.create_maxp_non_greedy()
+
 # w = q.condition.workspaces.first
 # r = w.rois.first
 # dt = r.dtorientationsmeans.filter_by(trial_sf=0.12,trial_contrast=1).first
@@ -280,7 +282,6 @@ def plot_timing_diff(id=1087):
 # exp = session.query(ExperimentV1).get(debugger_condition_id)
 
 # q = ScanboxIO('debugger/debugger_movie.io')
-# q = ScanboxIO('Kirstie/ka28/day1/day1_000_002.io')
 
 # r = q.condition.workspaces.last.rois.first
 # fit = r.dtsfreqfit.refresh()
