@@ -256,7 +256,6 @@ def plot_timing_diff(id=1087):
 # import os
 # import time
 # print 'purge disk cache', os.system('sudo purge')
-
 # q = ScanboxIO('test_ka50_lit_day1/day1_000_003.io')
 # q.ch0.create_maxp_non_greedy()
 

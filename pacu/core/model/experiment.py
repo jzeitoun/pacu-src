@@ -1,5 +1,7 @@
 from datetime import datetime
 
+import os
+from scipy import io
 import numpy as np
 from sqlalchemy.sql import func
 from sqlalchemy import Column
@@ -86,3 +88,30 @@ class ExperimentV1(Base):
             for on_time, off_time, sequence, ran, order, condition
             in zip(on_time, off_time, sequence, ran, order, trials)
         ]
+    def export_as_matlab(self):
+        trials = self.ordered_trials
+        conditions = self.trial_list
+        stimulus_params = dict(self.stimulus_kwargs,
+                clsname=self.stimulus_clsname, pkgname=self.stimulus_pkgname)
+        handler_params = dict(self.handler_kwargs,
+                clsname=self.handler_clsname, pkgname=self.handler_pkgname)
+        window_params = dict(self.window_kwargs,
+                clsname=self.window_clsname, pkgname=self.window_pkgname)
+        monitor_params = dict(self.monitor_kwargs,
+                clsname=self.monitor_clsname, pkgname=self.monitor_pkgname)
+        clock_params = dict(self.clock_kwargs,
+                clsname=self.clock_clsname, pkgname=self.clock_pkgname)
+        projection_params = dict(self.projection_kwargs,
+                clsname=self.projection_clsname, pkgname=self.projection_pkgname)
+        payload = dict(
+            trials=trials, conditions=conditions, id=self.id,
+            keyword=self.keyword, duration=self.duration,
+            stimulus_params=stimulus_params,
+            handler_params=handler_params,
+            window_params=window_params,
+            monitor_params=monitor_params,
+            clock_params=clock_params,
+            projection_params=projection_params,
+        )
+        key = self.keyword.replace(os.path.sep, '_')
+        io.savemat('{}-{}'.format(self.id, key), payload)

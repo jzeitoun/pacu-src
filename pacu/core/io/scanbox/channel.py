@@ -6,7 +6,7 @@ from pacu.util.inspect import repr
 from pacu.util.path import Path
 from pacu.util.prop.memoized import memoized_property
 from matplotlib.colors import Normalize
-from matplotlib.cm import ScalarMappable, jet
+from matplotlib.cm import ScalarMappable, jet, gray
 from pacu.core.io.util.colormap.distorted2 import DistortedColormap2
 
 class ScanboxChannelMeta(object):
@@ -94,7 +94,7 @@ class ScanboxChannel(object):
         self.dcmap = DistortedColormap2(name,
             xmid1=x1, ymid1=y1, xmid2=x2, ymid2=y2)
     def request_maxp(self):
-        return jet(
+        return gray(
             self.maxp.view('uint8')[..., 1::2], bytes=True).tostring()
     @property
     def has_maxp(self):
