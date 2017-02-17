@@ -10,9 +10,13 @@
 <div class="ui clearing divider"></div>
 
 <p>Workspace Launcher</p>
+<div class="fluid ui labeled input">
+  <div class="ui label">Filter</div>
+  {{input type="text" placeholder="You can filter by IO name...and bookmark to keep your filter!" value=filter}}
+</div>
 <div class="ui inverted segment">
   <div class="ui stackable three column page grid">
-  {{#each model.ios as |io|}}
+  {{#each filteredIOs as |io|}}
     <div class="column">
       {{#x-anlz-session-card
         title=io.info.iopath

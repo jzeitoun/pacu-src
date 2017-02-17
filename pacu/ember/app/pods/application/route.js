@@ -52,6 +52,12 @@ export default Ember.Route.extend({
         color: 'black',
       },
       // {
+      //   content: 'Sparse Noise Data Manager',
+      //   linkTo: 'sparse-noise-data',
+      //   icon: 'grid layout',
+      //   color: 'black',
+      // },
+      // {
       //   content: 'Trajectory Data Controller',
       //   linkTo: 'trj-analyses',
       //   icon: 'paw',

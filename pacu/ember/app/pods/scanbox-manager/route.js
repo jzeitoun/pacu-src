@@ -41,6 +41,11 @@ function removeWorkspace(io, name) {
 }
 
 export default Ember.Route.extend({
+  queryParams: {
+    filter: {
+      replace: true
+    }
+  },
   model() {
     return Ember.RSVP.hash({
       path: Ember.$.getJSON('/api/json/scanbox_manager/path'),

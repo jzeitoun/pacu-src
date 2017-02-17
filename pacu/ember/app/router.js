@@ -48,6 +48,7 @@ Router.map(function() {
   this.route('miniscope-manager');
   this.route('miniscope-analyzer', { path: '/miniscope-analyzer/*hops' });
   this.route('blank');
+  this.route('sparse-noise-data');
 });
 
 export default Router;
