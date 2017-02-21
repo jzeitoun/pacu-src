@@ -39,8 +39,11 @@
     <table style="background-colr: transparent;" class="ui small inverted selectable unstackable table">
       <thead>
         <tr>
-          <th>ID</th><th>Datetime</th>
-          <th>Keyword</th><th>Duration (sec)</th>
+          <th>ID</th>
+          <th>Datetime</th>
+          <th>Stimulus</th>
+          <th>Keyword</th>
+          <th>Duration (sec)</th>
         </tr>
       </thead>
       <tbody>
@@ -48,6 +51,7 @@
         <tr {{action "importRawWithCondition" c}}>
           <td>{{c.id}}</td>
           <td>{{from-timestamp c.created_at detailed=true}}</td>
+          <td>{{c.stimulus_clsname}}</td>
           <td>{{c.keyword}}</td>
           <td>{{c.duration}}</td>
         </tr>

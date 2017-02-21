@@ -73,6 +73,8 @@ class ROI(SQLite3Base):
             DTOverallMean(roi=self)
         if not condition.imported:
             return
+        if condition.stimulus == 'SparseNoiseStimulus':
+            return
         if not self.dttrialdff0s:
             print 'Initialize Trial DFF0'
             n_trials =  len(condition.trials)
@@ -120,7 +122,10 @@ class ROI(SQLite3Base):
        for tag in self.dtorientationsfits: tag.refresh()
     def refresh_all(self):
         print 'REFRESH TRACE'
+        condition = self.workspace.condition
         self.dtoverallmean.refresh()
+        if condition.stimulus == 'SparseNoiseStimulus':
+            return
         print 'REFRESH df/f0'
         for tag in self.dttrialdff0s: tag.refresh()
         print 'REFRESH Orientations'

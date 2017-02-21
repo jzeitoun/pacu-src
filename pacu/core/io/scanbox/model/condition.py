@@ -30,6 +30,8 @@ class Condition(SQLite3Base):
     off_duration = Column(Float)
     repetition = Column(Integer)
     projection = Column(UnicodeText)
+    stimulus = Column(UnicodeText)
+    handler = Column(UnicodeText)
     keyword = Column(UnicodeText)
     message = Column(UnicodeText)
     trial_list = Column(PickleType, default=[])
@@ -39,6 +41,7 @@ class Condition(SQLite3Base):
     tfrequencies = Column(PickleType, default=[])
     exp_created_at = Column(DateTime)
     object_session = property(object_session)
+    expdb = None
     @property
     def framerate(self):
         return self.info.get('framerate')
@@ -76,6 +79,8 @@ class Condition(SQLite3Base):
         payload = entity.payload
         self.keyword = entity.keyword
         self.projection = entity.projection_clsname
+        self.stimulus = entity.stimulus_clsname
+        self.handler = entity.handler_clsname
         self.message = entity.message
         self.exp_created_at = entity.created_at
         for k, v in entity.monitor_kwargs.items():

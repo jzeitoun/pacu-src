@@ -41,6 +41,7 @@ export default Ember.Route.extend({
   session: Ember.inject.service(),
   actions: actions,
   model(param) {
+    window.R = this;
     const hops = param.hops.split('/');
     const wsName = hops.pop();
     const ioName = hops.join('/');

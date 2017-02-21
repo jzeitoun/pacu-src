@@ -83,7 +83,9 @@ class ScanboxIO(object):
     @memoized_property
     def condition(self):
         # Session = schema.get_sessionmaker(self.db_path, echo=False)
-        return self.db_session.query(schema.Condition).one()
+        condition = self.db_session.query(schema.Condition).one()
+        condition.expdb = glab().query(ExperimentV1).get(condition.exp_id or '')
+        return condition
     @memoized_property
     def ch0(self):
         return ScanboxChannel(self.path.joinpath('0.chan'))
@@ -256,6 +258,7 @@ def plot_timing_diff(id=1087):
 # import os
 # import time
 # print 'purge disk cache', os.system('sudo purge')
+# q = ScanboxIO('Carey/ka51-ch/001/Aligned_001_000_008.io')
 # q = ScanboxIO('test_ka50_lit_day1/day1_000_003.io')
 # q.ch0.create_maxp_non_greedy()
 

@@ -23,6 +23,8 @@ export default Model.extend({
   contrasts: attr(),
   repetition: attr(),
   projection: attr(),
+  stimulus: attr(),
+  handler: attr(),
   keyword: attr(),
   trial_list: attr(),
 });

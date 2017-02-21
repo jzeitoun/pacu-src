@@ -10,16 +10,13 @@
   <a class="item" {{action "reloadTracePlot"}}>
     <i class="red line chart icon"></i>
   </a>
-  {{!--
-  <a class="item" {{action "noop"}}>
-    <i class="green file image outline icon"></i>
-  </a>
-  --}}
+  {{#unless (eq model.condition.stimulus 'SparseNoiseStimulus')}}
   <a class="item">
     SF: {{x-dropdown-value
       items=model.condition.sfrequencies
       value=model.workspace.cur_sfreq}}
   </a>
+  {{/unless}}
   {{#if model.condition.contrasts}}
   <a class="item">
     Contrast: {{x-dropdown-value
@@ -46,6 +43,7 @@
     </div>
   </div>
 
+  {{#unless (eq model.condition.stimulus 'SparseNoiseStimulus')}}
   <div class="ui simple dropdown item">
     Global SoG Initial Guess
     <i class="dropdown icon"></i>
@@ -71,6 +69,7 @@
         SFreq Fit Data as .mat</div>
     </div>
   </div>
+  {{/unless}}
 
 </div>
 {{/x-sui-sticky}}
@@ -82,16 +81,18 @@
       dimension=masterDimension
       index=model.stream.img.curIndex
       datatags=model.workspace.dtoverallmeans}}
-    {{x-sbx-analysis/plot/orientations
-      dimension=masterDimension
-      condition=model.condition
-      roiID=model.workspace.activeROI.id
-      datatag=model.workspace.activeROI.dtorientationsmeanBySF}}
-    {{x-sbx-analysis/plot/sumofgaussians
-      dimension=masterDimension
-      condition=model.condition
-      roiID=model.workspace.activeROI.id
-      datatag=model.workspace.activeROI.dtorientationsfitBySF}}
+      {{#unless (eq model.condition.stimulus 'SparseNoiseStimulus')}}
+        {{x-sbx-analysis/plot/orientations
+          dimension=masterDimension
+          condition=model.condition
+          roiID=model.workspace.activeROI.id
+          datatag=model.workspace.activeROI.dtorientationsmeanBySF}}
+        {{x-sbx-analysis/plot/sumofgaussians
+          dimension=masterDimension
+          condition=model.condition
+          roiID=model.workspace.activeROI.id
+          datatag=model.workspace.activeROI.dtorientationsfitBySF}}
+      {{/unless}}
   {{/with}}
 
   {{! Main Canvas Slider }}

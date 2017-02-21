@@ -73,7 +73,8 @@ def get_nav_ds(req, hops, glob, days):
 def get_conditions(req):
     try:
         query = glab().query(
-            EXPV1.id, EXPV1.created_at, EXPV1.keyword, EXPV1.duration
+            EXPV1.id, EXPV1.created_at, EXPV1.keyword, EXPV1.duration,
+            EXPV1.stimulus_clsname
         ).order_by(EXPV1.created_at.desc())
         # .filter_by(clock_clsname='LabJackClock')
         return [entity._asdict() for entity in query]
