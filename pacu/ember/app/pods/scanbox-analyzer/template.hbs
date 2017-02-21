@@ -137,6 +137,7 @@
 
   </div>
 
+  {{#unless (eq model.condition.stimulus 'SparseNoiseStimulus')}}
   {{#if model.workspace.activeROI}}
   <section class="ui clearing divider"></section>
   <img class="ui fluid image" alt="SF Tuning Curve"
@@ -153,6 +154,8 @@
       condition=model.condition
       rois=model.workspace.loadedROIs}}
   </div>
+  {{else}}
+  {{/unless}}
 
   {{!-- logging message
   <section class="ui clearing divider"></section>
