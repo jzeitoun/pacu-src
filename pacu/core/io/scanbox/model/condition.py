@@ -21,6 +21,7 @@ class Condition(SQLite3Base):
     imported = Column(Boolean, default=False)
     pixel_x = Column(Integer)
     pixel_y = Column(Integer)
+    focal_pane = Column(Integer, default=0)
     dist = Column(Float)
     width = Column(Float)
     height = Column(Float)
@@ -104,6 +105,9 @@ class Condition(SQLite3Base):
                 ws.cur_sfreq = self.sfrequencies[0]
             if self.contrasts:
                 ws.cur_contrast = self.contrasts[0]
+    def append_workspace_with_focal_pane(self, name, pane):
+        self.focal_pane = pane
+        self.append_workspace(name)
     @property
     def timings(self):
         times = self.trials.map_by('on_time', 'off_time')

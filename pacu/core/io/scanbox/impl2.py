@@ -88,7 +88,11 @@ class ScanboxIO(object):
         return condition
     @memoized_property
     def ch0(self):
-        return ScanboxChannel(self.path.joinpath('0.chan'))
+        n_focal_pane = self.condition.info.get('focal_pane_args', {}).get('n', 1)
+        pane = self.condition.focal_pane
+        currnet_pane = pane = 0 if pane is None else pane
+        print 'Setup a focal pane #{} out of {}...'.format(currnet_pane, n_focal_pane)
+        return ScanboxChannel(self.path.joinpath('0.chan'), n_focal_pane, currnet_pane)
     @memoized_property
     def ch1(self):
         return ScanboxChannel(self.path.joinpath('1.chan'))
@@ -283,6 +287,7 @@ def plot_timing_diff(id=1087):
 # exp = session.query(ExperimentV1).get(1811)
 # exp = session.query(ExperimentV1).get(debugger_condition_id)
 
+# q = ScanboxIO('Dario/P22_000_004.io')
 # q = ScanboxIO('debugger/debugger_movie.io')
 
 # r = q.condition.workspaces.last.rois.first

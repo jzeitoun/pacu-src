@@ -88,6 +88,7 @@ class ScanboxMatView(ZeroDimensionArrayView):
         data['nframes'] = self.nframes
         data['nframesstr'] = str(self.nframes) + ' frames'
         data['scanmodestr'] = self.scanmodestr
+        data['focal_pane_args'] = self.focal_pane_args
         return data
     @property
     def duration(self):
@@ -100,5 +101,11 @@ class ScanboxMatView(ZeroDimensionArrayView):
 #         buf = self.recordsPerBuffer
 #         print 'original: {}, normal: buf'.format(obuf, buf)
 #         return obuf or buf
+    @property
+    def focal_pane_args(self):
+        _, _, n = map(int, self.otparam)
+        return dict(waves = list(map(int, self.otwave)),
+                # start=start, stop=stop,
+                n=n)
 
-# u0 = ScanboxMatView('/Volumes/Users/ht/Desktop/sbx/Day0_000_007.mat')
+# q = ScanboxMatView('/Volumes/Users/ht/dev/current/pacu/tmp/sbxroot/Dario/P22_000_004.mat')

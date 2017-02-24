@@ -26,7 +26,11 @@ class ScanboxChannelMeta(object):
         return cls(**payload)
 
 class ScanboxChannel(object):
-    def __init__(self, path):
+    n_focal_pane = 1 # 1 single pane
+    c_focal_pane = 0 # 0 first
+    def __init__(self, path, n_focal_pane=1, c_focal_pane=0):
+        self.n_focal_pane = n_focal_pane
+        self.c_focal_pane = c_focal_pane
         self.path = Path(path).ensure_suffix('.chan')
         self.channel = int(self.path.stem)
         self.maxppath = self.path.join_suffixes('.maxp.npy')
@@ -74,7 +78,8 @@ class ScanboxChannel(object):
         return self.cmap8bit.to_rgba(self.mmap8bit[index], bytes=True).tostring()
     @memoized_property
     def mmap8bit(self):
-        return self.mmap.view('uint8')[..., 1::2]
+        return self._mmap.view('uint8'
+            )[self.c_focal_pane::self.n_focal_pane, :, 1::2]
     @memoized_property
     def cmap8bit(self):
         return ScalarMappable(norm=self.norm, cmap=self.dcmap.distorted)
@@ -132,10 +137,14 @@ class ScanboxChannel(object):
     def meta(self):
         return ScanboxChannelMeta.load(self.metapath.str)
     @memoized_property
-    def mmap(self):
+    def _mmap(self):
         shape = (self.meta.z, self.meta.y, self.meta.x)
         return np.memmap(self.mmappath.str,
-            mode='r', dtype=self.meta.dtype, shape=shape)
+            mode='r', dtype=self.meta.dtype, shape=shape
+        )
+    @memoized_property
+    def mmap(self):
+        return self._mmap[self.c_focal_pane::self.n_focal_pane, ...]
     @property
     def dimension(self):
         z, y, x = self.mmap.shape

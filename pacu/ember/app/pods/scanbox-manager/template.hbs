@@ -24,9 +24,18 @@
         timeAgo=(from-timestamp io.info.sbxtime detailed=false)
         src=io.info.sbxsize
         user=io.info.nframesstr
-        desc=(concat "With condition: " io.has_condition)
         host=io.info.frameratestr
       }}
+      <div class="extra content">
+        <div class="ui list">
+          {{#if io.has_condition}}
+            <div class="item"><span class="tiny ui green label">Has condition</span></div>
+          {{/if}}
+          {{#if io.info.focal_pane_args}}
+            <div class="item"><span class="tiny ui blue label">Multiple Focal Panes: {{io.info.focal_pane_args.n}}</span></div>
+          {{/if}}
+        </div>
+      </div>
       {{#if io.dbfixed}}
         <h5 class="ui centered header">new db schema!</h5>
       {{/if}}

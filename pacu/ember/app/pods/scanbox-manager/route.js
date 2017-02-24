@@ -2,8 +2,8 @@ import Ember from 'ember';
 
 /* global swal */
 
-function newWorkspace(io, name) {
-  const payload = {iopath: io.info.iopath, name};
+function newWorkspace(io, name, pane) {
+  const payload = {iopath: io.info.iopath, name, pane};
   Ember.$.ajax('/api/json/scanbox_manager/workspace', {
     type: 'POST',
     data: payload,
@@ -55,23 +55,62 @@ export default Ember.Route.extend({
   },
   actions: {
     newWorkspace(io) {
-      swal({
-        title: "New session...",
-        text: 'Provide a unique session name. I suggest "main" as a default name.',
-        customClass: "trj-analyses",
-        type: "input",
-        showCancelButton: true,
-        closeOnConfirm: false,
-        animation: "slide-from-top", 
-        inputPlaceholder: "Alphanumeric characters including underscore..."
-      }, (inputValue) => {
-        if (inputValue === false) return false;
-        if (inputValue === "") {
-          swal.showInputError("Please provide a name.");
-          return false;
+      if (io.info.focal_pane_args) {
+        const inputOptions = {};
+        for (let i=0; i<io.info.focal_pane_args.n; i++) {
+          inputOptions[i] = i;
         }
-        newWorkspace.call(this, io, inputValue);
-      });
+        swal.setDefaults({
+          confirmButtonText: 'Next &rarr;',
+          showCancelButton: true,
+          customClass: "trj-analyses",
+          progressSteps: ['1', '2']
+        })
+        const steps = [
+          {
+            title: "New session...",
+            text: 'Provide a unique session name. I suggest "main" as a default name.',
+            input: 'text'
+          },
+          {
+            title: "With focal pane...",
+            text: `You have ${io.info.focal_pane_args.n} panes, which one would you like?`,
+            input: 'select',
+            inputOptions
+          },
+        ];
+        swal.queue(steps).then(result => {
+          const [name, pane] = result;
+          if (name === false) return false;
+          if (name === "") {
+            this.toast.warning('Please provide a name.')
+            return false;
+          }
+          newWorkspace.call(this, io, name, pane);
+        }, () => {
+          swal.resetDefaults()
+        }).then(() => {
+          swal.resetDefaults()
+        });
+      } else {
+        swal({
+          title: 'New session...',
+          text: 'Provide a unique session name. I suggest "main" as a default name.',
+          input: 'text',
+          inputPlaceholder: "Alphanumeric characters including underscore...",
+          customClass: "trj-analyses",
+          showCancelButton: true,
+          confirmButtonText: 'Submit',
+          allowOutsideClick: false,
+        }).then(value => {
+           if (value === false) return false;
+           if (value === "") {
+             swal.showInputError("Please provide a name.");
+             return false;
+           }
+          newWorkspace.call(this, io, value);
+        }).catch(() => {});
+      }
     },
     removeImported(io) {
       swal({
@@ -82,7 +121,9 @@ export default Ember.Route.extend({
         closeOnConfirm: true,
         confirmButtonColor: "#DD6B55",
         confirmButtonText: "Yes, delete it!",
-      }, removeImported.bind(this, io));
+      }).then(() => {
+        removeImported.call(this, io);
+      }).catch(() => {});
     },
     removeWorkspace(io, ws) {
       swal({
@@ -90,10 +131,11 @@ export default Ember.Route.extend({
         text: "You will not be able to undo this!",
         type: "warning",
         showCancelButton: true,
-        closeOnConfirm: true,
         confirmButtonColor: "#DD6B55",
         confirmButtonText: "Yes, delete it!",
-      }, removeWorkspace.bind(this, io, ws));
+      }).then(() => {
+        removeWorkspace.call(this, io, ws);
+      }).catch(() => {});
     },
     openWorkspace(io, ws) {
       const path = `${io.info.iopath}/${ws}`;

@@ -10,6 +10,7 @@ export default Model.extend({
   message: attr(),
   pixel_x: attr(),
   pixel_y: attr(),
+  focal_pane: attr(),
   dist: attr(),
   width: attr(),
   height: attr(),

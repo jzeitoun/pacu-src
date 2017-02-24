@@ -119,10 +119,13 @@ def delete_io(req, iopath):
     io.path.resolve()
     io.remove_io()
 
-def post_workspace(req, iopath, name):
+def post_workspace(req, iopath, name, pane=None):
     io = ScanboxIO(iopath)
     io.path.resolve()
-    io.condition.append_workspace(name)
+    if pane:
+        io.condition.append_workspace_with_focal_pane(name, int(pane))
+    else:
+        io.condition.append_workspace(name)
     return dict(name=name)
 
 def delete_workspace(req, iopath, name):
