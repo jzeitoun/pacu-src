@@ -50,7 +50,10 @@ class ScanboxMatView(ZeroDimensionArrayView):
         # recordsPerBuffer = self.originalRecordsPerBuffer \
         #                 if self.is_aligned else self.recordsPerBuffer
         if self.is_aligned:
-            recordsPerBuffer = self.originalRecordsPerBuffer
+            try:
+                recordsPerBuffer = self.originalRecordsPerBuffer
+            except:
+                recordsPerBuffer = self.recordsPerBuffer
         else:
             recordsPerBuffer = self.recordsPerBuffer
         rate = self.resfreq / recordsPerBuffer
