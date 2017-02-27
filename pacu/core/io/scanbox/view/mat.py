@@ -103,9 +103,14 @@ class ScanboxMatView(ZeroDimensionArrayView):
 #         return obuf or buf
     @property
     def focal_pane_args(self):
-        _, _, n = map(int, self.otparam)
-        return dict(waves = list(map(int, self.otwave)),
-                # start=start, stop=stop,
-                n=n)
+        try:
+            _, _, n = map(int, self.otparam)
+        except:
+            n = 1
+        try:
+            waves = list(map(int, self.otwave))
+        except:
+            waves = [0]
+        return dict(waves=waves, n=n)
 
 # q = ScanboxMatView('/Volumes/Users/ht/dev/current/pacu/tmp/sbxroot/Dario/P22_000_004.mat')
