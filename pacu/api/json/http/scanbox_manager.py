@@ -10,7 +10,7 @@ from pacu.core.io.scanbox.model import db as schema
 from pacu.core.io.scanbox.impl2 import ScanboxIO
 
 opt = manager.instance('opt')
-glab = manager.get('db').section('glab')
+glab = manager.get('db').section('glab')()
 
 class Location(object):
     def __init__(self, path):
@@ -72,7 +72,7 @@ def get_nav_ds(req, hops, glob, days):
 
 def get_conditions(req):
     try:
-        query = glab().query(
+        query = glab.query(
             EXPV1.id, EXPV1.created_at, EXPV1.keyword, EXPV1.duration,
             EXPV1.stimulus_clsname
         ).order_by(EXPV1.created_at.desc())

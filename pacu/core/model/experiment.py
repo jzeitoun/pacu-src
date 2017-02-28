@@ -15,18 +15,18 @@ from sqlalchemy.types import UnicodeText
 from . import Base
 
 from pacu.profile import manager
-glab = manager.get('db').section('glab')
+glab = manager.get('db').section('glab')()
 
 class ExperimentV1(Base):
     @classmethod
     def query(cls):
-        return glab().query(cls)
+        return glab.query(cls)
     @classmethod
     def get_by_id(cls, id):
         return cls.query().get(id)
     @classmethod
     def find_keyword(cls, keyword):
-        return glab().query(
+        return glab.query(
             ExperimentV1.id, func.date(ExperimentV1.created_at), ExperimentV1.keyword
         ).filter(ExperimentV1.keyword.contains(keyword)).all()
 

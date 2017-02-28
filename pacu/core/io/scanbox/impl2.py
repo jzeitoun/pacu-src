@@ -16,7 +16,7 @@ from pacu.core.io.scanbox.model import db as schema
 from pacu.core.model.experiment import ExperimentV1
 
 opt = manager.instance('opt')
-glab = manager.get('db').section('glab')
+glab = manager.get('db').section('glab')()
 userenv = identity.path.userenv
 
 class ScanboxIO(object):
@@ -66,7 +66,7 @@ class ScanboxIO(object):
             self.import_condition(condition_id)
     def import_condition(self, id):
         session = self.db_session
-        exp = glab().query(ExperimentV1).get(id)
+        exp = glab.query(ExperimentV1).get(id)
         try:
             with session.begin():
                 condition = session.query(schema.Condition).one()
@@ -84,7 +84,7 @@ class ScanboxIO(object):
     def condition(self):
         # Session = schema.get_sessionmaker(self.db_path, echo=False)
         condition = self.db_session.query(schema.Condition).one()
-        condition.expdb = glab().query(ExperimentV1).get(condition.exp_id or '')
+        condition.expdb = glab.query(ExperimentV1).get(condition.exp_id or '')
         return condition
     @memoized_property
     def ch0(self):
@@ -186,7 +186,7 @@ def fix_contrasts_schema(Session):
     if not condition.exp_id:
         print 'no cond, return'
         return
-    exp = glab().query(ExperimentV1).get(condition.exp_id)
+    exp = glab.query(ExperimentV1).get(condition.exp_id)
     ct = exp.stimulus_kwargs.get('contrast')
     cts = exp.stimulus_kwargs.get('contrasts')
     print ct, cts
@@ -220,10 +220,10 @@ import re
 import numpy as np
 from matplotlib import pyplot
 # import ujson
-# qwe = glab()().query(ExperimentV1).get(1087)
+# qwe = glab.query(ExperimentV1).get(1087)
 # get_ipython().magic('pylab')
 def plot_timing_diff(id=1087):
-    qwe = glab()().query(ExperimentV1).get(id)
+    qwe = glab.query(ExperimentV1).get(id)
     asd = map(float,
         [re.match(r'(?P<num>[\d\.]+)\s.*', line).groupdict().get('num')
             for line in qwe.message.splitlines() if 'Entering' in line])
@@ -287,7 +287,7 @@ def plot_timing_diff(id=1087):
 # exp = session.query(ExperimentV1).get(1811)
 # exp = session.query(ExperimentV1).get(debugger_condition_id)
 
-# q = ScanboxIO('Dario/P22_000_004.io')
+# q = ScanboxIO('Dario/noMDExc2/P22/P22_000_000.io')
 # q = ScanboxIO('debugger/debugger_movie.io')
 
 # r = q.condition.workspaces.last.rois.first
@@ -352,7 +352,7 @@ def redump(filename):
             ett_attr = key + '_' + attr
             ett_val = val.get(attr)
             setattr(model, ett_attr, ett_val)
-    session = glab()
+    session = glab
     session.add(model)
     session.commit()
     return model
