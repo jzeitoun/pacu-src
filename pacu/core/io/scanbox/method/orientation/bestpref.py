@@ -5,7 +5,8 @@ import numpy as np
 from pacu.core.io.scanbox.method.fit.sogfit import SumOfGaussianFit
 
 def main(workspace, condition, roi, datatag):
-    cfreq = workspace.condition.info['framerate']
+    n_panes = condition.info.get('focal_pane_args', {}).get('n', 1)
+    cfreq = workspace.condition.info['framerate'] / n_panes
     sfs = []
     trials = roi.dttrialdff0s.filter_by(trial_blank=False, trial_flicker=False)
     for sf in condition.sfrequencies:

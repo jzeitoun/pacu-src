@@ -54,12 +54,17 @@ export default Ember.Route.extend({
         resolve(this.store.findRecord('workspace', id, queryParam));
       });
     });
-    const condition = workspace.then(ws => ws.get('condition'));
+    let cur_pane;
+    const condition = workspace.then(ws => {
+      cur_pane = ws.get('cur_pane') || 0;
+      return ws.get('condition');
+    });
     const stream = condition.then(() => {
       return new Ember.RSVP.Promise((resolve /*, reject */) => {
         return this.get('socket').create(
           this, modname, clsname, ioName
         ).then((wsx) => {
+          wsx.invoke('setup_focal_pane', cur_pane);
           wsx.socket.onclose = () => {
             this.toast.warning('WebSocket connection closed.');
           };

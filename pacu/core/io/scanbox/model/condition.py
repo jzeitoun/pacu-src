@@ -21,7 +21,6 @@ class Condition(SQLite3Base):
     imported = Column(Boolean, default=False)
     pixel_x = Column(Integer)
     pixel_y = Column(Integer)
-    focal_pane = Column(Integer, default=0)
     dist = Column(Float)
     width = Column(Float)
     height = Column(Float)
@@ -95,19 +94,20 @@ class Condition(SQLite3Base):
         from pacu.core.io.scanbox.impl2 import ScanboxIO
         # TODO: still has problem with relative paths
         return ScanboxIO(self.info.get('iopath'))
-    def append_workspace(self, name):
+    def append_workspace(self, name, pane=None):
         from pacu.core.io.scanbox.model import db as schema
         with self.object_session.begin():
             if not self.contrasts:
                 self.contrasts = [self.contrast]
             ws = schema.Workspace(name=name, condition=self)
+            if pane is not None:
+                ws.cur_pane = pane
             if self.sfrequencies:
                 ws.cur_sfreq = self.sfrequencies[0]
             if self.contrasts:
                 ws.cur_contrast = self.contrasts[0]
     def append_workspace_with_focal_pane(self, name, pane):
-        self.focal_pane = pane
-        self.append_workspace(name)
+        self.append_workspace(name, pane)
     @property
     def timings(self):
         times = self.trials.map_by('on_time', 'off_time')

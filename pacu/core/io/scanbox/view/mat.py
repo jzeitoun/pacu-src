@@ -100,18 +100,24 @@ class ScanboxMatView(ZeroDimensionArrayView):
         #  duration = frame_count / frame_rate
 #     @property
 #     def originalRecordsPerBuffer(self):
-#         obuf = self._dict.get('originalRecordsPerBuffer')                                                                                                                         
+#         obuf = self._dict.get('originalRecordsPerBuffer')
 #         buf = self.recordsPerBuffer
 #         print 'original: {}, normal: buf'.format(obuf, buf)
 #         return obuf or buf
     @property
     def focal_pane_args(self):
         try:
-            _, _, n = map(int, self.otparam)
+            if self.volscan:
+                _, _, n = map(int, self.otparam)
+            else:
+                n = 1
         except:
             n = 1
         try:
-            waves = list(map(int, self.otwave))
+            if self.volscan:
+                waves = list(map(int, self.otwave))
+            else:
+                waves = [0]
         except:
             waves = [0]
         return dict(waves=waves, n=n)

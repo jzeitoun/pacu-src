@@ -3,7 +3,10 @@ __package__ = '' # unicode package name error
 from pacu.core.io.scanbox.method.overall.tracer import ROITracer
 
 def main(workspace, condition, roi, datatag):
-    frames = condition.io.ch0.mmap
+    # possible unnecessary db connection?
+    channel = condition.io.ch0
+    channel.c_focal_pane = workspace.cur_pane or 0
+    frames = channel.mmap
     tracer = ROITracer(roi, frames)
     if roi.neuropil_enabled: # np goes first to get cache benefit because
                              # np has larger area than normal

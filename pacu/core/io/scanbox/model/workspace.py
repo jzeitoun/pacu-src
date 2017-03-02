@@ -21,6 +21,7 @@ class Workspace(SQLite3Base):
     cur_sfreq = Column(Float)
     cur_contrast = Column(Float)
     cur_chan = Column(Integer, default=0)
+    cur_pane = Column(Integer, default=0)
     baseline_duration = Column(Float, default=0.5)
     sog_initial_guess = Column(PickleType, default=lambda: SOG_INITIAL_GUESS)
     def other_rois(self, roi):

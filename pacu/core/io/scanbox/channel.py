@@ -151,4 +151,4 @@ class ScanboxChannel(object):
         return dict(depth=z, height=y, width=x)
     @property
     def shape(self):
-        return (self.meta.z, self.meta.y, self.meta.x)
+        return (self.meta.z/self.n_focal_pane, self.meta.y, self.meta.x)

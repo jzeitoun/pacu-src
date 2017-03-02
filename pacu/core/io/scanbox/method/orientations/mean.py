@@ -9,7 +9,10 @@ def main(workspace, condition, roi, datatag):
         trial_contrast=datatag.trial_contrast,
         trial_flicker=False, trial_blank=False)
 
-    framerate = condition.info['framerate']
+    n_panes = condition.info.get('focal_pane_args', {}).get('n', 1)
+    # pane_offset = workspace.cur_pane or 0
+
+    framerate = condition.info['framerate'] / n_panes
     on_frames = int(condition.on_duration * framerate)
     bs_frames = int(condition.off_duration * framerate) - 1
 
@@ -28,6 +31,7 @@ def main(workspace, condition, roi, datatag):
 #             # trial.value['baseline'] + trial.value['on']
 #         print
     # first axis is orientation, second is each trial
+
     oris = [[
         trial.value['baseline'] + trial.value['on']
         for trial in trials.filter_by(trial_ori=ori)
@@ -38,6 +42,7 @@ def main(workspace, condition, roi, datatag):
     matrix = np.array(map(np.concatenate, matrix))
     meantrace = np.nanmean(matrix, axis=0)
     indices = dict(zip(indice, condition.orientations))
+
     return matrix, meantrace, indices, on_frames, bs_frames
 
 if __name__ == '__sbx_main__':

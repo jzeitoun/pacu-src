@@ -20,11 +20,12 @@ glab = manager.get('db').section('glab')()
 userenv = identity.path.userenv
 
 class ScanboxIO(object):
-    def __init__(self, path):
+    def __init__(self, path, cur_pane=0):
         self.path = userenv.joinpath('scanbox', path).ensure_suffix('.io')
         self.db_path = self.path.joinpath('db.sqlite3').absolute()
         self.mat_path = opt.scanbox_root.joinpath(path).with_suffix('.mat')
         self.sbx_path = opt.scanbox_root.joinpath(path).with_suffix('.sbx')
+        self.cur_pane = cur_pane
     @property
     def mat(self):
         return ScanboxMatView(self.mat_path)
@@ -89,12 +90,14 @@ class ScanboxIO(object):
     @memoized_property
     def ch0(self):
         n_focal_pane = self.condition.info.get('focal_pane_args', {}).get('n', 1)
-        pane = self.condition.focal_pane
-        currnet_pane = pane = 0 if pane is None else pane
-        print 'Setup a focal pane #{} out of {}...'.format(currnet_pane, n_focal_pane)
-        return ScanboxChannel(self.path.joinpath('0.chan'), n_focal_pane, currnet_pane)
+        print 'Setup a focal pane #{} out of {}...'.format(self.cur_pane, n_focal_pane)
+        return ScanboxChannel(self.path.joinpath('0.chan'), n_focal_pane, self.cur_pane)
+    @ch0.invalidator
+    def setup_focal_pane(self, offset):
+        self.cur_pane = offset
+        return self
     @memoized_property
-    def ch1(self):
+    def ch1(self): # not used
         return ScanboxChannel(self.path.joinpath('1.chan'))
     def toDict(self):
         try:
@@ -287,7 +290,7 @@ def plot_timing_diff(id=1087):
 # exp = session.query(ExperimentV1).get(1811)
 # exp = session.query(ExperimentV1).get(debugger_condition_id)
 
-# q = ScanboxIO('Dario/noMDExc2/P22/P22_000_000.io')
+q = ScanboxIO('Dario/noMDExc2/P22/P22_000_000.io')
 # q = ScanboxIO('debugger/debugger_movie.io')
 
 # r = q.condition.workspaces.last.rois.first

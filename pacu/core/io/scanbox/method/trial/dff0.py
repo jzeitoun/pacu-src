@@ -7,8 +7,11 @@ def main(workspace, condition, roi, datatag):
     on_duration = condition.on_duration
     off_duration = condition.off_duration
 
-    framerate = condition.info['framerate'] # capture_frequency
-    nframes = condition.info['nframes']
+    n_panes = condition.info.get('focal_pane_args', {}).get('n', 1)
+    # pane_offset = workspace.cur_pane or 0
+
+    framerate = condition.info['framerate'] / n_panes # capture_frequency
+    nframes = condition.info['nframes'] / n_panes
 
     on_frames = int(framerate * on_duration)
     off_frames = int(framerate * off_duration)
