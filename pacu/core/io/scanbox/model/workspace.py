@@ -8,8 +8,8 @@ from pacu.ext.sqlalchemy.types.mutable import MutableDict
 from pacu.core.io.scanbox.model.base import SQLite3Base
 
 SOG_INITIAL_GUESS = dict(
-    a1min=0  , a1max=1,
-    a2min=0  , a2max=1,
+    a1min=0  , a1max=0.5,
+    a2min=0  , a2max=0.5,
     sigmin=15, sigmax=60,
     offmin=0 , offmax=0.01
 )
