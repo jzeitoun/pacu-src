@@ -10,9 +10,9 @@ def main(workspace, condition, roi, datatag):
         trial_flicker=False, trial_blank=False)
 
     n_panes = condition.info.get('focal_pane_args', {}).get('n', 1)
-    # pane_offset = workspace.cur_pane or 0
+    pane_offset = workspace.cur_pane or 0
 
-    framerate = condition.info['framerate'] / n_panes
+    framerate = condition.info['framerate'] / n_panes # have to do this
     on_frames = int(condition.on_duration * framerate)
     bs_frames = int(condition.off_duration * framerate) - 1
 
@@ -33,7 +33,8 @@ def main(workspace, condition, roi, datatag):
     # first axis is orientation, second is each trial
 
     oris = [[
-        trial.value['baseline'] + trial.value['on']
+        (trial.value['baseline'][pane_offset::n_panes] +
+               trial.value['on'][pane_offset::n_panes])
         for trial in trials.filter_by(trial_ori=ori)
     ] for ori in condition.orientations]
     # first axis is each trial, second is orientations, third is baseline ~ ontime

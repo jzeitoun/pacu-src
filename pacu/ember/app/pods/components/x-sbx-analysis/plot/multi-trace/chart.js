@@ -74,7 +74,7 @@ const options = {
 
 export default Ember.Object.extend({
   @computed('datatags') traces(dts=[]) {
-    return dts.getEach('value');
+    return dts.getEach('valueByFocalPlane');
   },
   @computed('traces') labels(traces) { // should work with non-isNew entities
     const lens = traces.getEach('length');
@@ -86,7 +86,7 @@ export default Ember.Object.extend({
       return {
         borderColor: datatag.color || color.google20[index],
         borderWidth: 0.5,
-        data: datatag.get('value'),
+        data: datatag.get('valueByFocalPlane'),
         label: `ROI #${datatag.get('roi.id')}`,
       }
     });

@@ -7,18 +7,18 @@ def main(workspace, condition, roi, datatag):
     on_duration = condition.on_duration
     off_duration = condition.off_duration
 
-    n_panes = condition.info.get('focal_pane_args', {}).get('n', 1)
-    # pane_offset = workspace.cur_pane or 0
+    # n_panes = condition.info.get('focal_pane_args', {}).get('n', 1)
+    pane_offset = workspace.cur_pane or 0
 
-    framerate = condition.info['framerate'] / n_panes # capture_frequency
-    nframes = condition.info['nframes'] / n_panes
+    framerate = condition.info['framerate'] # / n_panes # capture_frequency
+    nframes = condition.info['nframes'] # / n_panes
 
     on_frames = int(framerate * on_duration)
     off_frames = int(framerate * off_duration)
     bs_frames = off_frames - 1
 
-    on_first_frame = int(datatag.trial_on_time*framerate)
-    on_last_frame = int(on_first_frame + on_frames)
+    on_first_frame = int(datatag.trial_on_time*framerate) + pane_offset
+    on_last_frame = int(on_first_frame + on_frames) + pane_offset
 
     # we can use last off period when we work with very first trial
     baseline_first_frame = on_first_frame - off_frames
@@ -33,11 +33,11 @@ def main(workspace, condition, roi, datatag):
     off_first_frame = min(on_last_frame, nframes)
     off_last_frame = min(off_first_frame + off_frames, nframes)
 
-    print ('\ntrial #{}'
+    print ('\ntrial #{} @{}pane'
            '\nbase -> [{}:{}]'
            '\non   -> [{}:{}]'
            '\noff  -> [{}:{}]').format(
-            datatag.trial_order,
+            datatag.trial_order, pane_offset,
             baseline_first_frame, baseline_last_frame,
             on_first_frame, on_last_frame,
             off_first_frame, off_last_frame)
@@ -45,7 +45,7 @@ def main(workspace, condition, roi, datatag):
     trace = np.array(roi.dtoverallmean.value)
     on_trace = trace[on_first_frame:on_last_frame]
     baseline_trace = trace[baseline_first_frame:baseline_last_frame]
-    # print len(baseline_trace), len(on_trace),
+    print len(baseline_trace), len(on_trace),
 
     # consider below 1 frame shift down might be necessary
     later_part = 1 + int(workspace.baseline_duration * framerate)

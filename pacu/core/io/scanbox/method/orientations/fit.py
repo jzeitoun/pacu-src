@@ -12,6 +12,8 @@ from pacu.core.io.scanbox.method.fit.sogfit import SumOfGaussianFit
 PATTRS = 'a1min a1max a2min a2max sigmin sigmax offmin offmax'.split()
 
 def main(workspace, condition, roi, datatag):
+    n_panes = condition.info.get('focal_pane_args', {}).get('n', 1)
+    pane_offset = workspace.cur_pane or 0
     trials = roi.dttrialdff0s.filter_by(
         trial_sf=datatag.trial_sf,
         trial_contrast=datatag.trial_contrast,
@@ -22,10 +24,8 @@ def main(workspace, condition, roi, datatag):
         trial_contrast=datatag.trial_contrast).first.value
     oris = []
     for ori in condition.orientations:
-        reps_by_ori = trials.filter_by(
-            trial_ori=ori
-        )
-        arr = np.array([rep.value['on'] for rep in reps_by_ori])
+        reps_by_ori = trials.filter_by(trial_ori=ori)
+        arr = np.array([rep.value['on'][pane_offset::n_panes] for rep in reps_by_ori])
         meantrace_for_ori = np.nanmean(arr, axis=0)
         oris.append(meantrace_for_ori)
     mat = np.nanmean(np.array(oris), axis=1)

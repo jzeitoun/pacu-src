@@ -6,12 +6,15 @@ from scipy import stats
 from pacu.core.io.scanimage import util
 
 def main(workspace, condition, roi, datatag):
+    n_panes = condition.info.get('focal_pane_args', {}).get('n', 1)
+    pane_offset = workspace.cur_pane or 0
+
     bls = roi.dttrialdff0s.filter_by(trial_blank=True)
     fls = roi.dttrialdff0s.filter_by(trial_flicker=True)
-    flicker = [np.nanmean(np.array(f.value['on'])) for f in fls]
-    blank = [np.nanmean(np.array(b.value['on'])) for b in bls]
+    flicker = [np.nanmean(np.array(f.value['on'][pane_offset::n_panes])) for f in fls]
+    blank = [np.nanmean(np.array(b.value['on'][pane_offset::n_panes])) for b in bls]
     all_oris = [
-        [np.nanmean(np.array(rep.value['on'])) for rep in reps]
+        [np.nanmean(np.array(rep.value['on'][pane_offset::n_panes])) for rep in reps]
         for sf, oris in roi.dt_ori_by_sf(datatag.trial_contrast).items()
         for ori, reps in oris.items()
     ]
