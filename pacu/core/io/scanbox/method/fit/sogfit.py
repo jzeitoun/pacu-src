@@ -18,7 +18,7 @@ class SumOfGaussianFit(object):
         self.xoris = xoris
         self.ymeas = ymeas
         self.global_o_pref = global_o_pref
-        self.initial_guess = initial_guess or ((0, 1), (0, 1), (15, 60), (0, 0.01))
+        self.initial_guess = initial_guess or ((0, 0.5), (0, 0.5), (15, 60), (0, 0.01))
         print 'SoG fit with params', self.initial_guess
     def function(self, x, params):
         A_1, A_2, sigma, offset = params
