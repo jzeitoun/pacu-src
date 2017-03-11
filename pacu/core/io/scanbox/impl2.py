@@ -266,7 +266,12 @@ def plot_timing_diff(id=1087):
 # import time
 # print 'purge disk cache', os.system('sudo purge')
 # q = ScanboxIO('Carey/ka51-ch/001/Aligned_001_000_008.io')
+# from pacu.core.io.scanbox.view.trial_merged_roi import TrialMergedROIView
 # q = ScanboxIO('test_ka50_lit_day1/day1_000_003.io')
+# r = q.condition.workspaces.first.rois.first
+# t = TrialMergedROIView(1,
+#     q.condition.workspaces.first,
+#     q.condition.workspaces.first).refresh()
 # q.ch0.create_maxp_non_greedy()
 
 # w = q.condition.workspaces.first

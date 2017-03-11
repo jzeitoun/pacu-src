@@ -9,18 +9,33 @@ from pacu.core.io.scanbox.method.fit.sogfit import SumOfGaussianFit
 # DID YOU SORT DATTAG?
 # self.CV = getCV(meanresponses=self.meanresponses, angles=c['orientations'])
 
+
+sog_default = dict(
+    a1_min = 0,
+    a1_max = 0.5,
+    a2_min = 0,
+    a2_max = 0.5,
+    sigma_min = 15,
+    sigma_max = 60,
+    offset_min = 0,
+    offset_max = 0.01,
+)
 PATTRS = 'a1min a1max a2min a2max sigmin sigmax offmin offmax'.split()
 
-def main(workspace, condition, roi, datatag):
+def main(workspace, condition, roi, datatag, dff0s=None, bestprefs=None):
+    if not dff0s:
+        dff0s = roi.dttrialdff0s
     n_panes = condition.info.get('focal_pane_args', {}).get('n', 1)
     pane_offset = workspace.cur_pane or 0
-    trials = roi.dttrialdff0s.filter_by(
+    trials = dff0s.filter_by(
         trial_sf=datatag.trial_sf,
         trial_contrast=datatag.trial_contrast,
         trial_blank=False,
         trial_flicker=False,
     )
-    best_pref_ori = roi.dtorientationbestprefs.filter_by(
+    if not bestprefs:
+        bestprefs = roi.dtorientationbestprefs
+    best_pref_ori = bestprefs.filter_by(
         trial_contrast=datatag.trial_contrast).first.value
     oris = []
     for ori in condition.orientations:
@@ -29,7 +44,7 @@ def main(workspace, condition, roi, datatag):
         meantrace_for_ori = np.nanmean(arr, axis=0)
         oris.append(meantrace_for_ori)
     mat = np.nanmean(np.array(oris), axis=1)
-    params = datatag.sog_params
+    params = datatag.sog_params or sog_default
     # p = roi.sog_initial_guess or workspace.sog_initial_guess
     # a1m, a1M, a2m, a2M, sm, sM, om, oM = [p[attr] for attr in PATTRS]
     fit = SumOfGaussianFit(condition.orientations, mat, best_pref_ori, (
@@ -53,3 +68,6 @@ def main(workspace, condition, roi, datatag):
 
 if __name__ == '__sbx_main__':
     datatag.value = main(workspace, condition, roi, datatag)
+
+if __name__ == '__sbx_stitch__':
+    datatag.value = main(workspace, condition, roi, datatag, dff0s, bestprefs)

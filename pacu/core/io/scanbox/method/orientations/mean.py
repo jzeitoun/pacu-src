@@ -3,8 +3,10 @@ __package__ = '' # unicode package name error
 import functools
 import numpy as np
 
-def main(workspace, condition, roi, datatag):
-    trials = roi.dttrialdff0s.filter_by(
+def main(workspace, condition, roi, datatag, dff0s=None):
+    if not dff0s:
+        dff0s = roi.dttrialdff0s
+    trials = dff0s.filter_by(
         trial_sf=datatag.trial_sf,
         trial_contrast=datatag.trial_contrast,
         trial_flicker=False, trial_blank=False)
@@ -53,3 +55,12 @@ if __name__ == '__sbx_main__':
     datatag.indices = indices
     datatag.on_frames = on_frames
     datatag.bs_frames = bs_frames
+
+if __name__ == '__sbx_stitch__':
+    matrix, meantrace, indices, on_frames, bs_frames = main(workspace, condition, roi, datatag, dff0s)
+    datatag.matrix = matrix.tolist()
+    datatag.meantrace = meantrace.tolist()
+    datatag.indices = indices
+    datatag.on_frames = on_frames
+    datatag.bs_frames = bs_frames
+

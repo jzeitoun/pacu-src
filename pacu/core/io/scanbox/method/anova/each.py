@@ -5,10 +5,12 @@ from scipy import stats
 
 from pacu.core.io.scanimage import util
 
-def main(workspace, condition, roi, datatag):
+def main(workspace, condition, roi, datatag, dff0s=None):
     n_panes = condition.info.get('focal_pane_args', {}).get('n', 1)
     pane_offset = workspace.cur_pane or 0
-    oris = roi.dttrialdff0s.filter_by(
+    if not dff0s:
+        dff0s = roi.dttrialdff0s
+    oris = dff0s.filter_by(
         trial_sf=datatag.trial_sf,
         trial_contrast=datatag.trial_contrast
     )
@@ -16,8 +18,8 @@ def main(workspace, condition, roi, datatag):
         [np.nanmean(np.array(rep.value['on'][pane_offset::n_panes]))
         for rep in oris.filter_by(trial_ori=ori)]
     for ori in condition.orientations]
-    bls = roi.dttrialdff0s.filter_by(trial_blank=True)
-    fls = roi.dttrialdff0s.filter_by(trial_flicker=True)
+    bls = dff0s.filter_by(trial_blank=True)
+    fls = dff0s.filter_by(trial_flicker=True)
     flicker = [np.nanmean(np.array(f.value['on'][pane_offset::n_panes])) for f in fls]
     blank = [np.nanmean(np.array(b.value['on'][pane_offset::n_panes])) for b in bls]
     try:
@@ -31,6 +33,12 @@ def main(workspace, condition, roi, datatag):
 
 if __name__ == '__sbx_main__':
     f, p = main(workspace, condition, roi, datatag)
+    datatag.f = 'nan' if np.isnan(f) else f
+    datatag.p = 'nan' if np.isnan(p) else p
+    print datatag.f, datatag.p, datatag.trial_sf, datatag.trial_contrast
+
+if __name__ == '__sbx_stitch__':
+    f, p = main(workspace, condition, roi, datatag, dff0s)
     datatag.f = 'nan' if np.isnan(f) else f
     datatag.p = 'nan' if np.isnan(p) else p
     print datatag.f, datatag.p, datatag.trial_sf, datatag.trial_contrast

@@ -4,13 +4,15 @@ import numpy as np
 
 from pacu.core.io.scanbox.method.fit.sogfit import SumOfGaussianFit
 
-def main(workspace, condition, roi, datatag):
+def main(workspace, condition, roi, datatag, dff0s=None):
+    if not dff0s:
+        dff0s = roi.dttrialdff0s
     n_panes = condition.info.get('focal_pane_args', {}).get('n', 1)
     pane_offset = workspace.cur_pane or 0
 
     cfreq = workspace.condition.info['framerate'] / n_panes
     sfs = []
-    trials = roi.dttrialdff0s.filter_by(trial_blank=False, trial_flicker=False)
+    trials = dff0s.filter_by(trial_blank=False, trial_flicker=False)
     for sf in condition.sfrequencies:
         sf_trials = trials.filter_by(trial_sf=sf,
             trial_contrast=datatag.trial_contrast)
@@ -29,6 +31,9 @@ def main(workspace, condition, roi, datatag):
 
 if __name__ == '__sbx_main__':
     datatag.value = main(workspace, condition, roi, datatag)
+
+if __name__ == '__sbx_stitch__':
+    datatag.value = main(workspace, condition, roi, datatag, dff0s)
 # cfreq = adaptor.capture_frequency
 # return np.array([
 #     resp.orientations.ons[...,
