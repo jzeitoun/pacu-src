@@ -89,3 +89,16 @@ class TrialMergedROIView(object):
         self.refresh_dtanovaeachs()
         self.refresh_dtsfreqfits()
         return self
+
+class TrialMergedROIViewByCentroid(TrialMergedROIView):
+    def __init__(self, centroid, *workspaces):
+        self.centroid = centroid
+        self.workspaces = workspaces
+        self.workspace = self.workspaces[0]
+        self.condition = self.workspace.condition
+        self.rois = self.collect_rois()
+    def collect_rois(self):
+        try: return [
+            ws.rois.filter_by(centroid=self.centroid)[0]
+            for ws in self.workspaces]
+        except: raise Exception(self.exc_no_roi.format(self))
