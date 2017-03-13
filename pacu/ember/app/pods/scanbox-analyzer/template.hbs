@@ -118,7 +118,7 @@
         {{layer.canvas-2d buffer=stream.img.buffer}}
         {{layer.roi-manager workspace=model.workspace}}
         {{#if stream.img.mpi}}
-          {{layer.roi-locator workspace=model.workspace}}
+          {{layer.roi-locator workspace=model.workspace stream=stream}}
         {{/if}}
         {{!layer.context-menu centroid=model.focused.roi.centroid}}
       {{/x-layer}}
