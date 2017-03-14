@@ -271,7 +271,6 @@ def plot_timing_diff(id=1087):
 # q = ScanboxIO('test_ka50_lit_day1/day1_000_003.io')
 # r = q.condition.workspaces.first.rois.first
 # t = TrialMergedROIViewByCentroid(r.centroid,
-#     q.condition.workspaces.first,
 #     q.condition.workspaces.first).refresh()
 # q.ch0.create_maxp_non_greedy()
 

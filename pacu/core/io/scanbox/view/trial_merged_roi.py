@@ -1,4 +1,7 @@
 import runpy
+from datetime import datetime
+
+from scipy import io
 
 from pacu.util.prop.memoized import memoized_property
 from pacu.core.io.scanbox.model.relationship import flist
@@ -8,6 +11,22 @@ from pacu.core.io.scanbox.model.datatag import DTOrientationsFit
 from pacu.core.io.scanbox.model.datatag import DTAnovaEach
 from pacu.core.io.scanbox.model.datatag import DTSFreqFit
 from pacu.core.io.scanbox.model.datatag import DTAnovaAll
+
+def serialize(o):
+    if isinstance(o, dict):
+        return {str(key): serialize(val) for key, val in o.items() if val is not None}
+    elif isinstance(o, (list, tuple)):
+        return [serialize(item) for item in o]
+    elif hasattr(o, 'toDict'):
+        return serialize(o.toDict())
+    elif hasattr(o, '__dict__'):
+        return serialize(vars(o))
+    elif isinstance(o, unicode):
+        return str(o)
+    elif isinstance(o, datetime):
+        return str(o)
+    else:
+        return o
 
 class TrialMergedROIView(object):
     """
@@ -89,6 +108,22 @@ class TrialMergedROIView(object):
         self.refresh_dtanovaeachs()
         self.refresh_dtsfreqfits()
         return self
+    def serialize(self):
+        return serialize(self)
+    def savemat(self, filename):
+        payload = self.serialize()
+        io.savemat(filename, payload)
+        return payload
+    def toDict(self):
+        return dict(
+            dtorientationsmeans=self.dtorientationsmeans,
+            dtorientationbestprefs=self.dtorientationbestprefs,
+            dtorientationsfits=self.dtorientationsfits,
+            dtanovaeachs=self.dtanovaeachs,
+            dtsfreqfits=self.dtsfreqfits,
+            condition=self.condition,
+            rois=self.rois,
+        )
 
 class TrialMergedROIViewByCentroid(TrialMergedROIView):
     def __init__(self, centroid, *workspaces):
