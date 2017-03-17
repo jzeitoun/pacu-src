@@ -295,7 +295,11 @@ def plot_timing_diff(id=1087):
 # exp = session.query(ExperimentV1).get(1811)
 # exp = session.query(ExperimentV1).get(debugger_condition_id)
 
+# q = ScanboxIO('test_ka50_lit_day1/day1_000_003.io')
 # q = ScanboxIO('Dario/noMDExc2/P22/P22_000_000.io')
+# for dt in q.condition.workspaces.first.rois.first.dttrialdff0s:
+#     dt.refresh()
+
 # q = ScanboxIO('debugger/debugger_movie.io')
 
 # r = q.condition.workspaces.last.rois.first

@@ -42,6 +42,7 @@ export default Ember.Component.extend({
   },
   didInsertElement(){
     Mousetrap.bind('esc', e => {
+      e.preventDefault();
       const stream = this.get('stream');
       stream.indexChanged();
     });

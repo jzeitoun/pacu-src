@@ -81,6 +81,11 @@ class TrialMergedROIView(object):
         return flist([
             DTSFreqFit(trial_contrast=ct)
             for ct in self.condition.contrasts])
+    @memoized_property
+    def dtanovaalls(self):
+        return flist([
+            DTAnovaAll(trial_contrast=ct)
+            for ct in self.condition.contrasts])
     def run_module(self, name, datatags, **kwargs):
         for datatag in datatags:
             runpy.run_module(name, run_name='__sbx_stitch__', init_globals=dict(
@@ -101,12 +106,16 @@ class TrialMergedROIView(object):
     def refresh_dtsfreqfits(self):
         module = 'pacu.core.io.scanbox.method.sfreq.fit'
         self.run_module(module, self.dtsfreqfits, fits=self.dtorientationsfits)
+    def refresh_dtanovaalls(self):
+        module = 'pacu.core.io.scanbox.method.anova.all'
+        self.run_module(module, self.dtanovaalls)
     def refresh(self):
         self.refresh_dtorientationsmeans()
         self.refresh_dtorientationbestprefs()
         self.refresh_dtorientationsfits()
         self.refresh_dtanovaeachs()
         self.refresh_dtsfreqfits()
+        self.refresh_dtanovaalls()
         return self
     def serialize(self):
         return serialize(self)
@@ -121,9 +130,9 @@ class TrialMergedROIView(object):
             dtorientationsfits=self.dtorientationsfits,
             dtanovaeachs=self.dtanovaeachs,
             dtsfreqfits=self.dtsfreqfits,
+            dtanovaalls=self.dtanovaalls,
             condition=self.condition,
-            rois=self.rois,
-        )
+            rois=self.rois)
 
 class TrialMergedROIViewByCentroid(TrialMergedROIView):
     def __init__(self, centroid, *workspaces):
