@@ -248,19 +248,10 @@ def plot_timing_diff(id=1087):
 
 # for io in ScanboxIO.iter_every_io():
 #     for ws in io.condition.workspaces:
-#         print ws.sog_initial_guess
-        # ws.sog_initial_guess = ws.SOG_INITIAL_GUESS
-#         print ws.sog_initial_guess
-    # io.condition.object_session.begin()
+#         for roi in ws.rois:
+#             print len(roi.dtorientationsmeans)
+#   # io.condition.object_session.begin()
 
-# w = q.condition.workspaces.first
-# r = q.condition.workspaces.first.rois.first
-# a = r.dtorientationsmeans.first
-# import cv2
-# import numpy as np
-# from matplotlib.pyplot import *
-# from matplotlib.patches import Rectangle
-# get_ipython().magic('pylab')
 
 # import os
 # import time
@@ -274,29 +265,9 @@ def plot_timing_diff(id=1087):
 #     q.condition.workspaces.first).refresh()
 # q.ch0.create_maxp_non_greedy()
 
-# w = q.condition.workspaces.first
-# r = w.rois.first
-# dt = r.dtorientationsmeans.filter_by(trial_sf=0.12,trial_contrast=1).first
-# for ct in q.condition.contrasts:
-#     for sf in q.condition.sfrequencies:
-#         print sf, ct
-#         dt = r.dttrialdff0s.filter_by(
-#             trial_sf=sf, trial_contrast=ct,
-#             trial_blank=False, trial_flicker=False) #, trial_ori=90.0)
-#         print sorted(set([d.trial_sequence for d in dt]))
-#         print len(dt)
-
-# dt = r.dttrialdff0s.filter_by(
-#     trial_sf=0.12, trial_contrast=1.0,
-#     trial_blank=False, trial_flicker=False) #, trial_ori=90.0)
-# id_multiple_category = 1475 #1193 previous, single contrast
-# debugger_condition_id = 1671
-# session = glab()
-# exp = session.query(ExperimentV1).get(1811)
-# exp = session.query(ExperimentV1).get(debugger_condition_id)
-
 # q = ScanboxIO('test_ka50_lit_day1/day1_000_003.io')
 # q = ScanboxIO('Dario/noMDExc2/P22/P22_000_000.io')
+# r = q.condition.workspaces.first.rois.first
 # for dt in q.condition.workspaces.first.rois.first.dttrialdff0s:
 #     dt.refresh()
 

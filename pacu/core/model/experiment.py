@@ -19,6 +19,9 @@ glab = manager.get('db').section('glab')()
 
 class ExperimentV1(Base):
     @classmethod
+    def todays(cls, s):
+        return s.query(cls).filter(cls.created_at > 'today').all()
+    @classmethod
     def query(cls):
         return glab.query(cls)
     @classmethod

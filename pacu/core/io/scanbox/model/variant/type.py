@@ -28,9 +28,10 @@ class VariantBaseType(TypeDecorator):
             value = dict(self.variants.items())
         return json.dumps(value)
     def process_result_value(self, value, dialect): # From DB to Python
-        if value is None:
-            value = '{}' # taking care of null column
-        data = json.loads(value)
+        try:
+            data = json.loads(value)
+        except Exception as e:
+            data = {}
         # taking care of empty data to default variants
         return dict(dict(self.variants.items()), **data)
     variants = Variant.descriptor_set()

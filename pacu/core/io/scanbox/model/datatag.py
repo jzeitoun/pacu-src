@@ -9,6 +9,7 @@ from sqlalchemy.types import PickleType
 
 from pacu.core.io.scanbox.model.base import SQLite3Base
 from pacu.core.io.scanbox.model.variant.dtorientationsfit import VTSoGParams
+from pacu.core.io.scanbox.model.variant.dtorientationsmeans import VTOriMeansParams
 
 basemodule = 'pacu.core.io.scanbox.method'
 
@@ -77,6 +78,7 @@ class DTOrientationsMean(Datatag, SQLite3Base):
     meantrace = Column(PickleType, default=[])
     on_frames = Column(Integer)
     bs_frames = Column(Integer)
+    # value = Column(VTOriMeansParams.as_mutable())
 class DTOrientationBestPref(Datatag, SQLite3Base):
     __tablename__ = 'dtorientationbestprefs'
     category = 'orientation'

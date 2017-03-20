@@ -46,7 +46,53 @@ const options =  {
     fontStyle: 'normal'
   },
   legend: {display: false},
-  tooltips: {enabled: false},
+  tooltips: {
+    // enabled: true,
+    // mode: 'index',
+    // intersect: false,
+    // custom: (tooltip) => {
+    //   debugger
+    // },
+    // callbacks: {
+    //   beforeTitle(items, data) {
+    //     return 'bf title';
+    //   },
+    //   title(items, data) {
+    //     return 'title';
+    //   },
+    //   afterTitle(items, data) {
+    //     return 'af title';
+    //   },
+    //   beforeBody(items, data) {
+    //     return 'bf body';
+    //   },
+    //   beforeLabel(item, data) {
+    //     return 'bf label';
+    //   },
+    //   label(item, data) {
+    //     return 'label';
+    //   },
+    //   // labelColor(item, chart) { debugger },
+    //   afterLabel(item, data) {
+    //     return 'af label';
+    //   },
+    //   afterBody(items, data) {
+    //     return 'af body';
+    //   },
+    //   beforeFooter(items, data) {
+    //     return 'bf footer';
+    //   },
+    //   footer(items, data) {
+    //     return 'fter';
+    //   },
+    //   afterFooter(items, data) {
+    //     return 'aftfoot';
+    //   },
+    //   dataPoints(items, data) {
+    //     return 'data points';
+    //   },
+    // }
+  },
   scales: {
     yAxes: [yAxes],
     xAxes: [xAxes],
@@ -58,14 +104,14 @@ const options =  {
       tension: 0
     },
     point: {
-      radius: 0,
-      hoverRadius: 0,
-      hitRadius: 0
+      radius: 0.1,
+      hoverRadius: 4,
+      hitRadius: 4
     }
   },
   animation: { // important
     duration: null,
-  }
+  },
 };
 const config = { type, data, options }
 
