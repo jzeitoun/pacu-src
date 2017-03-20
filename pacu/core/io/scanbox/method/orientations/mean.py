@@ -16,7 +16,7 @@ def main(workspace, condition, roi, datatag, dff0s=None):
 
     framerate = condition.info['framerate'] / n_panes # have to do this
     on_frames = int(condition.on_duration * framerate)
-    bs_frames = int(condition.off_duration * framerate) # - 1
+    bs_frames = int(condition.off_duration * framerate) - 1
 
     cursor = 0
     indice = []
