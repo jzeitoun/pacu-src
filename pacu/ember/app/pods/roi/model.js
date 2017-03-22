@@ -16,6 +16,7 @@ import { outerPointsByRatio } from 'pacu/pods/components/x-layer/roi/neuropil';
 export default Model.extend({
   toast: Ember.inject.service(),
   created_at: attr('epoch'),
+  params: attr(),
   // active: attr('boolean', { defaultValue: false }),
   polygon: attr({ defaultValue: () => { return []; } }),
   neuropil_ratio: attr({ defaultValue: 4.0 }),
@@ -197,5 +198,15 @@ export default Model.extend({
   },
   @computed('workspace.cur_contrast', 'workspace.cur_sfreq', 'dtorientationsfits') cur_dtorientationsfit(ct, sf, dts) {
     return dts.filterBy('trial_contrast', ct).filterBy('trial_sf', sf).get('firstObject');
-  }
+  },
+  setCellId() {
+    const params = this.get('params');
+    let cid = params.cell_id || '';
+    cid = prompt('Please type new cell id. Blank will delete current id.', cid);
+    if (cid.trim() === '') {
+      cid = null;
+    }
+    this.set('params', { ...params, cell_id: cid });
+    this.save();
+  },
 });

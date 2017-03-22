@@ -162,16 +162,16 @@ class ScanboxIO(object):
                 except Exception as e:
                     print 'ERROR', e
 
-"""
-for io in ScanboxIO.iter_every_io():
-    print io.db_path
-    fix_contrasts_schema(upgrade_sqlite(io.db_path))
-"""
 
 def open_sqlite(path):
     return schema.get_sessionmaker(path, echo=False)
 
 def upgrade_sqlite(path):
+    """
+    for io in ScanboxIO.iter_every_io():
+    print io.db_path
+    upgrade_sqlite(io.db_path)
+    """
     import shutil
     path = Path(path)
     Session = open_sqlite(path.str)
@@ -293,24 +293,6 @@ def plot_timing_diff(id=1087):
 #     return rv
 
 
-# f = np.memmap(q.condition.io.ch0.mmappath.str, dtype='uint16')
-
-# gca().invert_yaxis()
-# scatter(*zip(*cnt))
-# r = Rectangle((x, y), w-1, h-1, fill=False)
-# gca().add_artist(r)
-# 
-# 
-# figure()
-# 
-# gca().invert_yaxis()
-# scatter(*zip(*small_cnt))
-# r = Rectangle((0, 0), w-1, h-1, fill=False)
-# gca().add_artist(r)
-# 
-
-# print (mask > 0).sum(), (small_mask > 0).sum(), len(cnt)
-
 def ScanboxIOStream(files): # magic protocol... for damn `files` kwargs
     return ScanboxIO(files)
 
@@ -339,46 +321,3 @@ def redump(filename):
     session.add(model)
     session.commit()
     return model
-
-# session = glab()
-# exp = session.query(ExperimentV1).get(1836)
-# c = schema.Condition()
-# c.from_expv1(exp)
-# c.trials.extend([
-#     schema.Trial.init_and_update(**trial)
-#     for trial in exp])
-# c.imported = True
-
-#     def initialize_db(self, condition_id=None):
-#         # requires original location...
-#         schema.recreate(self.db_path, echo=False)
-#         session = self.db_session
-#         with session.begin():
-#             condition = schema.Condition(info=self.mat.toDict())
-#             session.add(condition)
-#         if condition_id:
-#             self.import_condition(condition_id)
-
-# condition = session.query(schema.Condition).one()
-# condition.from_expv1(exp)
-# condition.trials.extend([
-#     schema.Trial.init_and_update(**trial)
-#     for trial in exp])
-# condition.imported = True
-# condition.exp_id = int(id)
-# session.add(condition)
-
-# condition = schema.Condition()
-# condition.from_expv1(exp)
-# try:
-#     with session.begin():
-#         condition = session.query(schema.Condition).one()
-#         condition.from_expv1(exp)
-#         condition.trials.extend([
-#             schema.Trial.init_and_update(**trial)
-#             for trial in exp])
-#         condition.imported = True
-#         condition.exp_id = int(id)
-#         session.add(condition)
-# except Exception as e:
-#     print 'Condition import failed with reason below,', str(e)

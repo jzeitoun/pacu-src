@@ -1,6 +1,7 @@
 // import Ember from 'ember';
 
-/* global Chart */
+import Chart from 'npm:chart.js';
+// import Zoom from 'npm:chartjs-plugin-zoom';
 
 export function initialize(/* application */) {
   // application.inject('route', 'foo', 'service:foo');

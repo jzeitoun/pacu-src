@@ -1,5 +1,6 @@
 import Ember from 'ember';
 import computed, { on, observes } from 'ember-computed-decorators';
+import Chart from 'npm:chart.js';
 
 /* global Chart */
 
@@ -40,6 +41,14 @@ const xAxes = {
 const type = 'line';
 const data = { labels:[], datasets:[] }; // dummy as an initial data
 const options =  {
+  // pan: {
+  //   enabled: true,
+  //   mode: 'xy'
+  // },
+  // zoom: {
+  //   enabled: true,
+  //   mode: 'xy',
+  // },
   title: {
     display: true,
     text: 'Orientation of Stimulus',
@@ -47,9 +56,9 @@ const options =  {
   },
   legend: {display: false},
   tooltips: {
-    // enabled: true,
-    // mode: 'index',
-    // intersect: false,
+    enabled: true,
+    mode: 'nearest',
+    intersect: true,
     // custom: (tooltip) => {
     //   debugger
     // },
@@ -105,8 +114,8 @@ const options =  {
     },
     point: {
       radius: 0.1,
-      hoverRadius: 4,
-      hitRadius: 4
+      hoverRadius: 8,
+      hitRadius: 8
     }
   },
   animation: { // important

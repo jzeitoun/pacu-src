@@ -14,6 +14,7 @@ def main(workspace, condition, roi, datatag, dff0s=None):
     n_panes = condition.info.get('focal_pane_args', {}).get('n', 1)
     pane_offset = workspace.cur_pane or 0
 
+    # to follow datastructure of dff0, below is not the best
     framerate = condition.info['framerate'] / n_panes # have to do this
     on_frames = int(condition.on_duration * framerate)
     bs_frames = int(condition.off_duration * framerate) - 1

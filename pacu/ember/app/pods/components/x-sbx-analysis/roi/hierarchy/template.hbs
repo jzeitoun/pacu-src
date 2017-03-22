@@ -1,4 +1,4 @@
-<div class="ui small roi dropdown icon {{if roi.inAction "disabled"}} item">
+<div class="ui roi dropdown icon {{if roi.inAction "disabled"}} item">
   <i class="gray {{if roi.active "big"}} {{if roi.inAction "loading"}} setting icon"></i>
   <div class="menu">
     <div class="header">
@@ -21,6 +21,9 @@
     <div class="divider"></div>
     <div class="header">
       ROI - ({{roi.polygon.length}})
+    </div>
+    <div class="item" {{action roi.setCellId target=roi}}>
+      Set Cell Id
     </div>
     <div class="item" {{action roi.destroyROI target=roi}}>
       Destroy
@@ -76,8 +79,20 @@
 
   </div>
 </div>
-<div class="menu" {{action roi.focus target=roi}}>
-  <span class="item">
-    #{{roi.id}} ({{roi.centroid.x}}, {{roi.centroid.y}})
-  </span>
+<div class="item" {{action roi.focus target=roi}}>
+  <div class="ui basic segments">
+    <p class="inverted segment">
+      <i class="green crosshairs icon"></i>
+      ({{roi.centroid.x}}, {{roi.centroid.y}})
+    </p>
+    <p class="inverted segment">
+      {{#if roi.params.cell_id as |cid|}}
+        <i class="teal tag icon"></i>
+        {{cid}}
+      {{else}}
+        <i class="yellow info icon"></i>
+        #{{roi.id}}
+      {{/if}}
+    </p>
+  </div>
 </div>
