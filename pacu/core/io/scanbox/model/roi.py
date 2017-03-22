@@ -12,6 +12,7 @@ from sqlalchemy.orm import object_session
 
 from pacu.core.io.scanbox.model.base import SQLite3Base
 from sqlalchemy import inspect
+from pacu.core.io.scanbox.model.variant.roi import VTROIParams
 
 origet = operator.attrgetter('ori')
 TRIAL_ATTRS = 'on_time off_time ori sf tf contrast sequence order ran flicker blank'.split()
@@ -28,6 +29,7 @@ class ROI(SQLite3Base):
     draw_dtoverallmean = Column(Boolean, default=False)
     object_session = property(object_session)
     sog_initial_guess = Column(PickleType)
+    params = Column(VTROIParams.as_mutable())
     @property
     def contours(self):
         return np.array([[p['x'], p['y']] for p in self.polygon])

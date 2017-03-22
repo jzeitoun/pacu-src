@@ -22,6 +22,11 @@ class ExperimentV1(Base):
     def todays(cls, s):
         return s.query(cls).filter(cls.created_at > 'today').all()
     @classmethod
+    def query_by_date(cls, s, date): # "20171231"
+        return s.query(m.ExperimentV1).filter(
+            func.date(m.ExperimentV1.created_at) == date
+        ).all()
+    @classmethod
     def query(cls):
         return glab.query(cls)
     @classmethod
@@ -116,5 +121,5 @@ class ExperimentV1(Base):
             clock_params=clock_params,
             projection_params=projection_params,
         )
-        key = self.keyword.replace(os.path.sep, '_')
+        key = self.keyword.replace('/', '_')
         io.savemat('{}-{}'.format(self.id, key), payload)
