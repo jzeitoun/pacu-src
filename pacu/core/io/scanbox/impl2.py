@@ -310,14 +310,17 @@ def redump(filename):
     errormsg = result.pop('errormsg', None)
     errortype = result.pop('errortype', None)
     model = ExperimentV1(**result)
-    model.duration = max(t for ts in model.off_time for t in ts)
-    model.keyword = keyword
     for key, val in payload.items():
         for attr in 'clsname pkgname kwargs'.split():
             ett_attr = key + '_' + attr
             ett_val = val.get(attr)
             setattr(model, ett_attr, ett_val)
+    off_duration = model.stimulus_kwargs.get('off_duration')
+    model.duration = max(t for ts in model.off_time for t in ts) + off_duration
+    model.keyword = keyword
     session = glab
     session.add(model)
     session.commit()
     return model
+
+
