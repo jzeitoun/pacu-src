@@ -81,11 +81,11 @@ class TrialMergedROIView(object):
         return flist([
             DTSFreqFit(trial_contrast=ct)
             for ct in self.condition.contrasts])
-    @memoized_property
-    def dtanovaalls(self):
-        return flist([
-            DTAnovaAll(trial_contrast=ct)
-            for ct in self.condition.contrasts])
+    #@memoized_property # commented out by JZ to fix error
+    #def dtanovaalls(self):
+    #    return flist([
+    #        DTAnovaAll(trial_contrast=ct)
+    #        for ct in self.condition.contrasts])
     def run_module(self, name, datatags, **kwargs):
         for datatag in datatags:
             runpy.run_module(name, run_name='__sbx_stitch__', init_globals=dict(
@@ -115,7 +115,7 @@ class TrialMergedROIView(object):
         self.refresh_dtorientationsfits()
         self.refresh_dtanovaeachs()
         self.refresh_dtsfreqfits()
-        self.refresh_dtanovaalls()
+        #self.refresh_dtanovaalls() # commented out by JZ to fix error
         return self
     def serialize(self):
         return serialize(self)
@@ -130,7 +130,7 @@ class TrialMergedROIView(object):
             dtorientationsfits=self.dtorientationsfits,
             dtanovaeachs=self.dtanovaeachs,
             dtsfreqfits=self.dtsfreqfits,
-            dtanovaalls=self.dtanovaalls,
+            #dtanovaalls=self.dtanovaalls, # commented out to fix error
             condition=self.condition,
             rois=self.rois)
 
