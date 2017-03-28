@@ -1,3 +1,5 @@
+import gc
+
 import numpy as np
 import psutil
 
@@ -54,14 +56,16 @@ class ScanboxChannel(object):
         min = np.zeros(depth, dtype='uint16')
         mean = np.zeros(depth, dtype='float64')
         print 'Iterating over {} frames...'.format(depth)
+        p = psutil.Process()
         with open(self.mmappath.str, 'w') as npy:
             for i, frame in enumerate(chan):
                 if (i % 100) == 0:
                     used_pct = psutil.virtual_memory().percent
-                    if used_pct > 90:
-                        raise MemoryError('Too much memory used.')
+                    mem_pct = p.memory_percent()
+                    if used_pct > 75 or mem_pct > 75:
+                        raise MemoryError('Too much memory used. Processing aborted.')
                     print ('Processing frames at ({}/{}). '
-                            'Memory usage {}%').format(i, depth, used_pct)
+                            'VMem usage {}%, Mem usage {}%').format(i, depth, used_pct, mem_pct)
                 f = ~frame
                 f[f == 65535] = 0
                 npy.write(f.tostring())
@@ -119,13 +123,15 @@ class ScanboxChannel(object):
         chan = self.mmap
         depth = len(chan)
         image = np.zeros_like(chan[0])
+        p = psutil.Process()
         for i, frame in enumerate(chan):
             if (i % 500) == 0:
                 used_pct = psutil.virtual_memory().percent
-                if used_pct > 90:
-                    raise MemoryError('Too much memory used.')
+                mem_pct = p.memory_percent()
+                if used_pct > 75 or mem_pct > 75:
+                    raise MemoryError('Too much memory used. Processing aborted.')
                 print ('Processing frames at ({}/{}). '
-                        'Memory usage {}%').format(i, depth, used_pct)
+                        'VMem usage {}%, Mem usage {}%').format(i, depth, used_pct, mem_pct)
             image = np.maximum(image, frame)
         np.save(self.maxppath.str, image)
         print 'done!'
