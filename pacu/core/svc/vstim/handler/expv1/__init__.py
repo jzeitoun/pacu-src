@@ -22,13 +22,14 @@ class ExpV1HandlerResource(HandlerResource):
         try:
             payload = result.pop('payload')
             model = ExperimentV1(**result)
-            model.keyword = self.component.keyword
-            model.duration = max(t for ts in model.off_time for t in ts)
             for key, val in payload.items():
                 for attr in 'clsname pkgname kwargs'.split():
                     ett_attr = key + '_' + attr
                     ett_val = val.get(attr)
                     setattr(model, ett_attr, ett_val)
+            off_duration = model.stimulus_kwargs.get('off_duration')
+            model.keyword = self.component.keyword
+            model.duration = max(t for ts in model.off_time for t in ts) + off_duration
             session = self.DB.instance()
             session.add(model)
             session.commit()
