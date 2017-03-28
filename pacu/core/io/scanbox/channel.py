@@ -56,7 +56,13 @@ class ScanboxChannel(object):
         mean = np.zeros(depth, dtype='float64')
         print 'Iterating over {} frames...with chunk size {}'.format(depth, frame_size)
         p = psutil.Process()
-
+        try:
+            prev_nice = p.nice()
+            p.nice(5)
+            prev_ionice = p.ionice()
+            p.ionice(3)
+        except Exception as e:
+            print '[NICE] Warn: {}'.format(str(e))
         with open(self.mmappath.str, 'w') as npy, io.sbx.path.open('rb') as raw_file:
             chunks = iter(functools.partial(raw_file.read, frame_size), '')
             for i, chunk in enumerate(chunks):
@@ -72,6 +78,11 @@ class ScanboxChannel(object):
                 max[i] = f.max()
                 min[i] = f.min()
                 mean[i] = f.mean()
+        # try:
+        #     p.nice(prev_nice)
+        #     p.ionice(prev_ionice.ioclass)
+        # except Exception as e:
+        #     print '[NICE] Warn: {}'.format(str(e))
         meta = ScanboxChannelMeta('uint16', depth, int(height), int(width))
         stat = np.rec.fromarrays([max, min, mean], names='MAX, MIN, MEAN')
         meta.save(self.metapath.str)
