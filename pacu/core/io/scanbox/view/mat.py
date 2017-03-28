@@ -17,6 +17,7 @@ Dimension = namedtuple('Dimension', 'height, width')
 class ScanboxMatView(ZeroDimensionArrayView):
     def __init__(self, path):
         self.path = Path(path).ensure_suffix('.mat')
+        self.bound_sbx_path = self.path.with_suffix('.sbx')
         array = io.loadmat(self.path.str, squeeze_me=True).get('info')
         super(ScanboxMatView, self).__init__(array)
     @property
@@ -121,5 +122,24 @@ class ScanboxMatView(ZeroDimensionArrayView):
         except:
             waves = [0]
         return dict(waves=waves, n=n)
+    @property
+    def memmap(self): # first channel
+        shape = self.get_shape(self.bound_sbx_path.size)
+        chans = np.memmap(self.bound_sbx_path.str, dtype='uint16', mode='r', shape=shape)
+        return chans[0::mat.nchannels]
+    @property
+    def opened(self):
+        return self.bound_sbx_path.open('rb')
 
-# q = ScanboxMatView('/Volumes/Users/ht/dev/current/pacu/tmp/sbxroot/Dario/P22_000_004.mat')
+# import psutil
+# import functools
+# p = psutil.Process()
+# mat = ScanboxMatView('/Volumes/Users/ht/dev/current/pacu/tmp/sbxroot/Dario/P22_000_004.mat')
+# h, w = map(int, mat.sz)
+# mm = mat.memmap
+# frame_size = h * w * 2
+# raw = mat.opened
+# for index, chunk in enumerate(iter(functools.partial(raw.read, frame_size), '')):
+#     print index, p.memory_percent()
+#     print chunk == mm[index].tostring()
+#     break

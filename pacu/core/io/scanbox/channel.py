@@ -1,4 +1,4 @@
-import gc
+import functools
 
 import numpy as np
 import psutil
@@ -47,32 +47,32 @@ class ScanboxChannel(object):
             print 'Uni-directional recording.'
         return self._import_with_io3(io)
     def _import_with_io3(self, io):
-        height, width = io.mat.sz
+        height, width = map(int, io.mat.sz)
         shape = io.mat.get_shape(io.sbx.path.size)
-        raw = np.memmap(io.sbx.path.str, dtype='uint16', mode='r', shape=shape)
-        chan = raw[self.channel::io.mat.nchannels]
-        depth = len(chan)
+        frame_size = height * width * 2
+        depth = shape[0]
         max = np.zeros(depth, dtype='uint16')
         min = np.zeros(depth, dtype='uint16')
         mean = np.zeros(depth, dtype='float64')
-        print 'Iterating over {} frames...'.format(depth)
+        print 'Iterating over {} frames...with chunk size {}'.format(depth, frame_size)
         p = psutil.Process()
-        with open(self.mmappath.str, 'w') as npy:
-            for i, frame in enumerate(chan):
+
+        with open(self.mmappath.str, 'w') as npy, io.sbx.path.open('rb') as raw_file:
+            chunks = iter(functools.partial(raw_file.read, frame_size), '')
+            for i, chunk in enumerate(chunks):
                 if (i % 100) == 0:
-                    used_pct = psutil.virtual_memory().percent
                     mem_pct = p.memory_percent()
-                    if used_pct > 75 or mem_pct > 75:
+                    if mem_pct > 75:
                         raise MemoryError('Too much memory used. Processing aborted.')
                     print ('Processing frames at ({}/{}). '
-                            'VMem usage {}%, Mem usage {}%').format(i, depth, used_pct, mem_pct)
-                f = ~frame
+                           'Mem usage {}%').format(i, depth, mem_pct)
+                f = ~np.frombuffer(chunk, dtype='uint16')
                 f[f == 65535] = 0
                 npy.write(f.tostring())
                 max[i] = f.max()
                 min[i] = f.min()
                 mean[i] = f.mean()
-        meta = ScanboxChannelMeta(raw.dtype.name, depth, int(height), int(width))
+        meta = ScanboxChannelMeta('uint16', depth, int(height), int(width))
         stat = np.rec.fromarrays([max, min, mean], names='MAX, MIN, MEAN')
         meta.save(self.metapath.str)
         np.save(self.statpath.str, stat)
@@ -126,12 +126,11 @@ class ScanboxChannel(object):
         p = psutil.Process()
         for i, frame in enumerate(chan):
             if (i % 500) == 0:
-                used_pct = psutil.virtual_memory().percent
                 mem_pct = p.memory_percent()
-                if used_pct > 75 or mem_pct > 75:
+                if mem_pct > 75:
                     raise MemoryError('Too much memory used. Processing aborted.')
                 print ('Processing frames at ({}/{}). '
-                        'VMem usage {}%, Mem usage {}%').format(i, depth, used_pct, mem_pct)
+                       'Mem usage {}%').format(i, depth, mem_pct)
             image = np.maximum(image, frame)
         np.save(self.maxppath.str, image)
         print 'done!'
