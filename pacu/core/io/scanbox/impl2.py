@@ -162,7 +162,6 @@ class ScanboxIO(object):
                 except Exception as e:
                     print 'ERROR', e
 
-
 def open_sqlite(path):
     return schema.get_sessionmaker(path, echo=False)
 
@@ -266,8 +265,10 @@ def plot_timing_diff(id=1087):
 # q.ch0.create_maxp_non_greedy()
 
 # q = ScanboxIO('test_ka50_lit_day1/day1_000_003.io')
+
 # q = ScanboxIO('Dario/noMDExc2/P22/P22_000_000.io')
 # r = q.condition.workspaces.first.rois.first
+
 # for dt in q.condition.workspaces.first.rois.first.dttrialdff0s:
 #     dt.refresh()
 

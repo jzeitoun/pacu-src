@@ -53,7 +53,6 @@ class StimulusResource(Resource):
         ]
         ts = [Trial(self, cond, self.component.on_duration, self.interval)
             for cond in conditions]
-        import ipdb;ipdb.set_trace()
         return TrialHandler(ts,
             nReps=self.component.repetition,
             method=('random' if self.component.randomize else 'sequential')

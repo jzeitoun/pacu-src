@@ -133,10 +133,10 @@ class ROI(SQLite3Base):
         print 'REFRESH Orientations'
         for tag in self.dtorientationsmeans: tag.refresh()
         print 'REFRESH BEST PREF'
-        for tag in self.dtorientationbestprefs: tag.refresh()
-        self.refresh_orientations_fit()
+        for tag in self.dtorientationbestprefs: tag.refresh() # <- global o_pref made here
+        self.refresh_orientations_fit() # <- each r_max made here
         print 'REFRESH SFreqFit'
-        for tag in self.dtsfreqfits: tag.refresh()
+        for tag in self.dtsfreqfits: tag.refresh() # <- requires r_max, each peak_sfreq made here
         print 'REFRESH Anova All'
         for tag in self.dtanovaalls: tag.refresh()
         print 'REFRESH Anova Each'

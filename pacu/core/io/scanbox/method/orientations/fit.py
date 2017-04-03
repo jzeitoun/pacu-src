@@ -9,7 +9,6 @@ from pacu.core.io.scanbox.method.fit.sogfit import SumOfGaussianFit
 # DID YOU SORT DATTAG?
 # self.CV = getCV(meanresponses=self.meanresponses, angles=c['orientations'])
 
-
 sog_default = dict(
     a1_min = 0,
     a1_max = 0.5,
@@ -20,6 +19,12 @@ sog_default = dict(
     offset_min = 0,
     offset_max = 0.01,
 )
+def make_sog_default(seed):
+    new = sog_default.copy()
+    new['a1_max'] = seed
+    new['a2_max'] = seed
+    return new
+
 PATTRS = 'a1min a1max a2min a2max sigmin sigmax offmin offmax'.split()
 
 def main(workspace, condition, roi, datatag, dff0s=None, bestprefs=None):
@@ -35,8 +40,9 @@ def main(workspace, condition, roi, datatag, dff0s=None, bestprefs=None):
     )
     if not bestprefs:
         bestprefs = roi.dtorientationbestprefs
-    best_pref_ori = bestprefs.filter_by(
-        trial_contrast=datatag.trial_contrast).first.value
+    best_pref = bestprefs.filter_by(
+        trial_contrast=datatag.trial_contrast).first
+    best_pref_ori = best_pref.value
     oris = []
     for ori in condition.orientations:
         reps_by_ori = trials.filter_by(trial_ori=ori)
@@ -45,6 +51,15 @@ def main(workspace, condition, roi, datatag, dff0s=None, bestprefs=None):
         oris.append(meantrace_for_ori)
     mat = np.nanmean(np.array(oris), axis=1)
     params = datatag.sog_params or sog_default
+
+    if params.use_seed:
+        peak_sf_index = best_pref.peak_sf_index
+        seed = mat[peak_sf_index]
+        print 'Fitting SoG using a seed value...'
+        print 'Peak SF Index is {}, Value is {}'.format(peak_sf_index, seed)
+        params['a1_max'] = seed
+        params['a2_max'] = seed
+
     # p = roi.sog_initial_guess or workspace.sog_initial_guess
     # a1m, a1M, a2m, a2M, sm, sM, om, oM = [p[attr] for attr in PATTRS]
     fit = SumOfGaussianFit(condition.orientations, mat, best_pref_ori, (

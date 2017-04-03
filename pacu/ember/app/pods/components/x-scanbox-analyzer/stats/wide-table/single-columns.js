@@ -4,7 +4,7 @@ import Ember from 'ember';
 export default [
   {
     name: 'Cell ID',
-    valuePath: 'id',
+    valuePath: 'reprId',
   },
   {
     name: 'Anova All F',

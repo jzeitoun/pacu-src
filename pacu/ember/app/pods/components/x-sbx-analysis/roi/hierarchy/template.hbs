@@ -65,6 +65,9 @@
           </div>
         </div>
       </div>
+    <div class="item" {{action roi.toggleUseSeed target=roi}}>
+      Use Seed {{if p.use_seed "✓" "✗"}}
+    </div>
     {{/with}}
 
     <div class="item" {{action roi.clearSoGParam target=roi}}>

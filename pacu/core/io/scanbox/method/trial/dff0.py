@@ -32,7 +32,7 @@ def handle_multi(workspace, condition, roi, datatag, n_panes):
     bs_comp = -bs_remainder
 
     if bs_remainder is not 0: # taking wrong offset, go backwards!
-        print 'Trial #{} Baseline frame compensation: {}, {+}'.format(
+        print 'Trial #{} Baseline frame compensation: {}, {:+}'.format(
             datatag.trial_order, maybe_bs_first_frame, bs_comp)
 
     baseline_first_frame = maybe_bs_first_frame + bs_comp

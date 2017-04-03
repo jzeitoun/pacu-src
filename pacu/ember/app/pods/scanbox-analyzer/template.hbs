@@ -1,11 +1,21 @@
 {{#x-sui-sticky class="sbx"}}
 <div class="ui small compact inverted icon bottom menu">
   <a class="item" {{action "exportROIs"}}>
-    <i class="yellow line cloud download icon"></i>
+    <i class="yellow cloud download icon"></i>
   </a>
-  <input type="file" id="roi-import-file" style="display: none"/>
-  <a class="item" {{action "importROIs"}}>
-    <i class="yellow line cloud upload icon"></i>
+  <input type="file" id="roi-import-file-all" style="display: none"/>
+  <a class="item" {{action "importROIsAll"}}>
+    <i class="icons" data-tooltip="Import Everything">
+      <i class="yellow cloud upload icon"></i>
+      <i class="red corner star icon"></i>
+    </i>
+  </a>
+  <input type="file" id="roi-import-file-diff" style="display: none"/>
+  <a class="item" {{action "importROIsDiff"}}>
+    <i class="icons" data-tooltip="Import New Labeled ROI Only">
+      <i class="yellow cloud upload icon"></i>
+      <i class="green corner add icon"></i>
+    </i>
   </a>
   <a class="item" {{action "reloadTracePlot"}}>
     <i class="red line chart icon"></i>

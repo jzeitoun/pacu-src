@@ -1,15 +1,17 @@
 import Ember from 'ember';
 import download from 'pacu/utils/download';
 
-function importROIFileChanged(e) { // `this` is the current route
+function importROIFileAllChanged(e) { // `this` is the current route
   const input = e.target;
   const route = this;
   const file = e.target.files[0];
   const fr = new FileReader();
   fr.onload = (/*e*/) => {
     const data = JSON.parse(fr.result);
+    let news;
     try {
-      data.rois.forEach(r => {
+      news = data.rois;
+      news.forEach(r => {
         const roi = route.store.createRecord('roi', r.attrs);
         roi.set('workspace', route.currentModel.workspace);
         roi.save();
@@ -18,7 +20,36 @@ function importROIFileChanged(e) { // `this` is the current route
       console.log(e);
       this.toast.warning('Invalid file');
     } finally {
-      this.toast.info(`${data.rois.length} ROI(s) imported.`);
+      this.toast.info(`${news.length} ROI(s) imported.`);
+      Ember.$(input).val(null);
+    }
+  }
+  fr.readAsText(file);
+}
+
+function importROIFileDiffChanged(e) { // `this` is the current route
+  const input = e.target;
+  const route = this;
+  const file = e.target.files[0];
+  const fr = new FileReader();
+  fr.onload = (/*e*/) => {
+    const data = JSON.parse(fr.result);
+    let news;
+    try {
+      const entry = this.currentModel.workspace.get('loadedROIs').getEach('params.cell_id').compact();
+      news = data.rois.filterBy('attrs.params.cell_id').filter(roi => {
+        return !entry.includes(roi.attrs.params.cell_id);
+      });
+      news.forEach(r => {
+        const roi = route.store.createRecord('roi', r.attrs);
+        roi.set('workspace', route.currentModel.workspace);
+        roi.save();
+      });
+    } catch(e) {
+      console.log(e);
+      this.toast.warning('Invalid file');
+    } finally {
+      this.toast.info(`${news.length} ROI(s) imported.`);
       Ember.$(input).val(null);
     }
   }
@@ -34,11 +65,13 @@ export default {
     this.store.unloadAll(); // releasing all data resources. important.
     this.wsx.dnit();
     this.wsx = null;
-    Ember.$('#roi-import-file').off('change.pacu-roi-import');
+    Ember.$('#roi-import-file-all').off('change.pacu-roi-import-all');
+    Ember.$('#roi-import-file-diff').off('change.pacu-roi-import-diff');
   },
   didTransition() {
     Ember.run.schedule('afterRender', () => {
-      Ember.$('#roi-import-file').on('change.pacu-roi-import', importROIFileChanged.bind(this));
+      Ember.$('#roi-import-file-all').on('change.pacu-roi-import-all', importROIFileAllChanged.bind(this));
+      Ember.$('#roi-import-file-diff').on('change.pacu-roi-import-diff', importROIFileDiffChanged.bind(this));
     });
   },
   updateModel(model) {
@@ -68,8 +101,11 @@ export default {
       download.fromByteString(data, `${ts}-${name.io}-${name.ws}-rois.json`, 'application/json');
     });
   },
-  importROIs() {
-    Ember.$('#roi-import-file').click();
+  importROIsAll() {
+    Ember.$('#roi-import-file-all').click();
+  },
+  importROIsDiff() {
+    Ember.$('#roi-import-file-diff').click();
   },
   reloadTracePlot() {
     this.toast.info('Update traces...');

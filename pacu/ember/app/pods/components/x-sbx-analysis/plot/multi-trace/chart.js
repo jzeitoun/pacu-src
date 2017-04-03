@@ -87,8 +87,12 @@ export default Ember.Object.extend({
         borderColor: datatag.color || color.google20[index],
         borderWidth: 0.5,
         data: datatag.get('valueByFocalPlane'),
-        label: `ROI #${datatag.get('roi.id')}`,
+        label: `ROI #${datatag.get('roi.reprId')}`,
       }
     });
-  }
+  },
+
+  @computed('datatags') rois(dts=[]) {
+    return dts.getEach('valueByFocalPlane');
+  },
 }).reopenClass({config: { type, data, options }});

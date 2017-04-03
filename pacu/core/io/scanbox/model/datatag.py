@@ -84,6 +84,8 @@ class DTOrientationBestPref(Datatag, SQLite3Base):
     category = 'orientation'
     method = 'bestpref'
     value = Column(Float)
+    peak_sf = Column(Float)
+    peak_sf_index = Column(Integer)
 class DTOrientationsFit(Datatag, SQLite3Base):
     __tablename__ = 'dtorientationsfits'
     category = 'orientations'

@@ -59,7 +59,9 @@ def create_endpoint():
     # for orm in schema.list_orms():
     #     manager.create_api(orm, methods=methods)
     manager.create_api(Workspace, methods=methods)
-    manager.create_api(Condition, methods=methods, exclude=['trials', 'trial_list'])
+    manager.create_api(Condition, methods=methods)
+    # manager.create_api(Condition, methods=methods, exclude=['trial_list'])
+    # manager.create_api(Condition, methods=methods, exclude=['trials', 'trial_list'])
     manager.create_api(Trial, methods=methods)
     manager.create_api(ROI, methods=methods, exclude=['dttrialdff0s'])
     manager.create_api(Colormap, methods=methods)

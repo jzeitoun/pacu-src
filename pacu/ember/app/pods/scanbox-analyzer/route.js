@@ -6,7 +6,7 @@ const modname = 'pacu.core.io.scanbox.impl2';
 const clsname = 'ScanboxIOStream';
 const moduleName = 'pacu.core.io.scanbox.model.db';
 const baseName = 'SQLite3Base';
-const include = 'condition,dtoverallmeans,rois,rois.dtorientationsmeans,rois.dtorientationbestprefs,rois.dtorientationsfits,rois.dtanovaeachs,rois.dtsfreqfits,rois.dtanovaalls';
+const include = 'condition,condition.trials,dtoverallmeans,rois,rois.dtorientationsmeans,rois.dtorientationbestprefs,rois.dtorientationsfits,rois.dtanovaeachs,rois.dtsfreqfits,rois.dtanovaalls';
 const queryParam = { include };
 
 export default Ember.Route.extend({
@@ -56,6 +56,14 @@ export default Ember.Route.extend({
     });
     let cur_pane;
     const condition = workspace.then(ws => {
+      if (wsName !== ws.get('name')) {
+        swal(
+          'Reference error',
+          'Session seems to refer a wrong workspace. Please restart Pacu process in backend!',
+          'error'
+        )
+        this.transitionTo('scanbox-manager');
+      }
       cur_pane = ws.get('cur_pane') || 0;
       return ws.get('condition');
     });

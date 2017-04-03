@@ -4,7 +4,7 @@ import { hasMany } from 'ember-data/relationships';
 
 export default Model.extend({
   workspaces: hasMany('workspace'),
-  // trials: hasMany('trial'),
+  trials: hasMany('trial'),
   info: attr(),
   imported: attr(),
   message: attr(),
