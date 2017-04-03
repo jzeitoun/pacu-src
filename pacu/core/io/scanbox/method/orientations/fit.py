@@ -52,13 +52,17 @@ def main(workspace, condition, roi, datatag, dff0s=None, bestprefs=None):
     mat = np.nanmean(np.array(oris), axis=1)
     params = datatag.sog_params or sog_default
 
+
     if params.use_seed:
         peak_sf_index = best_pref.peak_sf_index
-        seed = mat[peak_sf_index]
-        print 'Fitting SoG using a seed value...'
-        print 'Peak SF Index is {}, Value is {}'.format(peak_sf_index, seed)
-        params['a1_max'] = seed
-        params['a2_max'] = seed
+        if peak_sf_index:
+            seed = mat[peak_sf_index]
+            print 'Fitting SoG using a seed value...'
+            print 'Peak SF Index is {}, Value is {}'.format(peak_sf_index, seed)
+            params['a1_max'] = seed
+            params['a2_max'] = seed
+        else:
+            raise Exception('Peak Spatial Frequency information not found. Try recompute all datatags.')
 
     # p = roi.sog_initial_guess or workspace.sog_initial_guess
     # a1m, a1M, a2m, a2M, sm, sM, om, oM = [p[attr] for attr in PATTRS]

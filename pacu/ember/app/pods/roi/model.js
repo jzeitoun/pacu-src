@@ -213,19 +213,22 @@ export default Model.extend({
     return cid || this.get('id');
   },
   toggleUseSeed() {
+    const dtbestprefs = this.get('dtorientationbestprefs');
     const dt = this.get('cur_dtorientationsfit');
     const params = dt.get('sog_params');
     const toggled = !params.use_seed;
     dt.set('sog_params', { ...params, use_seed: toggled });
-    dt.save().then(() => {
-      if (toggled) {
+    if (toggled) {
+      Ember.RSVP.all([ dtbestprefs.reload(), dt.save()]).then(() => {
         this.get('toast').info(
           `A seed value will be used for A1_MAX and A2_MAX to get Sog fit.<br>
-           This will take precedence over SoG override params.`);
-      } else {
+           This will take precedence over SoG override params.<br>`);
+      });
+    } else {
+      dt.save().then(() => {
         this.get('toast').info(
           `The seed value will not be used. Sog override params will take precedence if any.`);
-      }
-    });
-  },
+      });
+    }
+  }
 });
