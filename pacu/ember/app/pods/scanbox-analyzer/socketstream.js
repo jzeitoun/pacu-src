@@ -38,6 +38,9 @@ export default Ember.Object.extend({
       this.set('img.buffer', buffer);
       this.set('img.mpi', true);
     });
+  },
+  requestMPITiff() {
+    return this.get('wsx').invokeAsBinary('ch0.request_maxp_tiff');
   }
   // colorMapChanged: function() {
   //   const cmap = this.get('colorMap').toJSON();

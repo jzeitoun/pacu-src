@@ -123,6 +123,14 @@ export default {
     this.toast.info('Locating max projection image...');
     this.currentModel.stream.overlayMPI();
   },
+  exportMPI() {
+    this.toast.info('Exporting max projection image...');
+    const wid = this.currentModel.workspace.id;
+    this.currentModel.stream.requestMPITiff().then(data => {
+      const ts = +(new Date);
+      download.fromArrayBuffer(data, `${ts}-${wid}-max-projection.tiff`, 'image/tiff');
+    });
+  },
   exportSFreqFitDataAsMat(roi) {
     const wid = this.currentModel.workspace.id;
     const rid = roi.id;

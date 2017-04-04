@@ -14,9 +14,18 @@ import { outerPointsByRatio } from 'pacu/pods/components/x-layer/roi/neuropil';
 // }
 
 export default Model.extend({
+  didCreate() {
+    this._super(...arguments);
+    if(Ember.isNone(this.get('params.cell_id'))) {
+      const cid = this.get('id');
+      const params = this.get('params');
+      this.set('params', { ...params, cell_id: cid });
+      this.save();
+    }
+  },
   toast: Ember.inject.service(),
   created_at: attr('epoch'),
-  params: attr(),
+  params: attr({ defaultValue: () => ({}) }),
   // active: attr('boolean', { defaultValue: false }),
   polygon: attr({ defaultValue: () => { return []; } }),
   neuropil_ratio: attr({ defaultValue: 4.0 }),

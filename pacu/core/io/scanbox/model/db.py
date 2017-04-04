@@ -111,12 +111,14 @@ def before_flush(session, flush_context, instances):
         if hasattr(deleted, 'before_flush_deleted'):
             deleted.before_flush_deleted(session, flush_context)
 def after_flush(session, flush_context):
-    # print 'AFTER FLUSH'
-    for dirty in session.dirty:
-        keys = [attr.key for attr in inspect(dirty).attrs
-            if attr.history.has_changes()]
-        dirty.__flushed_attrs__ = tuple(keys)
-        dirty.__committed_attrs__.extend(keys)
+    for new in session.new:
+        if hasattr(new, 'after_flush_new'):
+            new.after_flush_new(session, flush_context)
+    # for dirty in session.dirty:
+    #     keys = [attr.key for attr in inspect(dirty).attrs
+    #         if attr.history.has_changes()]
+    #     dirty.__flushed_attrs__ = tuple(keys)
+    #     dirty.__committed_attrs__.extend(keys)
 def after_begin(session, transaction, connection):
     # print 'AFTER BEGIN'
     for model in session.identity_map.values():

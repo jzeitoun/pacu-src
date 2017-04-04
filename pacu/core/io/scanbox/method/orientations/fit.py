@@ -18,12 +18,8 @@ sog_default = dict(
     sigma_max = 60,
     offset_min = 0,
     offset_max = 0.01,
+    use_seed = False,
 )
-def make_sog_default(seed):
-    new = sog_default.copy()
-    new['a1_max'] = seed
-    new['a2_max'] = seed
-    return new
 
 PATTRS = 'a1min a1max a2min a2max sigmin sigmax offmin offmax'.split()
 
@@ -53,7 +49,7 @@ def main(workspace, condition, roi, datatag, dff0s=None, bestprefs=None):
     params = datatag.sog_params or sog_default
 
 
-    if params.use_seed:
+    if params['use_seed']:
         peak_sf_index = best_pref.peak_sf_index
         if not peak_sf_index:
             print 'Peak Spatial Frequency information not found. Try refresh...'

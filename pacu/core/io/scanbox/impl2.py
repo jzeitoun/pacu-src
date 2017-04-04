@@ -257,6 +257,7 @@ def plot_timing_diff(id=1087):
 # print 'purge disk cache', os.system('sudo purge')
 # q = ScanboxIO('Carey/ka51-ch/001/Aligned_001_000_008.io')
 # from pacu.core.io.scanbox.view.trial_merged_roi import TrialMergedROIView
+
 # from pacu.core.io.scanbox.view.trial_merged_roi import TrialMergedROIViewByCentroid
 # q = ScanboxIO('test_ka50_lit_day1/day1_000_003.io')
 # r = q.condition.workspaces.first.rois.first
@@ -268,11 +269,7 @@ def plot_timing_diff(id=1087):
 
 # q = ScanboxIO('Dario/noMDExc2/P22/P22_000_000.io')
 # r = q.condition.workspaces.first.rois.first
-
-# for dt in q.condition.workspaces.first.rois.first.dttrialdff0s:
-#     dt.refresh()
-
-# q = ScanboxIO('debugger/debugger_movie.io')
+# q = ScanboxIO('Dario/P22_000_004.io')
 
 # r = q.condition.workspaces.last.rois.first
 # fit = r.dtsfreqfit.refresh()

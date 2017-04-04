@@ -1,5 +1,7 @@
 import functools
+from cStringIO import StringIO
 
+from PIL import Image
 import numpy as np
 import psutil
 
@@ -116,6 +118,14 @@ class ScanboxChannel(object):
     def request_maxp(self):
         return gray(
             self.maxp.view('uint8')[..., 1::2], bytes=True).tostring()
+    def request_maxp_tiff(self):
+        arr = self.maxp.view('uint8')[..., 1::2]
+        i = Image.fromarray(arr)
+        io = StringIO()
+        i.save(io, format='tiff')
+        value = io.getvalue()
+        io.close()
+        return value
     @property
     def has_maxp(self):
         return self.maxppath.is_file()
