@@ -47,7 +47,8 @@ class TrialMergedROIView(object):
         self.rois = self.collect_rois()
     def collect_rois(self):
         try: return [
-            ws.rois.filter_by(id=self.roi_id)[0]
+            #ws.rois.filter_by(id=self.roi_id)[0] modifed by JZ to allow merging on cell id
+            ws.rois.filter_by(params={'cell_id': str(self.roi_id)})[0]
             for ws in self.workspaces]
         except: raise Exception(self.exc_no_roi.format(self))
     @memoized_property
