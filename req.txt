@@ -2,7 +2,7 @@ psutil
 pathlib
 pathlib2
 futures
-tornado
+tornado==4.2.1
 flask
 sqlalchemy
 pyreadline

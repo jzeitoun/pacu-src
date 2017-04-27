@@ -141,5 +141,45 @@ export default {
       const ts = +(new Date);
       download.fromArrayBuffer(data, `${ts}-${wid}-${rid}-sfreqfit.mat`, 'application/json');
     });
+  },
+  computeAll() {
+    const self = this;
+    const rois = this.currentModel.workspace.get('loadedROIs').copy();
+    const len = rois.get('length');
+    let shouldStop = false;
+
+    (function next(index) {
+      const roi = rois.shiftObject();
+      if (shouldStop || !roi) {
+        self.toast.info('Batch process complete!');
+        return swal.close();
+      }
+      swal({
+        type: 'info',
+        title: 'Batch: Compute All',
+        text: `Running ${index}/${len}...`,
+        showConfirmButton: false,
+        showCancelButton: true,
+        focusCancel: true,
+        cancelButtonClass: "ui red basic button",
+        allowOutsideClick: false,
+        allowEscapeKey: false,
+        allowEnterKey: false,
+      }).catch(dismiss => {
+        shouldStop = true;
+        swal({
+          type: 'warning',
+          title: 'Batch: Stop requested',
+          text: `It will end after the current process #${index}. Please wait little more...`,
+          showConfirmButton: false,
+          showCancelButton: false,
+          allowOutsideClick: false,
+          allowEscapeKey: false,
+          allowEnterKey: false,
+        });
+      });
+      roi.refreshAll().then(next.bind(null, index + 1));
+    })(1)
+
   }
 }

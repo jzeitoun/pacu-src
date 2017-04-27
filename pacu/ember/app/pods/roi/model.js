@@ -111,8 +111,8 @@ export default Model.extend({
   refreshAll() {
     if (this.get('inAction')) { return; }
     this.set('inAction', true);
-    this.save().then(() => {
-      this.store.createRecord('action', {
+    return this.save().then(() => {
+      return this.store.createRecord('action', {
         model_name: 'ROI',
         model_id: this.id,
         action_name: 'refresh_all'

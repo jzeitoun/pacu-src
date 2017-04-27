@@ -40,6 +40,8 @@ def main(workspace, condition, roi, datatag, dff0s=None, bestprefs=None):
         trial_contrast=datatag.trial_contrast).first
     best_pref_ori = best_pref.value
     oris = []
+
+    # this is where response for given orientation and sf is made
     for ori in condition.orientations:
         reps_by_ori = trials.filter_by(trial_ori=ori)
         arr = np.array([rep.value['on'][pane_offset::n_panes] for rep in reps_by_ori])

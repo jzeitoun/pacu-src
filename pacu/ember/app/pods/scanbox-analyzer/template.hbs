@@ -38,9 +38,11 @@
       Contrast: {{model.condition.contrast}}
     </a>
   {{/if}}
+  {{!--
   <a class="item" {{action "noop"}}>
     Baseline Duration: {{model.workspace.baseline_duration}}
   </a>
+  --}}
 
   <div class="ui simple dropdown {{if maxpBusy "disabled"}} item">
     Max Projection Image {{if stream.ch0HasMaxp "✓" "✗"}}
@@ -55,6 +57,7 @@
   </div>
 
   {{#unless (eq model.condition.stimulus 'SparseNoiseStimulus')}}
+    {{!--
   <div class="ui simple dropdown item">
     Global SoG Initial Guess
     <i class="dropdown icon"></i>
@@ -64,13 +67,14 @@
       <div class="header">A2: {{p.a2min}} ~ {{p.a2max}}</div>
       <div class="header">Sigma: {{p.sigmin}} ~ {{p.sigmax}}</div>
       <div class="header">Offset: {{p.offmin}} ~ {{p.offmax}}</div>
-      {{!--
+      {!--
       <div class="divider"></div>
       <div class="item" {{action "overlayMPI"}}>Change...</div>
-      --}}
+      --}
       {{/with}}
     </div>
   </div>
+  --}}
 
   <div class="ui simple dropdown item">
     Export
@@ -80,6 +84,17 @@
         SFreq Fit Data as .mat</div>
     </div>
   </div>
+
+  <div class="ui simple dropdown item">
+    Batch Process
+    <i class="dropdown icon"></i>
+    <div class="menu">
+      <div class="item" {{action "computeAll"}}>Compute all</div>
+    </div>
+  </div>
+
+
+
   {{/unless}}
 
 </div>
