@@ -38,7 +38,7 @@ class SpatialFrequencyDogFit(object):
         self.xstim = np.array(map(self.stimulus, self.stretched.x))
         # negative visual field squared
         self.nvfs = -np.square(self.visual_field)
-    def stretch(self, n=100):
+    def stretch(self, n=1000):
         func = interpolate.interp1d(self.xfreq, self.ymeas)
         stretched = np.linspace(self.lowest_freq, self.highest_freq, n)
         return Stretched(stretched, func(stretched))
@@ -100,6 +100,7 @@ class SpatialFrequencyDogFit(object):
     def preferred_sfreq(self):
         x, y = self.dog_xy
         pindex = y.argmax()
+        # import ipdb; ipdb.set_trace()
         return Point(x[pindex], y[pindex])
     @property
     def peak_sfreq(self):
