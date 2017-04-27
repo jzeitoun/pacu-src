@@ -267,8 +267,8 @@ def plot_timing_diff(id=1087):
 
 # q = ScanboxIO('test_ka50_lit_day1/day1_000_003.io')
 
-q = ScanboxIO('Dario/noMDExc2/P22/P22_000_000.io')
-r = q.condition.workspaces.first.rois.first
+# q = ScanboxIO('Dario/noMDExc2/P22/P22_000_000.io')
+# r = q.condition.workspaces.first.rois.first
 # q = ScanboxIO('Dario/P22_000_004.io')
 
 # r = q.condition.workspaces.last.rois.first
