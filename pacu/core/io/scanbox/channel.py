@@ -115,8 +115,10 @@ class ScanboxChannel(object):
         y2 = float(ymid2) / 100
         self.dcmap = DistortedColormap2(name,
             xmid1=x1, ymid1=y1, xmid2=x2, ymid2=y2)
-    def request_maxp(self):
-        return gray(
+    def request_maxp(self, cmap_kwargs):
+        dcmap = DistortedColormap2('gray', **cmap_kwargs)
+        return dcmap.distorted(
+        # return gray(
             self.maxp.view('uint8')[..., 1::2], bytes=True).tostring()
     def request_maxp_tiff(self):
         arr = self.maxp.view('uint8')[..., 1::2]

@@ -11,4 +11,4 @@ class VTSoGParams(VariantBaseType):
     sigma_max = Variant(60)
     offset_min = Variant(0)
     offset_max = Variant(0.01)
-    use_seed = Variant(True)
+    use_seed = Variant(False)

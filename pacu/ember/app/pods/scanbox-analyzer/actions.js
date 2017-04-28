@@ -58,7 +58,7 @@ function importROIFileDiffChanged(e) { // `this` is the current route
 
 export default {
   do(/*action, ...args*/) {
-    alert('not supported');
+    // alert('not supported');
     // return this.actions[action].apply(this, args);
   },
   willTransition: function(/*transition*/) {
