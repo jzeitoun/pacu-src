@@ -85,11 +85,11 @@ export default Model.extend({
   },
   enableNeuropil() {
     this.set('neuropil_enabled', true);
-    this.save();
+    return this.save();
   },
   disableNeuropil() {
     this.set('neuropil_enabled', false);
-    this.save();
+    return this.save();
   },
   setNeuropilRatio() {
     const ratio = prompt("Please enter neuropil ratio amount",

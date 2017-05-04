@@ -1,5 +1,6 @@
 import Ember from 'ember';
 import download from 'pacu/utils/download';
+import batch from 'pacu/utils/batch';
 
 function importROIFileAllChanged(e) { // `this` is the current route
   const input = e.target;
@@ -143,43 +144,21 @@ export default {
     });
   },
   computeAll() {
-    const self = this;
-    const rois = this.currentModel.workspace.get('loadedROIs').copy();
-    const len = rois.get('length');
-    let shouldStop = false;
-
-    (function next(index) {
-      const roi = rois.shiftObject();
-      if (shouldStop || !roi) {
-        self.toast.info('Batch process complete!');
-        return swal.close();
-      }
-      swal({
-        type: 'info',
-        title: 'Batch: Compute All',
-        text: `Running ${index}/${len}...`,
-        showConfirmButton: false,
-        showCancelButton: true,
-        focusCancel: true,
-        cancelButtonClass: "ui red basic button",
-        allowOutsideClick: false,
-        allowEscapeKey: false,
-        allowEnterKey: false,
-      }).catch(dismiss => {
-        shouldStop = true;
-        swal({
-          type: 'warning',
-          title: 'Batch: Stop requested',
-          text: `It will end after the current process #${index}. Please wait little more...`,
-          showConfirmButton: false,
-          showCancelButton: false,
-          allowOutsideClick: false,
-          allowEscapeKey: false,
-          allowEnterKey: false,
-        });
-      });
-      roi.refreshAll().then(next.bind(null, index + 1));
-    })(1)
-
+    const rois = this.currentModel.workspace.get('loadedROIs');
+    batch.promiseSequence(rois, 'refreshAll').then(() => {
+      this.toast.info('Batch process complete!');
+    });
+  },
+  neuropilOnAll() {
+    const rois = this.currentModel.workspace.get('loadedROIs');
+    batch.promiseSequence(rois, 'enableNeuropil').then(() => {
+      this.toast.info('Batch process complete!');
+    });
+  },
+  neuropilOffAll() {
+    const rois = this.currentModel.workspace.get('loadedROIs');
+    batch.promiseSequence(rois, 'disableNeuropil').then(() => {
+      this.toast.info('Batch process complete!');
+    });
   }
 }
