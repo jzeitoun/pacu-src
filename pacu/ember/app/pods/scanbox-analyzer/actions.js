@@ -160,5 +160,41 @@ export default {
     batch.promiseSequence(rois, 'disableNeuropil').then(() => {
       this.toast.info('Batch process complete!');
     });
+  },
+  updateFrameShift() {
+    const current = this.currentModel.workspace.get('params.frame_shift');
+    const url = "https://docs.scipy.org/doc/numpy-1.12.0/reference/generated/numpy.roll.html"
+    const message = `<p>Please specify an integer to pass into the function
+      <a href="${url}" target="_blank">np.roll</a></p>
+      <p>This will apply to an initial trace of an ROI. And then the trace will be chopped along with all trials.</p>`;
+    swal({
+      title: 'Frame Shift',
+      html: message,
+      input: 'number',
+      inputValue: current,
+      showCancelButton: true,
+      inputClass: 'ui input',
+      inputValidator: function (value) {
+        return new Promise(function (resolve, reject) {
+          if (value && isFinite(value) && !isNaN(value)) {
+            resolve()
+          } else {
+            reject(`Cannot send the value "${value}".`)
+          }
+        })
+      }
+    }).then(result => {
+      const shift = parseInt(result);
+      const ws = this.currentModel.workspace;
+      const params = ws.get('params');
+      ws.set('params', { ...params, frame_shift: shift});
+      ws.save().then(() => {
+        swal({
+          type: 'success',
+          title: 'Update success!',
+          text: 'To take effect, recompute desired ROIs.',
+        })
+      });
+    }).catch(swal.noop);
   }
 }

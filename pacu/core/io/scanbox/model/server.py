@@ -58,7 +58,7 @@ def create_endpoint():
     manager = APIManager(app=app, session=nmspc.session)
     # for orm in schema.list_orms():
     #     manager.create_api(orm, methods=methods)
-    manager.create_api(Workspace, methods=methods)
+    manager.create_api(Workspace, methods=methods, allow_to_many_replacement=True)
     manager.create_api(Condition, methods=methods)
     # manager.create_api(Condition, methods=methods, exclude=['trial_list'])
     # manager.create_api(Condition, methods=methods, exclude=['trials', 'trial_list'])

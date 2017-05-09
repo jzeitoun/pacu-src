@@ -224,26 +224,26 @@ from matplotlib import pyplot
 # import ujson
 # qwe = glab.query(ExperimentV1).get(1087)
 # get_ipython().magic('pylab')
-def plot_timing_diff(id=1087):
-    qwe = glab.query(ExperimentV1).get(id)
-    asd = map(float,
-        [re.match(r'(?P<num>[\d\.]+)\s.*', line).groupdict().get('num')
-            for line in qwe.message.splitlines() if 'Entering' in line])
-    ps = [e-asd[0] for e in asd]
-    lj = [t.get('on_time') for t in qwe.ordered_trials]
-    delayinfo = ('{} sec took to show the '
-        'first trial after synchronization').format(lj[0])
-    try:
-        thediff = np.array(ps) - np.array(lj)
-    except Exception as e:
-        raise e
-    else:
-        pyplot.figure()
-        pyplot.plot(thediff)
-        pyplot.suptitle(qwe.keyword)
-        pyplot.title(delayinfo)
-        pyplot.ylabel('psychopy - labjack in second')
-        pyplot.xlabel('trials in order')
+# def plot_timing_diff(id=1087):
+#     qwe = glab.query(ExperimentV1).get(id)
+#     asd = map(float,
+#         [re.match(r'(?P<num>[\d\.]+)\s.*', line).groupdict().get('num')
+#             for line in qwe.message.splitlines() if 'Entering' in line])
+#     ps = [e-asd[0] for e in asd]
+#     lj = [t.get('on_time') for t in qwe.ordered_trials]
+#     delayinfo = ('{} sec took to show the '
+#         'first trial after synchronization').format(lj[0])
+#     try:
+#         thediff = np.array(ps) - np.array(lj)
+#     except Exception as e:
+#         raise e
+#     else:
+#         pyplot.figure()
+#         pyplot.plot(thediff)
+#         pyplot.suptitle(qwe.keyword)
+#         pyplot.title(delayinfo)
+#         pyplot.ylabel('psychopy - labjack in second')
+#         pyplot.xlabel('trials in order')
 
 # for io in ScanboxIO.iter_every_io():
 #     for ws in io.condition.workspaces:
@@ -252,18 +252,6 @@ def plot_timing_diff(id=1087):
 #   # io.condition.object_session.begin()
 
 
-# import os
-# import time
-# print 'purge disk cache', os.system('sudo purge')
-# q = ScanboxIO('Carey/ka51-ch/001/Aligned_001_000_008.io')
-# from pacu.core.io.scanbox.view.trial_merged_roi import TrialMergedROIView
-
-# from pacu.core.io.scanbox.view.trial_merged_roi import TrialMergedROIViewByCentroid
-# q = ScanboxIO('test_ka50_lit_day1/day1_000_003.io')
-# r = q.condition.workspaces.first.rois.first
-# t = TrialMergedROIViewByCentroid(r.centroid,
-#     q.condition.workspaces.first).refresh()
-# q.ch0.create_maxp_non_greedy()
 
 # q = ScanboxIO('test_ka50_lit_day1/day1_000_003.io')
 

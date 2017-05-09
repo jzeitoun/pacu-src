@@ -1,5 +1,6 @@
 __package__ = '' # unicode package name error
 
+import numpy as np
 from pacu.core.io.scanbox.method.overall.tracer import ROITracer
 
 def main(workspace, condition, roi, datatag):
@@ -16,6 +17,9 @@ def main(workspace, condition, roi, datatag):
         main_trace -= np_trace * roi.neuropil_factor
     else:
         main_trace = tracer.trace()
+    shift = workspace.params.frame_shift
+    print 'Roll array by', shift
+    main_trace = np.roll(main_trace, shift)
     return main_trace.tolist()
 
 if __name__ == '__sbx_main__':

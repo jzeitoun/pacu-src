@@ -12,7 +12,7 @@
   </a>
   <input type="file" id="roi-import-file-diff" style="display: none"/>
   <a class="item" {{action "importROIsDiff"}}>
-    <i class="icons" data-tooltip="Import New Labeled ROI Only">
+    <i class="icons" data-tooltip="Import Newly Labeled ROI Only">
       <i class="yellow cloud upload icon"></i>
       <i class="green corner add icon"></i>
     </i>
@@ -95,6 +95,14 @@
     </div>
   </div>
 
+  <div class="ui simple dropdown item">
+    Params
+    <i class="dropdown icon"></i>
+    <div class="menu">
+      <div class="item" {{action "updateFrameShift"}}>
+        Update Frame Shift: {{model.workspace.params.frame_shift}}</div>
+    </div>
+  </div>
 
 
   {{/unless}}

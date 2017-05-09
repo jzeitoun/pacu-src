@@ -1,15 +1,13 @@
 import Ember from 'ember';
 
-export function promiseSequence(targets, task, done) {
-  const targetsCopied = targets.copy();
-  const len = targetsCopied.get('length');
+export function promiseSequence(targets, task, done, index=1) {
+  const entry = targets.copy();
+  const len = entry.get('length');
   const promise = new Ember.RSVP.Promise((resolve, reject) => {
-    let shouldStop = false;
     (function next(index) {
-      const target = targetsCopied.shiftObject();
-      if (shouldStop || !target) {
-        resolve();
-        return swal.close();
+      const target = entry.shiftObject();
+      if (!target) {
+        return resolve(swal.close());
       }
       swal({
         type: 'info',
@@ -23,7 +21,7 @@ export function promiseSequence(targets, task, done) {
         allowEscapeKey: false,
         allowEnterKey: false,
       }).catch(dismiss => {
-        shouldStop = true;
+        entry.clear();
         swal({
           type: 'warning',
           title: 'Batch: Stop requested',
@@ -37,7 +35,7 @@ export function promiseSequence(targets, task, done) {
         });
       });
       target[task]().then(next.bind(null, index + 1));
-    })(1);
+    })(index);
   });
   return promise;
 }

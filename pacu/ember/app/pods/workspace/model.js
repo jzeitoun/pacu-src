@@ -11,6 +11,7 @@ export default Model.extend({
   cur_pane: attr(),
   baseline_duration: attr(),
   sog_initial_guess: attr(),
+  params: attr(),
   // iopath: attr('string'),
   rois: hasMany('roi'),
   dtoverallmeans: hasMany('dtoverallmean'),

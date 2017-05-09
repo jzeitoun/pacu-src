@@ -6,6 +6,7 @@ from sqlalchemy.types import PickleType
 
 from pacu.ext.sqlalchemy.types.mutable import MutableDict
 from pacu.core.io.scanbox.model.base import SQLite3Base
+from pacu.core.io.scanbox.model.variant.workspace import VTWorkspaceParams
 
 SOG_INITIAL_GUESS = dict(
     a1min=0  , a1max=0.5,
@@ -24,6 +25,7 @@ class Workspace(SQLite3Base):
     cur_pane = Column(Integer, default=0)
     baseline_duration = Column(Float, default=0.5)
     sog_initial_guess = Column(PickleType, default=lambda: SOG_INITIAL_GUESS)
+    params = Column(VTWorkspaceParams.as_mutable())
     def other_rois(self, roi):
         rois = list(self.rois)
         rois.remove(roi)
