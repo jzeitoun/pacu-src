@@ -166,7 +166,8 @@ export default {
     const url = "https://docs.scipy.org/doc/numpy-1.12.0/reference/generated/numpy.roll.html"
     const message = `<p>Please specify an integer to pass into the function
       <a href="${url}" target="_blank">np.roll</a></p>
-      <p>This will apply to an initial trace of an ROI. And then the trace will be chopped along with all trials.</p>`;
+      <p>This will apply to an initial trace of an ROI.
+         And then "recompute" will make the trace chopped along with all trials.</p>`;
     swal({
       title: 'Frame Shift',
       html: message,
