@@ -143,6 +143,15 @@ export default {
       download.fromArrayBuffer(data, `${ts}-${wid}-${rid}-sfreqfit.mat`, 'application/json');
     });
   },
+  exportROITracesAsMat() {
+    const wid = this.currentModel.workspace.id;
+    this.currentModel.stream.invokeAsBinary(
+    'export_traces_as_mat', wid
+    ).then(data => {
+      const ts = +(new Date);
+      download.fromArrayBuffer(data, `${ts}-${wid}-traces.mat`, 'application/json');
+    });
+  },
   computeAll() {
     const rois = this.currentModel.workspace.get('loadedROIs');
     batch.promiseSequence(rois, 'refreshAll').then(() => {

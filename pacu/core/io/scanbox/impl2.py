@@ -1,6 +1,8 @@
+import cStringIO
 import shutil
 import ujson
 import numpy as np
+from scipy import io
 from sqlalchemy import event
 from sqlalchemy.orm import object_session
 
@@ -140,6 +142,13 @@ class ScanboxIO(object):
         roi = self.db_session.query(schema.ROI
             ).filter_by(id=rid, workspace_id=wid).one()
         return roi.export_sfreqfit_data_as_mat(contrast)
+    def export_traces_as_mat(self, wid):
+        ws = self.db_session.query(schema.Workspace).get(wid)
+        sio = cStringIO.StringIO()
+        data = {str(roi.id): roi.dtoverallmean.value
+            for roi in ws.rois if roi.draw_dtoverallmean}
+        io.savemat(sio, data)
+        return sio.getvalue()
     @staticmethod
     def condition_by_file(filename='db.sqlite3'):
         Session = schema.get_sessionmaker(filename)

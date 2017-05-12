@@ -153,11 +153,6 @@ class ROI(SQLite3Base):
         value = self.dtsfreqfits.filter_by(trial_contrast=contrast).first.value
         io.savemat(sio, value)
         return sio.getvalue()
-        # return base64.b64encode(sio.getvalue())
-
-
-
-
 
 
 
