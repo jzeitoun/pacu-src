@@ -145,7 +145,7 @@ class ScanboxIO(object):
     def export_traces_as_mat(self, wid):
         ws = self.db_session.query(schema.Workspace).get(wid)
         sio = cStringIO.StringIO()
-        data = {str(roi.id): roi.dtoverallmean.value
+        data = {'cell' + str(roi.id): roi.dtoverallmean.value
             for roi in ws.rois if roi.draw_dtoverallmean}
         io.savemat(sio, data)
         return sio.getvalue()
