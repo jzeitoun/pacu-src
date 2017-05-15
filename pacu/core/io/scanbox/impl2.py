@@ -263,6 +263,7 @@ from matplotlib import pyplot
 
 
 # q = ScanboxIO('test_ka50_lit_day1/day1_000_003.io')
+q = ScanboxIO('/Volumes/Users/ht/dev/current/pacu/tmp/day3_000_011.io')
 
 # q = ScanboxIO('Dario/noMDExc2/P22/P22_000_000.io')
 # r = q.condition.workspaces.first.rois.first

@@ -91,7 +91,7 @@ export default Model.extend({
     this.set('neuropil_enabled', false);
     return this.save();
   },
-  setNeuropilRatio() {
+  askNeuropilRatio() {
     const ratio = prompt("Please enter neuropil ratio amount",
       this.get('neuropil_ratio'));
     const fRatio = parseFloat(ratio);
@@ -99,6 +99,17 @@ export default Model.extend({
       this.get('toast').warning(`Invalid value ${ratio}.`);
     } else {
       this.set('neuropil_ratio', fRatio);
+      this.save();
+    }
+  },
+  askNeuropilFactor() {
+    const factor = prompt("Please enter neuropil R value",
+      this.get('neuropil_factor'));
+    const fFactor = parseFloat(factor);
+    if (isNaN(fFactor)) {
+      this.get('toast').warning(`Invalid value ${factor}.`);
+    } else {
+      this.set('neuropil_factor', fFactor);
       this.save();
     }
   },

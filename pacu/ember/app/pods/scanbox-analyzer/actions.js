@@ -170,6 +170,22 @@ export default {
       this.toast.info('Batch process complete!');
     });
   },
+  neuropilRValueAll() {
+    const rois = this.currentModel.workspace.get('loadedROIs');
+
+    const factor = prompt("Please enter neuropil R value",
+      this.get('neuropil_factor'));
+    const fFactor = parseFloat(factor);
+    if (isNaN(fFactor)) {
+      this.get('toast').warning(`Invalid value ${factor}.`);
+    } else {
+      rois.setEach('neuropil_factor', fFactor);
+      batch.promiseSequence(rois, 'save').then(() => {
+        this.toast.info('Batch process complete!');
+      });
+    }
+
+  },
   updateFrameShift() {
     const current = this.currentModel.workspace.get('params.frame_shift');
     const url = "https://docs.scipy.org/doc/numpy-1.12.0/reference/generated/numpy.roll.html"

@@ -38,8 +38,11 @@
     <div class="item" {{action roi.disableNeuropil target=roi}}>
       Disable
     </div>
-    <div class="item" {{action roi.setNeuropilRatio target=roi}}>
+    <div class="item" {{action roi.askNeuropilRatio target=roi}}>
       Set amount ({{roi.neuropil_ratio}})
+    </div>
+    <div class="item" {{action roi.askNeuropilFactor target=roi}}>
+      Set R value ({{roi.neuropil_factor}})
     </div>
 
     <div class="divider"></div>
