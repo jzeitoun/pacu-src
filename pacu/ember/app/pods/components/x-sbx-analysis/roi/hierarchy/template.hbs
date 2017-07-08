@@ -76,9 +76,13 @@
     <div class="item" {{action roi.clearSoGParam target=roi}}>
       Default
     </div>
-    <div class="item" {{action roi.overrideSoGParam target=roi}}>
-      Override
-    </div>
+
+    {{#with roi.cur_dtorientationsfit.sog_params as |p|}}
+      <div class="item" {{action roi.overrideSoGParam target=roi}}>
+        Override {{if p.override "✓" "✗"}}
+      </div>
+      {{/with}}
+
     <div class="item" {{action roi.computeSoG target=roi}}>
       Compute
     </div>

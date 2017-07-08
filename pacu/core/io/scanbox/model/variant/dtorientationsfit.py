@@ -12,3 +12,4 @@ class VTSoGParams(VariantBaseType):
     offset_min = Variant(0)
     offset_max = Variant(0.01)
     use_seed = Variant(False)
+    override = Variant(False)

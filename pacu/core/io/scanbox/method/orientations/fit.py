@@ -19,6 +19,7 @@ sog_default = dict(
     offset_min = 0,
     offset_max = 0.01,
     use_seed = False,
+    override = False,
 )
 
 PATTRS = 'a1min a1max a2min a2max sigmin sigmax offmin offmax'.split()
@@ -50,6 +51,10 @@ def main(workspace, condition, roi, datatag, dff0s=None, bestprefs=None):
     mat = np.nanmean(np.array(oris), axis=1)
     params = datatag.sog_params or sog_default
 
+    # Patched to use auto-selection of max amplitudes based off the max of the average response across orientations. (JZ)
+    if not params['override']:
+        params['a1_max'] = max(mat) if max(mat) > 0 else 0
+        params['a2_max'] = max(mat) if max(mat) > 0 else 0
 
     if params['use_seed']:
         peak_sf_index = best_pref.peak_sf_index

@@ -159,20 +159,26 @@ export default Model.extend({
     const dt = this.get('cur_dtorientationsfit');
     const p = dt.get('sog_params');
     const current = `${p.a1_min}, ${p.a1_max}, ${p.a2_min}, ${p.a2_max}, ${p.sigma_min}, ${p.sigma_max}, ${p.offset_min}, ${p.offset_max}`;
-    const params = prompt('Please type new parameters', current);
-    if (Ember.isNone(params)) { return; }
-    try {
-      const [a1_min, a1_max, a2_min, a2_max, sigma_min, sigma_max, offset_min, offset_max] = params.split(',').map(parseFloat);
-      const newParams = { a1_min, a1_max, a2_min, a2_max, sigma_min, sigma_max, offset_min, offset_max };
-      for (let p in newParams) {
-        if (isNaN(newParams[p])) {
-          throw 'Parameter error';
+    const toggled = !p.override;
+    if (toggled) {
+      const params = prompt('Please type new parameters', current);
+      if (Ember.isNone(params)) { return; }
+      try {
+        const [a1_min, a1_max, a2_min, a2_max, sigma_min, sigma_max, offset_min, offset_max] = params.split(',').map(parseFloat);
+        const newParams = { a1_min, a1_max, a2_min, a2_max, sigma_min, sigma_max, offset_min, offset_max };
+        for (let p in newParams) {
+          if (isNaN(newParams[p])) {
+            throw 'Parameter error';
+          }
         }
+        dt.set('sog_params', {...newParams, override: true});
+        dt.save();
+      } catch(e) {
+        this.get('toast').warning(e);
       }
-      dt.set('sog_params', newParams);
-      dt.save();
-    } catch(e) {
-      this.get('toast').warning(e);
+    } else {
+        dt.set('sog_params', {override: false});
+        dt.save();
     }
   },
   computeSoG() {
