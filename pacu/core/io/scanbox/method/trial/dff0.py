@@ -130,16 +130,16 @@ def handle_single(workspace, condition, roi, datatag, n_panes):
     later_baseline_trace = baseline_trace[-later_part:]
 
     # using median between 20th and 80th percentil for baseline value (JZ)
-    p_20 = np.percentile(trace, 20)
-    p_80 = np.percentile(trace, 80)
-    filtered_trace = trace[(trace > p_20) & (trace < p_80)]
-    f_0 = np.median(trace)
+    #p_20 = np.percentile(trace, 20)
+    #p_80 = np.percentile(trace, 80)
+    #filtered_trace = trace[(trace > p_20) & (trace < p_80)]
+    #f_0 = np.median(trace)
 
-    old_f_0 = later_baseline_trace.mean()
+    f_0 = later_baseline_trace.mean()
     on_trace_f_0 = (on_trace - f_0) / f_0
     baseline_trace_f_0 = (baseline_trace - f_0) / f_0
-    print ('\nOld Baseline: {}'
-           '\nNew Baseline: {}'.format(old_f_0,f_0))
+    #print ('\nOld Baseline: {}'
+    #       '\nNew Baseline: {}'.format(old_f_0,f_0))
 
     # print 'Verifying recording duration...'
     # print datatag.trial_on_time, len(on_trace), on_first_frame, on_last_frame
