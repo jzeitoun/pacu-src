@@ -13,6 +13,11 @@ export default [
     valuePath: 'value.cv',
   },
   {
+    name: 'DCV',
+    relPath: 'dtorientationsfitsByCT',
+    valuePath: 'value.dcv',
+  },
+  {
     name: 'DSI',
     relPath: 'dtorientationsfitsByCT',
     valuePath: 'value.dsi',

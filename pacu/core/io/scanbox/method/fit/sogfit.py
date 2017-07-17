@@ -150,6 +150,15 @@ class SumOfGaussianFit(object):
         return sqrt(
             sum((R_thetas * sin(two_thetas)))**2 + sum((R_thetas * cos(two_thetas)))**2
         ) / sum(R_thetas)
+    # Added by (JZ)
+    @property
+    def dcv(self):
+        sqrt, sin, cos, sum = np.sqrt, np.sin, np.cos, np.sum
+        thetas = (np.array(self.xoris)/360)*2*np.pi
+        R_thetas = self.ymeas
+        return sqrt(
+            sum((R_thetas * sin(thetas)))**2 + sum((R_thetas * cos(thetas)))**2
+        ) / sum(R_thetas)
     @property
     def sigma(self):
         return self.fit_params[2]

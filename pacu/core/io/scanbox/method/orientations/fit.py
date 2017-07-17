@@ -55,6 +55,10 @@ def main(workspace, condition, roi, datatag, dff0s=None, bestprefs=None):
     if not params['override']:
         params['a1_max'] = max(mat) if max(mat) > 0 else 0
         params['a2_max'] = max(mat) if max(mat) > 0 else 0
+        # added by Dario's suggestion (JZ)
+        params['a1_max'] = params['a1_max'] * 0.8
+        params['a2_max'] = params['a2_max'] * 0.8
+        params['sigma_min'] = (360/len(condition.orientations))/2.0
 
     if params['use_seed']:
         peak_sf_index = best_pref.peak_sf_index
@@ -81,6 +85,7 @@ def main(workspace, condition, roi, datatag, dff0s=None, bestprefs=None):
         osi = fit.osi,
         dsi = fit.dsi,
         cv = fit.cv,
+        dcv = fit.dcv, # added by (JZ)
         sigma = fit.sigma,
         o_pref = fit.o_pref,
         r_max = fit.r_max,

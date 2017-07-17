@@ -81,7 +81,7 @@ def handle_multi(workspace, condition, roi, datatag, n_panes):
     return dict(on=on_trace_f_0.tolist(), baseline=baseline_trace_f_0.tolist())
 
 def handle_single(workspace, condition, roi, datatag, n_panes):
-    print 'handle single plain'
+    print 'handle single pane'
     pane_offset = workspace.cur_pane or 0
     on_duration = condition.on_duration
     off_duration = condition.off_duration
@@ -129,9 +129,17 @@ def handle_single(workspace, condition, roi, datatag, n_panes):
     later_part = int(workspace.baseline_duration * framerate)
     later_baseline_trace = baseline_trace[-later_part:]
 
-    f_0 = later_baseline_trace.mean()
+    # using median between 20th and 80th percentil for baseline value (JZ)
+    p_20 = np.percentile(trace, 20)
+    p_80 = np.percentile(trace, 80)
+    filtered_trace = trace[(trace > p_20) & (trace < p_80)]
+    f_0 = np.median(trace)
+
+    old_f_0 = later_baseline_trace.mean()
     on_trace_f_0 = (on_trace - f_0) / f_0
     baseline_trace_f_0 = (baseline_trace - f_0) / f_0
+    print ('\nOld Baseline: {}'
+           '\nNew Baseline: {}'.format(old_f_0,f_0))
 
     # print 'Verifying recording duration...'
     # print datatag.trial_on_time, len(on_trace), on_first_frame, on_last_frame
