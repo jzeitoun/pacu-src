@@ -147,6 +147,7 @@ class SumOfGaussianFit(object):
         sqrt, sin, cos, sum = np.sqrt, np.sin, np.cos, np.sum
         two_thetas = 2*(np.array(self.xoris)/360)*2*np.pi
         R_thetas = self.ymeas
+        R_thetas = R_thetas + np.abs(np.min(R_thetas)) # sets most negative mean response to zero
         return sqrt(
             sum((R_thetas * sin(two_thetas)))**2 + sum((R_thetas * cos(two_thetas)))**2
         ) / sum(R_thetas)
@@ -156,6 +157,7 @@ class SumOfGaussianFit(object):
         sqrt, sin, cos, sum = np.sqrt, np.sin, np.cos, np.sum
         thetas = (np.array(self.xoris)/360)*2*np.pi
         R_thetas = self.ymeas
+        R_thetas = R_thetas + np.abs(np.min(R_thetas)) # sets most negative mean response to zero
         return sqrt(
             sum((R_thetas * sin(thetas)))**2 + sum((R_thetas * cos(thetas)))**2
         ) / sum(R_thetas)
