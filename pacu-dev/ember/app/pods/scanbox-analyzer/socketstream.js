@@ -5,6 +5,7 @@ const Image = Ember.Object.extend({
   mpi: false,
   buffer: null,
   curIndex: 0,
+  cmap: `jet`, // added attribute (JZ)
   @computed('depth') maxIndex(d) {
     return d - 1;
   },
@@ -20,16 +21,22 @@ export default Ember.Object.extend({
   @on('init') initialize() {
     this.mirror('ch0.dimension', 'ch0.has_maxp');
   },
-  requestFrame(index) {
+  // this requests frame from backend (JZ)
+  // colormap is determined in backend
+  // added cmap argument to select colormap
+  requestFrame(index, cmap) {
     return this.get('wsx').invokeAsBinary(
-        'ch0.request_frame', parseInt(index)).then(buffer => {
+        'ch0.request_frame', parseInt(index), cmap).then(buffer => {
       this.set('img.buffer', buffer);
       this.set('img.mpi', false);
     });
   },
   indexChanged: function() {
-    this.requestFrame(this.get('img.curIndex'));
+    this.requestFrame(this.get('img.curIndex'), this.get('img.cmap')); // added cmap argument
   }.observes('img.curIndex'),
+  cmapChanged: function() {
+    this.requestFrame(this.get('img.curIndex'), this.get('img.cmap')); // added cmap argument
+  }.observes('img.cmap'),
   @computed() mainCanvasDimension() {
     return { height: 0 };
   },

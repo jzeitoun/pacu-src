@@ -58,6 +58,9 @@ function importROIFileDiffChanged(e) { // `this` is the current route
 }
 
 export default {
+  testalert() {
+    alert('Test!');
+  },
   do(/*action, ...args*/) {
     // alert('not supported');
     // return this.actions[action].apply(this, args);
@@ -157,6 +160,14 @@ export default {
     batch.promiseSequence(rois, 'refreshAll').then(() => {
       this.toast.info('Batch process complete!');
     });
+  },
+  setJetCmap() {
+    this.currentModel.stream.set('img.cmap', 'jet');
+    this.toast.info('Colormap changed to jet.');
+  },
+  setGrayCmap() {
+    this.currentModel.stream.set('img.cmap', 'gray');
+    this.toast.info('Colormap changed to gray.');
   },
   neuropilOnAll() {
     const rois = this.currentModel.workspace.get('loadedROIs');

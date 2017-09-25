@@ -88,6 +88,7 @@
       {{! Added by (JZ)}}
       <div class="item" {{action "exportDataAsMat"}}>
         All Data as .mat</div>
+      <div class="item" {{action "testalert"}}>Modified Twice Alert!</div>
     </div>
   </div>
   {{/unless}}
@@ -141,8 +142,8 @@
     {{input type="range" min="0" step="1"
       max=stream.img.maxIndex value=stream.img.curIndex}}
   </div>
-
   <section class="ui clearing divider"></section>
+<<<<<<< HEAD:pacu-dev/ember/app/pods/scanbox-analyzer/template.hbs
   {{! Aadded by RA }}
   <div class="ui compact inverted icon menu">
     {{! Dropdown to select ROI visualization mode. If true uses min mode. Right now this is handled as a bool.}}
@@ -162,6 +163,18 @@
   {{! End }}
   </div>
 
+=======
+  {{! Added by (JZ)}}
+  <div class="ui simple dropdown {{if maxpBusy "disabled"}} item">
+    Colormap
+    <i class="dropdown icon"></i>
+    <div class="menu">
+      <div class="item" {{action "setJetCmap"}}>Jet</div>
+      <div class="item" {{action "setGrayCmap"}}>Gray</div>
+    </div>
+  </div>
+  {{! End Addition }}
+>>>>>>> 3d769ec818cfd2999c03001b6b3f82cff90de516:pacu/ember/app/pods/scanbox-analyzer/template.hbs
   <div class="ui padded grid">
 
     {{! Main Canvas }}
@@ -174,7 +187,12 @@
         <div class="ui {{if model.workspace.roisBusy "active"}} dimmer">
           <div class="ui loader"></div>
         </div>
+<<<<<<< HEAD:pacu-dev/ember/app/pods/scanbox-analyzer/template.hbs
         
+=======
+
+
+>>>>>>> 3d769ec818cfd2999c03001b6b3f82cff90de516:pacu/ember/app/pods/scanbox-analyzer/template.hbs
         {{layer.canvas-2d buffer=stream.img.buffer}}
 
         {{layer.roi-manager workspace=model.workspace passedToggleROIs=toggleROIs passedModeROIs=MinModeROIs}}
