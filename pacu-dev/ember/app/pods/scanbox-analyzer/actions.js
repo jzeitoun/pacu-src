@@ -184,7 +184,18 @@ export default {
         this.toast.info('Batch process complete!');
       });
     }
-
+  },        
+  //Added by RA. 
+  //Listenes to state o the ROI toggle and changes a bool representing desired ROI visibility to pass to roi-manager
+  changeVisibilityROIs() {
+    this.controller.set('toggleROIs', !this.controller.get('toggleROIs'));
+  },
+  //Added by RA.
+  //Responds to selecton in Display Mode dropdown and changes a bool representing if should display minimal or full features. true is minimal. 
+  //Passes infor ro roi-manager. Should be updated to pass string for >2 options.
+  changeModeROIs(mode){
+    this.controller.set('MinModeROIs', mode);
+    console.log(mode);
   },
   updateFrameShift() {
     const current = this.currentModel.workspace.get('params.frame_shift');

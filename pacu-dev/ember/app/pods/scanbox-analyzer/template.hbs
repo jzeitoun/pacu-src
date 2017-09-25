@@ -49,6 +49,7 @@
     <i class="dropdown icon"></i>
     <div class="menu">
       <div class="item" {{action "initMPI"}}>Initialize</div>
+      <div class="item">Live-Test</div>
       {{#if stream.ch0HasMaxp}}
         <div class="item" {{action "overlayMPI"}}>Overlay MPI Window</div>
         <div class="item" {{action "exportMPI"}}>Export MPI as Tiff</div>
@@ -110,9 +111,6 @@
         Update Frame Shift: {{model.workspace.params.frame_shift}}</div>
     </div>
   </div>
-
-
-
 </div>
 {{/x-sui-sticky}}
 
@@ -145,6 +143,25 @@
   </div>
 
   <section class="ui clearing divider"></section>
+  {{! Aadded by RA }}
+  <div class="ui compact inverted icon menu">
+    {{! Dropdown to select ROI visualization mode. If true uses min mode. Right now this is handled as a bool.}}
+    <div class="ui simple dropdown item">
+      Display: {{#if MinModeROIs}}Minimal{{else}}Full Featured{{/if}}
+      <i class="dropdown icon"></i>
+      <div class="menu">
+        <div class="item" {{action "changeModeROIs" true}}>Minimal</div>
+        <div class="item" {{action "changeModeROIs" false}}>Full Featured</div>
+      </div>
+    </div>
+    {{! toggle to show, hide ROIs. }}
+    <div class="ui toggle checkbox inverted" style="margin: 0.92857143em 1.14285714em;">
+      <input type="checkbox" id="checkbox-toggle" name="cancelCheckbox" checked {{action "changeVisibilityROIs" on="change"}}/>
+      <label>Display ROIs</label>
+    </div>
+  {{! End }}
+  </div>
+
   <div class="ui padded grid">
 
     {{! Main Canvas }}
@@ -157,12 +174,15 @@
         <div class="ui {{if model.workspace.roisBusy "active"}} dimmer">
           <div class="ui loader"></div>
         </div>
+        
         {{layer.canvas-2d buffer=stream.img.buffer}}
-        {{layer.roi-manager workspace=model.workspace}}
+
+        {{layer.roi-manager workspace=model.workspace passedToggleROIs=toggleROIs passedModeROIs=MinModeROIs}}
         {{#if stream.img.mpi}}
           {{layer.roi-locator workspace=model.workspace stream=stream}}
         {{/if}}
         {{!layer.context-menu centroid=model.focused.roi.centroid}}
+
       {{/x-layer}}
     {{/x-zoomable-container}}
 

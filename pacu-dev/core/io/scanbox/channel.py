@@ -68,18 +68,19 @@ class ScanboxChannel(object):
         with open(self.mmappath.str, 'w') as npy, io.sbx.path.open('rb') as raw_file:
             chunks = iter(functools.partial(raw_file.read, frame_size), '')
             for i, chunk in enumerate(chunks):
-                if (i % 100) == 0:
-                    mem_pct = p.memory_percent()
-                    if mem_pct > 75:
-                        raise MemoryError('Too much memory used. Processing aborted.')
-                    print ('Processing frames at ({}/{}). '
-                           'Mem usage {}%').format(i, depth, mem_pct)
-                f = ~np.frombuffer(chunk, dtype='uint16')
-                f[f == 65535] = 0
-                npy.write(f.tostring())
-                max[i] = f.max()
-                min[i] = f.min()
-                mean[i] = f.mean()
+                if i < depth:
+                    if (i % 100) == 0:
+                        mem_pct = p.memory_percent()
+                        if mem_pct > 75:
+                            raise MemoryError('Too much memory used. Processing aborted.')
+                        print ('Processing frames at ({}/{}). '
+                               'Mem usage {}%').format(i, depth, mem_pct)
+                    f = ~np.frombuffer(chunk, dtype='uint16')
+                    f[f == 65535] = 0
+                    npy.write(f.tostring())
+                    max[i] = f.max()
+                    min[i] = f.min()
+                    mean[i] = f.mean()
         # try:
         #     p.nice(prev_nice)
         #     p.ionice(prev_ionice.ioclass)
@@ -92,6 +93,9 @@ class ScanboxChannel(object):
         print 'Converting done!'
         return self
     def request_frame(self, index):
+
+        import ipdb; ipdb.set_trace()
+
         return self.cmap8bit.to_rgba(self.mmap8bit[index], bytes=True).tostring()
     @memoized_property
     def mmap8bit(self):

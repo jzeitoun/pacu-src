@@ -98,6 +98,12 @@ export default Ember.Route.extend({
   setupController(controller, model) {
     this._super(...arguments);
     controller.set('stream', model.stream);
+    //Added by RA
+    //sets ROI toggle default state.
+    this.controller.set('toggleROIs', true);
+    //Added by RA
+    //sets ROI display mode to default state. Currently default is minimal info.
+    this.controller.set('MinModeROIs', false);
   },
   on_sse_print(msg, err) {
     if (10 === msg.charCodeAt() || 32 === msg.charCodeAt()) { return; }

@@ -17,6 +17,10 @@ export default Ember.Component.extend({
       }
     });
   },
+  fullNameChanged: Ember.observer('toggleROIs', function() {
+    // deal with the change
+    console.log('test');
+  }),
   @observes('roi.active') activityChanged(/*active*/) {
     if (this.get('roi.active')) {
       this.element.scrollIntoViewIfNeeded();

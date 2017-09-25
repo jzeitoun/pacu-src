@@ -69,6 +69,7 @@ export default Ember.Component.extend({
       // return this.get('workspace').appendROI({
       //   polygon: roi.get('polygon')
       // });
+
     }
   }
 });
