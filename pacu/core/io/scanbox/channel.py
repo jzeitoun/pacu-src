@@ -10,8 +10,22 @@ from pacu.util.inspect import repr
 from pacu.util.path import Path
 from pacu.util.prop.memoized import memoized_property
 from matplotlib.colors import Normalize
-from matplotlib.cm import ScalarMappable, jet, gray
+from matplotlib.cm import jet, gray, viridis, plasma, inferno, magma, Purples, Blues, Greens, Oranges, Reds
 from pacu.core.io.util.colormap.distorted2 import DistortedColormap2
+
+colormaps = {
+    'Jet': jet,
+    'Gray': gray,
+    'Viridis': viridis,
+    'Plasma': plasma,
+    'Inferno': inferno,
+    'Magma': magma,
+    'Purples': Purples,
+    'Blues': Blues,
+    'Greens': Greens,
+    'Oranges': Oranges,
+    'Reds': Reds
+    }
 
 class ScanboxChannelMeta(object):
     __repr__ = repr.auto_strict
@@ -41,6 +55,7 @@ class ScanboxChannel(object):
         self.mmappath = self.path.join_suffixes('.mmap.npy')
         self.statpath = self.path.join_suffixes('.stat.npy')
         self.metapath = self.path.join_suffixes('.meta.json')
+        self.cmap = colormaps['Jet']
     def import_with_io(self, io):
         print 'Import channel {}.'.format(self.channel)
         if io.mat.scanmode == 0:
@@ -93,7 +108,9 @@ class ScanboxChannel(object):
         print 'Converting done!'
         return self
     def request_frame(self, index):
-        return self.cmap8bit.to_rgba(self.mmap8bit[index], bytes=True).tostring()
+        return self.cmap(self.mmap8bit[index], bytes=True).tostring()
+    def set_cmap(self, cmap):
+        self.cmap = colormaps[cmap]
     @memoized_property
     def mmap8bit(self):
         return self._mmap.view('uint8'
@@ -181,3 +198,14 @@ class ScanboxChannel(object):
     @property
     def shape(self):
         return (self.meta.z/self.n_focal_pane, self.meta.y, self.meta.x)
+
+#import functools
+#from cStringIO import StringIO
+#
+#from PIL import Image
+#import numpy as np
+#    z, y, x = self.mmap.shape
+#    return dict(depth=z, height=y, width=x)
+#    @property
+#    def shape(self):
+#        return (self.meta.z/self.n_focal_pane, self.meta.y, self.meta.x)

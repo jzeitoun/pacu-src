@@ -161,13 +161,9 @@ export default {
       this.toast.info('Batch process complete!');
     });
   },
-  setJetCmap() {
-    this.currentModel.stream.set('img.cmap', 'jet');
-    this.toast.info('Colormap changed to jet.');
-  },
-  setGrayCmap() {
-    this.currentModel.stream.set('img.cmap', 'gray');
-    this.toast.info('Colormap changed to gray.');
+  setCmap(cmap) {
+    this.currentModel.stream.set('img.cmap', cmap);
+    this.toast.info(`Colormap changed to ${cmap}`);
   },
   neuropilOnAll() {
     const rois = this.currentModel.workspace.get('loadedROIs');
