@@ -93,9 +93,6 @@ class ScanboxChannel(object):
         print 'Converting done!'
         return self
     def request_frame(self, index):
-
-        import ipdb; ipdb.set_trace()
-
         return self.cmap8bit.to_rgba(self.mmap8bit[index], bytes=True).tostring()
     @memoized_property
     def mmap8bit(self):
