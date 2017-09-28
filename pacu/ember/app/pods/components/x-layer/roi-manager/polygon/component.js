@@ -8,11 +8,7 @@ export default Ember.Component.extend({
   classNameBindings: ['roi.active'],
   attributeBindings: ['points', 'style'],
   @computed('color') style(c) {
-<<<<<<< HEAD:pacu-dev/ember/app/pods/components/x-layer/roi-manager/polygon/component.js
-    return Ember.String.htmlSafe(`stroke: ${c};`);
-=======
-    return Ember.String.htmlSafe(`fill: ${c}; fill-opacity: 0.1;`);
->>>>>>> 3d769ec818cfd2999c03001b6b3f82cff90de516:pacu/ember/app/pods/components/x-layer/roi-manager/polygon/component.js
+    return Ember.String.htmlSafe(`fill: ${c}; fill-opacity: 0;`);
   },
   @computed('roi.polygon.@each.{x,y}') points(pg=[]) {
     return pg.map(p => `${p.x},${p.y}`).join(' ');
