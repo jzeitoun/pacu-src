@@ -7,6 +7,7 @@ export default Model.extend({
   created_at: attr('epoch'),
   name: attr('string'),
   cur_sfreq: attr(),
+  cur_tfreq: attr(), // added for tfrequency
   cur_contrast: attr(),
   cur_pane: attr(),
   baseline_duration: attr(),

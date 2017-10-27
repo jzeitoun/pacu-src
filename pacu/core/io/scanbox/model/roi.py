@@ -96,29 +96,35 @@ class ROI(SQLite3Base):
             print 'Initialize Orientations Mean'
             for sf in condition.sfrequencies:
                 for ct in condition.contrasts:
-                    DTOrientationsMean(roi=self, trial_sf=sf, trial_contrast=ct)
+                    for tf in condition.tfrequencies: # added by JZ
+                        DTOrientationsMean(roi=self, trial_sf=sf, trial_contrast=ct, trial_tf=tf)
         if not self.dtorientationbestprefs:
             print 'Initialize Orientation Best Pref'
             for ct in condition.contrasts:
-                DTOrientationBestPref(roi=self, trial_contrast=ct)
+                for tf in condition.tfrequencies: # added by JZ
+                    DTOrientationBestPref(roi=self, trial_contrast=ct, trial_tf=tf)
         if not self.dtorientationsfits:
             print 'Initialize Orientations Fit'
             for sf in condition.sfrequencies:
                 for ct in condition.contrasts:
-                    DTOrientationsFit(roi=self, trial_sf=sf, trial_contrast=ct)
+                    for tf in condition.tfrequencies: # added by JZ
+                        DTOrientationsFit(roi=self, trial_sf=sf, trial_contrast=ct, trial_tf=tf)
         if not self.dtanovaeachs:
             print 'Initialize Anova Each'
             for sf in condition.sfrequencies:
                 for ct in condition.contrasts:
-                    DTAnovaEach(roi=self, trial_sf=sf, trial_contrast=ct)
+                    for tf in condition.tfrequencies: # added by JZ
+                        DTAnovaEach(roi=self, trial_sf=sf, trial_contrast=ct, trial_tf=tf)
         if not self.dtsfreqfits:
             print 'Initialize SFreq Fit'
             for ct in condition.contrasts:
-                DTSFreqFit(roi=self, trial_contrast=ct)
+                for tf in condition.tfrequencies: # added by JZ
+                    DTSFreqFit(roi=self, trial_contrast=ct, trial_tf=tf)
         if not self.dtanovaalls:
             print 'Initialize Anova All'
             for ct in condition.contrasts:
-                DTAnovaAll(roi=self, trial_contrast=ct)
+                for tf in condition.tfrequencies: # added by JZ
+                    DTAnovaAll(roi=self, trial_contrast=ct, trial_tf=tf)
     def refresh_orientations_fit(self):
        print 'REFRESH OriFit' # used in ember/app/pods/roi/model.js
        for tag in self.dtorientationsfits: tag.refresh()

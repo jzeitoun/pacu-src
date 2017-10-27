@@ -32,6 +32,7 @@ def main(workspace, condition, roi, datatag, dff0s=None, bestprefs=None):
     trials = dff0s.filter_by(
         trial_sf=datatag.trial_sf,
         trial_contrast=datatag.trial_contrast,
+        trial_tf=datatag.trial_tf, # added by JZ
         trial_blank=False,
         trial_flicker=False,
     )

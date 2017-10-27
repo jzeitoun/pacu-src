@@ -106,6 +106,9 @@ class Condition(SQLite3Base):
                 ws.cur_sfreq = self.sfrequencies[0]
             if self.contrasts:
                 ws.cur_contrast = self.contrasts[0]
+            # added for temporal frequency addition (JZ)
+            if self.tfrequencies:
+                ws.cur_tfreq = self.tfrequencies[0]
     def append_workspace_with_focal_pane(self, name, pane):
         self.append_workspace(name, pane)
     @property

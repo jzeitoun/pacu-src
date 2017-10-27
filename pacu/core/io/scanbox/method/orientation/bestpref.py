@@ -36,6 +36,8 @@ def main(workspace, condition, roi, datatag, dff0s=None):
     n_panes = condition.info.get('focal_pane_args', {}).get('n', 1)
     pane_offset = workspace.cur_pane or 0
 
+    ws_condition = condition # added for debugging JZ
+
     cfreq = workspace.condition.info['framerate'] / n_panes
     sfs = []
     trials = dff0s.filter_by(trial_blank=False, trial_flicker=False)

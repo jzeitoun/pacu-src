@@ -57,6 +57,7 @@ class SumOfGaussianFit(object):
         x = np.append(self.xoris, 360)
         y = np.append(self.ymeas, self.ymeas[0])
         x_new = np.arange(0, 360, 1)
+        #x_new = np.arange(np.min(x), np.max(x)) # modified by JZ because orientations might not span 0 - 360
         return Fit(interp1d(x, y)(x_new), x_new) # y comes first
     @memoized_property
     def brute_fit(self):
@@ -71,7 +72,7 @@ class SumOfGaussianFit(object):
         return fit_params
     @memoized_property
     def leastsq_fit(self):
-        fit_params, _, _, _, _ =optimize.leastsq(
+        fit_params, _, _, _, _ = optimize.leastsq(
             self.get_residuals_leastsq,
             self.brute_fit,
             args = self.stretched,
@@ -102,7 +103,8 @@ class SumOfGaussianFit(object):
             return not offset < 0
     def get_residuals_leastsq(self, params, y, x):
         if not self.within_bounds(params):
-            return 1e12
+            print('WARNING: SIGMA IS OUTSIDE THE NORMAL BOUNDS')
+            #return 1e12  # commented out to allow single orientation
         return y - self.function(x, params)
     @memoized_property
     def x_fit(self):

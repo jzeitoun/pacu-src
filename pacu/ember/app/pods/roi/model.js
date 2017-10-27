@@ -201,11 +201,19 @@ export default Model.extend({
       this.set('inAction', false);
     });
   },
-  @computed('workspace.cur_sfreq', 'workspace.cur_contrast', 'dtorientationsmeans') dtorientationsmeanBySF(sfreq, cont, dts) {
-    return dts.filterBy('trial_sf', sfreq).findBy('trial_contrast', cont);
+  // adding temporal frequency (JZ)
+  //@computed('workspace.cur_sfreq', 'workspace.cur_contrast', 'dtorientationsmeans') dtorientationsmeanBySF(sfreq, cont, tfreq, dts) {
+  //  return dts.filterBy('trial_sf', sfreq).findBy('trial_contrast', cont);
+  //},
+  @computed('workspace.cur_sfreq', 'workspace.cur_contrast', 'workspace.cur_tfreq', 'dtorientationsmeans') dtorientationsmeanBySF(sfreq, cont, tfreq, dts) {
+    console.log('dtorientationsmeanBySF')
+    return dts.filterBy('trial_sf', sfreq).filterBy('trial_contrast', cont).findBy('trial_tf', tfreq);
   },
-  @computed('workspace.cur_sfreq', 'workspace.cur_contrast', 'dtorientationsfits') dtorientationsfitBySF(sfreq, cont, dts) {
-    return dts.filterBy('trial_sf', sfreq).findBy('trial_contrast', cont);
+  //@computed('workspace.cur_sfreq', 'workspace.cur_contrast', 'dtorientationsfits') dtorientationsfitBySF(sfreq, cont, dts) {
+  //  return dts.filterBy('trial_sf', sfreq).findBy('trial_contrast', cont);
+  //},
+  @computed('workspace.cur_sfreq', 'workspace.cur_contrast', 'workspace.cur_tfreq', 'dtorientationsfits') dtorientationsfitBySF(sfreq, cont, tfreq, dts) {
+    return dts.filterBy('trial_sf', sfreq).filterBy('trial_contrast', cont).findBy('trial_tf', tfreq);
   },
   @computed('workspace.cur_contrast', 'dtsfreqfits') dtsfreqfitByCT(cont, dts) {
     return dts.findBy('trial_contrast', cont);

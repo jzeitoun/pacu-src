@@ -21,6 +21,7 @@ class Workspace(SQLite3Base):
     name = Column(UnicodeText, unique=True)
     cur_sfreq = Column(Float)
     cur_contrast = Column(Float)
+    cur_tfreq = Column(Float)
     cur_chan = Column(Integer, default=0)
     cur_pane = Column(Integer, default=0)
     baseline_duration = Column(Float, default=0.5)

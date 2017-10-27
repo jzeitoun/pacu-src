@@ -38,6 +38,13 @@
       Contrast: {{model.condition.contrast}}
     </a>
   {{/if}}
+  {{#if model.condition.tfrequencies}}
+  <a class="item">
+    TF: {{x-dropdown-value
+      items=model.condition.tfrequencies
+      value=model.workspace.cur_tfreq}}
+  </a>
+  {{/if}}
   {{!--
   <a class="item" {{action "noop"}}>
     Baseline Duration: {{model.workspace.baseline_duration}}

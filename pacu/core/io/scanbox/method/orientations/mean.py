@@ -9,7 +9,10 @@ def main(workspace, condition, roi, datatag, dff0s=None):
     trials = dff0s.filter_by(
         trial_sf=datatag.trial_sf,
         trial_contrast=datatag.trial_contrast,
+        trial_tf=datatag.trial_tf, # added by JZ for temporal frequency
         trial_flicker=False, trial_blank=False)
+
+    ws_condition = condition # added for debugging JZ
 
     n_panes = condition.info.get('focal_pane_args', {}).get('n', 1)
     pane_offset = workspace.cur_pane or 0

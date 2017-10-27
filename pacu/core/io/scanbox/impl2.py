@@ -201,6 +201,7 @@ def fix_contrasts_schema(Session):
     ct = exp.stimulus_kwargs.get('contrast')
     cts = exp.stimulus_kwargs.get('contrasts')
     print ct, cts
+
     if ct:
         condition.contrast = ct
         condition.contrasts = [ct]
