@@ -10,7 +10,8 @@ from pacu.util.inspect import repr
 from pacu.util.path import Path
 from pacu.util.prop.memoized import memoized_property
 from matplotlib.colors import Normalize
-from matplotlib.cm import jet, gray, viridis, plasma, inferno, magma, Purples, Blues, Greens, Oranges, Reds
+from matplotlib.cm import ScalarMappable, jet, gray, viridis, plasma, inferno, magma, bone, pink, spring, summer, autumn, winter, cool, Wistia, hot, PRGn, PuOr, RdGy, Spectral, coolwarm
+autumn, winter, cool, Wistia, hot, PRGn, PuOr, RdGy, Spectral, coolwarm
 from pacu.core.io.util.colormap.distorted2 import DistortedColormap2
 
 colormaps = {
@@ -20,11 +21,20 @@ colormaps = {
     'Plasma': plasma,
     'Inferno': inferno,
     'Magma': magma,
-    'Purples': Purples,
-    'Blues': Blues,
-    'Greens': Greens,
-    'Oranges': Oranges,
-    'Reds': Reds
+    'Bone': bone,
+    'Pink': pink,
+    'Spring': spring,
+    'Summer': summer,
+    'Autumn': autumn,
+    'Winter': winter,
+    'Cool': cool,
+    'Wistia': Wistia,
+    'Hot': hot,
+    'Purple-Green': PRGn,
+    'Purple-Orange': PuOr,
+    'Red-Gray': RdGy,
+    'Spectral': Spectral,
+    'Cool-Warm': coolwarm
     }
 
 class ScanboxChannelMeta(object):
@@ -56,6 +66,8 @@ class ScanboxChannel(object):
         self.statpath = self.path.join_suffixes('.stat.npy')
         self.metapath = self.path.join_suffixes('.meta.json')
         self.cmap = colormaps['Jet']
+        self.min_val = 0
+        self.max_val = 255
     def import_with_io(self, io):
         print 'Import channel {}.'.format(self.channel)
         if io.mat.scanmode == 0:
@@ -108,31 +120,37 @@ class ScanboxChannel(object):
         print 'Converting done!'
         return self
     def request_frame(self, index):
-        return self.cmap(self.mmap8bit[index], bytes=True).tostring()
+        #return self.cmap(self.mmap8bit[index], bytes=True).tostring()
+        return self.cmap8bit.to_rgba(self.mmap8bit[index], bytes=True).tostring()
     def set_cmap(self, cmap):
         self.cmap = colormaps[cmap]
+    def set_contrast(self, min_val, max_val):
+        self.min_val = int(min_val)
+        self.max_val = int(max_val)
     @memoized_property
     def mmap8bit(self):
         return self._mmap.view('uint8'
             )[self.c_focal_pane::self.n_focal_pane, :, 1::2]
-    @memoized_property
+    @property
     def cmap8bit(self):
-        return ScalarMappable(norm=self.norm, cmap=self.dcmap.distorted)
-    @memoized_property
+        #return ScalarMappable(norm=self.norm, cmap=self.dcmap.distorted)
+        return ScalarMappable(norm=self.norm, cmap=self.cmap)
+    @property
     def norm(self):
         return Normalize(
-            vmin=self.stat.MIN.min()/256, vmax=self.stat.MAX.max()/256)
+            #vvmin=self.stat.MIN.min()/255, vmax=(self.stat.MAX.max()*0.9)/255)
+            vmin=self.min_val, vmax=self.max_val)
     @memoized_property
     def dcmap(self):
         return DistortedColormap2('jet', xmid1=0.35, ymid1=0.65)
-    @cmap8bit.invalidator
-    def update_colormap(self, name, xmid1, ymid1, xmid2, ymid2):
-        x1 = float(xmid1) / 100
-        y1 = float(ymid1) / 100
-        x2 = float(xmid2) / 100
-        y2 = float(ymid2) / 100
-        self.dcmap = DistortedColormap2(name,
-            xmid1=x1, ymid1=y1, xmid2=x2, ymid2=y2)
+    #@cmap8bit.invalidator
+    #def update_colormap(self, name, xmid1, ymid1, xmid2, ymid2):
+    #    x1 = float(xmid1) / 100
+    #    y1 = float(ymid1) / 100
+    #    x2 = float(xmid2) / 100
+    #    y2 = float(ymid2) / 100
+    #    self.dcmap = DistortedColormap2(name,
+    #        xmid1=x1, ymid1=y1, xmid2=x2, ymid2=y2)
     def request_maxp(self, cmap_kwargs):
         dcmap = DistortedColormap2('gray', **cmap_kwargs)
         return dcmap.distorted(

@@ -8,7 +8,7 @@ export default Ember.Component.extend({
   classNameBindings: ['roi.active'],
   attributeBindings: ['points', 'style'],
   @computed('color') style(c) {
-    return Ember.String.htmlSafe(`fill: ${c}; fill-opacity: 0;`);
+    return Ember.String.htmlSafe(`stroke: ${c}; fill: ${c}; fill-opacity: 0;`);
   },
   @computed('roi.polygon.@each.{x,y}') points(pg=[]) {
     return pg.map(p => `${p.x},${p.y}`).join(' ');

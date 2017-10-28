@@ -8,7 +8,7 @@ input[type="range"] {
   padding: 1px 2px;
   border-radius: 14px;
   background: #232528;
-  box-shadow: inset 0 1px 0 0 #0d0e0f, inset 0 -1px 0 0 #3a3d42;
+  //box-shadow: inset 0 1px 0 0 #0d0e0f, inset 0 -1px 0 0 #3a3d42;
   -webkit-box-shadow: inset 0 1px 0 0 #0d0e0f, inset 0 -1px 0 0 #3a3d42;
   outline: none; /* no focus outline */
 }
@@ -60,3 +60,33 @@ input[type="range"]::-ms-thumb {
   border: 0;
   background-image: linear-gradient(to bottom, #529de1 0, #245e8f 100%); /* W3C */
 }
+
+input[type="checkbox"] {
+  color: #FFFFFF;
+}
+
+.flex-container {
+  display: -webkit-flex;
+  display: flex;
+}
+
+.colormap, .left-label, .roi-toggle {
+  padding: 10px;
+  display: inline-block;
+  text-align: center;
+  vertical-align: middle;
+}
+
+.contrast {
+  display: -webkit-flex;
+  display: flex;
+  width: 45%;
+  position: relative;
+}
+
+.max, .min {
+  width: 35%;
+  padding: 10px;
+}
+
+

@@ -20,4 +20,9 @@ export default Ember.Component.extend({
     img.data.set(new Uint8ClampedArray(buffer));
     ctx.putImageData(img, 0, 0);
   }.observes('buffer'),
+
+  didInsertElement() {
+    // ensures default value of 255 for contrast slider
+    document.getElementById('max-slider').value = "255"
+  }
 });

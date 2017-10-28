@@ -149,47 +149,74 @@
     {{input type="range" min="0" step="1"
       max=stream.img.maxIndex value=stream.img.curIndex}}
   </div>
+
   <section class="ui clearing divider"></section>
-  {{! Aadded by RA }}
-  <div class="ui compact inverted icon menu">
-    {{! Dropdown to select ROI visualization mode. If true uses min mode. Right now this is handled as a bool.}}
-    <div class="ui simple dropdown item">
-      Display: {{#if MinModeROIs}}Minimal{{else}}Full Featured{{/if}}
+  <div class="flex-container"> {{!-- Start flex div --}}
+    {{! Aadded by RA }}
+    <div class="ui compact inverted icon menu">
+      {{! Dropdown to select ROI visualization mode. If true uses min mode. Right now this is handled as a bool.}}
+      <div class="ui simple dropdown item">
+        Display:{{#if MinModeROIs}}Minimal{{else}}Full Featured{{/if}}
+        <i class="dropdown icon"></i>
+        <div class="menu">
+          <div class="item" {{action "changeModeROIs" true}}>Minimal</div>
+          <div class="item" {{action "changeModeROIs" false}}>Full Featured</div>
+        </div>
+      </div>
+
+      {{! toggle to show, hide ROIs. }}
+      <div class="left-label">Display ROIs:</div>
+      <div class="ui toggle checkbox roi-toggle">
+        <input type="checkbox" id="checkbox-toggle" name="cancelCheckbox" checked {{action "changeVisibilityROIs" on="change"}}/>
+      <label></label>
+      </div>
+
+    {{! End }}
+    </div>
+
+    {{! Added by (JZ)}}
+    <div class="ui simple dropdown colormap{{if maxpBusy "disabled"}} item">
+      Colormap
       <i class="dropdown icon"></i>
       <div class="menu">
-        <div class="item" {{action "changeModeROIs" true}}>Minimal</div>
-        <div class="item" {{action "changeModeROIs" false}}>Full Featured</div>
+        <div class="item" {{action "setCmap" 'Jet'}}>Jet</div>
+        <div class="item" {{action "setCmap" 'Gray'}}>Gray</div>
+        <div class="item" {{action "setCmap" 'Viridis'}}>Viridis</div>
+        <div class="item" {{action "setCmap" 'Plasma'}}>Plasma</div>
+        <div class="item" {{action "setCmap" 'Inferno'}}>Inferno</div>
+        <div class="item" {{action "setCmap" 'Magma'}}>Magma</div>
+        <div class="item" {{action "setCmap" 'Bone'}}>Bone</div>
+        <div class="item" {{action "setCmap" 'Pink'}}>Pink</div>
+        <div class="item" {{action "setCmap" 'Spring'}}>Spring</div>
+        <div class="item" {{action "setCmap" 'Summer'}}>Summer</div>
+        <div class="item" {{action "setCmap" 'Autumn'}}>Autumn</div>
+        <div class="item" {{action "setCmap" 'Winter'}}>Winter</div>
+        <div class="item" {{action "setCmap" 'Cool'}}>Cool</div>
+        <div class="item" {{action "setCmap" 'Hot'}}>Hot</div>
+        <div class="item" {{action "setCmap" 'Wistia'}}>Wistia</div>
+        <div class="item" {{action "setCmap" 'Purple-Green'}}>Purple-Green</div>
+        <div class="item" {{action "setCmap" 'Purple-Orange'}}>Purple-Orange</div>
+        <div class="item" {{action "setCmap" 'Red-Gray'}}>Red-Gray</div>
+        <div class="item" {{action "setCmap" 'Spectral'}}>Spectral</div>
+        <div class="item" {{action "setCmap" 'Cool-Warm'}}>Cool-Warm</div>
       </div>
     </div>
-    {{! toggle to show, hide ROIs. }}
-    <div class="ui toggle checkbox inverted" style="margin: 0.92857143em 1.14285714em;">
-      <input type="checkbox" id="checkbox-toggle" name="cancelCheckbox" checked {{action "changeVisibilityROIs" on="change"}}/>
-      <label>Display ROIs</label>
+    <div class="contrast">
+      <div class="left-label">Min: </div>
+      <div class="min">
+        {{input type="range" min=0
+          max=255 value=stream.img.min}}
+      </div>
+      <div class="left-label">Max: </div>
+      <div class="max">
+         {{input id="max-slider" type="range" min=0
+            max=255 value=stream.img.max}}
+      </div>
     </div>
-  {{! End }}
-  </div>
-
-  {{! Added by (JZ)}}
-  <div class="ui simple dropdown {{if maxpBusy "disabled"}} item">
-    Colormap
-    <i class="dropdown icon"></i>
-    <div class="menu">
-      <div class="item" {{action "setCmap" 'Jet'}}>Jet</div>
-      <div class="item" {{action "setCmap" 'Gray'}}>Gray</div>
-      <div class="item" {{action "setCmap" 'Viridis'}}>Viridis</div>
-      <div class="item" {{action "setCmap" 'Plasma'}}>Plasma</div>
-      <div class="item" {{action "setCmap" 'Inferno'}}>Inferno</div>
-      <div class="item" {{action "setCmap" 'Magma'}}>Magma</div>
-      <div class="item" {{action "setCmap" 'Purples'}}>Purples</div>
-      <div class="item" {{action "setCmap" 'Blues'}}>Blues</div>
-      <div class="item" {{action "setCmap" 'Greens'}}>Greens</div>
-      <div class="item" {{action "setCmap" 'Oranges'}}>Oranges</div>
-      <div class="item" {{action "setCmap" 'Reds'}}>Reds</div>
-    </div>
-  </div>
+  </div> {{!-- End flexed div --}}
   {{! End Addition }}
-  <div class="ui padded grid">
 
+  <div class="ui padded grid">
     {{! Main Canvas }}
     {{#x-zoomable-container class="twelve wide column imagestack-container"
       dimension=(mut stream.mainCanvasDimension) as |dim|}}

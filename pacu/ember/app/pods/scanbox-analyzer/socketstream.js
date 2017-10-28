@@ -6,6 +6,8 @@ const Image = Ember.Object.extend({
   buffer: null,
   curIndex: 0,
   cmap: 'Jet', // added attribute (JZ)
+  max: 255, // added to control colormap contrast (JZ)
+  min: 0, // added to control colormap contrast (JZ)
   @computed('depth') maxIndex(d) {
     return d - 1;
   },
@@ -35,6 +37,10 @@ export default Ember.Object.extend({
     this.get('wsx').invokeAsBinary(
       'ch0.set_cmap', this.get('img.cmap'))
   },
+  set_contrast(min, max) {
+    this.get('wsx').invokeAsBinary(
+      'ch0.set_contrast', min, max)
+  },
   indexChanged: function() {
     this.requestFrame(this.get('img.curIndex'));
   }.observes('img.curIndex'),
@@ -42,6 +48,10 @@ export default Ember.Object.extend({
     this.set_cmap(this.get('img.cmap')); // added cmap argument JZ
     this.requestFrame(this.get('img.curIndex'));
   }.observes('img.cmap'),
+  contrastChanged: function() {
+    this.set_contrast(this.get('img.min'), this.get('img.max'));
+    Ember.run.debounce(this, () => this.requestFrame(this.get('img.curIndex')), 150);
+  }.observes('img.min', 'img.max'),
   @computed() mainCanvasDimension() {
     return { height: 0 };
   },
