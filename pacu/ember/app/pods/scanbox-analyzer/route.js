@@ -24,6 +24,10 @@ export default Ember.Route.extend({
           esName = 'contrasts';
           eName = 'cur_contrast';
           break;
+        case 84: // t
+          esName = 'tfrequencies';
+          eName = 'cur_tfreq';
+          break;
         default:
           return false;
       }
