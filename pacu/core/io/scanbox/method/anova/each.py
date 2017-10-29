@@ -10,10 +10,18 @@ def main(workspace, condition, roi, datatag, dff0s=None):
     pane_offset = workspace.cur_pane or 0
     if not dff0s:
         dff0s = roi.dttrialdff0s
-    oris = dff0s.filter_by(
-        trial_sf=datatag.trial_sf,
-        trial_contrast=datatag.trial_contrast
-    )
+    if datatag.trial_tf:
+        oris = dff0s.filter_by(
+            trial_sf=datatag.trial_sf,
+            trial_contrast=datatag.trial_contrast,
+            trial_tf=datatag.trial_tf # added by JZ
+        )
+    else:
+        oris = dff0s.filter_by(
+            trial_sf=datatag.trial_sf,
+            trial_contrast=datatag.trial_contrast,
+        )
+
     oris = [
         [np.nanmean(np.array(rep.value['on'][pane_offset::n_panes]))
         for rep in oris.filter_by(trial_ori=ori)]
@@ -35,11 +43,11 @@ if __name__ == '__sbx_main__':
     f, p = main(workspace, condition, roi, datatag)
     datatag.f = 'nan' if np.isnan(f) else f
     datatag.p = 'nan' if np.isnan(p) else p
-    print datatag.f, datatag.p, datatag.trial_sf, datatag.trial_contrast
+    print datatag.f, datatag.p, datatag.trial_sf, datatag.trial_contrast, datatag.trial_tf
 
 if __name__ == '__sbx_stitch__':
     f, p = main(workspace, condition, roi, datatag, dff0s)
     datatag.f = 'nan' if np.isnan(f) else f
     datatag.p = 'nan' if np.isnan(p) else p
-    print datatag.f, datatag.p, datatag.trial_sf, datatag.trial_contrast
+    print datatag.f, datatag.p, datatag.trial_sf, datatag.trial_contrast, datatag.trial_tf
 

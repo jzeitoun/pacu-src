@@ -30,10 +30,17 @@ def main(workspace, condition, roi, datatag, dff0s=None):
     fls = dff0s.filter_by(trial_flicker=True)
     flicker = [np.nanmean(np.array(f.value['on'][pane_offset::n_panes])) for f in fls]
     blank = [np.nanmean(np.array(b.value['on'][pane_offset::n_panes])) for b in bls]
-    all_trials = dff0s.filter_by(
-        trial_contrast=datatag.trial_contrast,
-        trial_flicker=False,
-        trial_blank=False)
+    if datatag.trial_tf:
+        all_trials = dff0s.filter_by(
+            trial_contrast=datatag.trial_contrast,
+            trial_tf=datatag.trial_tf,
+            trial_flicker=False,
+            trial_blank=False)
+    else:
+        all_trials = dff0s.filter_by(
+            trial_contrast=datatag.trial_contrast,
+            trial_flicker=False,
+            trial_blank=False)
     trials = ori_by_sf(all_trials, condition.sfrequencies, condition.orientations)
 
     # all_oris = [

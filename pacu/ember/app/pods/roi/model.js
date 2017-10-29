@@ -215,13 +215,13 @@ export default Model.extend({
     return dts.filterBy('trial_sf', sfreq).filterBy('trial_contrast', cont).findBy('trial_tf', tfreq);
   },
   @computed('workspace.cur_contrast', 'workspace.cur_tfreq', 'dtsfreqfits') dtsfreqfitByCT(cont, tfreq, dts) {
-    return dts.filterBy('trial_contrast', cont).filterBy('trial_tf', tfreq);
+    return dts.filterBy('trial_contrast', cont).findBy('trial_tf', tfreq);
   },
   @computed('workspace.cur_contrast', 'workspace.cur_tfreq', 'dtorientationbestprefs') dtorientationbestprefByCT(cont, tfreq, dts) {
-    return dts.filterBy('trial_contrast', cont).filterBy('trial_tf', tfreq);
+    return dts.filterBy('trial_contrast', cont).findBy('trial_tf', tfreq);
   },
   @computed('workspace.cur_contrast', 'workspace.cur_tfreq', 'dtanovaalls') dtanovaallByCT(cont, tfreq, dts) {
-    return dts.filterBy('trial_contrast', cont).filterBy('trial_tf', tfreq);
+    return dts.filterBy('trial_contrast', cont).findBy('trial_tf', tfreq);
   },
   @computed('workspace.cur_contrast', 'workspace.cur_tfreq', 'dtanovaeachs') dtanovaeachsByCT(cont, tfreq, dts) {
     return dts.filterBy('trial_contrast', cont).filterBy('trial_tf', tfreq);

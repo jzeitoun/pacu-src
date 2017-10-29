@@ -42,8 +42,17 @@ def main(workspace, condition, roi, datatag, dff0s=None):
     sfs = []
     trials = dff0s.filter_by(trial_blank=False, trial_flicker=False)
     for sf in condition.sfrequencies:
-        sf_trials = trials.filter_by(trial_sf=sf,
-            trial_contrast=datatag.trial_contrast)
+        if datatag.trial_tf:
+            sf_trials = trials.filter_by(
+                    trial_sf=sf,
+                    trial_contrast=datatag.trial_contrast,
+                    trial_tf=datatag.trial_tf # added by JZ
+                    )
+        else:
+            sf_trials = trials.filter_by(
+                    trial_sf=sf,
+                    trial_contrast=datatag.trial_contrast,
+                    )
         oris = []
         for ori in condition.orientations:
             reps_by_ori = sf_trials.filter_by(trial_ori=ori)
