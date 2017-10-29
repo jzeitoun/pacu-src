@@ -6,11 +6,17 @@ import numpy as np
 def main(workspace, condition, roi, datatag, dff0s=None):
     if not dff0s:
         dff0s = roi.dttrialdff0s
-    trials = dff0s.filter_by(
-        trial_sf=datatag.trial_sf,
-        trial_contrast=datatag.trial_contrast,
-        trial_tf=datatag.trial_tf, # added by JZ for temporal frequency
-        trial_flicker=False, trial_blank=False)
+    if datatag.trial_tf:
+        trials = dff0s.filter_by(
+            trial_sf=datatag.trial_sf,
+            trial_contrast=datatag.trial_contrast,
+            trial_tf=datatag.trial_tf, # added by JZ for temporal frequency
+            trial_flicker=False, trial_blank=False)
+    else:
+        trials = dff0s.filter_by(
+            trial_sf=datatag.trial_sf,
+            trial_contrast=datatag.trial_contrast,
+            trial_flicker=False, trial_blank=False)
 
     ws_condition = condition # added for debugging JZ
 

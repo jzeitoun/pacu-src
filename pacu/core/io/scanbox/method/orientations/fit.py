@@ -29,13 +29,22 @@ def main(workspace, condition, roi, datatag, dff0s=None, bestprefs=None):
         dff0s = roi.dttrialdff0s
     n_panes = condition.info.get('focal_pane_args', {}).get('n', 1)
     pane_offset = workspace.cur_pane or 0
-    trials = dff0s.filter_by(
-        trial_sf=datatag.trial_sf,
-        trial_contrast=datatag.trial_contrast,
-        trial_tf=datatag.trial_tf, # added by JZ
-        trial_blank=False,
-        trial_flicker=False,
-    )
+    if datatag.trial_tf:
+        trials = dff0s.filter_by(
+            trial_sf=datatag.trial_sf,
+            trial_contrast=datatag.trial_contrast,
+            trial_tf=datatag.trial_tf, # added by JZ
+            trial_blank=False,
+            trial_flicker=False,
+        )
+    else:
+        trials = dff0s.filter_by(
+            trial_sf=datatag.trial_sf,
+            trial_contrast=datatag.trial_contrast,
+            trial_blank=False,
+            trial_flicker=False,
+        )
+
     if not bestprefs:
         bestprefs = roi.dtorientationbestprefs
     best_pref = bestprefs.filter_by(
