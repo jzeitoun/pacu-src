@@ -207,10 +207,20 @@
         {{input type="range" min=0
           max=255 value=stream.img.min}}
       </div>
+      <div>
+        <div class="field-container">
+          {{input value=stream.img.min class="contrast-field"}}
+        </div>
+      </div>
       <div class="left-label">Max: </div>
       <div class="max">
          {{input id="max-slider" type="range" min=0
             max=255 value=stream.img.max}}
+      </div>
+      <div>
+        <div class="field-container">
+          {{input value=stream.img.max class="contrast-field"}}
+        </div>
       </div>
     </div>
   </div> {{!-- End flexed div --}}
