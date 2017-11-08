@@ -29,10 +29,16 @@ export default Ember.Controller.extend({
           return Number(roi.id);
         });
         rois.forEach(function(roi) {
-          roi.set('lastComputedPolygon', 'inProgress');
-          roi.save();
+          if (!(roi.get('polygon') == roi.get('lastComputedPolygon'))) {
+            roi.set('lastComputedPolygon', 'inProgress');
+            roi.save();
+          };
         });
         rois.forEach(function(roi) {
+          // if roi is already computed, skip
+          if (roi.get('polygon') == roi.get('lastComputedPolygon')) {
+            return;
+          };
           // create sqlite record if none exists
           if (!existingIDs.includes(roi.get('roi_id'))) {
             //console.log(existingIDs);
@@ -45,7 +51,11 @@ export default Ember.Controller.extend({
               workspace: workspace
             });
             // compute
-            newRecord.save().then(() => { newRecord.refreshAll(); });
+            newRecord.save().then(() => {
+              newRecord.refreshAll().then(() => {
+                roi.set('lastComputedPolygon', roi.get('polygon'));
+              });
+            });
           } else {
             // record exists, skip to compute
             var roiData = roiDataObjects.filterBy('id', String(roi.get('roi_id'))).get('firstObject');
