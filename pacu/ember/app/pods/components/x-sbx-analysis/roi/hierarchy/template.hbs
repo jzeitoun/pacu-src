@@ -1,4 +1,4 @@
-<div class="ui roi dropdown icon {{if roi.inAction "disabled"}} item">
+{{!--<div class="ui roi dropdown icon {{if roi.inAction "disabled"}} item">
   <i class="gray {{if roi.active "big"}} {{if roi.inAction "loading"}} setting icon"></i>
   <div class="menu">
     <div class="header">
@@ -88,20 +88,20 @@
     </div>
 
   </div>
-</div>
-<div class="item" {{action roi.focus target=roi}}>
+</div>--}}
+<div class="item" {{!--{{action roi.focus target=roi}}--}}>
   <div class="ui basic segments">
-    <p class="inverted segment">
+    {{!--<p class="inverted segment">
       <i class="green crosshairs icon"></i>
       ({{roi.centroid.x}}, {{roi.centroid.y}})
-    </p>
-    <p class="inverted segment">
+    </p>--}}
+  <p class="ui inverted segment">
       {{#if roi.params.cell_id as |cid|}}
         <i class="teal tag icon"></i>
         {{cid}}
       {{else}}
         <i class="yellow info icon"></i>
-        #{{roi.id}}
+        #{{roi.roi_id}}
       {{/if}}
     </p>
   </div>

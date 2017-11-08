@@ -240,24 +240,39 @@
 
         {{layer.canvas-2d buffer=stream.img.buffer}}
 
-        {{layer.roi-manager workspace=model.workspace passedToggleROIs=toggleROIs passedModeROIs=MinModeROIs}}
+        {{layer.roi-manager-v2 workspace=model.workspace
+          file=model.file
+          rois=model.firebaseWorkspace.rois
+          firebaseWorkspace=model.firebaseWorkspace
+          curID=model.file.roi_count
+          add=(action "addROI")
+          update=(action "updateROI")
+          delete=(action "deleteROI")
+          compute=(action "computeROIs")
+          ensureWorkspace=(action "ensureWorkspace")}}
+
+        {{!--{{layer.roi-manager workspace=model.workspace passedToggleROIs=toggleROIs passedModeROIs=MinModeROIs}}
         {{#if stream.img.mpi}}
           {{layer.roi-locator workspace=model.workspace stream=stream}}
         {{/if}}
-        {{!layer.context-menu centroid=model.focused.roi.centroid}}
+        {{!layer.context-menu centroid=model.focused.roi.centroid}}--}}
 
       {{/x-layer}}
     {{/x-zoomable-container}}
 
     {{! ROI Control }}
-    <div class="four wide column roi-list-container"
-      style={{stream.mainCanvasDimension.parallelContainerStyle}}>
-      {{#each model.workspace.loadedROIs as |roi index|}}
+    <div class="four wide column roi-list-container">
+    {{input type="button"
+      value="Compute All"
+      click=(action "computeROIs" model.firebaseWorkspace.rois model.workspace)}}
+         {{!--style={{stream.mainCanvasDimension.parallelContainerStyle}}>
+      {{#each model.workspace.loadedROIs as |roi index|}}-
+        {{#each model.rois as |roi index|}}
         {{x-sbx-analysis/roi/hierarchy roi=roi colorIndex=index}}
         <section class="ui clearing divider"></section>
       {{else}}
         <p class="ui mini yellow header">No ROIs yet...</p>
-      {{/each}}
+         {{/each}}--}}
     </div>
 
   </div>
@@ -275,7 +290,7 @@
     <span class="ui label">TF: {{model.workspace.cur_tfreq}}</span>
   </h4>
   <section class="ui clearing divider"></section>
-  <div class="ui" style="overflow-x: scroll; font-family: monospace;">
+  <div id=stat class="ui" style="overflow-x: scroll; font-family: monospace;">
     {{x-scanbox-analyzer/stats/wide-table
       condition=model.condition
       rois=model.workspace.loadedROIs}}
@@ -300,5 +315,8 @@
 #route-sbx-analysis .ui.dropdown .menu > .header {
   font-style: italic;
   margin: 0.25rem 0.5rem 0.25rem;
+}
+#stat {
+  height: 200px;
 }
 </style>

@@ -45,6 +45,7 @@ export default Ember.Route.extend({
   session: Ember.inject.service(),
   actions: actions,
   model(param) {
+    const store = this.get('store');
     window.R = this;
     const hops = param.hops.split('/');
     const wsName = hops.pop();
@@ -89,7 +90,42 @@ export default Ember.Route.extend({
       });
     });
     const name = { io: ioName, ws: wsName };
-    return Ember.RSVP.hash({ condition, workspace, stream, name });
+    const wsAlias = param.hops;
+    const file = store.query('file', {
+      orderBy: 'name',
+      equalTo: ioName
+    }).then(function(result) {
+      var f = result.get('firstObject');
+      if (!f) {
+        f = store.createRecord('file', {
+          name: ioName
+        });
+      };
+      return f;
+    });
+    const firebaseWorkspace = store.query('fb-workspace', {
+      orderBy: 'name',
+      equalTo: wsAlias
+    }).then(function(result) {
+      var ws = result.get('firstObject');
+      if (!ws) {
+        ws =  store.createRecord('fb-workspace', {
+          name: wsAlias
+        });
+      };
+      ws.get('rois');
+      return ws;
+    });
+    //const rois = this.get('store').query('roi', {
+    //  orderBy: 'workspace',
+    //  equalTo: wsName
+    //}).then(function(rois) {
+    //  console.log(rois);
+    //  return rois;
+    //}).catch(function(reason) {
+    //  console.log(reason);
+    //});
+    return Ember.RSVP.hash({ condition, workspace, file, firebaseWorkspace, stream, name });
   },
   afterModel(/*model, transition */) {
     this._super(...arguments);

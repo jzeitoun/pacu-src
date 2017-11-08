@@ -14,7 +14,7 @@ export default Model.extend({
   sog_initial_guess: attr(),
   params: attr(),
   // iopath: attr('string'),
-  rois: hasMany('roi'),
+  //rois: hasMany('roi'),
   dtoverallmeans: hasMany('dtoverallmean'),
   // colormaps: hasMany('colormap'),
   condition: belongsTo('condition'),

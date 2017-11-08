@@ -14,6 +14,13 @@ module.exports = function(environment) {
       }
     },
 
+    firebase: {
+      apiKey: "AIzaSyCfQPiJ0rKVY3-NBriIQyMgQTr0t43zr9c",
+      authDomain: "pacu-rois.firebaseapp.com",
+      databaseURL: "https://pacu-rois.firebaseio.com",
+      projectId: "pacu-rois",
+    },
+
     APP: {
       // Here you can pass flags/options to your application instance
       // when it is created

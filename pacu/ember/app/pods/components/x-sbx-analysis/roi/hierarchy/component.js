@@ -21,9 +21,12 @@ export default Ember.Component.extend({
     // deal with the change
     console.log('test');
   }),
-  @observes('roi.active') activityChanged(/*active*/) {
-    if (this.get('roi.active')) {
+  @observes('roi.selected') activityChanged(/*active*/) {
+    if (this.get('roi.selected')) {
       this.element.scrollIntoViewIfNeeded();
     }
-  }
+  },
+  didRender() {
+    console.log('Rendered');
+  },
 });

@@ -49,6 +49,7 @@
     "ember-sweetalert": "^0.1.1",
     "ember-toastr": "1.4.0",
     "ember-welcome-page": "^2.0.2",
+    "emberfire": "^2.0.8",
     "loader.js": "^4.1.0",
     "semantic-ui-ember": "1.0.0"
   },

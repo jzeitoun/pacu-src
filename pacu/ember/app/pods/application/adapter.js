@@ -30,6 +30,11 @@ export default JSONAPIAdapter.extend({
     };
   }.property('session.jsonapi.{moduleName,sessionArgs,baseName}').volatile(),
   ajax(url, type, hash) {
+    if (url.includes('rois')) { // modify model type to for communication with backend
+      if (hash.data.data) {
+        hash.data.data.type = 'rois';
+      }
+    };
     this.set('store.isfetching', true);
     return this._super(url, type, hash).finally(() => {
       this.set('store.isFetching', false);
@@ -37,5 +42,13 @@ export default JSONAPIAdapter.extend({
   },
   pathForType(type) {
     return Ember.String.underscore(this._super(type));
-  }
+  },
+  //buildURL(modelName, id, snapshot, requestType, query) {
+  //  // ensures compatibility with backend
+  //  var url = this._super(modelName, id, snapshot, requestType, query);
+  //  if (url.includes('roi_data')) {
+  //    url = url.replace('roi_data','rois');
+  //  };
+  //  return url
+  //}
 });
