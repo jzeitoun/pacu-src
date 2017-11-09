@@ -222,7 +222,7 @@
           {{input value=stream.img.max class="contrast-field"}}
         </div>
       </div>
-      <div class="ui small compact inverted icon bottom menu">
+      <div id="compute-button" class="ui small compact inverted icon bottom menu field-container">
         <a class="item" {{action "computeROIs" model.firebaseWorkspace.rois model.workspace}}>
            Compute All
         </a>
@@ -320,5 +320,8 @@
 }
 #stat {
   height: 200px;
+}
+#compute-button {
+  margin-left: 5px;
 }
 </style>

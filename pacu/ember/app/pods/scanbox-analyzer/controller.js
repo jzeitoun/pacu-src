@@ -1,5 +1,6 @@
 import Ember from 'ember';
 
+
 export default Ember.Controller.extend({
   actions: {
     addROI(roi, file, workspace) {
@@ -59,6 +60,12 @@ export default Ember.Controller.extend({
           } else {
             // record exists, skip to compute
             var roiData = roiDataObjects.filterBy('id', String(roi.get('roi_id'))).get('firstObject');
+            // update coordinates
+            var polygon = pointsToArray(roi.get('polygon')).map(function(point) {
+              return {x:point[0], y:point[1]};
+            });
+            roiData.set('polygon', polygon);
+            roiData.save();
             return store.createRecord('action', {
               model_name: 'ROI',
               model_id: roiData.id,
@@ -85,11 +92,41 @@ export default Ember.Controller.extend({
       }
     },
 
-    ensureWorkspace(file, workspace) {
-      file.get('workspaces').then(workspaces => {
-        if (!workspaces.includes(workspace)) {
-          workspaces.addObject(workspace);
-          workspaces.save();
+    ensureWorkspace(file, workspace, firebaseWorkspace) {
+      const store = this.get('store');
+      var roi_count = file.get('roi_count');
+      var roiData = store.findAll('roi').then(result => {
+        var roiDataObjects = result.toArray();
+        var existingIDs = roiDataObjects.map(function(roi) {
+          return Number(roi.id);
+        });
+        // check if number of database entries matches firebase roi_count
+        if (existingIDs.length) {
+          var neededEntries = roi_count - Math.max(...existingIDs);
+          // if not, add extra blank entries
+          if (neededEntries > 0) {
+            while(neededEntries--) {
+              var newRecord = store.createRecord('roi', {
+                polygon: [
+                  {x:0, y:0},
+                  {x:0, y:10},
+                  {x:10, y:10},
+                  {x:10, y:0}
+                ],
+                workspace: workspace
+              });
+              newRecord.save().then((newRecord) => {
+                console.log(`Record ${newRecord.id} added`);
+              });
+            };
+          };
+        };
+      });
+      // ensure firebaseWorkspace reference exists in file
+      file.get('workspaces').then(firebaseWorkspaces => {
+        if (!firebaseWorkspaces.includes(firebaseWorkspace)) {
+          firebaseWorkspaces.addObject(firebaseWorkspace);
+          firebaseWorkspaces.save();
           return file.save();
         };
       });

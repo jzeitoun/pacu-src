@@ -81,7 +81,7 @@ export default Ember.Component.extend({
 
   didInsertElement() {
     // ensure workspace is linked to file
-    this.get('ensureWorkspace')(this.get('file'), this.get('firebaseWorkspace'));
+    this.get('ensureWorkspace')(this.get('file'), this.get('workspace'), this.get('firebaseWorkspace'));
   },
 
   mouseDown(e) {
@@ -165,22 +165,54 @@ export default Ember.Component.extend({
         case 'ArrowLeft':
           if (this.get('placeMode')) {
             this.set('roiPrototype.numPoints', numPoints-1);
-          }
+          } else {
+            this.get('selectedROIs').forEach(function(roi) {
+              var newPoints = pointsToArray(roi.get('polygon')).map(function(point) {
+                return [point[0]-1, point[1]];
+              });
+              roi.set('polygon', newPoints.join());
+            });
+              console.log('moved left');
+          };
           break;
         case 'ArrowRight':
           if (this.get('placeMode')) {
             this.set('roiPrototype.numPoints', numPoints+1);
-          }
+          } else {
+            this.get('selectedROIs').forEach(function(roi) {
+              var newPoints = pointsToArray(roi.get('polygon')).map(function(point) {
+                return [point[0]+1, point[1]];
+              });
+              roi.set('polygon', newPoints.join());
+            });
+              console.log('moved right');
+          };
           break;
         case 'ArrowDown':
           if (this.get('placeMode')) {
             this.set('roiPrototype.radius', radius-1);
-          }
+          } else {
+            this.get('selectedROIs').forEach(function(roi) {
+              var newPoints = pointsToArray(roi.get('polygon')).map(function(point) {
+                return [point[0], point[1]+1];
+              });
+              roi.set('polygon', newPoints.join());
+            });
+            console.log('moved down');
+          };
           break;
         case 'ArrowUp':
           if (this.get('placeMode')) {
             this.set('roiPrototype.radius', radius+1);
-          }
+          } else {
+            this.get('selectedROIs').forEach(function(roi) {
+              var newPoints = pointsToArray(roi.get('polygon')).map(function(point) {
+                return [point[0], point[1]-1];
+              });
+              roi.set('polygon', newPoints.join());
+            });
+            console.log('moved up');
+          };
           break;
         case 'm':
           this.toggleProperty('placeMode');
