@@ -224,7 +224,10 @@
       </div>
       <div id="compute-button" class="ui small compact inverted icon bottom menu field-container">
         <a class="item" {{action "computeROIs" model.firebaseWorkspace.rois model.workspace}}>
-           Compute All
+          Compute All
+        </a>
+        <a class="item" {{action "exportExcel"}}>
+          Export
         </a>
       </div>
     </div>
@@ -254,7 +257,9 @@
           update=(action "updateROI")
           delete=(action "deleteROI")
           compute=(action "computeROIs")
-          ensureWorkspace=(action "ensureWorkspace")}}
+          ensureWorkspace=(action "ensureWorkspace")
+          placeMode=placeMode
+          disableHandles=disableHandles}}
 
         {{!--{{layer.roi-manager workspace=model.workspace passedToggleROIs=toggleROIs passedModeROIs=MinModeROIs}}
         {{#if stream.img.mpi}}
@@ -267,6 +272,10 @@
 
     {{! ROI Control }}
     <div class="four wide column roi-list-container">
+      <h3>Shortcuts</h3>
+      <li>"m" :  <span class={{if placeMode "active-mode"}}>Place Mode</span></li>
+      <li>"d" :  <span class={{if disableHandles "active-mode"}}>Disable Handles</span></li>
+
          {{!--style={{stream.mainCanvasDimension.parallelContainerStyle}}>
       {{#each model.workspace.loadedROIs as |roi index|}}-
         {{#each model.rois as |roi index|}}
@@ -310,6 +319,9 @@
 
 </div>
 <style>
+.active-mode {
+  color: #77f442;
+}
 #route-sbx-analysis .roi.dropdown .menu .item {
   padding-top: 4px !important;
   padding-bottom: 4px !important;

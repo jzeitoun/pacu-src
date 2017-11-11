@@ -17,6 +17,8 @@ from pacu.core.io.scanbox.channel import ScanboxChannel
 from pacu.core.io.scanbox.model import db as schema
 from pacu.core.model.experiment import ExperimentV1
 
+from pacu.core.addons.export import Export
+
 opt = manager.instance('opt')
 glab = manager.get('db').section('glab')()
 userenv = identity.path.userenv
@@ -170,6 +172,9 @@ class ScanboxIO(object):
                     roi.refresh_all()
                 except Exception as e:
                     print 'ERROR', e
+    def export_excel(self, wsName):
+        active_workspace = self.condition.workspaces.filter_by(name=str(wsName))[0]
+        return Export(self.condition, active_workspace.rois).excel()
 
 def open_sqlite(path):
     return schema.get_sessionmaker(path, echo=False)

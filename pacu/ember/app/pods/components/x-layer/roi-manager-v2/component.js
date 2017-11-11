@@ -19,7 +19,7 @@ export default Ember.Component.extend({
   attributeBindings: ['height', 'width'],
   height: null,
   width: null,
-  placeMode: true,
+  placeMode: false,
   selectMode: false,
   disableHandles: false,
   selectRect: {
@@ -172,7 +172,6 @@ export default Ember.Component.extend({
               });
               roi.set('polygon', newPoints.join());
             });
-              console.log('moved left');
           };
           break;
         case 'ArrowRight':
@@ -185,7 +184,6 @@ export default Ember.Component.extend({
               });
               roi.set('polygon', newPoints.join());
             });
-              console.log('moved right');
           };
           break;
         case 'ArrowDown':
@@ -211,7 +209,6 @@ export default Ember.Component.extend({
               });
               roi.set('polygon', newPoints.join());
             });
-            console.log('moved up');
           };
           break;
         case 'm':
@@ -220,7 +217,6 @@ export default Ember.Component.extend({
         case 'd':
           this.toggleProperty('disableHandles');
           var disableHandles = this.get('disableHandles');
-          console.log(`disableHandles set to ${disableHandles}`);
           break;
         case 'Delete':
           this.get('selectedROIs').map(this.get('delete'));

@@ -28,8 +28,8 @@ export default Ember.Component.extend({
     return (this.get('points') == this.get('lastComputedPoints')) && !this.get('inProgress') && !this.get('selected');
   }),
   targetPoint: null,
-  placeMode: null,
-  disableHandles: null,
+  placeMode: false,
+  disableHandles: false,
   pointsChanged: Ember.observer('points', 'lastComputedPoints', function() {
     Ember.run.debounce(this, 'triggerUpdate', 500);
   }),

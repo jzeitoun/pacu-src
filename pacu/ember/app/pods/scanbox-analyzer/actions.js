@@ -2,6 +2,22 @@ import Ember from 'ember';
 import download from 'pacu/utils/download';
 import batch from 'pacu/utils/batch';
 
+function pad(number) {
+      if (number < 10) {
+        return '0' + number;
+      }
+      return number;
+    }
+
+Date.prototype.toCustomString = function() {
+  return this.getUTCFullYear() +
+    '-' + pad(this.getUTCMonth() + 1) +
+    '-' + pad(this.getUTCDate()) +
+    '-' + pad(this.getHours()) +
+    '-' + pad(this.getUTCMinutes()) +
+    '-' + pad(this.getUTCSeconds());
+};
+
 function importROIFileAllChanged(e) { // `this` is the current route
   const input = e.target;
   const route = this;
@@ -58,8 +74,14 @@ function importROIFileDiffChanged(e) { // `this` is the current route
 }
 
 export default {
-  testalert() {
-    alert('Test!');
+  exportExcel() {
+    const {io, ws} = this.currentModel.name;
+    const fname = io.split('.')[0]
+    this.toast.info(`Exporting data as Excel...`);
+    this.currentModel.stream.invokeAsBinary('export_excel', ws).then(data => {
+      const ts = (new Date).toCustomString();
+      download.fromArrayBuffer(data, `${fname}-${ws}-${ts}.xlsx`, 'application/json');
+    });
   },
   do(/*action, ...args*/) {
     // alert('not supported');
