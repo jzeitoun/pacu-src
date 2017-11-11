@@ -184,6 +184,7 @@ class Export(object):
             cell.style = header
 
         for idx,roi in zip(idx_list, self.rois):
+            print(roi.id)
             peak_sf = round(roi.dtsfreqfits[0].attributes['value']['peak'],2)
             try:
                 if roi.dtanovaeachs.filter_by(trial_sf=peak_sf)[0].p <= p_value:
