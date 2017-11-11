@@ -43,6 +43,7 @@ export default Ember.Route.extend({
   },
   socket: Ember.inject.service(),
   session: Ember.inject.service(),
+  roiRecord: Ember.inject.service(),
   actions: actions,
   model(param) {
     const store = this.get('store');

@@ -15,6 +15,7 @@ function pointsToArray(strPoints) {
 
 export default Ember.Component.extend({
   store: Ember.inject.service(),
+  roiRecord: Ember.inject.service(),
   tagName: 'svg',
   attributeBindings: ['height', 'width'],
   height: null,
@@ -81,6 +82,8 @@ export default Ember.Component.extend({
   },
 
   didInsertElement() {
+    // use service to keep a record of roi states
+    this.get('roiRecord').set('all', this.get('rois'));
     // ensure workspace is linked to file
     this.get('ensureWorkspace')(this.get('file'), this.get('workspace'), this.get('firebaseWorkspace'));
   },

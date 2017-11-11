@@ -22,8 +22,8 @@ class Export(object):
         #self.wsName = wsName
         self.condition = condition
         self.rois = rois
-        self.ids = ids.split(',')
-        print(ids)
+        self.ids = map(int, ids.split(','))
+        print(self.ids)
         #self.active_workspace = io.condition.workspaces.filter_by(name = self.wsName)[0]
         #self.condition = self.io.condition
         #self.workspaces = [workspace for data,fw in zip(self.io, self.fw_array) for workspace in data.condition.workspaces if workspace.name == fw[1]]
