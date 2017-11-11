@@ -74,11 +74,16 @@ function importROIFileDiffChanged(e) { // `this` is the current route
 }
 
 export default {
-  exportExcel() {
+  exportExcel(computedROIs) {
     const {io, ws} = this.currentModel.name;
-    const fname = io.split('.')[0]
+    const fname = io.split('.')[0];
+    ids = [];
+    for (var i=0; i<computedROIs.length; i++) {
+      ids.push(computedROIs[i].get('roi_id'));
+    }
+    console.log(ids);
     this.toast.info(`Exporting data as Excel...`);
-    this.currentModel.stream.invokeAsBinary('export_excel', ws).then(data => {
+    this.currentModel.stream.invokeAsBinary('export_excel', ids.join(), ws).then(data => {
       const ts = (new Date).toCustomString();
       download.fromArrayBuffer(data, `${fname}-${ws}-${ts}.xlsx`, 'application/json');
     });

@@ -226,7 +226,7 @@
         <a class="item" {{action "computeROIs" model.firebaseWorkspace.rois model.workspace}}>
           Compute All
         </a>
-        <a class="item" {{action "exportExcel"}}>
+        <a class="item" {{action "exportExcel" computedROIs}}>
           Export
         </a>
       </div>
@@ -259,7 +259,8 @@
           compute=(action "computeROIs")
           ensureWorkspace=(action "ensureWorkspace")
           placeMode=placeMode
-          disableHandles=disableHandles}}
+          disableHandles=disableHandles
+          computedROIs=computedROIs}}
 
         {{!--{{layer.roi-manager workspace=model.workspace passedToggleROIs=toggleROIs passedModeROIs=MinModeROIs}}
         {{#if stream.img.mpi}}

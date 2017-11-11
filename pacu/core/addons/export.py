@@ -14,7 +14,7 @@ class Export(object):
     Argument should be list of tuples with the filename first and the workspace name second.
     Example: stitched_dataset = stitched_data([('Day1_000_000','Workspace_1'),('Day1_000_001',Workspace_1')])
     '''
-    def __init__(self, condition, rois): #, fw_array):
+    def __init__(self, condition, ids, rois): #, fw_array):
         #self.fw_array = fw_array
         #self.path = os.getcwd()
         #self.io = [ScanboxIO(os.path.join(self.path,fw[0])) for fw in self.fw_array]
@@ -22,6 +22,8 @@ class Export(object):
         #self.wsName = wsName
         self.condition = condition
         self.rois = rois
+        self.ids = ids.split(',')
+        print(ids)
         #self.active_workspace = io.condition.workspaces.filter_by(name = self.wsName)[0]
         #self.condition = self.io.condition
         #self.workspaces = [workspace for data,fw in zip(self.io, self.fw_array) for workspace in data.condition.workspaces if workspace.name == fw[1]]
@@ -84,7 +86,9 @@ class Export(object):
         wb = Workbook()
         ws = wb.active
 
-        num_rois = len(self.rois)
+        filtered_rois = [roi for roi in self.rois if roi.id in self.ids]
+        #num_rois = len(self.rois)
+        num_rois = len(filtered_rois)
         sfreqs = self.condition.sfrequencies #attributes['sfrequencies']
         num_sf = len(sfreqs)
         idx_list = range(3, num_rois*num_sf, num_sf)
@@ -183,7 +187,7 @@ class Export(object):
             cell.value = val
             cell.style = header
 
-        for idx,roi in zip(idx_list, self.rois):
+        for idx,roi in zip(idx_list, filtered_rois):
             print(roi.id)
             peak_sf = round(roi.dtsfreqfits[0].attributes['value']['peak'],2)
             try:

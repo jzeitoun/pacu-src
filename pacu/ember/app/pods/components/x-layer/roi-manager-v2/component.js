@@ -38,6 +38,7 @@ export default Ember.Component.extend({
   firebaseWorkspace: null,
   curID: null,
   selectedROIs: Ember.computed.filterBy('rois', 'selected', true),
+  computedROIs: Ember.computed.filterBy('rois', 'computed', true),
   uncomputedROIs: Ember.computed.filterBy('rois', 'computed', false),
   draggedROIs: Ember.computed.filterBy('rois', 'dragging', true),
   targetedROI: Ember.computed.filter('rois.@each.targetPoint', function(roi, index, array) {

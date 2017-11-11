@@ -172,9 +172,9 @@ class ScanboxIO(object):
                     roi.refresh_all()
                 except Exception as e:
                     print 'ERROR', e
-    def export_excel(self, wsName):
+    def export_excel(self, ids, wsName):
         active_workspace = self.condition.workspaces.filter_by(name=str(wsName))[0]
-        return Export(self.condition, active_workspace.rois).excel()
+        return Export(self.condition, str(ids), active_workspace.rois).excel()
 
 def open_sqlite(path):
     return schema.get_sessionmaker(path, echo=False)
